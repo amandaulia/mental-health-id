@@ -1,13 +1,14 @@
 
 import { useState } from "react";
-import { FilterState, Specialization, Mode, BureauType, InsuranceType } from "@/types";
+import { FilterState, Specialization, Mode, BureauType, InsuranceType, ProfessionType } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, Filter } from "lucide-react";
-import { specializations } from "@/data/mockData";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Search, Filter, ChevronDown } from "lucide-react";
+import { specializations, professionTypes } from "@/data/mockData";
 
 interface SearchAndFiltersProps {
   filters: FilterState;
@@ -60,6 +61,20 @@ export const SearchAndFilters = ({ filters, onFiltersChange, bureauNames }: Sear
     }
   };
 
+  const FilterSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <Collapsible>
+      <CollapsibleTrigger className="flex items-center justify-between w-full py-2 hover:bg-muted/50 rounded px-2">
+        <Label className="text-sm font-medium">{title}</Label>
+        <ChevronDown className="h-4 w-4" />
+      </CollapsibleTrigger>
+      <CollapsibleContent className="px-2 pb-2">
+        <div className="space-y-2 max-h-32 overflow-y-auto">
+          {children}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
@@ -75,104 +90,115 @@ export const SearchAndFilters = ({ filters, onFiltersChange, bureauNames }: Sear
         <Button
           variant="outline"
           onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 whitespace-nowrap"
         >
           <Filter className="h-4 w-4" />
-          Filters
+          <span className="hidden sm:inline">Filters</span>
         </Button>
       </div>
 
       {showFilters && (
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-3">
             <CardTitle className="text-lg">Filters</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Bureau Names */}
-              <div>
-                <Label className="text-sm font-medium mb-3 block">Bureau/Clinic</Label>
-                <div className="space-y-2 max-h-32 overflow-y-auto">
-                  {bureauNames.map((name) => (
-                    <div key={name} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`bureau-${name}`}
-                        checked={filters.bureauNames.includes(name)}
-                        onCheckedChange={() => handleArrayToggle("bureauNames", name)}
-                      />
-                      <Label htmlFor={`bureau-${name}`} className="text-sm">{name}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <FilterSection title="Bureau/Clinic">
+                {bureauNames.map((name) => (
+                  <div key={name} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`bureau-${name}`}
+                      checked={filters.bureauNames.includes(name)}
+                      onCheckedChange={() => handleArrayToggle("bureauNames", name)}
+                    />
+                    <Label htmlFor={`bureau-${name}`} className="text-sm cursor-pointer flex-1">
+                      {name}
+                    </Label>
+                  </div>
+                ))}
+              </FilterSection>
+
+              {/* Profession Types */}
+              <FilterSection title="Profession Type">
+                {professionTypes.map((type) => (
+                  <div key={type} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`profession-${type}`}
+                      checked={filters.professionTypes.includes(type)}
+                      onCheckedChange={() => handleArrayToggle("professionTypes", type)}
+                    />
+                    <Label htmlFor={`profession-${type}`} className="text-sm cursor-pointer flex-1">
+                      {type}
+                    </Label>
+                  </div>
+                ))}
+              </FilterSection>
 
               {/* Specializations */}
-              <div>
-                <Label className="text-sm font-medium mb-3 block">Specialization</Label>
-                <div className="space-y-2 max-h-32 overflow-y-auto">
-                  {specializations.map((spec) => (
-                    <div key={spec} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`spec-${spec}`}
-                        checked={filters.specializations.includes(spec)}
-                        onCheckedChange={() => handleArrayToggle("specializations", spec)}
-                      />
-                      <Label htmlFor={`spec-${spec}`} className="text-sm">{spec}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <FilterSection title="Specialization">
+                {specializations.map((spec) => (
+                  <div key={spec} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`spec-${spec}`}
+                      checked={filters.specializations.includes(spec)}
+                      onCheckedChange={() => handleArrayToggle("specializations", spec)}
+                    />
+                    <Label htmlFor={`spec-${spec}`} className="text-sm cursor-pointer flex-1">
+                      {spec}
+                    </Label>
+                  </div>
+                ))}
+              </FilterSection>
 
               {/* Modes */}
-              <div>
-                <Label className="text-sm font-medium mb-3 block">Session Mode</Label>
-                <div className="space-y-2">
-                  {modes.map((mode) => (
-                    <div key={mode} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`mode-${mode}`}
-                        checked={filters.modes.includes(mode)}
-                        onCheckedChange={() => handleArrayToggle("modes", mode)}
-                      />
-                      <Label htmlFor={`mode-${mode}`} className="text-sm">{getModeLabel(mode)}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <FilterSection title="Session Mode">
+                {modes.map((mode) => (
+                  <div key={mode} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`mode-${mode}`}
+                      checked={filters.modes.includes(mode)}
+                      onCheckedChange={() => handleArrayToggle("modes", mode)}
+                    />
+                    <Label htmlFor={`mode-${mode}`} className="text-sm cursor-pointer flex-1">
+                      {getModeLabel(mode)}
+                    </Label>
+                  </div>
+                ))}
+              </FilterSection>
 
               {/* Bureau Types */}
-              <div>
-                <Label className="text-sm font-medium mb-3 block">Type</Label>
-                <div className="space-y-2">
-                  {bureauTypes.map((type) => (
-                    <div key={type} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`type-${type}`}
-                        checked={filters.types.includes(type)}
-                        onCheckedChange={() => handleArrayToggle("types", type)}
-                      />
-                      <Label htmlFor={`type-${type}`} className="text-sm">{getBureauTypeLabel(type)}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <FilterSection title="Type">
+                {bureauTypes.map((type) => (
+                  <div key={type} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`type-${type}`}
+                      checked={filters.types.includes(type)}
+                      onCheckedChange={() => handleArrayToggle("types", type)}
+                    />
+                    <Label htmlFor={`type-${type}`} className="text-sm cursor-pointer flex-1">
+                      {getBureauTypeLabel(type)}
+                    </Label>
+                  </div>
+                ))}
+              </FilterSection>
 
               {/* Insurance */}
-              <div>
-                <Label className="text-sm font-medium mb-3 block">Insurance</Label>
-                <div className="space-y-2">
-                  {insuranceTypes.map((ins) => (
-                    <div key={ins} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`ins-${ins}`}
-                        checked={filters.insurance.includes(ins)}
-                        onCheckedChange={() => handleArrayToggle("insurance", ins)}
-                      />
-                      <Label htmlFor={`ins-${ins}`} className="text-sm">{getInsuranceLabel(ins)}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <FilterSection title="Insurance">
+                {insuranceTypes.map((ins) => (
+                  <div key={ins} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`ins-${ins}`}
+                      checked={filters.insurance.includes(ins)}
+                      onCheckedChange={() => handleArrayToggle("insurance", ins)}
+                    />
+                    <Label htmlFor={`ins-${ins}`} className="text-sm cursor-pointer flex-1">
+                      {getInsuranceLabel(ins)}
+                    </Label>
+                  </div>
+                ))}
+              </FilterSection>
             </div>
           </CardContent>
         </Card>

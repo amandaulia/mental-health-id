@@ -1,5 +1,5 @@
 
-import { Practitioner, Bureau, Specialization } from "@/types";
+import { Practitioner, Bureau, Specialization, ProfessionType } from "@/types";
 
 export const mockPractitioners: Practitioner[] = [
   {
@@ -8,6 +8,9 @@ export const mockPractitioners: Practitioner[] = [
     image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=400&fit=crop",
     name: "Dr. Sarah Johnson",
     bureauName: "MindCare Psychology Center",
+    bureauId: "b1",
+    professionTypes: ["Psychologist", "Counselor"],
+    licenseNumber: "PSY-2024-001",
     specializations: ["Clinical Psychology", "Anxiety Disorders"],
     experience: "8 years",
     education: "PhD in Clinical Psychology, University of Indonesia",
@@ -18,8 +21,24 @@ export const mockPractitioners: Practitioner[] = [
       lng: 106.8456
     },
     services: [
-      { name: "Individual Therapy", duration: "60 minutes", minPrice: 500000, maxPrice: 750000 },
-      { name: "Group Therapy", duration: "90 minutes", minPrice: 300000, maxPrice: 450000 }
+      { 
+        name: "Individual Therapy", 
+        duration: "60 minutes", 
+        minPrice: 500000, 
+        maxPrice: 750000, 
+        mode: "offline",
+        bookingUrl: "https://booking.example.com/sarah/individual",
+        learnMoreUrl: "https://example.com/services/individual-therapy"
+      },
+      { 
+        name: "Online Counseling", 
+        duration: "45 minutes", 
+        minPrice: 400000, 
+        maxPrice: 600000, 
+        mode: "video",
+        bookingUrl: "https://booking.example.com/sarah/online",
+        learnMoreUrl: "https://example.com/services/online-counseling"
+      }
     ],
     modes: ["text", "video", "offline"],
     phoneNumber: "+6281234567890",
@@ -28,7 +47,7 @@ export const mockPractitioners: Practitioner[] = [
     insurance: ["private", "bpjs"],
     isVerified: true,
     lastUpdated: "2024-01-15",
-    priceRange: { min: 300000, max: 750000 }
+    priceRange: { min: 400000, max: 750000 }
   },
   {
     id: "2",
@@ -36,6 +55,9 @@ export const mockPractitioners: Practitioner[] = [
     image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=400&fit=crop",
     name: "Dr. Ahmad Rizky",
     bureauName: "Serenity Mental Health Clinic",
+    bureauId: "b2",
+    professionTypes: ["Psychiatrist"],
+    licenseNumber: "PST-2024-002",
     specializations: ["Child Psychology", "Family Therapy"],
     experience: "12 years",
     education: "Master in Psychology, Gadjah Mada University",
@@ -46,8 +68,24 @@ export const mockPractitioners: Practitioner[] = [
       lng: 107.6191
     },
     services: [
-      { name: "Child Counseling", duration: "45 minutes", minPrice: 400000, maxPrice: 600000 },
-      { name: "Family Therapy", duration: "90 minutes", minPrice: 800000, maxPrice: 1200000 }
+      { 
+        name: "Child Counseling", 
+        duration: "45 minutes", 
+        minPrice: 400000, 
+        maxPrice: 600000, 
+        mode: "offline",
+        bookingUrl: "https://booking.example.com/ahmad/child",
+        learnMoreUrl: "https://example.com/services/child-counseling"
+      },
+      { 
+        name: "Family Therapy", 
+        duration: "90 minutes", 
+        minPrice: 800000, 
+        maxPrice: 1200000, 
+        mode: "offline",
+        bookingUrl: "https://booking.example.com/ahmad/family",
+        learnMoreUrl: "https://example.com/services/family-therapy"
+      }
     ],
     modes: ["voice", "video", "offline"],
     phoneNumber: "+6281987654321",
@@ -66,6 +104,7 @@ export const mockBureaus: Bureau[] = [
     name: "MindCare Psychology Center",
     businessHours: "Mon-Fri: 8:00-17:00, Sat: 8:00-13:00",
     bureauType: "clinic",
+    professionTypes: ["Psychologist", "Counselor"],
     city: "Jakarta",
     location: {
       address: "Jl. Sudirman No. 123, Jakarta Selatan",
@@ -82,6 +121,7 @@ export const mockBureaus: Bureau[] = [
     name: "Serenity Mental Health Clinic",
     businessHours: "Mon-Sun: 9:00-21:00",
     bureauType: "independent",
+    professionTypes: ["Psychiatrist", "Art Therapist"],
     city: "Bandung",
     location: {
       address: "Jl. Braga No. 45, Bandung",
@@ -107,4 +147,13 @@ export const specializations: Specialization[] = [
   "Addiction Counseling",
   "Couples Therapy",
   "Eating Disorders"
+];
+
+export const professionTypes: ProfessionType[] = [
+  "Psychologist",
+  "Psychiatrist",
+  "Art Therapist",
+  "Music Therapist",
+  "Counselor",
+  "Social Worker"
 ];

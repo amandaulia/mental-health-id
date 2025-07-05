@@ -11,6 +11,14 @@ export type Specialization =
   | "Couples Therapy"
   | "Eating Disorders";
 
+export type ProfessionType = 
+  | "Psychologist"
+  | "Psychiatrist"
+  | "Art Therapist"
+  | "Music Therapist"
+  | "Counselor"
+  | "Social Worker";
+
 export type Mode = "text" | "voice" | "video" | "offline";
 
 export type InsuranceType = "none" | "private" | "bpjs";
@@ -22,6 +30,9 @@ export interface Service {
   duration: string;
   minPrice: number;
   maxPrice: number;
+  mode: Mode;
+  bookingUrl?: string;
+  learnMoreUrl?: string;
 }
 
 export interface Practitioner {
@@ -30,6 +41,9 @@ export interface Practitioner {
   image: string;
   name: string;
   bureauName: string;
+  bureauId: string;
+  professionTypes: ProfessionType[];
+  licenseNumber: string;
   specializations: Specialization[];
   experience: string;
   education: string;
@@ -59,6 +73,7 @@ export interface Bureau {
   name: string;
   businessHours: string;
   bureauType: BureauType;
+  professionTypes: ProfessionType[];
   city: string;
   location: {
     address: string;
@@ -75,9 +90,16 @@ export type Resource = Practitioner | Bureau;
 export interface FilterState {
   search: string;
   bureauNames: string[];
+  professionTypes: ProfessionType[];
   specializations: Specialization[];
   priceRange: [number, number];
   modes: Mode[];
   types: BureauType[];
   insurance: InsuranceType[];
+}
+
+export interface FilterTag {
+  type: keyof FilterState;
+  value: string;
+  label: string;
 }

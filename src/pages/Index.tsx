@@ -1,21 +1,44 @@
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { FilterState, Resource } from "@/types";
 import { allResources, mockPractitioners, mockBureaus } from "@/data/mockData";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
+import { FilterTags } from "@/components/FilterTags";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { BureauCard } from "@/components/BureauCard";
 
 const Index = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     bureauNames: [],
+    professionTypes: [],
     specializations: [],
     priceRange: [0, 2000000],
     modes: [],
     types: [],
     insurance: []
   });
+
+  // Load filters from URL params on mount
+  useEffect(() => {
+    const urlFilters: Partial<FilterState> = {};
+    
+    for (const [key, value] of searchParams.entries()) {
+      if (key in filters) {
+        if (Array.isArray(filters[key as keyof FilterState])) {
+          urlFilters[key as keyof FilterState] = [value] as any;
+        } else {
+          urlFilters[key as keyof FilterState] = value as any;
+        }
+      }
+    }
+    
+    if (Object.keys(urlFilters).length > 0) {
+      setFilters(prev => ({ ...prev, ...urlFilters }));
+    }
+  }, []);
 
   const bureauNames = useMemo(() => {
     const names = new Set<string>();
@@ -43,6 +66,14 @@ const Index = () => {
       if (filters.bureauNames.length > 0) {
         const bureauName = resource.type === "practitioner" ? resource.bureauName : resource.name;
         if (!filters.bureauNames.includes(bureauName)) return false;
+      }
+
+      // Profession types filter
+      if (filters.professionTypes.length > 0) {
+        const hasMatchingProfession = resource.professionTypes.some(type => 
+          filters.professionTypes.includes(type)
+        );
+        if (!hasMatchingProfession) return false;
       }
 
       // Type-specific filters
@@ -89,34 +120,58 @@ const Index = () => {
     });
   }, [filters]);
 
+  const handleRemoveFilter = (type: keyof FilterState, value: string) => {
+    const currentArray = filters[type] as string[];
+    const newArray = currentArray.filter(item => item !== value);
+    setFilters(prev => ({ ...prev, [type]: newArray }));
+  };
+
+  const handleClearAllFilters = () => {
+    setFilters({
+      search: "",
+      bureauNames: [],
+      professionTypes: [],
+      specializations: [],
+      priceRange: [0, 2000000],
+      modes: [],
+      types: [],
+      insurance: []
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-center mb-4">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-4xl font-bold text-center mb-2 sm:mb-4">
             Mental Health Resource Directory
           </h1>
-          <p className="text-xl text-muted-foreground text-center">
+          <p className="text-lg sm:text-xl text-muted-foreground text-center">
             Find qualified psychologists, psychiatrists, and mental health clinics
           </p>
         </div>
 
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <SearchAndFilters
             filters={filters}
             onFiltersChange={setFilters}
             bureauNames={bureauNames}
           />
+          <FilterTags
+            filters={filters}
+            onRemoveFilter={handleRemoveFilter}
+            onClearAll={handleClearAllFilters}
+          />
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-xl sm:text-2xl font-semibold">
               {filteredResources.length} Resources Found
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {filteredResources.map((resource) => (
               <div key={resource.id}>
                 {resource.type === "practitioner" ? (
@@ -130,7 +185,7 @@ const Index = () => {
 
           {filteredResources.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-xl text-muted-foreground">
+              <p className="text-lg sm:text-xl text-muted-foreground">
                 No resources found matching your criteria.
               </p>
               <p className="text-muted-foreground mt-2">

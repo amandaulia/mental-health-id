@@ -35,26 +35,38 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
 
   return (
     <Link to={`/practitioner/${practitioner.id}`}>
-      <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
         <CardContent className="p-4">
           <div className="flex gap-4">
             <img
               src={practitioner.image}
               alt={practitioner.name}
-              className="w-20 h-20 rounded-lg object-cover"
+              className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
             />
             <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-lg truncate">{practitioner.name}</h3>
                     {practitioner.isVerified && (
-                      <Badge variant="secondary" className="text-xs bg-green-100 text-green-700">
+                      <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 flex-shrink-0">
                         Verified
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground mb-2">{practitioner.bureauName}</p>
+                  <p className="text-sm text-muted-foreground mb-1 truncate">{practitioner.bureauName}</p>
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {practitioner.professionTypes.slice(0, 2).map((type) => (
+                      <Badge key={type} variant="outline" className="text-xs">
+                        {type}
+                      </Badge>
+                    ))}
+                    {practitioner.professionTypes.length > 2 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{practitioner.professionTypes.length - 2}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </div>
               
@@ -72,13 +84,13 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
                   )}
                 </div>
                 
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    <span>{practitioner.city}</span>
+                    <MapPin className="h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">{practitioner.city}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    {practitioner.modes.map((mode) => (
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    {practitioner.modes.slice(0, 3).map((mode) => (
                       <ModeIcon key={mode} mode={mode} />
                     ))}
                   </div>
