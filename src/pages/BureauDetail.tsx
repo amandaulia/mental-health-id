@@ -1,21 +1,54 @@
 
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { mockBureaus, mockPractitioners } from "@/data/mockData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { MapPin, Clock, Building2, ArrowLeft, ExternalLink } from "lucide-react";
 import { PractitionerCard } from "@/components/PractitionerCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useInstitution, usePractitionersByInstitution } from "@/hooks/useDatabase";
+import { transformInstitution, transformPractitioner } from "@/utils/dataTransform";
+import { Bureau, Practitioner } from "@/types";
 
 const BureauDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isMapExpanded, setIsMapExpanded] = useState(false);
+  const [bureau, setBureau] = useState<Bureau | null>(null);
+  const [practitioners, setPractitioners] = useState<Practitioner[]>([]);
   
-  const bureau = mockBureaus.find(b => b.id === id);
-  const bureauPractitioners = mockPractitioners.filter(p => p.bureauId === id);
+  const institutionId = parseInt(id || "0");
+  const { data: dbInstitution, isLoading: institutionLoading, error: institutionError } = useInstitution(institutionId);
+  const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitionersByInstitution(institutionId);
+
+  useEffect(() => {
+    if (dbInstitution) {
+      setBureau(transformInstitution(dbInstitution));
+    }
+  }, [dbInstitution]);
+
+  useEffect(() => {
+    if (dbPractitioners) {
+      setPractitioners(dbPractitioners.map(transformPractitioner));
+    }
+  }, [dbPractitioners]);
+
+  if (institutionLoading || practitionersLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">Loading bureau details...</div>
+      </div>
+    );
+  }
+
+  if (institutionError) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center text-red-500">Error loading bureau details</div>
+      </div>
+    );
+  }
 
   if (!bureau) {
     return <div className="container mx-auto px-4 py-8">Bureau not found</div>;
@@ -34,8 +67,8 @@ const BureauDetail = () => {
   const getInsuranceLabel = (ins: string) => {
     switch (ins) {
       case "none": return "No Insurance";
-      case "private": return "Private Insurance";
-      case "bpjs": return "BPJS";
+      case "PRIVATE": return "Private Insurance";
+      case "BPJS": return "BPJS";
       default: return ins;
     }
   };
@@ -206,14 +239,14 @@ const BureauDetail = () => {
         </div>
 
         {/* Practitioners Section */}
-        {bureauPractitioners.length > 0 && (
+        {practitioners.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Our Practitioners ({bureauPractitioners.length})</CardTitle>
+              <CardTitle>Our Practitioners ({practitioners.length})</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {bureauPractitioners.map((practitioner) => (
+                {practitioners.map((practitioner) => (
                   <PractitionerCard key={practitioner.id} practitioner={practitioner} />
                 ))}
               </div>

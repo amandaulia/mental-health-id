@@ -2,11 +2,12 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { FilterState, Resource } from "@/types";
-import { allResources, mockPractitioners, mockBureaus } from "@/data/mockData";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { BureauCard } from "@/components/BureauCard";
+import { usePractitioners, useInstitutions } from "@/hooks/useDatabase";
+import { transformPractitioner, transformInstitution } from "@/utils/dataTransform";
 
 const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -20,6 +21,24 @@ const Index = () => {
     types: [],
     insurance: []
   });
+
+  const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitioners();
+  const { data: dbInstitutions, isLoading: institutionsLoading } = useInstitutions();
+
+  // Transform database data to match frontend types
+  const allResources: Resource[] = useMemo(() => {
+    const resources: Resource[] = [];
+    
+    if (dbPractitioners) {
+      resources.push(...dbPractitioners.map(transformPractitioner));
+    }
+    
+    if (dbInstitutions) {
+      resources.push(...dbInstitutions.map(transformInstitution));
+    }
+    
+    return resources;
+  }, [dbPractitioners, dbInstitutions]);
 
   // Load filters from URL params on mount
   useEffect(() => {
@@ -42,10 +61,15 @@ const Index = () => {
 
   const bureauNames = useMemo(() => {
     const names = new Set<string>();
-    mockPractitioners.forEach(p => names.add(p.bureauName));
-    mockBureaus.forEach(b => names.add(b.name));
+    allResources.forEach(resource => {
+      if (resource.type === "practitioner") {
+        names.add(resource.bureauName);
+      } else {
+        names.add(resource.name);
+      }
+    });
     return Array.from(names);
-  }, []);
+  }, [allResources]);
 
   const filteredResources = useMemo(() => {
     return allResources.filter((resource) => {
@@ -118,7 +142,7 @@ const Index = () => {
 
       return true;
     });
-  }, [filters]);
+  }, [filters, allResources]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
@@ -138,6 +162,18 @@ const Index = () => {
       insurance: []
     });
   };
+
+  const isLoading = practitionersLoading || institutionsLoading;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-4 sm:py-8">
+          <div className="text-center">Loading resources...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

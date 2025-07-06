@@ -1,6 +1,5 @@
 
 import { useParams, useNavigate } from "react-router-dom";
-import { mockPractitioners } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { ArrowLeft } from "lucide-react";
@@ -8,11 +7,49 @@ import { Link } from "react-router-dom";
 import { PractitionerHeader } from "@/components/PractitionerHeader";
 import { PractitionerServices } from "@/components/PractitionerServices";
 import { PractitionerContact } from "@/components/PractitionerContact";
+import { usePractitioner, useServicesByPractitioner } from "@/hooks/useDatabase";
+import { transformPractitioner, transformService, calculatePriceRange } from "@/utils/dataTransform";
+import { useEffect, useState } from "react";
+import { Practitioner } from "@/types";
 
 const PractitionerDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const practitioner = mockPractitioners.find(p => p.id === id);
+  const [practitioner, setPractitioner] = useState<Practitioner | null>(null);
+  
+  const practitionerId = parseInt(id || "0");
+  const { data: dbPractitioner, isLoading: practitionerLoading, error: practitionerError } = usePractitioner(practitionerId);
+  const { data: dbServices, isLoading: servicesLoading } = useServicesByPractitioner(practitionerId);
+
+  useEffect(() => {
+    if (dbPractitioner && dbServices) {
+      const transformedPractitioner = transformPractitioner(dbPractitioner);
+      const transformedServices = dbServices.map(transformService);
+      const priceRange = calculatePriceRange(transformedServices);
+      
+      setPractitioner({
+        ...transformedPractitioner,
+        services: transformedServices,
+        priceRange,
+      });
+    }
+  }, [dbPractitioner, dbServices]);
+
+  if (practitionerLoading || servicesLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">Loading practitioner details...</div>
+      </div>
+    );
+  }
+
+  if (practitionerError) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center text-red-500">Error loading practitioner details</div>
+      </div>
+    );
+  }
 
   if (!practitioner) {
     return <div className="container mx-auto px-4 py-8">Practitioner not found</div>;
@@ -39,8 +76,8 @@ const PractitionerDetail = () => {
   const getInsuranceLabel = (ins: string) => {
     switch (ins) {
       case "none": return "No Insurance";
-      case "private": return "Private Insurance";
-      case "bpjs": return "BPJS";
+      case "PRIVATE": return "Private Insurance";
+      case "BPJS": return "BPJS";
       default: return ins;
     }
   };

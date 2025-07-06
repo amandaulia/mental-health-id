@@ -1,0 +1,64 @@
+
+import { useQuery } from "@tanstack/react-query";
+import { databaseService } from "@/services/database";
+
+export const usePractitioners = () => {
+  return useQuery({
+    queryKey: ['practitioners'],
+    queryFn: databaseService.getPractitioners,
+  });
+};
+
+export const usePractitioner = (id: number) => {
+  return useQuery({
+    queryKey: ['practitioner', id],
+    queryFn: () => databaseService.getPractitioner(id),
+    enabled: !!id,
+  });
+};
+
+export const useInstitutions = () => {
+  return useQuery({
+    queryKey: ['institutions'],
+    queryFn: databaseService.getInstitutions,
+  });
+};
+
+export const useInstitution = (id: number) => {
+  return useQuery({
+    queryKey: ['institution', id],
+    queryFn: () => databaseService.getInstitution(id),
+    enabled: !!id,
+  });
+};
+
+export const useServicesByPractitioner = (practitionerId: number) => {
+  return useQuery({
+    queryKey: ['services', 'practitioner', practitionerId],
+    queryFn: () => databaseService.getServicesByPractitioner(practitionerId),
+    enabled: !!practitionerId,
+  });
+};
+
+export const useServicesByInstitution = (institutionId: number) => {
+  return useQuery({
+    queryKey: ['services', 'institution', institutionId],
+    queryFn: () => databaseService.getServicesByInstitution(institutionId),
+    enabled: !!institutionId,
+  });
+};
+
+export const useContactDetails = () => {
+  return useQuery({
+    queryKey: ['contact-details'],
+    queryFn: databaseService.getContactDetails,
+  });
+};
+
+export const usePractitionersByInstitution = (institutionId: number) => {
+  return useQuery({
+    queryKey: ['practitioners', 'institution', institutionId],
+    queryFn: () => databaseService.getPractitionersByInstitution(institutionId),
+    enabled: !!institutionId,
+  });
+};
