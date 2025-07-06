@@ -7,9 +7,9 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { MapPin, Clock, Building2, ArrowLeft, ExternalLink } from "lucide-react";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { useState, useEffect } from "react";
-import { useInstitution, usePractitionersByInstitution } from "@/hooks/useDatabase";
-import { transformInstitution, transformPractitioner } from "@/utils/dataTransform";
-import { Bureau, Practitioner } from "@/types";
+import { useInstitution, usePractitionersByInstitution, useServicesByInstitution } from "@/hooks/useDatabase";
+import { transformInstitution, transformPractitioner, transformService } from "@/utils/dataTransform";
+import { Bureau, Practitioner, Service } from "@/types";
 
 const BureauDetail = () => {
   const { id } = useParams();
@@ -17,10 +17,12 @@ const BureauDetail = () => {
   const [isMapExpanded, setIsMapExpanded] = useState(false);
   const [bureau, setBureau] = useState<Bureau | null>(null);
   const [practitioners, setPractitioners] = useState<Practitioner[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   
   const institutionId = parseInt(id || "0");
   const { data: dbInstitution, isLoading: institutionLoading, error: institutionError } = useInstitution(institutionId);
   const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitionersByInstitution(institutionId);
+  const { data: dbServices, isLoading: servicesLoading } = useServicesByInstitution(institutionId);
 
   useEffect(() => {
     if (dbInstitution) {
@@ -34,7 +36,13 @@ const BureauDetail = () => {
     }
   }, [dbPractitioners]);
 
-  if (institutionLoading || practitionersLoading) {
+  useEffect(() => {
+    if (dbServices) {
+      setServices(dbServices.map(transformService));
+    }
+  }, [dbServices]);
+
+  if (institutionLoading || practitionersLoading || servicesLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">Loading bureau details...</div>
@@ -237,6 +245,75 @@ const BureauDetail = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Services Section */}
+        {services.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Our Services ({services.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {services.map((service, index) => (
+                  <Card key={index} className="p-4">
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-lg">{service.name}</h3>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Clock className="h-4 w-4" />
+                          <span>{service.duration}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">Price</span>
+                          <span className="text-sm">
+                            {service.minPrice === service.maxPrice 
+                              ? `Rp ${service.minPrice.toLocaleString()}`
+                              : `Rp ${service.minPrice.toLocaleString()} - Rp ${service.maxPrice.toLocaleString()}`
+                            }
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">Mode</span>
+                          <Badge variant="outline" className="text-xs">
+                            {service.mode.charAt(0).toUpperCase() + service.mode.slice(1)}
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      {(service.bookingUrl || service.learnMoreUrl) && (
+                        <div className="flex gap-2 pt-2">
+                          {service.bookingUrl && (
+                            <Button 
+                              size="sm" 
+                              className="flex-1"
+                              onClick={() => window.open(service.bookingUrl, '_blank')}
+                            >
+                              Book Now
+                            </Button>
+                          )}
+                          {service.learnMoreUrl && (
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="flex-1"
+                              onClick={() => window.open(service.learnMoreUrl, '_blank')}
+                            >
+                              Learn More
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Practitioners Section */}
         {practitioners.length > 0 && (
