@@ -52,6 +52,23 @@ export const databaseService = {
     return data;
   },
 
+  // Fetch contact details for a practitioner
+  async getContactDetailsByPractitioner(practitionerId: number) {
+    const { data, error } = await supabase
+      .from('contact_mapping')
+      .select(`
+        contact_details:contact_details_id(*)
+      `)
+      .eq('practitioner_id', practitionerId);
+    
+    if (error) {
+      console.error('Error fetching contact details:', error);
+      throw error;
+    }
+    
+    return data?.map(item => item.contact_details).filter(Boolean) || [];
+  },
+
   // Fetch all institutions with location data
   async getInstitutions() {
     const { data, error } = await supabase
@@ -88,11 +105,14 @@ export const databaseService = {
     return data;
   },
 
-  // Fetch services for a practitioner
+  // Fetch services for a practitioner with institution data
   async getServicesByPractitioner(practitionerId: number) {
     const { data, error } = await supabase
       .from('services')
-      .select('*')
+      .select(`
+        *,
+        institution:institution_id(name)
+      `)
       .eq('practitioner_id', practitionerId);
     
     if (error) {

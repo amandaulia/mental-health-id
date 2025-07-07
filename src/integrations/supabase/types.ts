@@ -36,6 +36,52 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_mapping: {
+        Row: {
+          contact_details_id: number | null
+          created_at: string
+          id: number
+          institution_id: number | null
+          practitioner_id: number | null
+        }
+        Insert: {
+          contact_details_id?: number | null
+          created_at?: string
+          id?: number
+          institution_id?: number | null
+          practitioner_id?: number | null
+        }
+        Update: {
+          contact_details_id?: number | null
+          created_at?: string
+          id?: number
+          institution_id?: number | null
+          practitioner_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_mapping_contact_details_id_fkey"
+            columns: ["contact_details_id"]
+            isOneToOne: false
+            referencedRelation: "contact_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_mapping_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institution"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_mapping_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "practitioner"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       institution: {
         Row: {
           created_at: string

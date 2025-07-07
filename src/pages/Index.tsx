@@ -30,7 +30,8 @@ const Index = () => {
     const resources: Resource[] = [];
     
     if (dbPractitioners) {
-      resources.push(...dbPractitioners.map(transformPractitioner));
+      const transformedPractitioners = dbPractitioners.map(p => transformPractitioner(p));
+      resources.push(...transformedPractitioners);
     }
     
     if (dbInstitutions) {
@@ -111,9 +112,13 @@ const Index = () => {
         }
 
         // Price range filter
-        if (resource.priceRange.min > filters.priceRange[1] || 
-            resource.priceRange.max < filters.priceRange[0]) {
-          return false;
+        const allPrices = resource.services.map(s => s.price).filter(Boolean);
+        if (allPrices.length > 0) {
+          const minPrice = Math.min(...allPrices);
+          const maxPrice = Math.max(...allPrices);
+          if (minPrice > filters.priceRange[1] || maxPrice < filters.priceRange[0]) {
+            return false;
+          }
         }
 
         // Modes filter

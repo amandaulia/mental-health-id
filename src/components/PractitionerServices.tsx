@@ -26,9 +26,12 @@ export const PractitionerServices = ({
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="flex-1">
                 <h3 className="font-semibold text-lg">{service.name}</h3>
+                {service.institutionName && (
+                  <p className="text-sm text-muted-foreground">{service.institutionName}</p>
+                )}
                 <p className="text-sm text-muted-foreground mb-2">{service.duration}</p>
                 <p className="font-medium text-primary text-lg">
-                  {formatPrice(service.minPrice)} - {formatPrice(service.maxPrice)}
+                  {formatPrice(service.price)}
                 </p>
                 <div className="flex items-center gap-2 mt-2">
                   <ModeIcon mode={service.mode} />

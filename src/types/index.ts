@@ -26,13 +26,22 @@ export type InsuranceType = "none" | "private" | "bpjs";
 export type BureauType = "independent" | "clinic" | "faskes1" | "faskes2";
 
 export interface Service {
+  id: string;
   name: string;
+  institutionName?: string;
   duration: string;
-  minPrice: number;
-  maxPrice: number;
+  price: number;
   mode: Mode;
   bookingUrl?: string;
   learnMoreUrl?: string;
+}
+
+export interface ContactDetails {
+  phone?: string;
+  whatsapp?: string;
+  website?: string;
+  instagram?: string;
+  facebook?: string;
 }
 
 export interface Practitioner {
@@ -43,10 +52,10 @@ export interface Practitioner {
   bureauName: string;
   bureauId: string;
   professionTypes: ProfessionType[];
-  licenseNumber: string;
+  licenseNumber?: string;
   specializations: Specialization[];
-  experience: string;
-  education: string;
+  experience?: string;
+  education?: string;
   city: string;
   location: {
     address: string;
@@ -55,16 +64,10 @@ export interface Practitioner {
   };
   services: Service[];
   modes: Mode[];
-  phoneNumber: string;
-  website?: string;
-  instagram?: string;
+  contactDetails: ContactDetails;
   insurance: InsuranceType[];
   isVerified: boolean;
   lastUpdated: string;
-  priceRange: {
-    min: number;
-    max: number;
-  };
 }
 
 export interface Bureau {

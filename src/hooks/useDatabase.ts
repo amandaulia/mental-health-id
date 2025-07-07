@@ -55,6 +55,14 @@ export const useContactDetails = () => {
   });
 };
 
+export const useContactDetailsByPractitioner = (practitionerId: number) => {
+  return useQuery({
+    queryKey: ['contact-details', 'practitioner', practitionerId],
+    queryFn: () => databaseService.getContactDetailsByPractitioner(practitionerId),
+    enabled: !!practitionerId,
+  });
+};
+
 export const usePractitionersByInstitution = (institutionId: number) => {
   return useQuery({
     queryKey: ['practitioners', 'institution', institutionId],

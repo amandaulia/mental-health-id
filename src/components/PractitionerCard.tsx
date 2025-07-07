@@ -97,7 +97,7 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
                 </div>
                 
                 <div className="text-sm font-medium text-primary">
-                  {formatPrice(practitioner.priceRange.min)} - {formatPrice(practitioner.priceRange.max)}
+                  Starting from {formatPrice(Math.min(...practitioner.services.map(s => s.price)))}
                 </div>
               </div>
             </div>

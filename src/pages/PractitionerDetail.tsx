@@ -7,8 +7,8 @@ import { Link } from "react-router-dom";
 import { PractitionerHeader } from "@/components/PractitionerHeader";
 import { PractitionerServices } from "@/components/PractitionerServices";
 import { PractitionerContact } from "@/components/PractitionerContact";
-import { usePractitioner, useServicesByPractitioner } from "@/hooks/useDatabase";
-import { transformPractitioner, transformService, calculatePriceRange } from "@/utils/dataTransform";
+import { usePractitioner, useServicesByPractitioner, useContactDetailsByPractitioner } from "@/hooks/useDatabase";
+import { transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
 import { useEffect, useState } from "react";
 import { Practitioner } from "@/types";
 
@@ -20,22 +20,18 @@ const PractitionerDetail = () => {
   const practitionerId = parseInt(id || "0");
   const { data: dbPractitioner, isLoading: practitionerLoading, error: practitionerError } = usePractitioner(practitionerId);
   const { data: dbServices, isLoading: servicesLoading } = useServicesByPractitioner(practitionerId);
+  const { data: dbContactDetails, isLoading: contactLoading } = useContactDetailsByPractitioner(practitionerId);
 
   useEffect(() => {
-    if (dbPractitioner && dbServices) {
-      const transformedPractitioner = transformPractitioner(dbPractitioner);
+    if (dbPractitioner && dbServices && dbContactDetails) {
       const transformedServices = dbServices.map(transformService);
-      const priceRange = calculatePriceRange(transformedServices);
+      const transformedContactDetails = transformContactDetails(dbContactDetails);
       
-      setPractitioner({
-        ...transformedPractitioner,
-        services: transformedServices,
-        priceRange,
-      });
+      setPractitioner(transformPractitioner(dbPractitioner, transformedServices, transformedContactDetails));
     }
-  }, [dbPractitioner, dbServices]);
+  }, [dbPractitioner, dbServices, dbContactDetails]);
 
-  if (practitionerLoading || servicesLoading) {
+  if (practitionerLoading || servicesLoading || contactLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">Loading practitioner details...</div>

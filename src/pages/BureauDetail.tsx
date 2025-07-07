@@ -32,7 +32,8 @@ const BureauDetail = () => {
 
   useEffect(() => {
     if (dbPractitioners) {
-      setPractitioners(dbPractitioners.map(transformPractitioner));
+      const transformedPractitioners = dbPractitioners.map(p => transformPractitioner(p));
+      setPractitioners(transformedPractitioners);
     }
   }, [dbPractitioners]);
 
@@ -61,6 +62,14 @@ const BureauDetail = () => {
   if (!bureau) {
     return <div className="container mx-auto px-4 py-8">Bureau not found</div>;
   }
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      maximumFractionDigits: 0
+    }).format(price);
+  };
 
   const getBureauTypeLabel = (type: string) => {
     switch (type) {
@@ -268,12 +277,9 @@ const BureauDetail = () => {
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium">Price</span>
-                          <span className="text-sm">
-                            {service.minPrice === service.maxPrice 
-                              ? `Rp ${service.minPrice.toLocaleString()}`
-                              : `Rp ${service.minPrice.toLocaleString()} - Rp ${service.maxPrice.toLocaleString()}`
-                            }
-                          </span>
+                           <span className="text-sm">
+                             {formatPrice(service.price)}
+                           </span>
                         </div>
                         
                         <div className="flex items-center justify-between">

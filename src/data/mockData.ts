@@ -1,4 +1,3 @@
-
 import { Practitioner, Bureau, Specialization, ProfessionType } from "@/types";
 
 export const mockPractitioners: Practitioner[] = [
@@ -22,32 +21,34 @@ export const mockPractitioners: Practitioner[] = [
     },
     services: [
       { 
+        id: "1",
         name: "Individual Therapy", 
         duration: "60 minutes", 
-        minPrice: 500000, 
-        maxPrice: 750000, 
+        price: 500000,
         mode: "offline",
         bookingUrl: "https://booking.example.com/sarah/individual",
         learnMoreUrl: "https://example.com/services/individual-therapy"
       },
       { 
+        id: "2",
         name: "Online Counseling", 
         duration: "45 minutes", 
-        minPrice: 400000, 
-        maxPrice: 600000, 
+        price: 400000,
         mode: "video",
         bookingUrl: "https://booking.example.com/sarah/online",
         learnMoreUrl: "https://example.com/services/online-counseling"
       }
     ],
     modes: ["text", "video", "offline"],
-    phoneNumber: "+6281234567890",
-    website: "https://mindcare.com",
-    instagram: "https://instagram.com/drsarahjohnson",
+    contactDetails: {
+      phone: "+6281234567890",
+      whatsapp: "+6281234567890",
+      website: "https://mindcare.com",
+      instagram: "https://instagram.com/drsarahjohnson"
+    },
     insurance: ["private", "bpjs"],
     isVerified: true,
-    lastUpdated: "2024-01-15",
-    priceRange: { min: 400000, max: 750000 }
+    lastUpdated: "2024-01-15"
   },
   {
     id: "2",
@@ -69,31 +70,33 @@ export const mockPractitioners: Practitioner[] = [
     },
     services: [
       { 
+        id: "3",
         name: "Child Counseling", 
         duration: "45 minutes", 
-        minPrice: 400000, 
-        maxPrice: 600000, 
+        price: 400000,
         mode: "offline",
         bookingUrl: "https://booking.example.com/ahmad/child",
         learnMoreUrl: "https://example.com/services/child-counseling"
       },
       { 
+        id: "4",
         name: "Family Therapy", 
         duration: "90 minutes", 
-        minPrice: 800000, 
-        maxPrice: 1200000, 
+        price: 800000,
         mode: "offline",
         bookingUrl: "https://booking.example.com/ahmad/family",
         learnMoreUrl: "https://example.com/services/family-therapy"
       }
     ],
     modes: ["voice", "video", "offline"],
-    phoneNumber: "+6281987654321",
-    website: "https://serenity-clinic.com",
+    contactDetails: {
+      phone: "+6281987654321",
+      whatsapp: "+6281987654321",
+      website: "https://serenity-clinic.com"
+    },
     insurance: ["private"],
     isVerified: true,
-    lastUpdated: "2024-01-10",
-    priceRange: { min: 400000, max: 1200000 }
+    lastUpdated: "2024-01-10"
   }
 ];
 
