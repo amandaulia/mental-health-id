@@ -12,13 +12,13 @@ interface PractitionerCardProps {
 const ModeIcon = ({ mode }: { mode: string }) => {
   switch (mode) {
     case "text":
-      return <MessageCircle className="h-4 w-4" title="Chat" />;
+      return <MessageCircle className="h-4 w-4" />;
     case "voice":
-      return <Phone className="h-4 w-4" title="Voice Call" />;
+      return <Phone className="h-4 w-4" />;
     case "video":
-      return <Video className="h-4 w-4" title="Video Call" />;
+      return <Video className="h-4 w-4" />;
     case "offline":
-      return <User className="h-4 w-4" title="Offline" />;
+      return <User className="h-4 w-4" />;
     default:
       return null;
   }
