@@ -1,4 +1,3 @@
-
 export type Specialization = 
   | "Clinical Psychology"
   | "Child Psychology"
@@ -9,7 +8,8 @@ export type Specialization =
   | "Depression"
   | "Addiction Counseling"
   | "Couples Therapy"
-  | "Eating Disorders";
+  | "Eating Disorders"
+  | "Art Therapy";
 
 export type ProfessionType = 
   | "Psychologist"

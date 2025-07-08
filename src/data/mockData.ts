@@ -1,4 +1,3 @@
-
 import { Practitioner, Bureau, Specialization, ProfessionType } from "@/types";
 
 export const mockPractitioners: Practitioner[] = [
@@ -166,7 +165,8 @@ export const specializations: Specialization[] = [
   "Depression",
   "Addiction Counseling",
   "Couples Therapy",
-  "Eating Disorders"
+  "Eating Disorders",
+  "Art Therapy"
 ];
 
 export const professionTypes: ProfessionType[] = [
