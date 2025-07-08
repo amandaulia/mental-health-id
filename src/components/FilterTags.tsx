@@ -16,8 +16,8 @@ export const FilterTags = ({ filters, onRemoveFilter, onClearAll }: FilterTagsPr
   const getActiveTags = (): FilterTag[] => {
     const tags: FilterTag[] = [];
     
-    filters.bureauNames.forEach(name => 
-      tags.push({ type: 'bureauNames', value: name, label: name })
+    filters.institutions.forEach(name => 
+      tags.push({ type: 'institutions', value: name, label: name })
     );
     
     filters.professionTypes.forEach(type => 
@@ -33,11 +33,6 @@ export const FilterTags = ({ filters, onRemoveFilter, onClearAll }: FilterTagsPr
       tags.push({ type: 'modes', value: mode, label });
     });
     
-    filters.types.forEach(type => {
-      const label = getBureauTypeLabel(type);
-      tags.push({ type: 'types', value: type, label });
-    });
-    
     filters.insurance.forEach(ins => {
       const label = getInsuranceLabel(ins);
       tags.push({ type: 'insurance', value: ins, label });
@@ -48,21 +43,11 @@ export const FilterTags = ({ filters, onRemoveFilter, onClearAll }: FilterTagsPr
 
   const getModeLabel = (mode: string) => {
     switch (mode) {
-      case "text": return "Text Session";
+      case "text": return "Chat";
       case "voice": return "Voice Call";
       case "video": return "Video Call";
-      case "offline": return "Offline Session";
+      case "offline": return "Offline";
       default: return mode;
-    }
-  };
-
-  const getBureauTypeLabel = (type: string) => {
-    switch (type) {
-      case "independent": return "Independent Bureau";
-      case "clinic": return "Clinic";
-      case "faskes1": return "Faskes 1";
-      case "faskes2": return "Faskes 2";
-      default: return type;
     }
   };
 

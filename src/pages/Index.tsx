@@ -13,12 +13,11 @@ const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState<FilterState>({
     search: "",
-    bureauNames: [],
+    institutions: [],
     professionTypes: [],
     specializations: [],
     priceRange: [0, 2000000],
     modes: [],
-    types: [],
     insurance: []
   });
 
@@ -61,7 +60,7 @@ const Index = () => {
     }
   }, []);
 
-  const bureauNames = useMemo(() => {
+  const institutionNames = useMemo(() => {
     const names = new Set<string>();
     allResources.forEach(resource => {
       if (resource.type === "practitioner") {
@@ -75,23 +74,31 @@ const Index = () => {
 
   const filteredResources = useMemo(() => {
     return allResources.filter((resource) => {
-      // Search filter
+      // Enhanced search filter - search by name, city, and mode
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         const matchName = resource.type === "practitioner" 
           ? resource.name.toLowerCase().includes(searchLower)
           : resource.name.toLowerCase().includes(searchLower);
-        const matchBureau = resource.type === "practitioner"
+        const matchInstitution = resource.type === "practitioner"
           ? resource.bureauName.toLowerCase().includes(searchLower)
           : resource.name.toLowerCase().includes(searchLower);
+        const matchCity = resource.city.toLowerCase().includes(searchLower);
+        const matchMode = resource.modes.some(mode => {
+          const modeLabel = mode === "text" ? "chat" : 
+                           mode === "voice" ? "voice call" : 
+                           mode === "video" ? "video call" : 
+                           mode === "offline" ? "offline" : mode;
+          return modeLabel.toLowerCase().includes(searchLower);
+        });
         
-        if (!matchName && !matchBureau) return false;
+        if (!matchName && !matchInstitution && !matchCity && !matchMode) return false;
       }
 
-      // Bureau names filter
-      if (filters.bureauNames.length > 0) {
-        const bureauName = resource.type === "practitioner" ? resource.bureauName : resource.name;
-        if (!filters.bureauNames.includes(bureauName)) return false;
+      // Institution filter
+      if (filters.institutions.length > 0) {
+        const institutionName = resource.type === "practitioner" ? resource.bureauName : resource.name;
+        if (!filters.institutions.includes(institutionName)) return false;
       }
 
       // Profession types filter
@@ -132,9 +139,20 @@ const Index = () => {
       }
 
       if (resource.type === "bureau") {
-        // Bureau types filter
-        if (filters.types.length > 0) {
-          if (!filters.types.includes(resource.bureauType)) return false;
+        // Specializations filter for bureaus
+        if (filters.specializations.length > 0) {
+          const hasMatchingSpec = resource.specializations.some(spec => 
+            filters.specializations.includes(spec)
+          );
+          if (!hasMatchingSpec) return false;
+        }
+
+        // Modes filter for bureaus
+        if (filters.modes.length > 0) {
+          const hasMatchingMode = resource.modes.some(mode => 
+            filters.modes.includes(mode)
+          );
+          if (!hasMatchingMode) return false;
         }
       }
 
@@ -159,12 +177,11 @@ const Index = () => {
   const handleClearAllFilters = () => {
     setFilters({
       search: "",
-      bureauNames: [],
+      institutions: [],
       professionTypes: [],
       specializations: [],
       priceRange: [0, 2000000],
       modes: [],
-      types: [],
       insurance: []
     });
   };
@@ -197,7 +214,7 @@ const Index = () => {
           <SearchAndFilters
             filters={filters}
             onFiltersChange={setFilters}
-            bureauNames={bureauNames}
+            institutionNames={institutionNames}
           />
           <FilterTags
             filters={filters}

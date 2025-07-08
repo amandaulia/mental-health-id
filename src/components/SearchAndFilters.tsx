@@ -1,22 +1,23 @@
 
 import { useState } from "react";
-import { FilterState, Specialization, Mode, BureauType, InsuranceType, ProfessionType } from "@/types";
+import { FilterState, Specialization, Mode, InsuranceType, ProfessionType } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Slider } from "@/components/ui/slider";
 import { Search, Filter, ChevronDown } from "lucide-react";
 import { specializations, professionTypes } from "@/data/mockData";
 
 interface SearchAndFiltersProps {
   filters: FilterState;
   onFiltersChange: (filters: FilterState) => void;
-  bureauNames: string[];
+  institutionNames: string[];
 }
 
-export const SearchAndFilters = ({ filters, onFiltersChange, bureauNames }: SearchAndFiltersProps) => {
+export const SearchAndFilters = ({ filters, onFiltersChange, institutionNames }: SearchAndFiltersProps) => {
   const [showFilters, setShowFilters] = useState(false);
 
   const handleFilterChange = (key: keyof FilterState, value: any) => {
@@ -32,24 +33,14 @@ export const SearchAndFilters = ({ filters, onFiltersChange, bureauNames }: Sear
   };
 
   const modes: Mode[] = ["text", "voice", "video", "offline"];
-  const bureauTypes: BureauType[] = ["independent", "clinic", "faskes1", "faskes2"];
   const insuranceTypes: InsuranceType[] = ["none", "private", "bpjs"];
 
   const getModeLabel = (mode: Mode) => {
     switch (mode) {
-      case "text": return "Text Session";
+      case "text": return "Chat";
       case "voice": return "Voice Call";
       case "video": return "Video Call";
-      case "offline": return "Offline Session";
-    }
-  };
-
-  const getBureauTypeLabel = (type: BureauType) => {
-    switch (type) {
-      case "independent": return "Independent Bureau";
-      case "clinic": return "Clinic";
-      case "faskes1": return "Faskes 1";
-      case "faskes2": return "Faskes 2";
+      case "offline": return "Offline";
     }
   };
 
@@ -81,7 +72,7 @@ export const SearchAndFilters = ({ filters, onFiltersChange, bureauNames }: Sear
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name or bureau..."
+            placeholder="Search by practitioner name, institution name, city, or mode..."
             value={filters.search}
             onChange={(e) => handleFilterChange("search", e.target.value)}
             className="pl-10"
@@ -102,35 +93,19 @@ export const SearchAndFilters = ({ filters, onFiltersChange, bureauNames }: Sear
           <CardHeader className="pb-3">
             <CardTitle className="text-lg">Filters</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Bureau Names */}
-              <FilterSection title="Bureau/Clinic">
-                {bureauNames.map((name) => (
+              {/* Institution Names */}
+              <FilterSection title="Institution">
+                {institutionNames.map((name) => (
                   <div key={name} className="flex items-center space-x-2">
                     <Checkbox
-                      id={`bureau-${name}`}
-                      checked={filters.bureauNames.includes(name)}
-                      onCheckedChange={() => handleArrayToggle("bureauNames", name)}
+                      id={`institution-${name}`}
+                      checked={filters.institutions.includes(name)}
+                      onCheckedChange={() => handleArrayToggle("institutions", name)}
                     />
-                    <Label htmlFor={`bureau-${name}`} className="text-sm cursor-pointer flex-1">
+                    <Label htmlFor={`institution-${name}`} className="text-sm cursor-pointer flex-1">
                       {name}
-                    </Label>
-                  </div>
-                ))}
-              </FilterSection>
-
-              {/* Profession Types */}
-              <FilterSection title="Profession Type">
-                {professionTypes.map((type) => (
-                  <div key={type} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`profession-${type}`}
-                      checked={filters.professionTypes.includes(type)}
-                      onCheckedChange={() => handleArrayToggle("professionTypes", type)}
-                    />
-                    <Label htmlFor={`profession-${type}`} className="text-sm cursor-pointer flex-1">
-                      {type}
                     </Label>
                   </div>
                 ))}
@@ -152,7 +127,7 @@ export const SearchAndFilters = ({ filters, onFiltersChange, bureauNames }: Sear
                 ))}
               </FilterSection>
 
-              {/* Modes */}
+              {/* Session Modes */}
               <FilterSection title="Session Mode">
                 {modes.map((mode) => (
                   <div key={mode} className="flex items-center space-x-2">
@@ -168,17 +143,17 @@ export const SearchAndFilters = ({ filters, onFiltersChange, bureauNames }: Sear
                 ))}
               </FilterSection>
 
-              {/* Bureau Types */}
-              <FilterSection title="Type">
-                {bureauTypes.map((type) => (
+              {/* Profession Types */}
+              <FilterSection title="Profession Type">
+                {professionTypes.map((type) => (
                   <div key={type} className="flex items-center space-x-2">
                     <Checkbox
-                      id={`type-${type}`}
-                      checked={filters.types.includes(type)}
-                      onCheckedChange={() => handleArrayToggle("types", type)}
+                      id={`profession-${type}`}
+                      checked={filters.professionTypes.includes(type)}
+                      onCheckedChange={() => handleArrayToggle("professionTypes", type)}
                     />
-                    <Label htmlFor={`type-${type}`} className="text-sm cursor-pointer flex-1">
-                      {getBureauTypeLabel(type)}
+                    <Label htmlFor={`profession-${type}`} className="text-sm cursor-pointer flex-1">
+                      {type}
                     </Label>
                   </div>
                 ))}
@@ -199,6 +174,25 @@ export const SearchAndFilters = ({ filters, onFiltersChange, bureauNames }: Sear
                   </div>
                 ))}
               </FilterSection>
+            </div>
+
+            {/* Price Range Slider */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Price Range</Label>
+              <div className="px-2">
+                <Slider
+                  value={filters.priceRange}
+                  onValueChange={(value) => handleFilterChange("priceRange", value as [number, number])}
+                  max={2000000}
+                  min={0}
+                  step={50000}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>Rp {filters.priceRange[0].toLocaleString()}</span>
+                  <span>Rp {filters.priceRange[1].toLocaleString()}</span>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>

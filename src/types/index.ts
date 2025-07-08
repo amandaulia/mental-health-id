@@ -96,12 +96,11 @@ export type Resource = Practitioner | Bureau;
 
 export interface FilterState {
   search: string;
-  bureauNames: string[];
+  institutions: string[];
   professionTypes: ProfessionType[];
   specializations: Specialization[];
   priceRange: [number, number];
   modes: Mode[];
-  types: BureauType[];
   insurance: InsuranceType[];
 }
 

@@ -12,13 +12,13 @@ interface PractitionerCardProps {
 const ModeIcon = ({ mode }: { mode: string }) => {
   switch (mode) {
     case "text":
-      return <MessageCircle className="h-4 w-4" />;
+      return <MessageCircle className="h-4 w-4" title="Chat" />;
     case "voice":
-      return <Phone className="h-4 w-4" />;
+      return <Phone className="h-4 w-4" title="Voice Call" />;
     case "video":
-      return <Video className="h-4 w-4" />;
+      return <Video className="h-4 w-4" title="Video Call" />;
     case "offline":
-      return <User className="h-4 w-4" />;
+      return <User className="h-4 w-4" title="Offline" />;
     default:
       return null;
   }
@@ -31,6 +31,38 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
       currency: 'IDR',
       maximumFractionDigits: 0
     }).format(price);
+  };
+
+  const getPriceRange = () => {
+    const prices = practitioner.services.map(s => s.price).filter(Boolean);
+    if (prices.length === 0) return "Price not available";
+    if (prices.length === 1) return formatPrice(prices[0]);
+    
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    return `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`;
+  };
+
+  const getDisplaySpecializations = () => {
+    if (practitioner.specializations.length <= 3) {
+      return practitioner.specializations;
+    }
+    return practitioner.specializations.slice(0, 2);
+  };
+
+  const getSpecializationMoreCount = () => {
+    if (practitioner.specializations.length > 3) {
+      return practitioner.specializations.length - 2;
+    }
+    return 0;
+  };
+
+  const getUniqueInsurance = () => {
+    return [...new Set(practitioner.insurance)];
+  };
+
+  const getUniqueModes = () => {
+    return [...new Set(practitioner.modes)];
   };
 
   return (
@@ -72,14 +104,14 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
               
               <div className="space-y-2">
                 <div className="flex flex-wrap gap-1">
-                  {practitioner.specializations.slice(0, 2).map((spec) => (
+                  {getDisplaySpecializations().map((spec) => (
                     <Badge key={spec} variant="outline" className="text-xs">
                       {spec}
                     </Badge>
                   ))}
-                  {practitioner.specializations.length > 2 && (
+                  {getSpecializationMoreCount() > 0 && (
                     <Badge variant="outline" className="text-xs">
-                      +{practitioner.specializations.length - 2} more
+                      +{getSpecializationMoreCount()} more
                     </Badge>
                   )}
                 </div>
@@ -90,15 +122,27 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
                     <span className="truncate">{practitioner.city}</span>
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
-                    {practitioner.modes.slice(0, 3).map((mode) => (
+                    {getUniqueModes().slice(0, 4).map((mode) => (
                       <ModeIcon key={mode} mode={mode} />
                     ))}
                   </div>
                 </div>
                 
                 <div className="text-sm font-medium text-primary">
-                  Starting from {formatPrice(Math.min(...practitioner.services.map(s => s.price)))}
+                  {getPriceRange()}
                 </div>
+
+                {getUniqueInsurance().length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {getUniqueInsurance().map((insurance) => (
+                      <Badge key={insurance} variant="secondary" className="text-xs">
+                        {insurance === "private" ? "Private Insurance" : 
+                         insurance === "bpjs" ? "BPJS" : 
+                         insurance === "none" ? "No Insurance" : insurance}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
