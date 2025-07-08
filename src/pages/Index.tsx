@@ -35,7 +35,8 @@ const Index = () => {
     }
     
     if (dbInstitutions) {
-      resources.push(...dbInstitutions.map(transformInstitution));
+      const transformedInstitutions = dbInstitutions.map(institution => transformInstitution(institution));
+      resources.push(...transformedInstitutions);
     }
     
     return resources;

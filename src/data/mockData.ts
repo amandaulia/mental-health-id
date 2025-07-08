@@ -1,3 +1,4 @@
+
 import { Practitioner, Bureau, Specialization, ProfessionType } from "@/types";
 
 export const mockPractitioners: Practitioner[] = [
@@ -108,6 +109,7 @@ export const mockBureaus: Bureau[] = [
     businessHours: "Mon-Fri: 8:00-17:00, Sat: 8:00-13:00",
     bureauType: "clinic",
     professionTypes: ["Psychologist", "Counselor"],
+    specializations: ["Clinical Psychology", "Anxiety Disorders"],
     city: "Jakarta",
     location: {
       address: "Jl. Sudirman No. 123, Jakarta Selatan",
@@ -115,6 +117,13 @@ export const mockBureaus: Bureau[] = [
       lng: 106.8456
     },
     insurance: ["private", "bpjs"],
+    modes: ["text", "video", "offline"],
+    contactDetails: {
+      phone: "+6281234567890",
+      whatsapp: "+6281234567890",
+      website: "https://mindcare.com",
+      instagram: "https://instagram.com/mindcare"
+    },
     isVerified: true,
     lastUpdated: "2024-01-15"
   },
@@ -125,6 +134,7 @@ export const mockBureaus: Bureau[] = [
     businessHours: "Mon-Sun: 9:00-21:00",
     bureauType: "independent",
     professionTypes: ["Psychiatrist", "Art Therapist"],
+    specializations: ["Child Psychology", "Family Therapy", "Art Therapy"],
     city: "Bandung",
     location: {
       address: "Jl. Braga No. 45, Bandung",
@@ -132,6 +142,13 @@ export const mockBureaus: Bureau[] = [
       lng: 107.6191
     },
     insurance: ["private"],
+    modes: ["voice", "video", "offline"],
+    contactDetails: {
+      phone: "+6281987654321",
+      whatsapp: "+6281987654321",
+      website: "https://serenity-clinic.com",
+      facebook: "https://facebook.com/serenityclinic"
+    },
     isVerified: true,
     lastUpdated: "2024-01-10"
   }
