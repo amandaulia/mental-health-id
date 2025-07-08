@@ -73,10 +73,12 @@ export interface Practitioner {
 export interface Bureau {
   id: string;
   type: "bureau";
+  image?: string;
   name: string;
   businessHours: string;
   bureauType: BureauType;
   professionTypes: ProfessionType[];
+  specializations: Specialization[];
   city: string;
   location: {
     address: string;
@@ -84,6 +86,8 @@ export interface Bureau {
     lng: number;
   };
   insurance: InsuranceType[];
+  modes: Mode[];
+  contactDetails: ContactDetails;
   isVerified: boolean;
   lastUpdated: string;
 }

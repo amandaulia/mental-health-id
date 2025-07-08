@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 
@@ -103,6 +102,23 @@ export const databaseService = {
     }
     
     return data;
+  },
+
+  // Fetch contact details for an institution
+  async getContactDetailsByInstitution(institutionId: number) {
+    const { data, error } = await supabase
+      .from('contact_mapping')
+      .select(`
+        contact_details:contact_details_id(*)
+      `)
+      .eq('institution_id', institutionId);
+    
+    if (error) {
+      console.error('Error fetching contact details:', error);
+      throw error;
+    }
+    
+    return data?.map(item => item.contact_details).filter(Boolean) || [];
   },
 
   // Fetch services for a practitioner with institution data

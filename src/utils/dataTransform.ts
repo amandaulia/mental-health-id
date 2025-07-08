@@ -1,4 +1,3 @@
-
 import { Database } from "@/integrations/supabase/types";
 import { Practitioner, Bureau, Service, ContactDetails, ProfessionType, Specialization, InsuranceType } from "@/types";
 
@@ -53,23 +52,31 @@ export const transformPractitioner = (
   };
 };
 
-export const transformInstitution = (dbInstitution: DBInstitution): Bureau => {
+export const transformInstitution = (
+  dbInstitution: DBInstitution, 
+  services: Service[] = [], 
+  contactDetails: ContactDetails = {}
+): Bureau => {
   const location = dbInstitution.location;
 
   return {
     id: dbInstitution.id.toString(),
     type: "bureau",
+    image: "/placeholder.svg", // Default placeholder since image field doesn't exist in DB yet
     name: dbInstitution.name,
     businessHours: "Not specified", // Can be added to schema later
     bureauType: mapInstitutionType(dbInstitution.type),
-    professionTypes: dbInstitution.profession_type as any[] || [],
+    professionTypes: mapProfessionTypes(dbInstitution.profession_type || []),
+    specializations: [], // Will be derived from services or added to schema later
     city: location?.city || "Unknown City",
     location: {
       address: location?.address || "Address not available",
       lat: 0, // Will need to be added to location table later
       lng: 0, // Will need to be added to location table later
     },
-    insurance: dbInstitution.insurance as any[] || [],
+    insurance: mapInsuranceTypes(dbInstitution.insurance || []),
+    modes: getUniqueModesFromServices(services),
+    contactDetails,
     isVerified: dbInstitution.verified,
     lastUpdated: dbInstitution.last_updated_at,
   };
