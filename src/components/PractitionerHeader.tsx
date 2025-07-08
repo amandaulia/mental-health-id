@@ -59,6 +59,16 @@ export const PractitionerHeader = ({
                 >
                   {practitioner.bureauName}
                 </button>
+                
+                {/* Experience & Education moved here */}
+                <div className="space-y-2 text-sm mt-3">
+                  {practitioner.experience && practitioner.experience !== "Not specified" && (
+                    <div><span className="font-medium">Experience:</span> {practitioner.experience}</div>
+                  )}
+                  {practitioner.education && practitioner.education !== "Not specified" && (
+                    <div><span className="font-medium">Education:</span> {practitioner.education}</div>
+                  )}
+                </div>
               </div>
               
               {practitioner.licenseNumber && practitioner.licenseNumber !== "N/A" && (
@@ -125,16 +135,6 @@ export const PractitionerHeader = ({
                 </div>
               </div>
             )}
-
-            {/* Experience & Education */}
-            <div className="space-y-2 text-sm">
-              {practitioner.experience && practitioner.experience !== "Not specified" && (
-                <div><span className="font-medium">Experience:</span> {practitioner.experience}</div>
-              )}
-              {practitioner.education && practitioner.education !== "Not specified" && (
-                <div><span className="font-medium">Education:</span> {practitioner.education}</div>
-              )}
-            </div>
           </div>
 
           {/* Right Column */}
