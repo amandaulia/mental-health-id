@@ -303,32 +303,10 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredProfessionalResources.slice(0, 3).map((resource) => {
-              const formatPrice = (prices: number[]) => {
-                if (prices.length === 0) return undefined;
-                if (prices.length === 1) return new Intl.NumberFormat('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                  maximumFractionDigits: 0
-                }).format(prices[0]);
-                
-                const minPrice = Math.min(...prices);
-                const maxPrice = Math.max(...prices);
-                return `${new Intl.NumberFormat('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                  maximumFractionDigits: 0
-                }).format(minPrice)} - ${new Intl.NumberFormat('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                  maximumFractionDigits: 0
-                }).format(maxPrice)}`;
-              };
-
+            {filteredProfessionalResources.slice(0, 3).map((resource, index) => {
               let cardData: UnifiedCardData;
               
               if (resource.type === "practitioner") {
-                const prices = resource.services.map(s => s.price).filter(Boolean);
                 cardData = {
                   type: "practitioner",
                   id: resource.id,
@@ -339,7 +317,7 @@ const Index = () => {
                   institutionName: resource.bureauName,
                   professionTypes: resource.professionTypes,
                   specializations: resource.specializations,
-                  priceRange: formatPrice(prices),
+                  priceRange: resource.priceRange,
                   insurance: resource.insurance,
                   modes: resource.modes
                 };
@@ -353,13 +331,14 @@ const Index = () => {
                   isVerified: resource.isVerified,
                   professionTypes: resource.professionTypes,
                   specializations: resource.specializations,
+                  priceRange: resource.priceRange,
                   insurance: resource.insurance,
                   modes: resource.modes
                 };
               }
 
               return (
-                <div key={resource.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+                <div key={`${resource.type}-${resource.id}`} className="transform transition-all duration-200 hover:scale-[1.02]">
                   <UnifiedCard 
                     data={cardData} 
                     linkTo={resource.type === "practitioner" ? `/practitioner/${resource.id}` : `/bureau/${resource.id}`}
@@ -383,7 +362,7 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredPeerCounseling.slice(0, 3).map((item) => {
+            {filteredPeerCounseling.slice(0, 3).map((item, index) => {
               const cardData: UnifiedCardData = {
                 type: item.type === "peer-counseling" ? "peer-counseling" : "support-group",
                 id: item.id,
@@ -397,7 +376,7 @@ const Index = () => {
               };
 
               return (
-                <div key={item.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+                <div key={`peer-${item.id}-${index}`} className="transform transition-all duration-200 hover:scale-[1.02]">
                   <UnifiedCard 
                     data={cardData} 
                     linkTo={`/peer-counseling/${item.id}`}
@@ -421,7 +400,7 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredActivities.slice(0, 3).map((item) => {
+            {filteredActivities.slice(0, 3).map((item, index) => {
               const cardData: UnifiedCardData = {
                 type: "activity",
                 id: item.id,
@@ -434,7 +413,7 @@ const Index = () => {
               };
 
               return (
-                <div key={item.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+                <div key={`activity-${item.id}-${index}`} className="transform transition-all duration-200 hover:scale-[1.02]">
                   <UnifiedCard data={cardData} />
                 </div>
               );
@@ -455,7 +434,7 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredOrganizations.slice(0, 3).map((item) => {
+            {filteredOrganizations.slice(0, 3).map((item, index) => {
               const cardData: UnifiedCardData = {
                 type: item.type === "organization" ? "organization" : "community",
                 id: item.id,
@@ -466,7 +445,7 @@ const Index = () => {
               };
 
               return (
-                <div key={item.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+                <div key={`org-${item.id}-${index}`} className="transform transition-all duration-200 hover:scale-[1.02]">
                   <UnifiedCard 
                     data={cardData} 
                     linkTo={`/organizations/${item.id}`}

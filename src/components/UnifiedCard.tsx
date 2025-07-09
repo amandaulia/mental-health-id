@@ -122,6 +122,9 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                         </Badge>
                       )}
                     </div>
+                    {data.priceRange && (
+                      <p className="font-medium text-primary text-sm mb-2">{data.priceRange}</p>
+                    )}
                   </>
                 )}
 

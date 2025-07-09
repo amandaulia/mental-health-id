@@ -19,6 +19,11 @@ export const transformPractitioner = (
   contactDetails: ContactDetails = {}
 ): Practitioner => {
   const institution = dbPractitioner.institution;
+  
+  // Combine practitioner and institution insurance
+  const practitionerInsurance = dbPractitioner.insurance || [];
+  const institutionInsurance = institution?.insurance || [];
+  const combinedInsurance = [...new Set([...practitionerInsurance, ...institutionInsurance])];
 
   return {
     id: dbPractitioner.id.toString(),
@@ -41,9 +46,10 @@ export const transformPractitioner = (
     services,
     modes: getUniqueModesFromServices(services),
     contactDetails,
-    insurance: mapInsuranceTypes(dbPractitioner.insurance || []),
+    insurance: mapInsuranceTypes(combinedInsurance),
     isVerified: false, // Will need to add this field to DB
     lastUpdated: dbPractitioner.last_updated_at,
+    priceRange: calculatePriceRange(services), // Add price range calculation
   };
 };
 
@@ -72,6 +78,7 @@ export const transformInstitution = (
     contactDetails,
     isVerified: dbInstitution.verified,
     lastUpdated: dbInstitution.last_updated_at,
+    priceRange: calculatePriceRange(services), // Add price range calculation
   };
 };
 
@@ -221,4 +228,40 @@ const mapInsuranceTypes = (dbInsurance: string[]): InsuranceType[] => {
 const getUniqueModesFromServices = (services: Service[]) => {
   const modes = services.map(service => service.mode);
   return [...new Set(modes)];
+};
+
+// Helper function to calculate price range from services
+const calculatePriceRange = (services: Service[]): string | undefined => {
+  const prices = services.map(s => s.price).filter(price => price && price > 0);
+  
+  if (prices.length === 0) return undefined;
+  
+  if (prices.length === 1) {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      maximumFractionDigits: 0
+    }).format(prices[0]);
+  }
+  
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  
+  if (minPrice === maxPrice) {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      maximumFractionDigits: 0
+    }).format(minPrice);
+  }
+  
+  return `${new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0
+  }).format(minPrice)} - ${new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0
+  }).format(maxPrice)}`;
 };

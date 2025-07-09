@@ -67,6 +67,7 @@ export interface Practitioner {
   insurance: InsuranceType[];
   isVerified: boolean;
   lastUpdated: string;
+  priceRange?: string;
 }
 
 export interface Bureau {
@@ -89,6 +90,7 @@ export interface Bureau {
   contactDetails: ContactDetails;
   isVerified: boolean;
   lastUpdated: string;
+  priceRange?: string;
 }
 
 export interface Institution {
