@@ -30,11 +30,11 @@ export const Header = () => {
             </a>
             <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
               <Users className="h-4 w-4" />
-              Counseling
+              Professional Counseling
             </a>
             <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
               <Heart className="h-4 w-4" />
-              Peer & Group
+              Peer Counseling
             </a>
             <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
               <Palette className="h-4 w-4" />
@@ -71,11 +71,11 @@ export const Header = () => {
               </a>
               <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Users className="h-4 w-4" />
-                Counseling
+                Professional Counseling
               </a>
               <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Heart className="h-4 w-4" />
-                Peer & Group
+                Peer Counseling
               </a>
               <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Palette className="h-4 w-4" />

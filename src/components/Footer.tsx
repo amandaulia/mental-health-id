@@ -29,7 +29,6 @@ export const Footer = () => {
           {/* Quick Links */}
           <div>
             <h3 className="text-xl font-semibold mb-4 flex items-center">
-              <Heart className="h-5 w-5 mr-2" />
               Counseling Quick Links
             </h3>
             <ul className="space-y-3">
@@ -43,7 +42,6 @@ export const Footer = () => {
           {/* Contact Info */}
           <div>
             <h3 className="text-xl font-semibold mb-4 flex items-center">
-              <Heart className="h-5 w-5 mr-2" />
               Resources Quick Links
             </h3>
             <ul className="space-y-3">
@@ -58,13 +56,11 @@ export const Footer = () => {
             <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
             <div className="space-y-3">
               <div className="bg-white/10 rounded-lg p-4">
-                <Phone className="h-5 w-5 mr-2" />
-                <p className="font-medium mb-1">WhatsApp</p>
+                <p className="font-medium mb-1">📞 WhatsApp</p>
                 <p className="text-white/90">+62-813-2393-1225</p>
               </div>
               <div className="bg-white/10 rounded-lg p-4">
-                <MapPin className="h-4 w-4 mr-3 flex-shrink-0" />
-                <p className="font-medium mb-1">Email</p>
+                <p className="font-medium mb-1">📧 Email</p>
                 <p className="text-white/90">elysium.mcare@gmail.com</p>
               </div>
             </div>
