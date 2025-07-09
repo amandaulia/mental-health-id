@@ -14,6 +14,108 @@ export type Database = {
   }
   public: {
     Tables: {
+      activities: {
+        Row: {
+          activity_type: Database["public"]["Enums"]["activity_type"]
+          created_at: string | null
+          description: string | null
+          duration: string | null
+          id: number
+          image: string | null
+          last_updated_at: string | null
+          max_participants: number | null
+          name: string
+          price: number | null
+          schedule: string | null
+        }
+        Insert: {
+          activity_type: Database["public"]["Enums"]["activity_type"]
+          created_at?: string | null
+          description?: string | null
+          duration?: string | null
+          id?: never
+          image?: string | null
+          last_updated_at?: string | null
+          max_participants?: number | null
+          name: string
+          price?: number | null
+          schedule?: string | null
+        }
+        Update: {
+          activity_type?: Database["public"]["Enums"]["activity_type"]
+          created_at?: string | null
+          description?: string | null
+          duration?: string | null
+          id?: never
+          image?: string | null
+          last_updated_at?: string | null
+          max_participants?: number | null
+          name?: string
+          price?: number | null
+          schedule?: string | null
+        }
+        Relationships: []
+      }
+      activity_contacts: {
+        Row: {
+          activity_id: number
+          contact_id: number
+        }
+        Insert: {
+          activity_id: number
+          contact_id: number
+        }
+        Update: {
+          activity_id?: number
+          contact_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_contacts_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_contacts_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contact_details"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activity_locations: {
+        Row: {
+          activity_id: number
+          location_id: number
+        }
+        Insert: {
+          activity_id: number
+          location_id: number
+        }
+        Update: {
+          activity_id?: number
+          location_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_locations_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_locations_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "location"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_details: {
         Row: {
           contact_type: Database["public"]["Enums"]["contact_type"]
@@ -100,8 +202,36 @@ export type Database = {
           },
         ]
       }
+      feeling_analyses: {
+        Row: {
+          ai_analysis: Json | null
+          created_at: string | null
+          feelings_text: string
+          id: number
+          recommendations: Json | null
+          user_session_id: string | null
+        }
+        Insert: {
+          ai_analysis?: Json | null
+          created_at?: string | null
+          feelings_text: string
+          id?: never
+          recommendations?: Json | null
+          user_session_id?: string | null
+        }
+        Update: {
+          ai_analysis?: Json | null
+          created_at?: string | null
+          feelings_text?: string
+          id?: never
+          recommendations?: Json | null
+          user_session_id?: string | null
+        }
+        Relationships: []
+      }
       institution: {
         Row: {
+          business_hours: string | null
           created_at: string
           id: number
           image: string | null
@@ -113,6 +243,7 @@ export type Database = {
           verified: boolean
         }
         Insert: {
+          business_hours?: string | null
           created_at?: string
           id?: number
           image?: string | null
@@ -124,6 +255,7 @@ export type Database = {
           verified: boolean
         }
         Update: {
+          business_hours?: string | null
           created_at?: string
           id?: number
           image?: string | null
@@ -304,6 +436,213 @@ export type Database = {
             columns: ["practitioner_id"]
             isOneToOne: false
             referencedRelation: "practitioner"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_contacts: {
+        Row: {
+          contact_id: number
+          organization_id: number
+        }
+        Insert: {
+          contact_id: number
+          organization_id: number
+        }
+        Update: {
+          contact_id?: number
+          organization_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_contacts_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contact_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_locations: {
+        Row: {
+          location_id: number
+          organization_id: number
+        }
+        Insert: {
+          location_id: number
+          organization_id: number
+        }
+        Update: {
+          location_id?: number
+          organization_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_locations_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "location"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_locations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          founded_year: number | null
+          id: number
+          image: string | null
+          last_updated_at: string | null
+          mission_statement: string | null
+          name: string
+          type: Database["public"]["Enums"]["organization_type"]
+          verified: boolean | null
+          website: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          founded_year?: number | null
+          id?: never
+          image?: string | null
+          last_updated_at?: string | null
+          mission_statement?: string | null
+          name: string
+          type: Database["public"]["Enums"]["organization_type"]
+          verified?: boolean | null
+          website?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          founded_year?: number | null
+          id?: never
+          image?: string | null
+          last_updated_at?: string | null
+          mission_statement?: string | null
+          name?: string
+          type?: Database["public"]["Enums"]["organization_type"]
+          verified?: boolean | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      peer_counseling_contacts: {
+        Row: {
+          contact_id: number
+          peer_counseling_id: number
+        }
+        Insert: {
+          contact_id: number
+          peer_counseling_id: number
+        }
+        Update: {
+          contact_id?: number
+          peer_counseling_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "peer_counseling_contacts_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contact_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "peer_counseling_contacts_peer_counseling_id_fkey"
+            columns: ["peer_counseling_id"]
+            isOneToOne: false
+            referencedRelation: "peer_counseling_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      peer_counseling_groups: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: number
+          image: string | null
+          last_updated_at: string | null
+          meeting_format: Database["public"]["Enums"]["session_mode"][] | null
+          meeting_schedule: string | null
+          name: string
+          price: number | null
+          specialization: string[] | null
+          type: Database["public"]["Enums"]["peer_counseling_type"]
+          verified: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: never
+          image?: string | null
+          last_updated_at?: string | null
+          meeting_format?: Database["public"]["Enums"]["session_mode"][] | null
+          meeting_schedule?: string | null
+          name: string
+          price?: number | null
+          specialization?: string[] | null
+          type: Database["public"]["Enums"]["peer_counseling_type"]
+          verified?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: never
+          image?: string | null
+          last_updated_at?: string | null
+          meeting_format?: Database["public"]["Enums"]["session_mode"][] | null
+          meeting_schedule?: string | null
+          name?: string
+          price?: number | null
+          specialization?: string[] | null
+          type?: Database["public"]["Enums"]["peer_counseling_type"]
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
+      peer_counseling_locations: {
+        Row: {
+          location_id: number
+          peer_counseling_id: number
+        }
+        Insert: {
+          location_id: number
+          peer_counseling_id: number
+        }
+        Update: {
+          location_id?: number
+          peer_counseling_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "peer_counseling_locations_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "location"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "peer_counseling_locations_peer_counseling_id_fkey"
+            columns: ["peer_counseling_id"]
+            isOneToOne: false
+            referencedRelation: "peer_counseling_groups"
             referencedColumns: ["id"]
           },
         ]
@@ -638,9 +977,31 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      contact_type: "WHATSAPP" | "WEBSITE" | "INSTAGRAM" | "FACEBOOK" | "PHONE"
+      activity_type:
+        | "ART_THERAPY"
+        | "NATURE_THERAPY"
+        | "MEDITATION"
+        | "MUSIC_THERAPY"
+        | "DANCE_THERAPY"
+        | "WRITING_THERAPY"
+        | "SPORTS_THERAPY"
+      contact_type:
+        | "WHATSAPP"
+        | "WEBSITE"
+        | "INSTAGRAM"
+        | "FACEBOOK"
+        | "PHONE"
+        | "EMAIL"
+        | "TELEGRAM"
       institution_type: "PRIVATE" | "CLINIC" | "HOSPITAL"
       insurance: "PRIVATE" | "BPJS"
+      organization_type:
+        | "NON_PROFIT"
+        | "COMMUNITY"
+        | "CORPORATE_PROGRAM"
+        | "STUDENT_ORGANIZATION"
+        | "GOVERNMENT_INITIATIVE"
+      peer_counseling_type: "PEER_COUNSELING" | "SUPPORT_GROUP"
       profession_type: "PSYCHOLOGIST" | "PSCYHIATRIST" | "ART THERAPIST"
       session_mode: "TEXT" | "VOICE" | "VIDEO" | "OFFLINE"
       specialization:
@@ -785,9 +1146,34 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      contact_type: ["WHATSAPP", "WEBSITE", "INSTAGRAM", "FACEBOOK", "PHONE"],
+      activity_type: [
+        "ART_THERAPY",
+        "NATURE_THERAPY",
+        "MEDITATION",
+        "MUSIC_THERAPY",
+        "DANCE_THERAPY",
+        "WRITING_THERAPY",
+        "SPORTS_THERAPY",
+      ],
+      contact_type: [
+        "WHATSAPP",
+        "WEBSITE",
+        "INSTAGRAM",
+        "FACEBOOK",
+        "PHONE",
+        "EMAIL",
+        "TELEGRAM",
+      ],
       institution_type: ["PRIVATE", "CLINIC", "HOSPITAL"],
       insurance: ["PRIVATE", "BPJS"],
+      organization_type: [
+        "NON_PROFIT",
+        "COMMUNITY",
+        "CORPORATE_PROGRAM",
+        "STUDENT_ORGANIZATION",
+        "GOVERNMENT_INITIATIVE",
+      ],
+      peer_counseling_type: ["PEER_COUNSELING", "SUPPORT_GROUP"],
       profession_type: ["PSYCHOLOGIST", "PSCYHIATRIST", "ART THERAPIST"],
       session_mode: ["TEXT", "VOICE", "VIDEO", "OFFLINE"],
       specialization: [

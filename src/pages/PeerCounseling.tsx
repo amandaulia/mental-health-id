@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, DollarSign, ChevronDown } from "lucide-react";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
+import { FilterTags } from "@/components/FilterTags";
+import { FilterState } from "@/types";
 
 // Mock data for peer counseling and support groups
 const mockData = [
@@ -131,13 +133,39 @@ const FilterChip = ({ label, isSelected, onClick }: FilterChipProps) => (
   >
     {label}
   </Button>
-);
+};
 
 const PeerCounseling = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState<string>("all");
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  // Create filters state for FilterTags component
+  const filters: FilterState = {
+    search: searchTerm,
+    locations: selectedCity !== "all" ? [selectedCity] : [],
+    institutions: [],
+    professionTypes: selectedType !== "all" ? [selectedType] : [],
+    specializations: [],
+    priceRange: [0, 2000000],
+    modes: [],
+    insurance: []
+  };
+
+  const handleRemoveFilter = (type: keyof FilterState, value: string) => {
+    if (type === 'locations') {
+      setSelectedCity("all");
+    } else if (type === 'professionTypes') {
+      setSelectedType("all");
+    }
+  };
+
+  const handleClearAllFilters = () => {
+    setSearchTerm("");
+    setSelectedType("all");
+    setSelectedCity("all");
+  };
 
   const toggleDropdown = (dropdown: string) => {
     setOpenDropdown(openDropdown === dropdown ? null : dropdown);
@@ -239,6 +267,15 @@ const PeerCounseling = () => {
               />
             </div>
           </div>
+        </div>
+
+        {/* FilterTags component */}
+        <div className="mt-4">
+          <FilterTags
+            filters={filters}
+            onRemoveFilter={handleRemoveFilter}
+            onClearAll={handleClearAllFilters}
+          />
         </div>
       </div>
 

@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, ChevronDown, Building2 } from "lucide-react";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
+import { FilterTags } from "@/components/FilterTags";
+import { FilterState } from "@/types";
 
 // Mock data for organizations and communities
 const mockData = [
@@ -148,6 +150,32 @@ const Organizations = () => {
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
+  // Create filters state for FilterTags component
+  const filters: FilterState = {
+    search: searchTerm,
+    locations: selectedCity !== "all" ? [selectedCity] : [],
+    institutions: [],
+    professionTypes: selectedType !== "all" ? [selectedType] : [],
+    specializations: [],
+    priceRange: [0, 2000000],
+    modes: [],
+    insurance: []
+  };
+
+  const handleRemoveFilter = (type: keyof FilterState, value: string) => {
+    if (type === 'locations') {
+      setSelectedCity("all");
+    } else if (type === 'professionTypes') {
+      setSelectedType("all");
+    }
+  };
+
+  const handleClearAllFilters = () => {
+    setSearchTerm("");
+    setSelectedType("all");
+    setSelectedCity("all");
+  };
+
   const toggleDropdown = (dropdown: string) => {
     setOpenDropdown(openDropdown === dropdown ? null : dropdown);
   };
@@ -257,6 +285,15 @@ const Organizations = () => {
               />
             </div>
           </div>
+        </div>
+        
+        {/* FilterTags component */}
+        <div className="mt-4">
+          <FilterTags
+            filters={filters}
+            onRemoveFilter={handleRemoveFilter}
+            onClearAll={handleClearAllFilters}
+          />
         </div>
       </div>
 
