@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -133,7 +134,7 @@ const FilterChip = ({ label, isSelected, onClick }: FilterChipProps) => (
   >
     {label}
   </Button>
-};
+);
 
 const PeerCounseling = () => {
   const [searchTerm, setSearchTerm] = useState("");
