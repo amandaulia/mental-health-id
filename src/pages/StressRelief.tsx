@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, DollarSign, ExternalLink, ChevronDown } from "lucide-react";
+import { Search, MapPin, DollarSign, ChevronDown } from "lucide-react";
+import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
 
 // Mock data for stress relief activities
 const mockData = [
@@ -288,49 +287,26 @@ const StressRelief = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredData.map((item) => (
-            <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-all duration-200">
-              <div className="aspect-video overflow-hidden">
-                <img 
-                  src={item.image} 
-                  alt={item.name}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-lg font-semibold leading-tight">
-                    {item.name}
-                  </CardTitle>
-                  <Badge className={getTypeColor(item.type)}>
-                    {item.type}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      <span>{item.city}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <DollarSign className="h-4 w-4" />
-                      <span>Rp {item.price}</span>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    className="w-full mt-4" 
-                    onClick={() => window.open(item.website, '_blank')}
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Visit Website
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {filteredData.map((item) => {
+            const cardData: UnifiedCardData = {
+              type: "activity",
+              id: item.id.toString(),
+              image: item.image,
+              name: item.name,
+              city: item.city,
+              organizationName: "Visit Website", // Using as placeholder since we don't have organization name in mock data
+              activityType: item.type,
+              price: item.price
+            };
+
+            return (
+              <UnifiedCard 
+                key={item.id} 
+                data={cardData} 
+                onClick={() => window.open(item.website, '_blank')}
+              />
+            );
+          })}
         </div>
 
         {filteredData.length === 0 && (

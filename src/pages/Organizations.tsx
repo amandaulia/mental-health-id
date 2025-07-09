@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, ChevronDown, Building2 } from "lucide-react";
+import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
 
 // Mock data for organizations and communities
 const mockData = [
@@ -270,42 +269,24 @@ const Organizations = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredData.map((item) => (
-            <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-all duration-200">
-              <div className="aspect-video overflow-hidden">
-                <img 
-                  src={item.image} 
-                  alt={item.name}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-lg font-semibold leading-tight">
-                    {item.name}
-                  </CardTitle>
-                  <Badge className={getTypeColor(item.type)}>
-                    {item.type}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span>{item.city}</span>
-                  </div>
-                  
-                  <Button 
-                    className="w-full mt-4" 
-                    onClick={() => window.location.href = `/organizations/${item.id}`}
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {filteredData.map((item) => {
+            const cardData: UnifiedCardData = {
+              type: item.type === "Organization" ? "organization" : "community",
+              id: item.id.toString(),
+              image: item.image,
+              name: item.name,
+              city: item.city,
+              organizationType: item.type
+            };
+
+            return (
+              <UnifiedCard 
+                key={item.id} 
+                data={cardData} 
+                linkTo={`/organizations/${item.id}`}
+              />
+            );
+          })}
         </div>
 
         {filteredData.length === 0 && (

@@ -4,8 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { FilterState, Resource } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
-import { PractitionerCard } from "@/components/PractitionerCard";
-import { BureauCard } from "@/components/BureauCard";
+import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
 import { usePractitioners, useInstitutions } from "@/hooks/useDatabase";
 import { transformPractitioner, transformInstitution } from "@/utils/dataTransform";
 
@@ -249,15 +248,70 @@ const Index = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredResources.map((resource) => (
-            <div key={resource.id} className="transform transition-all duration-200 hover:scale-[1.02]">
-              {resource.type === "practitioner" ? (
-                <PractitionerCard practitioner={resource} />
-              ) : (
-                <BureauCard bureau={resource} />
-              )}
-            </div>
-          ))}
+          {filteredResources.map((resource) => {
+            const formatPrice = (prices: number[]) => {
+              if (prices.length === 0) return undefined;
+              if (prices.length === 1) return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                maximumFractionDigits: 0
+              }).format(prices[0]);
+              
+              const minPrice = Math.min(...prices);
+              const maxPrice = Math.max(...prices);
+              return `${new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                maximumFractionDigits: 0
+              }).format(minPrice)} - ${new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                maximumFractionDigits: 0
+              }).format(maxPrice)}`;
+            };
+
+            let cardData: UnifiedCardData;
+            
+            if (resource.type === "practitioner") {
+              const prices = resource.services.map(s => s.price).filter(Boolean);
+              cardData = {
+                type: "practitioner",
+                id: resource.id,
+                image: resource.image,
+                name: resource.name,
+                city: resource.city,
+                isVerified: resource.isVerified,
+                institutionName: resource.bureauName,
+                professionTypes: resource.professionTypes,
+                specializations: resource.specializations,
+                priceRange: formatPrice(prices),
+                insurance: resource.insurance,
+                modes: resource.modes
+              };
+            } else {
+              cardData = {
+                type: "institution",
+                id: resource.id,
+                image: resource.image,
+                name: resource.name,
+                city: resource.city,
+                isVerified: resource.isVerified,
+                professionTypes: resource.professionTypes,
+                specializations: resource.specializations,
+                insurance: resource.insurance,
+                modes: resource.modes
+              };
+            }
+
+            return (
+              <div key={resource.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+                <UnifiedCard 
+                  data={cardData} 
+                  linkTo={resource.type === "practitioner" ? `/practitioner/${resource.id}` : `/bureau/${resource.id}`}
+                />
+              </div>
+            );
+          })}
         </div>
 
         {filteredResources.length === 0 && (
