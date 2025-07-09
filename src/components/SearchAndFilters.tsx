@@ -304,38 +304,59 @@ export const SearchAndFilters = ({
             <ChevronDown className="h-3 w-3 ml-1" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-80 p-4">
-          <div className="space-y-4">
-            <div>
-              <h4 className="font-medium mb-2">Price Range (IDR)</h4>
-              <Slider
-                value={priceRange}
-                max={2000000}
-                step={100000}
-                onValueChange={(value) => setPriceRange(value as [number, number])}
-                onValueCommit={() => handlePriceRangeChange(priceRange)}
-                className="mb-2"
-              />
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(priceRange[0])}</span>
-                <span>{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(priceRange[1])}</span>
-              </div>
-            </div>
+        <PopoverContent className="w-80 p-6">
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold text-foreground">Advanced Filters</h3>
             
             <div>
-              <h4 className="font-medium mb-2">Insurance</h4>
-              <div className="space-y-2">
-                {["bpjs", "private", "none"].map((insurance) => (
+              <h4 className="font-medium text-foreground mb-3">Insurance</h4>
+              <div className="flex flex-wrap gap-2">
+                {["Private", "BPJS", "None"].map((insurance) => (
                   <button
                     key={insurance}
-                    onClick={() => handleInsuranceSelect(insurance)}
-                    className={`w-full text-left p-2 rounded hover:bg-gray-100 capitalize ${
-                      filters.insurance.includes(insurance as InsuranceType) ? 'bg-purple-100 text-purple-700' : ''
+                    onClick={() => handleInsuranceSelect(insurance.toLowerCase())}
+                    className={`px-4 py-2 rounded-full border transition-colors ${
+                      filters.insurance.includes(insurance.toLowerCase() as InsuranceType)
+                        ? 'bg-purple-100 border-purple-300 text-purple-700'
+                        : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                     }`}
                   >
                     {insurance}
                   </button>
                 ))}
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-medium text-foreground mb-3">Session Cost (IDR)</h4>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-1 block">Minimum</label>
+                    <div className="bg-gray-50 rounded-lg p-3 border">
+                      <span className="text-lg font-medium">{priceRange[0].toLocaleString()}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-1 block">Maximum</label>
+                    <div className="bg-gray-50 rounded-lg p-3 border">
+                      <span className="text-lg font-medium">{priceRange[1].toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <Slider
+                  value={priceRange}
+                  max={2000000}
+                  step={100000}
+                  onValueChange={(value) => setPriceRange(value as [number, number])}
+                  onValueCommit={() => handlePriceRangeChange(priceRange)}
+                  className="mb-2"
+                />
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>Rp {priceRange[0].toLocaleString()}</span>
+                  <span>Rp {priceRange[1].toLocaleString()}</span>
+                </div>
               </div>
             </div>
           </div>
