@@ -428,7 +428,7 @@ export const SearchAndFilters = ({ filters, onFiltersChange, institutionNames }:
             placeholder="Search keyword"
             value={filters.search}
             onChange={(e) => handleFilterChange("search", e.target.value)}
-            className="pl-10 bg-white text-lavender-foreground placeholder:text-lavender-foreground border-[hsl(var(--lavender-mist)/0.6)] focus:outline-none focus:ring-2 focus:ring-lavender focus:border-lavender"
+            className="pl-10 bg-white text-lavender-foreground placeholder:text-lavender-foreground border-[hsl(var(--lavender-mist)/0.6)] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--lavender-mist))] focus:border-[hsl(var(--lavender-mist))]"
           />
         </div>
       </div>
