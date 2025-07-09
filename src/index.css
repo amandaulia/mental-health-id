@@ -48,10 +48,15 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
-    /* Brand gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(25 100% 65%), hsl(10 90% 55%), hsl(350 85% 60%));
+    /* Calm accent colors */
+    --sage-green: 134 40% 82%;
+    --sky-blue: 200 70% 78%;
+    --lavender-mist: 275 45% 79%;
+
+    /* Brand gradients - calmer palette */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--sage-green)), hsl(var(--sky-blue)), hsl(var(--lavender-mist)));
     --gradient-warm: linear-gradient(180deg, hsl(35 40% 98%), hsl(30 30% 96%));
-    --gradient-accent: linear-gradient(90deg, hsl(45 100% 85%), hsl(35 80% 80%));
+    --gradient-accent: linear-gradient(90deg, hsl(var(--sky-blue)), hsl(var(--sage-green)));
 
     /* Shadows with warm undertones */
     --shadow-warm: 0 4px 20px -4px hsl(15 50% 70% / 0.3);
@@ -98,9 +103,14 @@ All colors MUST be HSL.
     --input: 25 10% 20%;
     --ring: 15 85% 55%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(25 80% 50%), hsl(10 85% 45%), hsl(350 80% 50%));
+    /* Calm accent colors for dark mode */
+    --sage-green: 134 35% 65%;
+    --sky-blue: 200 60% 65%;
+    --lavender-mist: 275 40% 70%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(var(--sage-green)), hsl(var(--sky-blue)), hsl(var(--lavender-mist)));
     --gradient-warm: linear-gradient(180deg, hsl(25 15% 8%), hsl(25 12% 12%));
-    --gradient-accent: linear-gradient(90deg, hsl(45 70% 60%), hsl(35 60% 55%));
+    --gradient-accent: linear-gradient(90deg, hsl(var(--sky-blue)), hsl(var(--sage-green)));
 
     --shadow-warm: 0 4px 20px -4px hsl(15 30% 10% / 0.8);
     --shadow-card: 0 2px 10px -2px hsl(15 20% 5% / 0.6);

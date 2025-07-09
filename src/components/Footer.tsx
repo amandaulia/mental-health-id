@@ -2,7 +2,7 @@ import { Heart, MapPin, Phone, Mail, Clock } from "lucide-react";
 
 export const Footer = () => {
   return (
-    <footer className="bg-gradient-to-r from-primary via-primary-hover to-destructive text-white mt-16">
+    <footer className="brand-gradient text-white mt-16">
       <div className="container mx-auto px-4 py-12">
         {/* Logo and Description */}
         <div className="flex flex-col items-center text-center mb-8">

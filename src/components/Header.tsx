@@ -6,7 +6,7 @@ export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-gradient-to-r from-primary via-primary-hover to-destructive shadow-md sticky top-0 z-50">
+    <header className="brand-gradient shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo Section */}
