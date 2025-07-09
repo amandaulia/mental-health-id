@@ -295,7 +295,7 @@ const PeerCounseling = () => {
               city: item.city,
               specialization: item.specialization,
               serviceType: item.type,
-              price: item.price
+              price: typeof item.price === 'string' ? parseInt(item.price) || 0 : item.price
             };
 
             return (

@@ -38,9 +38,10 @@ export interface UnifiedCardData {
 interface UnifiedCardProps {
   data: UnifiedCardData;
   linkTo?: string;
+  onClick?: () => void;
 }
 
-export const UnifiedCard = ({ data, linkTo }: UnifiedCardProps) => {
+export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -51,6 +52,9 @@ export const UnifiedCard = ({ data, linkTo }: UnifiedCardProps) => {
 
   const handleCardClick = () => {
     trackCardClick(data.type, data.id, data.name);
+    if (onClick) {
+      onClick();
+    }
   };
 
   const CardWrapper = ({ children }: { children: React.ReactNode }) => {
@@ -81,7 +85,6 @@ export const UnifiedCard = ({ data, linkTo }: UnifiedCardProps) => {
                   )}
                 </div>
                 
-                {/* Render different content based on card type */}
                 {data.type === "practitioner" && (
                   <>
                     {data.institutionName && (

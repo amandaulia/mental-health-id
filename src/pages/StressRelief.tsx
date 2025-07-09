@@ -329,17 +329,19 @@ const StressRelief = () => {
               image: item.image,
               name: item.name,
               city: item.city,
-              organizationName: "Visit Website", // Using as placeholder since we don't have organization name in mock data
+              organizationName: "Visit Website",
               activityType: item.type,
-              price: item.price
+              price: typeof item.price === 'string' ? parseInt(item.price) || 0 : item.price
             };
 
             return (
-              <UnifiedCard 
-                key={item.id} 
-                data={cardData} 
+              <div 
+                key={item.id}
                 onClick={() => window.open(item.website, '_blank')}
-              />
+                className="cursor-pointer"
+              >
+                <UnifiedCard data={cardData} />
+              </div>
             );
           })}
         </div>

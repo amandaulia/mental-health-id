@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import React from "react";
 import { FilterState } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
@@ -32,7 +33,6 @@ const Index = () => {
   const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitioners();
   const { data: dbInstitutions, isLoading: institutionsLoading } = useInstitutions();
 
-  // Transform database data
   const allProfessionalResources = useMemo(() => {
     const resources = [];
     
@@ -67,7 +67,6 @@ const Index = () => {
 
       if (error) throw error;
 
-      // Transform recommendations to card format
       const recommendedCards: UnifiedCardData[] = data.recommendations?.map((rec: any) => ({
         type: rec.type,
         id: rec.id,
@@ -79,7 +78,6 @@ const Index = () => {
 
       setRecommendations(recommendedCards);
       
-      // Track the feelings analysis event
       trackFeelingsAnalysis(feelings.trim().length, recommendedCards.length);
       
       toast({
@@ -159,7 +157,6 @@ const Index = () => {
     const newArray = currentArray.filter(item => item !== value);
     setFilters(prev => ({ ...prev, [type]: newArray }));
     
-    // Track filter removal
     trackFilter(type, value, 'Home');
   };
 
@@ -175,7 +172,6 @@ const Index = () => {
       insurance: []
     });
     
-    // Track clear all filters
     trackFilter('clear_all', 'all_filters', 'Home');
   };
 
@@ -193,6 +189,16 @@ const Index = () => {
 
   const isLoading = practitionersLoading || institutionsLoading;
 
+  useEffect(() => {
+    if (filters.search) {
+      const totalResults = filteredProfessionalResources.length + 
+                          filteredPeerCounseling.length + 
+                          filteredActivities.length + 
+                          filteredOrganizations.length;
+      trackSearch(filters.search, totalResults, 'Home');
+    }
+  }, [filters.search, filteredProfessionalResources, filteredPeerCounseling, filteredActivities, filteredOrganizations]);
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -205,17 +211,6 @@ const Index = () => {
       </div>
     );
   }
-
-  // Track search when filters change
-  React.useEffect(() => {
-    if (filters.search) {
-      const totalResults = filteredProfessionalResources.length + 
-                          filteredPeerCounseling.length + 
-                          filteredActivities.length + 
-                          filteredOrganizations.length;
-      trackSearch(filters.search, totalResults, 'Home');
-    }
-  }, [filters.search, filteredProfessionalResources, filteredPeerCounseling, filteredActivities, filteredOrganizations]);
 
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
@@ -398,7 +393,7 @@ const Index = () => {
                 isVerified: item.isVerified,
                 specialization: item.specialization,
                 serviceType: item.serviceType,
-                price: item.price
+                price: typeof item.price === 'string' ? parseInt(item.price) : item.price
               };
 
               return (
@@ -435,7 +430,7 @@ const Index = () => {
                 city: item.city,
                 organizationName: item.organizationName,
                 activityType: item.activityType,
-                price: item.price
+                price: typeof item.price === 'string' ? parseInt(item.price) : item.price
               };
 
               return (
