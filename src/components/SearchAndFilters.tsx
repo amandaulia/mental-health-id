@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, MapPin, Building2, User, Heart, Monitor, Settings, ChevronDown } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -9,9 +9,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { FilterState, ProfessionType, Specialization, Mode, InsuranceType } from "@/types";
 import { trackFormInteraction } from "@/utils/analytics";
 
@@ -35,49 +40,15 @@ export const SearchAndFilters = ({
     }
   };
 
-  const handleLocationChange = (locations: string[]) => {
-    onFiltersChange({ ...filters, locations });
-    trackFormInteraction('filter', 'location_changed');
-  };
-
-  const handleInstitutionChange = (institutions: string[]) => {
-    onFiltersChange({ ...filters, institutions });
-    trackFormInteraction('filter', 'institution_changed');
-  };
-
-  const handleProfessionChange = (professionTypes: ProfessionType[]) => {
-    onFiltersChange({ ...filters, professionTypes });
-    trackFormInteraction('filter', 'profession_changed');
-  };
-
-  const handleSpecializationChange = (specializations: Specialization[]) => {
-    onFiltersChange({ ...filters, specializations });
-    trackFormInteraction('filter', 'specialization_changed');
-  };
-
-  const handleModeChange = (modes: Mode[]) => {
-    onFiltersChange({ ...filters, modes });
-    trackFormInteraction('filter', 'mode_changed');
-  };
-
-  const handleInsuranceChange = (insurance: InsuranceType[]) => {
-    onFiltersChange({ ...filters, insurance });
-    trackFormInteraction('filter', 'insurance_changed');
-  };
-
-  const handlePriceRangeChange = (priceRange: [number, number]) => {
-    onFiltersChange({ ...filters, priceRange });
-    trackFormInteraction('filter', 'price_range_changed');
-  };
-
   const handleLocationSelect = useCallback(
     (value: string) => {
       const newLocations = filters.locations.includes(value)
         ? filters.locations.filter((loc) => loc !== value)
         : [...filters.locations, value];
-      handleLocationChange(newLocations);
+      onFiltersChange({ ...filters, locations: newLocations });
+      trackFormInteraction('filter', 'location_changed');
     },
-    [filters.locations, handleLocationChange]
+    [filters, onFiltersChange]
   );
 
   const handleInstitutionSelect = useCallback(
@@ -85,9 +56,10 @@ export const SearchAndFilters = ({
       const newInstitutions = filters.institutions.includes(value)
         ? filters.institutions.filter((ins) => ins !== value)
         : [...filters.institutions, value];
-      handleInstitutionChange(newInstitutions);
+      onFiltersChange({ ...filters, institutions: newInstitutions });
+      trackFormInteraction('filter', 'institution_changed');
     },
-    [filters.institutions, handleInstitutionChange]
+    [filters, onFiltersChange]
   );
 
   const handleProfessionSelect = useCallback(
@@ -95,9 +67,10 @@ export const SearchAndFilters = ({
       const newProfessions = filters.professionTypes.includes(value as ProfessionType)
         ? filters.professionTypes.filter((prof) => prof !== value)
         : [...filters.professionTypes, value as ProfessionType];
-      handleProfessionChange(newProfessions);
+      onFiltersChange({ ...filters, professionTypes: newProfessions });
+      trackFormInteraction('filter', 'profession_changed');
     },
-    [filters.professionTypes, handleProfessionChange]
+    [filters, onFiltersChange]
   );
 
   const handleSpecializationSelect = useCallback(
@@ -105,9 +78,10 @@ export const SearchAndFilters = ({
       const newSpecializations = filters.specializations.includes(value as Specialization)
         ? filters.specializations.filter((spec) => spec !== value)
         : [...filters.specializations, value as Specialization];
-      handleSpecializationChange(newSpecializations);
+      onFiltersChange({ ...filters, specializations: newSpecializations });
+      trackFormInteraction('filter', 'specialization_changed');
     },
-    [filters.specializations, handleSpecializationChange]
+    [filters, onFiltersChange]
   );
 
   const handleModeSelect = useCallback(
@@ -115,9 +89,10 @@ export const SearchAndFilters = ({
       const newModes = filters.modes.includes(value as Mode)
         ? filters.modes.filter((mode) => mode !== value)
         : [...filters.modes, value as Mode];
-      handleModeChange(newModes);
+      onFiltersChange({ ...filters, modes: newModes });
+      trackFormInteraction('filter', 'mode_changed');
     },
-    [filters.modes, handleModeChange]
+    [filters, onFiltersChange]
   );
 
   const handleInsuranceSelect = useCallback(
@@ -125,132 +100,259 @@ export const SearchAndFilters = ({
       const newInsurance = filters.insurance.includes(value as InsuranceType)
         ? filters.insurance.filter((ins) => ins !== value)
         : [...filters.insurance, value as InsuranceType];
-      handleInsuranceChange(newInsurance);
+      onFiltersChange({ ...filters, insurance: newInsurance });
+      trackFormInteraction('filter', 'insurance_changed');
     },
-    [filters.insurance, handleInsuranceChange]
+    [filters, onFiltersChange]
   );
 
+  const handlePriceRangeChange = (priceRange: [number, number]) => {
+    onFiltersChange({ ...filters, priceRange });
+    trackFormInteraction('filter', 'price_range_changed');
+  };
+
+  const getActiveFilterCount = (filterArray: any[]) => {
+    return filterArray.length;
+  };
+
   return (
-    <div className="space-y-4">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-        <Input
-          type="text"
-          placeholder="Search by name, city, or institution..."
-          value={filters.search}
-          onChange={(e) => handleSearchChange(e.target.value)}
-          className="pl-10"
-        />
-      </div>
+    <div className="flex flex-wrap items-center gap-3">
+      {/* Location Filter */}
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button 
+            variant="outline" 
+            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto font-medium"
+          >
+            <MapPin className="h-4 w-4 mr-2" />
+            Location
+            {getActiveFilterCount(filters.locations) > 0 && (
+              <Badge className="ml-2 bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+                {getActiveFilterCount(filters.locations)}
+              </Badge>
+            )}
+            <ChevronDown className="h-4 w-4 ml-2" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-64 p-4">
+          <div className="space-y-2">
+            {["Jakarta, Indonesia", "Surabaya, Indonesia", "Medan, Indonesia"].map((location) => (
+              <button
+                key={location}
+                onClick={() => handleLocationSelect(location)}
+                className={`w-full text-left p-2 rounded hover:bg-gray-100 ${
+                  filters.locations.includes(location) ? 'bg-purple-100 text-purple-700' : ''
+                }`}
+              >
+                {location}
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Select onValueChange={handleLocationSelect} defaultValue={filters.locations[0] || ""}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Location" />
-            </SelectTrigger>
-            <SelectContent>
-              {["Jakarta, Indonesia", "Surabaya, Indonesia", "Medan, Indonesia"].map((location) => (
-                <SelectItem key={location} value={location}>
-                  {location}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      {/* Institution Filter */}
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button 
+            variant="outline" 
+            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto font-medium"
+          >
+            <Building2 className="h-4 w-4 mr-2" />
+            Institution
+            {getActiveFilterCount(filters.institutions) > 0 && (
+              <Badge className="ml-2 bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+                {getActiveFilterCount(filters.institutions)}
+              </Badge>
+            )}
+            <ChevronDown className="h-4 w-4 ml-2" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-64 p-4">
+          <div className="space-y-2 max-h-48 overflow-y-auto">
+            {institutionNames.map((institution) => (
+              <button
+                key={institution}
+                onClick={() => handleInstitutionSelect(institution)}
+                className={`w-full text-left p-2 rounded hover:bg-gray-100 ${
+                  filters.institutions.includes(institution) ? 'bg-purple-100 text-purple-700' : ''
+                }`}
+              >
+                {institution}
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
 
-        <div>
-          <Select onValueChange={handleInstitutionSelect} defaultValue={filters.institutions[0] || ""}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Institution" />
-            </SelectTrigger>
-            <SelectContent>
-              {institutionNames.map((institution) => (
-                <SelectItem key={institution} value={institution}>
-                  {institution}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      {/* Profession Filter */}
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button 
+            variant="outline" 
+            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto font-medium"
+          >
+            <User className="h-4 w-4 mr-2" />
+            Profession
+            {getActiveFilterCount(filters.professionTypes) > 0 && (
+              <Badge className="ml-2 bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+                {getActiveFilterCount(filters.professionTypes)}
+              </Badge>
+            )}
+            <ChevronDown className="h-4 w-4 ml-2" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-64 p-4">
+          <div className="space-y-2">
+            {["Psychologist", "Psychiatrist", "Counselor", "Therapist"].map((profession) => (
+              <button
+                key={profession}
+                onClick={() => handleProfessionSelect(profession)}
+                className={`w-full text-left p-2 rounded hover:bg-gray-100 ${
+                  filters.professionTypes.includes(profession as ProfessionType) ? 'bg-purple-100 text-purple-700' : ''
+                }`}
+              >
+                {profession}
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Select onValueChange={handleProfessionSelect} defaultValue={filters.professionTypes[0] || ""}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Profession" />
-            </SelectTrigger>
-            <SelectContent>
-              {["Psychologist", "Psychiatrist", "Counselor", "Therapist"].map((profession) => (
-                <SelectItem key={profession} value={profession}>
-                  {profession}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      {/* Specializations Filter */}
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button 
+            variant="outline" 
+            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto font-medium"
+          >
+            <Heart className="h-4 w-4 mr-2" />
+            Specializations
+            {getActiveFilterCount(filters.specializations) > 0 && (
+              <Badge className="ml-2 bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+                {getActiveFilterCount(filters.specializations)}
+              </Badge>
+            )}
+            <ChevronDown className="h-4 w-4 ml-2" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-64 p-4">
+          <div className="space-y-2">
+            {["Depression", "Anxiety", "Trauma", "Relationship Issues"].map((specialization) => (
+              <button
+                key={specialization}
+                onClick={() => handleSpecializationSelect(specialization)}
+                className={`w-full text-left p-2 rounded hover:bg-gray-100 ${
+                  filters.specializations.includes(specialization as Specialization) ? 'bg-purple-100 text-purple-700' : ''
+                }`}
+              >
+                {specialization}
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
 
-        <div>
-          <Select onValueChange={handleSpecializationSelect} defaultValue={filters.specializations[0] || ""}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Specialization" />
-            </SelectTrigger>
-            <SelectContent>
-              {["Depression", "Anxiety", "Trauma", "Relationship Issues"].map((specialization) => (
-                <SelectItem key={specialization} value={specialization}>
-                  {specialization}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      {/* Session Mode Filter */}
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button 
+            variant="outline" 
+            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto font-medium"
+          >
+            <Monitor className="h-4 w-4 mr-2" />
+            Session Mode
+            {getActiveFilterCount(filters.modes) > 0 && (
+              <Badge className="ml-2 bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+                {getActiveFilterCount(filters.modes)}
+              </Badge>
+            )}
+            <ChevronDown className="h-4 w-4 ml-2" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-64 p-4">
+          <div className="space-y-2">
+            {["text", "voice", "video", "offline"].map((mode) => (
+              <button
+                key={mode}
+                onClick={() => handleModeSelect(mode)}
+                className={`w-full text-left p-2 rounded hover:bg-gray-100 capitalize ${
+                  filters.modes.includes(mode as Mode) ? 'bg-purple-100 text-purple-700' : ''
+                }`}
+              >
+                {mode}
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
 
-      <div>
-        <p className="text-sm font-medium">Price Range (IDR)</p>
-        <Slider
-          defaultValue={filters.priceRange}
-          max={2000000}
-          step={100000}
-          onValueChange={(value) => setPriceRange(value as [number, number])}
-          onValueCommit={() => handlePriceRangeChange(priceRange)}
-        />
-        <div className="flex justify-between text-sm text-muted-foreground">
-          <span>{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(priceRange[0])}</span>
-          <span>{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(priceRange[1])}</span>
-        </div>
-      </div>
+      {/* Advanced Filter */}
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button 
+            variant="outline" 
+            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto font-medium"
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            Advanced
+            {getActiveFilterCount(filters.insurance) > 0 && (
+              <Badge className="ml-2 bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+                {getActiveFilterCount(filters.insurance)}
+              </Badge>
+            )}
+            <ChevronDown className="h-4 w-4 ml-2" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-80 p-4">
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-medium mb-2">Price Range (IDR)</h4>
+              <Slider
+                value={priceRange}
+                max={2000000}
+                step={100000}
+                onValueChange={(value) => setPriceRange(value as [number, number])}
+                onValueCommit={() => handlePriceRangeChange(priceRange)}
+                className="mb-2"
+              />
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(priceRange[0])}</span>
+                <span>{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(priceRange[1])}</span>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-medium mb-2">Insurance</h4>
+              <div className="space-y-2">
+                {["bpjs", "private", "none"].map((insurance) => (
+                  <button
+                    key={insurance}
+                    onClick={() => handleInsuranceSelect(insurance)}
+                    className={`w-full text-left p-2 rounded hover:bg-gray-100 capitalize ${
+                      filters.insurance.includes(insurance as InsuranceType) ? 'bg-purple-100 text-purple-700' : ''
+                    }`}
+                  >
+                    {insurance}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Select onValueChange={handleModeSelect} defaultValue={filters.modes[0] || ""}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Mode" />
-            </SelectTrigger>
-            <SelectContent>
-              {["text", "voice", "video", "offline"].map((mode) => (
-                <SelectItem key={mode} value={mode}>
-                  {mode}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Select onValueChange={handleInsuranceSelect} defaultValue={filters.insurance[0] || ""}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Insurance" />
-            </SelectTrigger>
-            <SelectContent>
-              {["bpjs", "private", "none"].map((insurance) => (
-                <SelectItem key={insurance} value={insurance}>
-                  {insurance}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Search Input */}
+      <div className="flex-1 min-w-64 ml-auto">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            type="text"
+            placeholder="Search keyword"
+            value={filters.search}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="pl-10 rounded-full border-gray-200"
+          />
         </div>
       </div>
     </div>
