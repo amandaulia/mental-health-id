@@ -137,12 +137,12 @@ export const SearchAndFilters = ({
         <PopoverContent className="w-80 p-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">Location</h3>
-            <div className="grid grid-cols-1 gap-1">
+            <div className="flex flex-wrap gap-1">
               {["Jakarta, Indonesia", "Surabaya, Indonesia", "Medan, Indonesia"].map((location) => (
                 <button
                   key={location}
                   onClick={() => handleLocationSelect(location)}
-                  className={`px-3 py-2 rounded-md border transition-colors text-left text-sm ${
+                  className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                     filters.locations.includes(location)
                       ? 'bg-purple-100 border-purple-300 text-purple-700'
                       : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
@@ -176,12 +176,12 @@ export const SearchAndFilters = ({
         <PopoverContent className="w-80 p-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">Institution</h3>
-            <div className="grid grid-cols-1 gap-1 max-h-64 overflow-y-auto">
+            <div className="flex flex-wrap gap-1 max-h-64 overflow-y-auto">
               {institutionNames.map((institution) => (
                 <button
                   key={institution}
                   onClick={() => handleInstitutionSelect(institution)}
-                  className={`px-3 py-2 rounded-md border transition-colors text-left text-sm ${
+                  className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                     filters.institutions.includes(institution)
                       ? 'bg-purple-100 border-purple-300 text-purple-700'
                       : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
@@ -215,12 +215,12 @@ export const SearchAndFilters = ({
         <PopoverContent className="w-80 p-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">Profession Type</h3>
-            <div className="grid grid-cols-3 gap-1">
+            <div className="flex flex-wrap gap-1">
               {["Psychologist", "Psychiatrist", "Art Therapist", "Music Therapist", "Counselor", "Social Worker"].map((profession) => (
                 <button
                   key={profession}
                   onClick={() => handleProfessionSelect(profession)}
-                  className={`px-2 py-1.5 rounded-md border transition-colors text-center text-xs ${
+                  className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                     filters.professionTypes.includes(profession as ProfessionType)
                       ? 'bg-purple-100 border-purple-300 text-purple-700'
                       : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
@@ -254,12 +254,12 @@ export const SearchAndFilters = ({
         <PopoverContent className="w-80 p-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">Specializations</h3>
-            <div className="grid grid-cols-3 gap-1">
+            <div className="flex flex-wrap gap-1">
               {["Depression", "Anxiety", "Trauma", "Relationship Issues", "ADHD", "OCD", "Personality Disorders", "Family Therapy"].map((specialization) => (
                 <button
                   key={specialization}
                   onClick={() => handleSpecializationSelect(specialization)}
-                  className={`px-2 py-1.5 rounded-md border transition-colors text-center text-xs ${
+                  className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                     filters.specializations.includes(specialization as Specialization)
                       ? 'bg-purple-100 border-purple-300 text-purple-700'
                       : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
@@ -293,7 +293,7 @@ export const SearchAndFilters = ({
         <PopoverContent className="w-80 p-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">Session Mode</h3>
-            <div className="grid grid-cols-2 gap-1">
+            <div className="flex flex-wrap gap-1">
               {[
                 { value: "text", label: "Text Chat" },
                 { value: "voice", label: "Voice Call" },
@@ -303,7 +303,7 @@ export const SearchAndFilters = ({
                 <button
                   key={mode.value}
                   onClick={() => handleModeSelect(mode.value)}
-                  className={`px-3 py-2 rounded-md border transition-colors text-center text-sm ${
+                  className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                     filters.modes.includes(mode.value as Mode)
                       ? 'bg-purple-100 border-purple-300 text-purple-700'
                       : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
