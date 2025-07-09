@@ -6,8 +6,6 @@ import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { BureauCard } from "@/components/BureauCard";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { usePractitioners, useInstitutions } from "@/hooks/useDatabase";
 import { transformPractitioner, transformInstitution } from "@/utils/dataTransform";
 
@@ -200,98 +198,88 @@ const Index = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen">
-        <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <div className="animate-pulse">
-              <div className="h-8 bg-muted rounded w-48 mx-auto mb-4"></div>
-              <div className="h-4 bg-muted rounded w-64 mx-auto"></div>
-            </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <div className="animate-pulse">
+            <div className="h-8 bg-muted rounded w-48 mx-auto mb-4"></div>
+            <div className="h-4 bg-muted rounded w-64 mx-auto"></div>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      
-      <main className="container mx-auto px-4 py-8 sm:py-12">
-        {/* Hero Section */}
-        <div className="mb-8 sm:mb-12 text-center">
-          <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
-            <span className="gradient-text">Mental Health</span> Resource Directory
-          </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Your trusted companion in finding qualified psychologists, psychiatrists, and mental health clinics. 
-            Taking care of your mental health is a brave and important step. 🌟
-          </p>
+    <div className="container mx-auto px-4 py-8 sm:py-12">
+      {/* Hero Section */}
+      <div className="mb-8 sm:mb-12 text-center">
+        <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
+          <span className="gradient-text">Mental Health</span> Resource Directory
+        </h1>
+        <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          Your trusted companion in finding qualified psychologists, psychiatrists, and mental health clinics. 
+          Taking care of your mental health is a brave and important step. 🌟
+        </p>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="mb-8 sm:mb-10">
+        <div className="bg-card rounded-xl p-6 card-shadow">
+          <SearchAndFilters
+            filters={filters}
+            onFiltersChange={setFilters}
+            institutionNames={institutionNames}
+          />
+        </div>
+        <div className="mt-4">
+          <FilterTags
+            filters={filters}
+            onRemoveFilter={handleRemoveFilter}
+            onClearAll={handleClearAllFilters}
+          />
+        </div>
+      </div>
+
+      {/* Results Section */}
+      <div className="space-y-6 sm:space-y-8">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+            <span className="text-primary">{filteredResources.length}</span> Resources Found
+          </h2>
         </div>
 
-        {/* Search and Filters */}
-        <div className="mb-8 sm:mb-10">
-          <div className="bg-card rounded-xl p-6 card-shadow">
-            <SearchAndFilters
-              filters={filters}
-              onFiltersChange={setFilters}
-              institutionNames={institutionNames}
-            />
-          </div>
-          <div className="mt-4">
-            <FilterTags
-              filters={filters}
-              onRemoveFilter={handleRemoveFilter}
-              onClearAll={handleClearAllFilters}
-            />
-          </div>
-        </div>
-
-        {/* Results Section */}
-        <div className="space-y-6 sm:space-y-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-              <span className="text-primary">{filteredResources.length}</span> Resources Found
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredResources.map((resource) => (
-              <div key={resource.id} className="transform transition-all duration-200 hover:scale-[1.02]">
-                {resource.type === "practitioner" ? (
-                  <PractitionerCard practitioner={resource} />
-                ) : (
-                  <BureauCard bureau={resource} />
-                )}
-              </div>
-            ))}
-          </div>
-
-          {filteredResources.length === 0 && (
-            <div className="text-center py-16">
-              <div className="max-w-md mx-auto">
-                <div className="text-6xl mb-4">🔍</div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">
-                  No resources found
-                </h3>
-                <p className="text-muted-foreground mb-6">
-                  We couldn't find any resources matching your criteria. Try adjusting your filters or search terms.
-                </p>
-                <button 
-                  onClick={handleClearAllFilters}
-                  className="text-primary hover:text-primary-hover font-medium"
-                >
-                  Clear all filters
-                </button>
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredResources.map((resource) => (
+            <div key={resource.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+              {resource.type === "practitioner" ? (
+                <PractitionerCard practitioner={resource} />
+              ) : (
+                <BureauCard bureau={resource} />
+              )}
             </div>
-          )}
+          ))}
         </div>
-      </main>
-      
-      <Footer />
+
+        {filteredResources.length === 0 && (
+          <div className="text-center py-16">
+            <div className="max-w-md mx-auto">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">
+                No resources found
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                We couldn't find any resources matching your criteria. Try adjusting your filters or search terms.
+              </p>
+              <button 
+                onClick={handleClearAllFilters}
+                className="text-primary hover:text-primary-hover font-medium"
+              >
+                Clear all filters
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
