@@ -74,13 +74,12 @@ interface FilterChipProps {
 
 const FilterChip = ({ label, isSelected, onClick }: FilterChipProps) => (
   <Button
-    variant={isSelected ? "default" : "outline"}
     size="sm"
     onClick={onClick}
-    className={`text-sm transition-colors ${
+    className={`text-sm transition-colors border ${
       isSelected 
-        ? 'bg-lavender text-lavender-foreground hover:bg-lavender/80' 
-        : 'bg-muted/30 hover:bg-muted border-muted-foreground/20 hover:border-lavender/50'
+        ? 'bg-lavender text-lavender-foreground hover:bg-lavender/80 border-lavender' 
+        : 'bg-background hover:bg-lavender/20 border-lavender/30 hover:border-lavender text-foreground'
     }`}
   >
     {label}
