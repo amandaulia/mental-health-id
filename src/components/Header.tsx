@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Home, Info, Users, Heart, Palette, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Header = () => {
@@ -25,20 +25,29 @@ export const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium">
+            <a href="/" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              Home
+            </a>
+            <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+              <Info className="h-4 w-4" />
               About
             </a>
-            <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium">
-              Professional Counseling
+            <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Counseling
             </a>
-            <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium">
-              Peer Counseling & Support Group
+            <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+              <Heart className="h-4 w-4" />
+              Peer & Group
             </a>
-            <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium">
-              Stress Relief Activities
+            <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+              <Palette className="h-4 w-4" />
+              Activities
             </a>
-            <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium">
-              Organizations & Communities
+            <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+              <Building2 className="h-4 w-4" />
+              Communities
             </a>
           </nav>
 
@@ -57,20 +66,29 @@ export const Header = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden bg-white/10 backdrop-blur-sm rounded-lg m-2 p-4">
             <nav className="flex flex-col space-y-3">
-              <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
+              <a href="/" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                <Home className="h-4 w-4" />
+                Home
+              </a>
+              <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                <Info className="h-4 w-4" />
                 About
               </a>
-              <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
-                Professional Counseling
+              <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Counseling
               </a>
-              <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
-                Peer Counseling & Support Group
+              <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                <Heart className="h-4 w-4" />
+                Peer & Group
               </a>
-              <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
-                Stress Relief Activities
+              <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                <Palette className="h-4 w-4" />
+                Activities
               </a>
-              <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
-                Organizations & Communities
+              <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                <Building2 className="h-4 w-4" />
+                Communities
               </a>
             </nav>
           </div>
