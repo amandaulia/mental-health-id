@@ -1,14 +1,11 @@
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FilterState, Specialization, Mode, InsuranceType, ProfessionType } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { Search, Filter, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, X, MapPin, Languages, Stethoscope, DollarSign, Settings } from "lucide-react";
 import { specializations, professionTypes } from "@/data/mockData";
 
 interface SearchAndFiltersProps {
@@ -17,8 +14,80 @@ interface SearchAndFiltersProps {
   institutionNames: string[];
 }
 
+interface DropdownProps {
+  title: string;
+  icon: React.ReactNode;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+  hasActiveFilters?: boolean;
+}
+
+const Dropdown = ({ title, icon, isOpen, onToggle, children, hasActiveFilters }: DropdownProps) => {
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        onToggle();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onToggle]);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <Button
+        variant="outline"
+        onClick={onToggle}
+        className={`flex items-center gap-2 bg-accent/50 border-accent hover:bg-accent transition-colors ${
+          hasActiveFilters ? 'ring-2 ring-primary/20 bg-primary/10' : ''
+        }`}
+      >
+        {icon}
+        <span className="font-medium">{title}</span>
+        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </Button>
+
+      {isOpen && (
+        <div className="absolute top-full mt-2 left-0 bg-card border rounded-xl shadow-lg z-50 min-w-[320px] max-w-[400px] card-shadow">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface FilterChipProps {
+  label: string;
+  isSelected: boolean;
+  onClick: () => void;
+}
+
+const FilterChip = ({ label, isSelected, onClick }: FilterChipProps) => (
+  <Button
+    variant={isSelected ? "default" : "outline"}
+    size="sm"
+    onClick={onClick}
+    className={`text-sm transition-colors ${
+      isSelected 
+        ? 'bg-primary text-primary-foreground hover:bg-primary-hover' 
+        : 'bg-muted/30 hover:bg-muted border-muted-foreground/20 hover:border-primary/50'
+    }`}
+  >
+    {label}
+  </Button>
+);
+
 export const SearchAndFilters = ({ filters, onFiltersChange, institutionNames }: SearchAndFiltersProps) => {
-  const [showFilters, setShowFilters] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const handleFilterChange = (key: keyof FilterState, value: any) => {
     onFiltersChange({ ...filters, [key]: value });
@@ -32,171 +101,263 @@ export const SearchAndFilters = ({ filters, onFiltersChange, institutionNames }:
     handleFilterChange(key, newArray);
   };
 
+  const toggleDropdown = (dropdown: string) => {
+    setOpenDropdown(openDropdown === dropdown ? null : dropdown);
+  };
+
   const modes: Mode[] = ["text", "voice", "video", "offline"];
-  const insuranceTypes: InsuranceType[] = ["none", "private", "bpjs"];
+  const insuranceTypes: InsuranceType[] = ["private", "bpjs"];
 
   const getModeLabel = (mode: Mode) => {
     switch (mode) {
       case "text": return "Chat";
       case "voice": return "Voice Call";
       case "video": return "Video Call";
-      case "offline": return "Offline";
+      case "offline": return "In Person";
     }
   };
 
   const getInsuranceLabel = (type: InsuranceType) => {
     switch (type) {
-      case "none": return "No Insurance";
-      case "private": return "Private Insurance";
+      case "private": return "Private";
       case "bpjs": return "BPJS";
     }
   };
 
-  const FilterSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <Collapsible>
-      <CollapsibleTrigger className="flex items-center justify-between w-full py-2 hover:bg-muted/50 rounded px-2">
-        <Label className="text-sm font-medium">{title}</Label>
-        <ChevronDown className="h-4 w-4" />
-      </CollapsibleTrigger>
-      <CollapsibleContent className="px-2 pb-2">
-        <div className="space-y-2 max-h-32 overflow-y-auto">
-          {children}
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
-  );
+  const hasLocationFilters = filters.institutions.length > 0;
+  const hasSpecializationFilters = filters.specializations.length > 0;
+  const hasProfessionFilters = filters.professionTypes.length > 0;
+  const hasSessionFilters = filters.modes.length > 0;
+  const hasAdvancedFilters = filters.insurance.length > 0 || filters.priceRange[0] > 0 || filters.priceRange[1] < 2000000;
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search by practitioner name, institution name, city, or mode..."
-            value={filters.search}
-            onChange={(e) => handleFilterChange("search", e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <Button
-          variant="outline"
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2 whitespace-nowrap"
+    <div className="space-y-6">
+      {/* Main Filter Bar */}
+      <div className="flex flex-wrap items-center gap-3">
+        {/* Location Dropdown */}
+        <Dropdown
+          title="Location"
+          icon={<MapPin className="h-4 w-4" />}
+          isOpen={openDropdown === 'location'}
+          onToggle={() => toggleDropdown('location')}
+          hasActiveFilters={hasLocationFilters}
         >
-          <Filter className="h-4 w-4" />
-          <span className="hidden sm:inline">Filters</span>
-        </Button>
-      </div>
-
-      {showFilters && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Filters</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Institution Names */}
-              <FilterSection title="Institution">
-                {institutionNames.map((name) => (
-                  <div key={name} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`institution-${name}`}
-                      checked={filters.institutions.includes(name)}
-                      onCheckedChange={() => handleArrayToggle("institutions", name)}
+          <div className="p-6">
+            <h3 className="font-semibold text-lg mb-4">Location</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-3 block">
+                  Institution
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {institutionNames.slice(0, 8).map((name) => (
+                    <FilterChip
+                      key={name}
+                      label={name}
+                      isSelected={filters.institutions.includes(name)}
+                      onClick={() => handleArrayToggle("institutions", name)}
                     />
-                    <Label htmlFor={`institution-${name}`} className="text-sm cursor-pointer flex-1">
-                      {name}
-                    </Label>
-                  </div>
-                ))}
-              </FilterSection>
-
-              {/* Specializations */}
-              <FilterSection title="Specialization">
-                {specializations.map((spec) => (
-                  <div key={spec} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`spec-${spec}`}
-                      checked={filters.specializations.includes(spec)}
-                      onCheckedChange={() => handleArrayToggle("specializations", spec)}
-                    />
-                    <Label htmlFor={`spec-${spec}`} className="text-sm cursor-pointer flex-1">
-                      {spec}
-                    </Label>
-                  </div>
-                ))}
-              </FilterSection>
-
-              {/* Session Modes */}
-              <FilterSection title="Session Mode">
-                {modes.map((mode) => (
-                  <div key={mode} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`mode-${mode}`}
-                      checked={filters.modes.includes(mode)}
-                      onCheckedChange={() => handleArrayToggle("modes", mode)}
-                    />
-                    <Label htmlFor={`mode-${mode}`} className="text-sm cursor-pointer flex-1">
-                      {getModeLabel(mode)}
-                    </Label>
-                  </div>
-                ))}
-              </FilterSection>
-
-              {/* Profession Types */}
-              <FilterSection title="Profession Type">
-                {professionTypes.map((type) => (
-                  <div key={type} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`profession-${type}`}
-                      checked={filters.professionTypes.includes(type)}
-                      onCheckedChange={() => handleArrayToggle("professionTypes", type)}
-                    />
-                    <Label htmlFor={`profession-${type}`} className="text-sm cursor-pointer flex-1">
-                      {type}
-                    </Label>
-                  </div>
-                ))}
-              </FilterSection>
-
-              {/* Insurance */}
-              <FilterSection title="Insurance">
-                {insuranceTypes.map((ins) => (
-                  <div key={ins} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`ins-${ins}`}
-                      checked={filters.insurance.includes(ins)}
-                      onCheckedChange={() => handleArrayToggle("insurance", ins)}
-                    />
-                    <Label htmlFor={`ins-${ins}`} className="text-sm cursor-pointer flex-1">
-                      {getInsuranceLabel(ins)}
-                    </Label>
-                  </div>
-                ))}
-              </FilterSection>
+                  ))}
+                </div>
+                {institutionNames.length > 8 && (
+                  <Button variant="link" className="text-primary text-sm mt-2 p-0 h-auto">
+                    Show {institutionNames.length - 8} more
+                  </Button>
+                )}
+              </div>
             </div>
 
-            {/* Price Range Slider */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Price Range</Label>
-              <div className="px-2">
-                <Slider
-                  value={filters.priceRange}
-                  onValueChange={(value) => handleFilterChange("priceRange", value as [number, number])}
-                  max={2000000}
-                  min={0}
-                  step={50000}
-                  className="w-full"
+            <div className="flex justify-end mt-6">
+              <Button 
+                onClick={() => setOpenDropdown(null)}
+                className="bg-primary text-primary-foreground hover:bg-primary-hover px-8"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </Dropdown>
+
+        {/* Profession Type Dropdown */}
+        <Dropdown
+          title="Profession"
+          icon={<Stethoscope className="h-4 w-4" />}
+          isOpen={openDropdown === 'profession'}
+          onToggle={() => toggleDropdown('profession')}
+          hasActiveFilters={hasProfessionFilters}
+        >
+          <div className="p-6">
+            <h3 className="font-semibold text-lg mb-4">Profession Type</h3>
+            
+            <div className="flex flex-wrap gap-2">
+              {professionTypes.map((type) => (
+                <FilterChip
+                  key={type}
+                  label={type}
+                  isSelected={filters.professionTypes.includes(type)}
+                  onClick={() => handleArrayToggle("professionTypes", type)}
                 />
-                <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>Rp {filters.priceRange[0].toLocaleString()}</span>
-                  <span>Rp {filters.priceRange[1].toLocaleString()}</span>
+              ))}
+            </div>
+
+            <div className="flex justify-end mt-6">
+              <Button 
+                onClick={() => setOpenDropdown(null)}
+                className="bg-primary text-primary-foreground hover:bg-primary-hover px-8"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </Dropdown>
+
+        {/* Specializations Dropdown */}
+        <Dropdown
+          title="Specializations"
+          icon={<Languages className="h-4 w-4" />}
+          isOpen={openDropdown === 'specializations'}
+          onToggle={() => toggleDropdown('specializations')}
+          hasActiveFilters={hasSpecializationFilters}
+        >
+          <div className="p-6">
+            <h3 className="font-semibold text-lg mb-4">Specializations</h3>
+            
+            <div className="flex flex-wrap gap-2">
+              {specializations.map((spec) => (
+                <FilterChip
+                  key={spec}
+                  label={spec}
+                  isSelected={filters.specializations.includes(spec)}
+                  onClick={() => handleArrayToggle("specializations", spec)}
+                />
+              ))}
+            </div>
+
+            <div className="flex justify-end mt-6">
+              <Button 
+                onClick={() => setOpenDropdown(null)}
+                className="bg-primary text-primary-foreground hover:bg-primary-hover px-8"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </Dropdown>
+
+        {/* Session Mode Dropdown */}
+        <Dropdown
+          title="Session Mode"
+          icon={<Languages className="h-4 w-4" />}
+          isOpen={openDropdown === 'session'}
+          onToggle={() => toggleDropdown('session')}
+          hasActiveFilters={hasSessionFilters}
+        >
+          <div className="p-6">
+            <h3 className="font-semibold text-lg mb-4">Session Mode</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-3 block">
+                  Formats offered
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {modes.map((mode) => (
+                    <FilterChip
+                      key={mode}
+                      label={getModeLabel(mode)}
+                      isSelected={filters.modes.includes(mode)}
+                      onClick={() => handleArrayToggle("modes", mode)}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
+
+            <div className="flex justify-end mt-6">
+              <Button 
+                onClick={() => setOpenDropdown(null)}
+                className="bg-primary text-primary-foreground hover:bg-primary-hover px-8"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </Dropdown>
+
+        {/* Advanced Dropdown */}
+        <Dropdown
+          title="Advanced"
+          icon={<Settings className="h-4 w-4" />}
+          isOpen={openDropdown === 'advanced'}
+          onToggle={() => toggleDropdown('advanced')}
+          hasActiveFilters={hasAdvancedFilters}
+        >
+          <div className="p-6">
+            <h3 className="font-semibold text-lg mb-4">Advanced Filters</h3>
+            
+            <div className="space-y-6">
+              {/* Insurance */}
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-3 block">
+                  Insurance
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {insuranceTypes.map((ins) => (
+                    <FilterChip
+                      key={ins}
+                      label={getInsuranceLabel(ins)}
+                      isSelected={filters.insurance.includes(ins)}
+                      onClick={() => handleArrayToggle("insurance", ins)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Range */}
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-3 block">
+                  Session Cost (IDR)
+                </label>
+                <div className="px-2">
+                  <Slider
+                    value={filters.priceRange}
+                    onValueChange={(value) => handleFilterChange("priceRange", value as [number, number])}
+                    max={2000000}
+                    min={0}
+                    step={50000}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                    <span>Rp {filters.priceRange[0].toLocaleString()}</span>
+                    <span>Rp {filters.priceRange[1].toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end mt-6">
+              <Button 
+                onClick={() => setOpenDropdown(null)}
+                className="bg-primary text-primary-foreground hover:bg-primary-hover px-8"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </Dropdown>
+
+        {/* Search Input */}
+        <div className="relative flex-1 min-w-[280px]">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search keyword"
+            value={filters.search}
+            onChange={(e) => handleFilterChange("search", e.target.value)}
+            className="pl-10 bg-accent/30 border-accent"
+          />
+        </div>
+      </div>
     </div>
   );
 };
