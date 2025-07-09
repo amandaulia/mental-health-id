@@ -1,0 +1,2 @@
+-- Create edge function for feeling analysis and resource recommendations
+-- No database changes needed for this functionality

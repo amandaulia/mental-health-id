@@ -8,6 +8,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import Index from "./pages/Index";
 import About from "./pages/About";
+import ProfessionalCounseling from "./pages/ProfessionalCounseling";
 import PeerCounseling from "./pages/PeerCounseling";
 import PeerCounselingDetail from "./pages/PeerCounselingDetail";
 import StressRelief from "./pages/StressRelief";
@@ -31,6 +32,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/about" element={<About />} />
+              <Route path="/professional-counseling" element={<ProfessionalCounseling />} />
               <Route path="/peer-counseling" element={<PeerCounseling />} />
               <Route path="/peer-counseling/:id" element={<PeerCounselingDetail />} />
               <Route path="/stress-relief" element={<StressRelief />} />

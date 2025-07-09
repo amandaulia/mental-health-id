@@ -172,3 +172,96 @@ export const professionTypes: ProfessionType[] = [
   "Counselor",
   "Social Worker"
 ];
+
+export const mockPeerCounselingData = [
+  {
+    id: "pc1",
+    type: "peer-counseling",
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop",
+    name: "Jakarta Anxiety Support Circle",
+    specialization: "Anxiety & Panic Disorders",
+    serviceType: "Peer Counseling",
+    city: "Jakarta",
+    price: "Free",
+    isVerified: true
+  },
+  {
+    id: "pc2",
+    type: "support-group",
+    image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&h=400&fit=crop",
+    name: "Depression Warriors Community",
+    specialization: "Depression & Mood Disorders",
+    serviceType: "Support Group",
+    city: "Bandung",
+    price: "25000",
+    isVerified: true
+  },
+  {
+    id: "pc3",
+    type: "peer-counseling",
+    image: "https://images.unsplash.com/photo-1600298881974-6be191ceeda1?w=400&h=400&fit=crop",
+    name: "Young Adults Mental Health",
+    specialization: "General Mental Health",
+    serviceType: "Peer Counseling",
+    city: "Surabaya",
+    price: "50000",
+    isVerified: false
+  }
+];
+
+export const mockActivitiesData = [
+  {
+    id: "act1",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop",
+    name: "Mindful Art Therapy",
+    organizationName: "Creative Minds Studio",
+    activityType: "Art Therapy",
+    city: "Jakarta",
+    price: "150000"
+  },
+  {
+    id: "act2",
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+    name: "Nature Hiking Group",
+    organizationName: "Outdoor Wellness",
+    activityType: "Nature Therapy",
+    city: "Bogor",
+    price: "Free"
+  },
+  {
+    id: "act3",
+    image: "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=400&h=400&fit=crop",
+    name: "Meditation & Mindfulness",
+    organizationName: "Inner Peace Center",
+    activityType: "Meditation",
+    city: "Yogyakarta",
+    price: "75000"
+  }
+];
+
+export const mockOrganizationsData = [
+  {
+    id: "org1",
+    type: "organization",
+    image: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400&h=400&fit=crop",
+    name: "Mental Health Indonesia Foundation",
+    organizationType: "Non-Profit Organization",
+    city: "Jakarta"
+  },
+  {
+    id: "org2",
+    type: "community",
+    image: "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=400&h=400&fit=crop",
+    name: "Student Mental Health Network",
+    organizationType: "Student Community",
+    city: "Bandung"
+  },
+  {
+    id: "org3",
+    type: "organization",
+    image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&h=400&fit=crop",
+    name: "Workplace Wellness Initiative",
+    organizationType: "Corporate Program",
+    city: "Surabaya"
+  }
+];

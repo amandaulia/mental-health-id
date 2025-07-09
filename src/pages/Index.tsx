@@ -1,15 +1,21 @@
-
-import { useState, useMemo, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { FilterState, Resource } from "@/types";
+import { useState, useMemo } from "react";
+import { FilterState } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
 import { usePractitioners, useInstitutions } from "@/hooks/useDatabase";
 import { transformPractitioner, transformInstitution } from "@/utils/dataTransform";
+import { mockPeerCounselingData, mockActivitiesData, mockOrganizationsData } from "@/data/mockData";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [feelings, setFeelings] = useState("");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [recommendations, setRecommendations] = useState<UnifiedCardData[]>([]);
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     locations: [],
@@ -21,12 +27,13 @@ const Index = () => {
     insurance: []
   });
 
+  const { toast } = useToast();
   const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitioners();
   const { data: dbInstitutions, isLoading: institutionsLoading } = useInstitutions();
 
-  // Transform database data to match frontend types
-  const allResources: Resource[] = useMemo(() => {
-    const resources: Resource[] = [];
+  // Transform database data
+  const allProfessionalResources = useMemo(() => {
+    const resources = [];
     
     if (dbPractitioners) {
       const transformedPractitioners = dbPractitioners.map(p => transformPractitioner(p));
@@ -41,138 +48,107 @@ const Index = () => {
     return resources;
   }, [dbPractitioners, dbInstitutions]);
 
-  // Load filters from URL params on mount
-  useEffect(() => {
-    const urlFilters: Partial<FilterState> = {};
-    
-    for (const [key, value] of searchParams.entries()) {
-      if (key in filters) {
-        if (Array.isArray(filters[key as keyof FilterState])) {
-          urlFilters[key as keyof FilterState] = [value] as any;
-        } else {
-          urlFilters[key as keyof FilterState] = value as any;
-        }
-      }
+  const handleFeelingsAnalysis = async () => {
+    if (!feelings.trim()) {
+      toast({
+        title: "Please share your feelings",
+        description: "Tell us what you're feeling today to get personalized recommendations.",
+        variant: "destructive"
+      });
+      return;
     }
-    
-    if (Object.keys(urlFilters).length > 0) {
-      setFilters(prev => ({ ...prev, ...urlFilters }));
+
+    setIsAnalyzing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('analyze-feelings', {
+        body: { feelings: feelings.trim() }
+      });
+
+      if (error) throw error;
+
+      // Transform recommendations to card format
+      const recommendedCards: UnifiedCardData[] = data.recommendations?.map((rec: any) => ({
+        type: rec.type,
+        id: rec.id,
+        name: rec.name,
+        city: rec.city || "Jakarta",
+        isVerified: rec.isVerified || false,
+        ...rec
+      })) || [];
+
+      setRecommendations(recommendedCards);
+      
+      toast({
+        title: "Recommendations Ready",
+        description: `Found ${recommendedCards.length} personalized recommendations for you.`
+      });
+    } catch (error) {
+      console.error('Error analyzing feelings:', error);
+      toast({
+        title: "Analysis Failed",
+        description: "We couldn't analyze your feelings right now. Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsAnalyzing(false);
     }
-  }, []);
+  };
 
-  const institutionNames = useMemo(() => {
-    const names = new Set<string>();
-    allResources.forEach(resource => {
-      if (resource.type === "practitioner") {
-        names.add(resource.bureauName);
-      } else {
-        names.add(resource.name);
-      }
-    });
-    return Array.from(names);
-  }, [allResources]);
-
-  const filteredResources = useMemo(() => {
-    return allResources.filter((resource) => {
-      // Enhanced search filter - search by name, city, and mode
+  const filteredProfessionalResources = useMemo(() => {
+    return allProfessionalResources.filter((resource) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        const matchName = resource.type === "practitioner" 
-          ? resource.name.toLowerCase().includes(searchLower)
-          : resource.name.toLowerCase().includes(searchLower);
-        const matchInstitution = resource.type === "practitioner"
+        const matchName = resource.name.toLowerCase().includes(searchLower);
+        const matchInstitution = resource.type === "practitioner" 
           ? resource.bureauName.toLowerCase().includes(searchLower)
           : resource.name.toLowerCase().includes(searchLower);
         const matchCity = resource.city.toLowerCase().includes(searchLower);
-        const matchMode = resource.modes.some(mode => {
-          const modeLabel = mode === "text" ? "chat" : 
-                           mode === "voice" ? "voice call" : 
-                           mode === "video" ? "video call" : 
-                           mode === "offline" ? "offline" : mode;
-          return modeLabel.toLowerCase().includes(searchLower);
-        });
         
-        if (!matchName && !matchInstitution && !matchCity && !matchMode) return false;
+        if (!matchName && !matchInstitution && !matchCity) return false;
       }
 
-      // Location filter (City & Country)
       if (filters.locations.length > 0) {
-        const cityCountry = `${resource.city}, Indonesia`; // Assuming Indonesia for now
+        const cityCountry = `${resource.city}, Indonesia`;
         if (!filters.locations.some(loc => cityCountry.includes(loc.split(',')[0]))) return false;
-      }
-
-      // Institution filter
-      if (filters.institutions.length > 0) {
-        const institutionName = resource.type === "practitioner" ? resource.bureauName : resource.name;
-        if (!filters.institutions.includes(institutionName)) return false;
-      }
-
-      // Profession types filter
-      if (filters.professionTypes.length > 0) {
-        const hasMatchingProfession = resource.professionTypes.some(type => 
-          filters.professionTypes.includes(type)
-        );
-        if (!hasMatchingProfession) return false;
-      }
-
-      // Type-specific filters
-      if (resource.type === "practitioner") {
-        // Specializations filter
-        if (filters.specializations.length > 0) {
-          const hasMatchingSpec = resource.specializations.some(spec => 
-            filters.specializations.includes(spec)
-          );
-          if (!hasMatchingSpec) return false;
-        }
-
-        // Price range filter
-        const allPrices = resource.services.map(s => s.price).filter(Boolean);
-        if (allPrices.length > 0) {
-          const minPrice = Math.min(...allPrices);
-          const maxPrice = Math.max(...allPrices);
-          if (minPrice > filters.priceRange[1] || maxPrice < filters.priceRange[0]) {
-            return false;
-          }
-        }
-
-        // Modes filter
-        if (filters.modes.length > 0) {
-          const hasMatchingMode = resource.modes.some(mode => 
-            filters.modes.includes(mode)
-          );
-          if (!hasMatchingMode) return false;
-        }
-      }
-
-      if (resource.type === "bureau") {
-        // Specializations filter for bureaus
-        if (filters.specializations.length > 0) {
-          const hasMatchingSpec = resource.specializations.some(spec => 
-            filters.specializations.includes(spec)
-          );
-          if (!hasMatchingSpec) return false;
-        }
-
-        // Modes filter for bureaus
-        if (filters.modes.length > 0) {
-          const hasMatchingMode = resource.modes.some(mode => 
-            filters.modes.includes(mode)
-          );
-          if (!hasMatchingMode) return false;
-        }
-      }
-
-      // Insurance filter (applies to both)
-      if (filters.insurance.length > 0) {
-        const hasMatchingInsurance = resource.insurance.some(ins => 
-          filters.insurance.includes(ins)
-        );
-        if (!hasMatchingInsurance) return false;
       }
 
       return true;
     });
-  }, [filters, allResources]);
+  }, [filters, allProfessionalResources]);
+
+  const filteredPeerCounseling = useMemo(() => {
+    return mockPeerCounselingData.filter((item) => {
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        if (!item.name.toLowerCase().includes(searchLower) && 
+            !item.city.toLowerCase().includes(searchLower)) return false;
+      }
+      return true;
+    });
+  }, [filters]);
+
+  const filteredActivities = useMemo(() => {
+    return mockActivitiesData.filter((item) => {
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        if (!item.name.toLowerCase().includes(searchLower) && 
+            !item.organizationName.toLowerCase().includes(searchLower) &&
+            !item.city.toLowerCase().includes(searchLower)) return false;
+      }
+      return true;
+    });
+  }, [filters]);
+
+  const filteredOrganizations = useMemo(() => {
+    return mockOrganizationsData.filter((item) => {
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        if (!item.name.toLowerCase().includes(searchLower) && 
+            !item.city.toLowerCase().includes(searchLower)) return false;
+      }
+      return true;
+    });
+  }, [filters]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
@@ -192,6 +168,18 @@ const Index = () => {
       insurance: []
     });
   };
+
+  const institutionNames = useMemo(() => {
+    const names = new Set<string>();
+    allProfessionalResources.forEach(resource => {
+      if (resource.type === "practitioner") {
+        names.add(resource.bureauName);
+      } else {
+        names.add(resource.name);
+      }
+    });
+    return Array.from(names);
+  }, [allProfessionalResources]);
 
   const isLoading = practitionersLoading || institutionsLoading;
 
@@ -215,15 +203,60 @@ const Index = () => {
         <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
           <span className="gradient-text">Mental Health</span> Resource Directory
         </h1>
-        <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-          Your trusted companion in finding qualified psychologists, psychiatrists, and mental health clinics. 
+        <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
+          Your trusted companion in finding qualified mental health resources and support. 
           Taking care of your mental health is a brave and important step. 🌟
         </p>
       </div>
 
-      {/* Search and Filters */}
+      {/* Feelings Analysis Section */}
+      <div className="mb-8 sm:mb-12">
+        <div className="bg-card rounded-xl p-6 card-shadow max-w-4xl mx-auto">
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">
+            How are you feeling today?
+          </h2>
+          <p className="text-muted-foreground mb-4">
+            Share what you're experiencing, and we'll recommend personalized mental health resources for you.
+          </p>
+          <Textarea
+            value={feelings}
+            onChange={(e) => setFeelings(e.target.value)}
+            placeholder="I've been feeling anxious about work lately and having trouble sleeping..."
+            className="min-h-[120px] mb-4"
+          />
+          <Button 
+            onClick={handleFeelingsAnalysis}
+            disabled={isAnalyzing}
+            className="w-full sm:w-auto"
+          >
+            {isAnalyzing ? "Analyzing..." : "Get Personalized Recommendations"}
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Recommendations Section */}
+      {recommendations.length > 0 && (
+        <div className="mb-8 sm:mb-12">
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-6">
+            Personalized Recommendations for You
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {recommendations.map((recommendation) => (
+              <div key={recommendation.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+                <UnifiedCard data={recommendation} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Search and Browse Section */}
       <div className="mb-8 sm:mb-10">
         <div className="bg-card rounded-xl p-6 card-shadow">
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-6">
+            Browse All Resources
+          </h2>
           <SearchAndFilters
             filters={filters}
             onFiltersChange={setFilters}
@@ -239,100 +272,194 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Results Section */}
-      <div className="space-y-6 sm:space-y-8">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-            <span className="text-primary">{filteredResources.length}</span> Resources Found
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredResources.map((resource) => {
-            const formatPrice = (prices: number[]) => {
-              if (prices.length === 0) return undefined;
-              if (prices.length === 1) return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                maximumFractionDigits: 0
-              }).format(prices[0]);
-              
-              const minPrice = Math.min(...prices);
-              const maxPrice = Math.max(...prices);
-              return `${new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                maximumFractionDigits: 0
-              }).format(minPrice)} - ${new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                maximumFractionDigits: 0
-              }).format(maxPrice)}`;
-            };
-
-            let cardData: UnifiedCardData;
-            
-            if (resource.type === "practitioner") {
-              const prices = resource.services.map(s => s.price).filter(Boolean);
-              cardData = {
-                type: "practitioner",
-                id: resource.id,
-                image: resource.image,
-                name: resource.name,
-                city: resource.city,
-                isVerified: resource.isVerified,
-                institutionName: resource.bureauName,
-                professionTypes: resource.professionTypes,
-                specializations: resource.specializations,
-                priceRange: formatPrice(prices),
-                insurance: resource.insurance,
-                modes: resource.modes
-              };
-            } else {
-              cardData = {
-                type: "institution",
-                id: resource.id,
-                image: resource.image,
-                name: resource.name,
-                city: resource.city,
-                isVerified: resource.isVerified,
-                professionTypes: resource.professionTypes,
-                specializations: resource.specializations,
-                insurance: resource.insurance,
-                modes: resource.modes
-              };
-            }
-
-            return (
-              <div key={resource.id} className="transform transition-all duration-200 hover:scale-[1.02]">
-                <UnifiedCard 
-                  data={cardData} 
-                  linkTo={resource.type === "practitioner" ? `/practitioner/${resource.id}` : `/bureau/${resource.id}`}
-                />
-              </div>
-            );
-          })}
-        </div>
-
-        {filteredResources.length === 0 && (
-          <div className="text-center py-16">
-            <div className="max-w-md mx-auto">
-              <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">
-                No resources found
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                We couldn't find any resources matching your criteria. Try adjusting your filters or search terms.
-              </p>
-              <button 
-                onClick={handleClearAllFilters}
-                className="text-primary hover:text-primary-hover font-medium"
-              >
-                Clear all filters
-              </button>
-            </div>
+      {/* Preview Sections */}
+      <div className="space-y-8">
+        {/* Professional Counseling Preview */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+              Professional Counseling
+            </h2>
+            <Button variant="outline" asChild>
+              <a href="/professional-counseling">
+                View All <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
           </div>
-        )}
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredProfessionalResources.slice(0, 3).map((resource) => {
+              const formatPrice = (prices: number[]) => {
+                if (prices.length === 0) return undefined;
+                if (prices.length === 1) return new Intl.NumberFormat('id-ID', {
+                  style: 'currency',
+                  currency: 'IDR',
+                  maximumFractionDigits: 0
+                }).format(prices[0]);
+                
+                const minPrice = Math.min(...prices);
+                const maxPrice = Math.max(...prices);
+                return `${new Intl.NumberFormat('id-ID', {
+                  style: 'currency',
+                  currency: 'IDR',
+                  maximumFractionDigits: 0
+                }).format(minPrice)} - ${new Intl.NumberFormat('id-ID', {
+                  style: 'currency',
+                  currency: 'IDR',
+                  maximumFractionDigits: 0
+                }).format(maxPrice)}`;
+              };
+
+              let cardData: UnifiedCardData;
+              
+              if (resource.type === "practitioner") {
+                const prices = resource.services.map(s => s.price).filter(Boolean);
+                cardData = {
+                  type: "practitioner",
+                  id: resource.id,
+                  image: resource.image,
+                  name: resource.name,
+                  city: resource.city,
+                  isVerified: resource.isVerified,
+                  institutionName: resource.bureauName,
+                  professionTypes: resource.professionTypes,
+                  specializations: resource.specializations,
+                  priceRange: formatPrice(prices),
+                  insurance: resource.insurance,
+                  modes: resource.modes
+                };
+              } else {
+                cardData = {
+                  type: "institution",
+                  id: resource.id,
+                  image: resource.image,
+                  name: resource.name,
+                  city: resource.city,
+                  isVerified: resource.isVerified,
+                  professionTypes: resource.professionTypes,
+                  specializations: resource.specializations,
+                  insurance: resource.insurance,
+                  modes: resource.modes
+                };
+              }
+
+              return (
+                <div key={resource.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+                  <UnifiedCard 
+                    data={cardData} 
+                    linkTo={resource.type === "practitioner" ? `/practitioner/${resource.id}` : `/bureau/${resource.id}`}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Peer Counseling & Support Groups Preview */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+              Peer Counseling & Support Groups
+            </h2>
+            <Button variant="outline" asChild>
+              <a href="/peer-counseling">
+                View All <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredPeerCounseling.slice(0, 3).map((item) => {
+              const cardData: UnifiedCardData = {
+                type: item.type === "peer-counseling" ? "peer-counseling" : "support-group",
+                id: item.id,
+                image: item.image,
+                name: item.name,
+                city: item.city,
+                isVerified: item.isVerified,
+                specialization: item.specialization,
+                serviceType: item.serviceType,
+                price: item.price
+              };
+
+              return (
+                <div key={item.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+                  <UnifiedCard 
+                    data={cardData} 
+                    linkTo={`/peer-counseling/${item.id}`}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Stress Relief Activities Preview */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+              Stress Relief Activities
+            </h2>
+            <Button variant="outline" asChild>
+              <a href="/stress-relief">
+                View All <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredActivities.slice(0, 3).map((item) => {
+              const cardData: UnifiedCardData = {
+                type: "activity",
+                id: item.id,
+                image: item.image,
+                name: item.name,
+                city: item.city,
+                organizationName: item.organizationName,
+                activityType: item.activityType,
+                price: item.price
+              };
+
+              return (
+                <div key={item.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+                  <UnifiedCard data={cardData} />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Organizations & Communities Preview */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+              Organizations & Communities
+            </h2>
+            <Button variant="outline" asChild>
+              <a href="/organizations">
+                View All <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredOrganizations.slice(0, 3).map((item) => {
+              const cardData: UnifiedCardData = {
+                type: item.type === "organization" ? "organization" : "community",
+                id: item.id,
+                image: item.image,
+                name: item.name,
+                city: item.city,
+                organizationType: item.organizationType
+              };
+
+              return (
+                <div key={item.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+                  <UnifiedCard 
+                    data={cardData} 
+                    linkTo={`/organizations/${item.id}`}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

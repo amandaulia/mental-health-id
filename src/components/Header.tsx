@@ -28,6 +28,9 @@ export const Header = () => {
             <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium">
               About
             </a>
+            <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium">
+              Professional Counseling
+            </a>
             <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium">
               Peer Counseling & Support Group
             </a>
@@ -56,6 +59,9 @@ export const Header = () => {
             <nav className="flex flex-col space-y-3">
               <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
                 About
+              </a>
+              <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
+                Professional Counseling
               </a>
               <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
                 Peer Counseling & Support Group
