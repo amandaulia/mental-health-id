@@ -48,8 +48,8 @@ const Dropdown = ({ title, icon, isOpen, onToggle, children, hasActiveFilters }:
       <Button
         variant="outline"
         onClick={onToggle}
-        className={`flex items-center gap-2 bg-accent/50 border-accent hover:bg-accent transition-colors ${
-          hasActiveFilters ? 'ring-2 ring-primary/20 bg-primary/10' : ''
+        className={`flex items-center gap-2 bg-lavender/70 border-lavender/60 hover:bg-lavender/80 transition-colors text-foreground ${
+          hasActiveFilters ? 'ring-2 ring-lavender shadow-md bg-lavender' : ''
         }`}
       >
         {icon}
@@ -78,8 +78,8 @@ const FilterChip = ({ label, isSelected, onClick }: FilterChipProps) => (
     onClick={onClick}
     className={`text-sm transition-colors border ${
       isSelected 
-        ? 'bg-lavender text-white hover:bg-lavender/90 border-lavender' 
-        : 'bg-lavender/60 hover:bg-lavender border-lavender text-white'
+        ? 'bg-lavender text-white hover:bg-lavender/90 border-lavender shadow-md' 
+        : 'bg-lavender/70 hover:bg-lavender/80 border-lavender/60 text-foreground'
     }`}
   >
     {label}
