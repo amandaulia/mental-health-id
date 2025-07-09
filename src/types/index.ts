@@ -37,11 +37,9 @@ export interface Service {
 }
 
 export interface ContactDetails {
-  phone?: string;
   whatsapp?: string;
   website?: string;
   instagram?: string;
-  facebook?: string;
 }
 
 export interface Practitioner {

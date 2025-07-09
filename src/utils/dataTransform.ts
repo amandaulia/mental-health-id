@@ -115,12 +115,6 @@ export const transformContactDetails = (dbContactDetails: DBContactDetail[]): Co
       case 'INSTAGRAM':
         contacts.instagram = contact.link || contact.value;
         break;
-      case 'FACEBOOK':
-        contacts.facebook = contact.link || contact.value;
-        break;
-      case 'PHONE':
-        contacts.phone = contact.value;
-        break;
     }
   });
   
