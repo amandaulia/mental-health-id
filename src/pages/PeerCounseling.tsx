@@ -66,7 +66,7 @@ const PeerCounseling = () => {
       {/* Hero Section */}
       <div className="mb-8 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
-          <span className="gradient-text">Peer Counseling</span> & Support Groups
+          <span className="gradient-text">Peer & Group</span> Counseling
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
           Connect with peers and find support groups for shared experiences and guidance. 🤝
