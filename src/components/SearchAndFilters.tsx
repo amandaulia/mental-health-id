@@ -26,8 +26,6 @@ export const SearchAndFilters = ({
   onFiltersChange,
   institutionNames
 }: SearchAndFiltersProps) => {
-  console.log('SearchAndFilters rendering with filters:', filters);
-  console.log('SearchAndFilters institutionNames:', institutionNames);
   const [priceRange, setPriceRange] = useState(filters.priceRange);
 
   const handleSearchChange = (value: string) => {
