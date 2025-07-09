@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ModeIcon } from "./ModeIcon";
 import { Clock } from "lucide-react";
 import { Practitioner } from "@/types";
+import { trackBookingClick } from "@/utils/analytics";
 
 interface PractitionerServicesProps {
   practitioner: Practitioner;
@@ -16,6 +17,14 @@ export const PractitionerServices = ({
   formatPrice, 
   getModeLabel 
 }: PractitionerServicesProps) => {
+  const handleBookingClick = (serviceName: string, price?: number) => {
+    trackBookingClick(serviceName, practitioner.name, price);
+  };
+
+  const handleLearnMoreClick = (serviceName: string) => {
+    trackBookingClick(`${serviceName} - Learn More`, practitioner.name);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -47,14 +56,23 @@ export const PractitionerServices = ({
                 </div>
                 <div className="flex gap-2">
                   {service.bookingUrl && (
-                    <Button size="sm" asChild>
+                    <Button 
+                      size="sm" 
+                      asChild
+                      onClick={() => handleBookingClick(service.name, service.price)}
+                    >
                       <a href={service.bookingUrl} target="_blank" rel="noopener noreferrer">
                         Book Now
                       </a>
                     </Button>
                   )}
                   {service.learnMoreUrl && (
-                    <Button variant="outline" size="sm" asChild>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      asChild
+                      onClick={() => handleLearnMoreClick(service.name)}
+                    >
                       <a href={service.learnMoreUrl} target="_blank" rel="noopener noreferrer">
                         Learn More
                       </a>

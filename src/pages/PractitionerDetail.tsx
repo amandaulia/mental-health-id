@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
@@ -12,6 +11,7 @@ import { usePractitioner, useServicesByPractitioner, useContactDetailsByPractiti
 import { transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
 import { useEffect, useState } from "react";
 import { Practitioner } from "@/types";
+import { trackError } from "@/utils/analytics";
 
 const PractitionerDetail = () => {
   const { id } = useParams();
@@ -48,6 +48,16 @@ const PractitionerDetail = () => {
     }
   }, [dbLocations]);
 
+  useEffect(() => {
+    if (practitionerError) {
+      trackError(
+        'Data Loading Error',
+        'Failed to load practitioner details',
+        `Practitioner ID: ${practitionerId}`
+      );
+    }
+  }, [practitionerError, practitionerId]);
+
   if (practitionerLoading || servicesLoading || contactLoading || locationsLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -59,7 +69,9 @@ const PractitionerDetail = () => {
   if (practitionerError) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-500">Error loading practitioner details</div>
+        <div className="text-center text-red-500">
+          Error loading practitioner details. Please try again later.
+        </div>
       </div>
     );
   }
