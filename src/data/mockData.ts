@@ -41,7 +41,6 @@ export const mockPractitioners: Practitioner[] = [
     ],
     modes: ["text", "video", "offline"],
     contactDetails: {
-      phone: "+6281234567890",
       whatsapp: "+6281234567890",
       website: "https://mindcare.com",
       instagram: "https://instagram.com/drsarahjohnson"
@@ -90,7 +89,6 @@ export const mockPractitioners: Practitioner[] = [
     ],
     modes: ["voice", "video", "offline"],
     contactDetails: {
-      phone: "+6281987654321",
       whatsapp: "+6281987654321",
       website: "https://serenity-clinic.com"
     },
@@ -118,7 +116,6 @@ export const mockBureaus: Bureau[] = [
     insurance: ["private", "bpjs"],
     modes: ["text", "video", "offline"],
     contactDetails: {
-      phone: "+6281234567890",
       whatsapp: "+6281234567890",
       website: "https://mindcare.com",
       instagram: "https://instagram.com/mindcare"
@@ -143,10 +140,8 @@ export const mockBureaus: Bureau[] = [
     insurance: ["private"],
     modes: ["voice", "video", "offline"],
     contactDetails: {
-      phone: "+6281987654321",
       whatsapp: "+6281987654321",
-      website: "https://serenity-clinic.com",
-      facebook: "https://facebook.com/serenityclinic"
+      website: "https://serenity-clinic.com"
     },
     isVerified: true,
     lastUpdated: "2024-01-10"
