@@ -116,22 +116,22 @@ export const SearchAndFilters = ({
   };
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto">
+    <div className="flex items-center gap-1 flex-nowrap">{/* Removed overflow-x-auto and reduced gap */}
       {/* Location Filter */}
       <Popover>
         <PopoverTrigger asChild>
           <Button 
             variant="outline" 
-            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto font-medium"
+            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
           >
-            <MapPin className="h-4 w-4 mr-2" />
+            <MapPin className="h-3 w-3 mr-1" />
             Location
             {getActiveFilterCount(filters.locations) > 0 && (
-              <Badge className="ml-2 bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+              <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                 {getActiveFilterCount(filters.locations)}
               </Badge>
             )}
-            <ChevronDown className="h-4 w-4 ml-2" />
+            <ChevronDown className="h-3 w-3 ml-1" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-64 p-4">
@@ -156,16 +156,16 @@ export const SearchAndFilters = ({
         <PopoverTrigger asChild>
           <Button 
             variant="outline" 
-            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto font-medium"
+            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
           >
-            <Building2 className="h-4 w-4 mr-2" />
+            <Building2 className="h-3 w-3 mr-1" />
             Institution
             {getActiveFilterCount(filters.institutions) > 0 && (
-              <Badge className="ml-2 bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+              <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                 {getActiveFilterCount(filters.institutions)}
               </Badge>
             )}
-            <ChevronDown className="h-4 w-4 ml-2" />
+            <ChevronDown className="h-3 w-3 ml-1" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-64 p-4">
@@ -190,16 +190,16 @@ export const SearchAndFilters = ({
         <PopoverTrigger asChild>
           <Button 
             variant="outline" 
-            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto font-medium"
+            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
           >
-            <User className="h-4 w-4 mr-2" />
+            <User className="h-3 w-3 mr-1" />
             Profession
             {getActiveFilterCount(filters.professionTypes) > 0 && (
-              <Badge className="ml-2 bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+              <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                 {getActiveFilterCount(filters.professionTypes)}
               </Badge>
             )}
-            <ChevronDown className="h-4 w-4 ml-2" />
+            <ChevronDown className="h-3 w-3 ml-1" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-64 p-4">
@@ -224,16 +224,16 @@ export const SearchAndFilters = ({
         <PopoverTrigger asChild>
           <Button 
             variant="outline" 
-            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto font-medium"
+            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
           >
-            <Heart className="h-4 w-4 mr-2" />
+            <Heart className="h-3 w-3 mr-1" />
             Specializations
             {getActiveFilterCount(filters.specializations) > 0 && (
-              <Badge className="ml-2 bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+              <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                 {getActiveFilterCount(filters.specializations)}
               </Badge>
             )}
-            <ChevronDown className="h-4 w-4 ml-2" />
+            <ChevronDown className="h-3 w-3 ml-1" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-64 p-4">
@@ -258,16 +258,16 @@ export const SearchAndFilters = ({
         <PopoverTrigger asChild>
           <Button 
             variant="outline" 
-            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto font-medium"
+            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
           >
-            <Monitor className="h-4 w-4 mr-2" />
+            <Monitor className="h-3 w-3 mr-1" />
             Session Mode
             {getActiveFilterCount(filters.modes) > 0 && (
-              <Badge className="ml-2 bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+              <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                 {getActiveFilterCount(filters.modes)}
               </Badge>
             )}
-            <ChevronDown className="h-4 w-4 ml-2" />
+            <ChevronDown className="h-3 w-3 ml-1" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-64 p-4">
@@ -292,16 +292,16 @@ export const SearchAndFilters = ({
         <PopoverTrigger asChild>
           <Button 
             variant="outline" 
-            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto font-medium"
+            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
           >
-            <Settings className="h-4 w-4 mr-2" />
+            <Settings className="h-3 w-3 mr-1" />
             Advanced
             {getActiveFilterCount(filters.insurance) > 0 && (
-              <Badge className="ml-2 bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+              <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                 {getActiveFilterCount(filters.insurance)}
               </Badge>
             )}
-            <ChevronDown className="h-4 w-4 ml-2" />
+            <ChevronDown className="h-3 w-3 ml-1" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80 p-4">
@@ -343,15 +343,15 @@ export const SearchAndFilters = ({
       </Popover>
 
       {/* Search Input */}
-      <div className="w-48 ml-auto">
+      <div className="w-40 ml-auto">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3" />
           <Input
             type="text"
-            placeholder="Search keyword"
+            placeholder="Search..."
             value={filters.search}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-10 rounded-full border-gray-200"
+            className="pl-7 text-sm rounded-full border-gray-200 h-8"
           />
         </div>
       </div>
