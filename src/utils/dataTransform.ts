@@ -108,7 +108,7 @@ export const transformContactDetails = (dbContactDetails: DBContactDetail[]): Co
   dbContactDetails.forEach(contact => {
     switch (contact.contact_type) {
       case 'WHATSAPP':
-        contacts.whatsapp = contact.value;
+        contacts.whatsapp = contact.link || contact.value;
         break;
       case 'WEBSITE':
         contacts.website = contact.link || contact.value;
@@ -116,7 +116,12 @@ export const transformContactDetails = (dbContactDetails: DBContactDetail[]): Co
       case 'INSTAGRAM':
         contacts.instagram = contact.link || contact.value;
         break;
-      // Add phone and facebook when they're added to the enum
+      case 'FACEBOOK':
+        contacts.facebook = contact.link || contact.value;
+        break;
+      case 'PHONE':
+        contacts.phone = contact.value;
+        break;
     }
   });
   
