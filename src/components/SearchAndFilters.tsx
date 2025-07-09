@@ -394,7 +394,7 @@ export const SearchAndFilters = ({
       </Popover>
 
       {/* Search Input */}
-      <div className="w-40 ml-auto">
+      <div className="flex-1 ml-2">
         <div className="relative">
           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3" />
           <Input
