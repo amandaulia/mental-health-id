@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, DollarSign } from "lucide-react";
+import { Search, MapPin, DollarSign, ChevronDown } from "lucide-react";
 
 // Mock data for peer counseling and support groups
 const mockData = [
@@ -63,17 +63,98 @@ const mockData = [
   }
 ];
 
+interface DropdownProps {
+  title: string;
+  icon: React.ReactNode;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+  hasActiveFilters?: boolean;
+}
+
+const Dropdown = ({ title, icon, isOpen, onToggle, children, hasActiveFilters }: DropdownProps) => {
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        onToggle();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onToggle]);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <Button
+        variant="outline"
+        onClick={onToggle}
+        className={`flex items-center gap-2 bg-lavender border-lavender hover:bg-lavender/90 transition-colors text-lavender-foreground ${
+          hasActiveFilters ? 'ring-2 ring-lavender shadow-md bg-lavender' : ''
+        }`}
+      >
+        {icon}
+        <span className="font-medium">{title}</span>
+        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </Button>
+
+      {isOpen && (
+        <div className="absolute top-full mt-2 left-0 bg-card border rounded-xl shadow-lg z-50 min-w-[280px] card-shadow">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface FilterChipProps {
+  label: string;
+  isSelected: boolean;
+  onClick: () => void;
+}
+
+const FilterChip = ({ label, isSelected, onClick }: FilterChipProps) => (
+  <Button
+    size="sm"
+    onClick={onClick}
+    className={`text-sm transition-colors border ${
+      isSelected 
+      ? 'bg-lavender text-lavender-foreground hover:bg-lavender/90 border-lavender shadow-md' 
+      : 'bg-lavender/50 hover:bg-lavender/70 border-[hsl(var(--lavender-mist)/0.6)] text-lavender-foreground'
+    }`}
+  >
+    {label}
+  </Button>
+);
+
 const PeerCounseling = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState<string>("all");
+  const [selectedCity, setSelectedCity] = useState<string>("all");
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const toggleDropdown = (dropdown: string) => {
+    setOpenDropdown(openDropdown === dropdown ? null : dropdown);
+  };
 
   const filteredData = mockData.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.specialization.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = selectedType === "all" || item.type.toLowerCase().includes(selectedType.toLowerCase());
-    return matchesSearch && matchesType;
+    const matchesCity = selectedCity === "all" || item.city.toLowerCase() === selectedCity.toLowerCase();
+    return matchesSearch && matchesType && matchesCity;
   });
+
+  const uniqueCities = [...new Set(mockData.map(item => item.city))].sort();
+  const types = ["Peer Counseling", "Support Group"];
 
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
@@ -91,38 +172,72 @@ const PeerCounseling = () => {
       {/* Search and Filters */}
       <div className="mb-8 sm:mb-10">
         <div className="bg-card rounded-xl p-6 card-shadow">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Type Filter Dropdown */}
+            <Dropdown
+              title="Type"
+              icon={<DollarSign className="h-4 w-4" />}
+              isOpen={openDropdown === 'type'}
+              onToggle={() => toggleDropdown('type')}
+              hasActiveFilters={selectedType !== "all"}
+            >
+              <div className="p-6">
+                <h3 className="font-semibold text-lg mb-4">Service Type</h3>
+                <div className="flex flex-wrap gap-2">
+                  <FilterChip
+                    label="All Types"
+                    isSelected={selectedType === "all"}
+                    onClick={() => { setSelectedType("all"); setOpenDropdown(null); }}
+                  />
+                  {types.map((type) => (
+                    <FilterChip
+                      key={type}
+                      label={type}
+                      isSelected={selectedType.toLowerCase() === type.toLowerCase()}
+                      onClick={() => { setSelectedType(type.toLowerCase()); setOpenDropdown(null); }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </Dropdown>
+
+            {/* City Filter Dropdown */}
+            <Dropdown
+              title="City"
+              icon={<MapPin className="h-4 w-4" />}
+              isOpen={openDropdown === 'city'}
+              onToggle={() => toggleDropdown('city')}
+              hasActiveFilters={selectedCity !== "all"}
+            >
+              <div className="p-6">
+                <h3 className="font-semibold text-lg mb-4">Location</h3>
+                <div className="flex flex-wrap gap-2">
+                  <FilterChip
+                    label="All Cities"
+                    isSelected={selectedCity === "all"}
+                    onClick={() => { setSelectedCity("all"); setOpenDropdown(null); }}
+                  />
+                  {uniqueCities.map((city) => (
+                    <FilterChip
+                      key={city}
+                      label={city}
+                      isSelected={selectedCity.toLowerCase() === city.toLowerCase()}
+                      onClick={() => { setSelectedCity(city.toLowerCase()); setOpenDropdown(null); }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </Dropdown>
+
+            {/* Search Input */}
+            <div className="relative flex-1 min-w-[280px]">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by name, city, or specialization..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white text-lavender-foreground placeholder:text-lavender-foreground border-lavender focus:outline-none focus:ring-2 focus:ring-lavender focus:border-lavender"
               />
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant={selectedType === "all" ? "default" : "outline"}
-                onClick={() => setSelectedType("all")}
-                size="sm"
-              >
-                All
-              </Button>
-              <Button
-                variant={selectedType === "peer" ? "default" : "outline"}
-                onClick={() => setSelectedType("peer")}
-                size="sm"
-              >
-                Peer Counseling
-              </Button>
-              <Button
-                variant={selectedType === "support" ? "default" : "outline"}
-                onClick={() => setSelectedType("support")}
-                size="sm"
-              >
-                Support Groups
-              </Button>
             </div>
           </div>
         </div>
