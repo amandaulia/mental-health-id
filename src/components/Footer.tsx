@@ -45,6 +45,7 @@ export const Footer = () => {
             <h3 className="text-xl font-semibold mb-4 flex items-center">
               <Heart className="h-5 w-5 mr-2" />
               Resources Quick Links
+            </h3>
             <ul className="space-y-3">
               <li><a href="#stress-relief" className="text-white/80 hover:text-white transition-colors">Activities</a></li>
               <li><a href="#organizations" className="text-white/80 hover:text-white transition-colors">Organizations</a></li>
