@@ -3,21 +3,21 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { initGA, trackPageView } from '@/utils/analytics';
 
-const GA_MEASUREMENT_ID = 'GA_MEASUREMENT_ID'; // This will be replaced with actual ID
+const GA_MEASUREMENT_ID = 'G-0DWXF5DTK4';
 
 export const useAnalytics = () => {
   const location = useLocation();
 
   useEffect(() => {
     // Initialize Google Analytics on first load
-    if (GA_MEASUREMENT_ID && GA_MEASUREMENT_ID !== 'GA_MEASUREMENT_ID') {
+    if (GA_MEASUREMENT_ID) {
       initGA(GA_MEASUREMENT_ID);
     }
   }, []);
 
   useEffect(() => {
     // Track page views on route changes
-    if (GA_MEASUREMENT_ID && GA_MEASUREMENT_ID !== 'GA_MEASUREMENT_ID') {
+    if (GA_MEASUREMENT_ID) {
       const pageName = getPageName(location.pathname);
       trackPageView(pageName);
     }
