@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -147,7 +146,7 @@ const PeerCounseling = () => {
     search: searchTerm,
     locations: selectedCity !== "all" ? [selectedCity] : [],
     institutions: [],
-    professionTypes: selectedType !== "all" ? [selectedType] : [],
+    professionTypes: [],
     specializations: [],
     priceRange: [0, 2000000],
     modes: [],
@@ -157,8 +156,6 @@ const PeerCounseling = () => {
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     if (type === 'locations') {
       setSelectedCity("all");
-    } else if (type === 'professionTypes') {
-      setSelectedType("all");
     }
   };
 

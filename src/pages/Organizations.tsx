@@ -155,7 +155,7 @@ const Organizations = () => {
     search: searchTerm,
     locations: selectedCity !== "all" ? [selectedCity] : [],
     institutions: [],
-    professionTypes: selectedType !== "all" ? [selectedType] : [],
+    professionTypes: [],
     specializations: [],
     priceRange: [0, 2000000],
     modes: [],
@@ -165,8 +165,6 @@ const Organizations = () => {
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     if (type === 'locations') {
       setSelectedCity("all");
-    } else if (type === 'professionTypes') {
-      setSelectedType("all");
     }
   };
 
