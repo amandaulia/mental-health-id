@@ -16,6 +16,10 @@ export const FilterTags = ({ filters, onRemoveFilter, onClearAll }: FilterTagsPr
   const getActiveTags = (): FilterTag[] => {
     const tags: FilterTag[] = [];
     
+    filters.locations.forEach(location => 
+      tags.push({ type: 'locations', value: location, label: location })
+    );
+    
     filters.institutions.forEach(name => 
       tags.push({ type: 'institutions', value: name, label: name })
     );

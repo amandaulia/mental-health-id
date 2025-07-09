@@ -5,8 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { Search, ChevronDown, X, MapPin, Languages, Stethoscope, DollarSign, Settings } from "lucide-react";
+import { Search, ChevronDown, X, MapPin, Building2, Stethoscope, DollarSign, Settings, MessageSquare } from "lucide-react";
 import { specializations, professionTypes } from "@/data/mockData";
+import { useLocations } from "@/hooks/useDatabase";
 
 interface SearchAndFiltersProps {
   filters: FilterState;
@@ -88,6 +89,7 @@ const FilterChip = ({ label, isSelected, onClick }: FilterChipProps) => (
 
 export const SearchAndFilters = ({ filters, onFiltersChange, institutionNames }: SearchAndFiltersProps) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const { data: locations } = useLocations();
 
   const handleFilterChange = (key: keyof FilterState, value: any) => {
     onFiltersChange({ ...filters, [key]: value });
@@ -124,11 +126,16 @@ export const SearchAndFilters = ({ filters, onFiltersChange, institutionNames }:
     }
   };
 
-  const hasLocationFilters = filters.institutions.length > 0;
+  const hasLocationFilters = filters.locations.length > 0;
+  const hasInstitutionFilters = filters.institutions.length > 0;
   const hasSpecializationFilters = filters.specializations.length > 0;
   const hasProfessionFilters = filters.professionTypes.length > 0;
   const hasSessionFilters = filters.modes.length > 0;
   const hasAdvancedFilters = filters.insurance.length > 0 || filters.priceRange[0] > 0 || filters.priceRange[1] < 2000000;
+
+  // Generate unique location options
+  const locationOptions = locations ? 
+    [...new Set(locations.map(loc => `${loc.city}, ${loc.country}`))].sort() : [];
 
   return (
     <div className="space-y-6">
@@ -148,24 +155,57 @@ export const SearchAndFilters = ({ filters, onFiltersChange, institutionNames }:
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-muted-foreground mb-3 block">
-                  Institution
+                  City & Country
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {institutionNames.slice(0, 8).map((name) => (
+                  {locationOptions.slice(0, 8).map((location) => (
                     <FilterChip
-                      key={name}
-                      label={name}
-                      isSelected={filters.institutions.includes(name)}
-                      onClick={() => handleArrayToggle("institutions", name)}
+                      key={location}
+                      label={location}
+                      isSelected={filters.locations.includes(location)}
+                      onClick={() => handleArrayToggle("locations", location)}
                     />
                   ))}
                 </div>
-                {institutionNames.length > 8 && (
+                {locationOptions.length > 8 && (
                   <Button variant="link" className="text-primary text-sm mt-2 p-0 h-auto">
-                    Show {institutionNames.length - 8} more
+                    Show {locationOptions.length - 8} more
                   </Button>
                 )}
               </div>
+            </div>
+
+            <div className="flex justify-end mt-6">
+              <Button 
+                onClick={() => setOpenDropdown(null)}
+                className="bg-primary text-primary-foreground hover:bg-primary-hover px-8"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </Dropdown>
+
+        {/* Institution Dropdown */}
+        <Dropdown
+          title="Institution"
+          icon={<Building2 className="h-4 w-4" />}
+          isOpen={openDropdown === 'institution'}
+          onToggle={() => toggleDropdown('institution')}
+          hasActiveFilters={hasInstitutionFilters}
+        >
+          <div className="p-6">
+            <h3 className="font-semibold text-lg mb-4">Institution</h3>
+            
+            <div className="flex flex-wrap gap-2">
+              {institutionNames.map((name) => (
+                <FilterChip
+                  key={name}
+                  label={name}
+                  isSelected={filters.institutions.includes(name)}
+                  onClick={() => handleArrayToggle("institutions", name)}
+                />
+              ))}
             </div>
 
             <div className="flex justify-end mt-6">
@@ -215,7 +255,7 @@ export const SearchAndFilters = ({ filters, onFiltersChange, institutionNames }:
         {/* Specializations Dropdown */}
         <Dropdown
           title="Specializations"
-          icon={<Languages className="h-4 w-4" />}
+          icon={<Stethoscope className="h-4 w-4" />}
           isOpen={openDropdown === 'specializations'}
           onToggle={() => toggleDropdown('specializations')}
           hasActiveFilters={hasSpecializationFilters}
@@ -248,7 +288,7 @@ export const SearchAndFilters = ({ filters, onFiltersChange, institutionNames }:
         {/* Session Mode Dropdown */}
         <Dropdown
           title="Session Mode"
-          icon={<Languages className="h-4 w-4" />}
+          icon={<MessageSquare className="h-4 w-4" />}
           isOpen={openDropdown === 'session'}
           onToggle={() => toggleDropdown('session')}
           hasActiveFilters={hasSessionFilters}

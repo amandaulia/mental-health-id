@@ -94,7 +94,8 @@ export type Resource = Practitioner | Bureau;
 
 export interface FilterState {
   search: string;
-  institutions: string[];
+  locations: string[]; // Cities/Countries
+  institutions: string[]; // Institution names
   professionTypes: ProfessionType[];
   specializations: Specialization[];
   priceRange: [number, number];

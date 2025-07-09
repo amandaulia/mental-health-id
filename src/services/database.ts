@@ -207,5 +207,20 @@ export const databaseService = {
     }
     
     return data?.map(item => item.location).filter(Boolean) || [];
+  },
+
+  // Fetch all locations
+  async getLocations() {
+    const { data, error } = await supabase
+      .from('location')
+      .select('*')
+      .order('city');
+    
+    if (error) {
+      console.error('Error fetching locations:', error);
+      throw error;
+    }
+    
+    return data || [];
   }
 };

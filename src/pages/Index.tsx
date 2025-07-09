@@ -15,6 +15,7 @@ const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState<FilterState>({
     search: "",
+    locations: [],
     institutions: [],
     professionTypes: [],
     specializations: [],
@@ -95,6 +96,12 @@ const Index = () => {
         });
         
         if (!matchName && !matchInstitution && !matchCity && !matchMode) return false;
+      }
+
+      // Location filter (City & Country)
+      if (filters.locations.length > 0) {
+        const cityCountry = `${resource.city}, Indonesia`; // Assuming Indonesia for now
+        if (!filters.locations.some(loc => cityCountry.includes(loc.split(',')[0]))) return false;
       }
 
       // Institution filter
@@ -179,6 +186,7 @@ const Index = () => {
   const handleClearAllFilters = () => {
     setFilters({
       search: "",
+      locations: [],
       institutions: [],
       professionTypes: [],
       specializations: [],

@@ -94,3 +94,10 @@ export const useLocationsByInstitution = (institutionId: number) => {
     enabled: !!institutionId,
   });
 };
+
+export const useLocations = () => {
+  return useQuery({
+    queryKey: ['locations'],
+    queryFn: databaseService.getLocations,
+  });
+};
