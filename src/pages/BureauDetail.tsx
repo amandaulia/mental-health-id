@@ -1,4 +1,3 @@
-
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,9 +9,10 @@ import { BureauHeader } from "@/components/BureauHeader";
 import { BureauContact } from "@/components/BureauContact";
 import { ModeIcon } from "@/components/ModeIcon";
 import { useState, useEffect } from "react";
-import { useInstitution, usePractitionersByInstitution, useServicesByInstitution, useContactDetailsByInstitution } from "@/hooks/useDatabase";
+import { useInstitution, usePractitionersByInstitution, useServicesByInstitution, useContactDetailsByInstitution, useLocationsByInstitution } from "@/hooks/useDatabase";
 import { transformInstitution, transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
 import { Bureau, Practitioner, Service } from "@/types";
+import { BureauLocations } from "@/components/BureauLocations";
 
 const BureauDetail = () => {
   const { id } = useParams();
@@ -20,12 +20,14 @@ const BureauDetail = () => {
   const [bureau, setBureau] = useState<Bureau | null>(null);
   const [practitioners, setPractitioners] = useState<Practitioner[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [locations, setLocations] = useState<any[]>([]);
   
   const institutionId = parseInt(id || "0");
   const { data: dbInstitution, isLoading: institutionLoading, error: institutionError } = useInstitution(institutionId);
   const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitionersByInstitution(institutionId);
   const { data: dbServices, isLoading: servicesLoading } = useServicesByInstitution(institutionId);
   const { data: dbContactDetails, isLoading: contactLoading } = useContactDetailsByInstitution(institutionId);
+  const { data: dbLocations, isLoading: locationsLoading } = useLocationsByInstitution(institutionId);
 
   useEffect(() => {
     if (dbInstitution && dbServices && dbContactDetails) {
@@ -43,7 +45,21 @@ const BureauDetail = () => {
     }
   }, [dbPractitioners]);
 
-  if (institutionLoading || practitionersLoading || servicesLoading || contactLoading) {
+  useEffect(() => {
+    if (dbLocations) {
+      const transformedLocations = dbLocations.map(loc => ({
+        id: loc.id.toString(),
+        name: loc.name,
+        address: loc.address || "Address not available",
+        city: loc.city,
+        province: loc.province,
+        country: loc.country
+      }));
+      setLocations(transformedLocations);
+    }
+  }, [dbLocations]);
+
+  if (institutionLoading || practitionersLoading || servicesLoading || contactLoading || locationsLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">Loading bureau details...</div>
@@ -197,9 +213,10 @@ const BureauDetail = () => {
             )}
           </div>
 
-          {/* Contact Details Sidebar */}
-          <div className="space-y-8">
+          {/* Contact Details and Locations Sidebar */}
+          <div className="space-y-6">
             <BureauContact bureau={bureau} />
+            <BureauLocations locations={locations} />
           </div>
         </div>
       </div>

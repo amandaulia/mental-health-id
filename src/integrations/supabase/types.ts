@@ -47,6 +47,8 @@ export type Database = {
           created_at: string
           id: number
           institution_id: number | null
+          last_updated_at: string | null
+          location_id: number | null
           practitioner_id: number | null
         }
         Insert: {
@@ -54,6 +56,8 @@ export type Database = {
           created_at?: string
           id?: number
           institution_id?: number | null
+          last_updated_at?: string | null
+          location_id?: number | null
           practitioner_id?: number | null
         }
         Update: {
@@ -61,6 +65,8 @@ export type Database = {
           created_at?: string
           id?: number
           institution_id?: number | null
+          last_updated_at?: string | null
+          location_id?: number | null
           practitioner_id?: number | null
         }
         Relationships: [
@@ -79,6 +85,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "contact_mapping_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "location"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "contact_mapping_practitioner_id_fkey"
             columns: ["practitioner_id"]
             isOneToOne: false
@@ -91,9 +104,9 @@ export type Database = {
         Row: {
           created_at: string
           id: number
+          image: string | null
           insurance: Database["public"]["Enums"]["insurance"][] | null
           last_updated_at: string
-          location_id: number | null
           name: string
           profession_type: Database["public"]["Enums"]["profession_type"][]
           type: Database["public"]["Enums"]["institution_type"]
@@ -102,9 +115,9 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: number
+          image?: string | null
           insurance?: Database["public"]["Enums"]["insurance"][] | null
           last_updated_at: string
-          location_id?: number | null
           name: string
           profession_type: Database["public"]["Enums"]["profession_type"][]
           type: Database["public"]["Enums"]["institution_type"]
@@ -113,23 +126,15 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
+          image?: string | null
           insurance?: Database["public"]["Enums"]["insurance"][] | null
           last_updated_at?: string
-          location_id?: number | null
           name?: string
           profession_type?: Database["public"]["Enums"]["profession_type"][]
           type?: Database["public"]["Enums"]["institution_type"]
           verified?: boolean
         }
-        Relationships: [
-          {
-            foreignKeyName: "institution_location_id_fkey"
-            columns: ["location_id"]
-            isOneToOne: false
-            referencedRelation: "location"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       location: {
         Row: {
@@ -139,6 +144,7 @@ export type Database = {
           created_at: string
           id: number
           last_updated_at: string
+          name: string | null
           province: string
         }
         Insert: {
@@ -148,6 +154,7 @@ export type Database = {
           created_at?: string
           id?: number
           last_updated_at: string
+          name?: string | null
           province: string
         }
         Update: {
@@ -157,9 +164,59 @@ export type Database = {
           created_at?: string
           id?: number
           last_updated_at?: string
+          name?: string | null
           province?: string
         }
         Relationships: []
+      }
+      location_mapping: {
+        Row: {
+          created_at: string
+          id: number
+          institution_id: number | null
+          last_updated_at: string
+          location_id: number
+          practitioner_id: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          institution_id?: number | null
+          last_updated_at: string
+          location_id: number
+          practitioner_id?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          institution_id?: number | null
+          last_updated_at?: string
+          location_id?: number
+          practitioner_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_mapping_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institution"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "location_mapping_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "location"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "location_mapping_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "practitioner"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       practitioner: {
         Row: {
@@ -167,6 +224,7 @@ export type Database = {
           education: string[] | null
           experience: number | null
           id: number
+          image: string | null
           institution_id: number | null
           insurance: Database["public"]["Enums"]["insurance"][] | null
           last_updated_at: string
@@ -181,6 +239,7 @@ export type Database = {
           education?: string[] | null
           experience?: number | null
           id?: number
+          image?: string | null
           institution_id?: number | null
           insurance?: Database["public"]["Enums"]["insurance"][] | null
           last_updated_at?: string
@@ -197,6 +256,7 @@ export type Database = {
           education?: string[] | null
           experience?: number | null
           id?: number
+          image?: string | null
           institution_id?: number | null
           insurance?: Database["public"]["Enums"]["insurance"][] | null
           last_updated_at?: string
@@ -220,13 +280,13 @@ export type Database = {
       }
       services: {
         Row: {
-          book_cta: string | null
+          book_cta: number | null
           created_at: string
           duration: number | null
           id: number
           institution_id: number | null
           last_updated_at: string
-          learn_more_cta: string | null
+          learn_more_cta: number | null
           location_id: number | null
           name: string
           practitioner_id: number | null
@@ -234,13 +294,13 @@ export type Database = {
           session_mode: Database["public"]["Enums"]["session_mode"][] | null
         }
         Insert: {
-          book_cta?: string | null
+          book_cta?: number | null
           created_at?: string
           duration?: number | null
           id?: number
           institution_id?: number | null
           last_updated_at: string
-          learn_more_cta?: string | null
+          learn_more_cta?: number | null
           location_id?: number | null
           name: string
           practitioner_id?: number | null
@@ -248,13 +308,13 @@ export type Database = {
           session_mode?: Database["public"]["Enums"]["session_mode"][] | null
         }
         Update: {
-          book_cta?: string | null
+          book_cta?: number | null
           created_at?: string
           duration?: number | null
           id?: number
           institution_id?: number | null
           last_updated_at?: string
-          learn_more_cta?: string | null
+          learn_more_cta?: number | null
           location_id?: number | null
           name?: string
           practitioner_id?: number | null
@@ -281,6 +341,20 @@ export type Database = {
             columns: ["practitioner_id"]
             isOneToOne: false
             referencedRelation: "practitioner"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "services_book_cta_fkey"
+            columns: ["book_cta"]
+            isOneToOne: false
+            referencedRelation: "contact_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "services_learn_more_cta_fkey"
+            columns: ["learn_more_cta"]
+            isOneToOne: false
+            referencedRelation: "contact_details"
             referencedColumns: ["id"]
           },
         ]

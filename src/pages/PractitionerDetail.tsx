@@ -7,7 +7,8 @@ import { Link } from "react-router-dom";
 import { PractitionerHeader } from "@/components/PractitionerHeader";
 import { PractitionerServices } from "@/components/PractitionerServices";
 import { PractitionerContact } from "@/components/PractitionerContact";
-import { usePractitioner, useServicesByPractitioner, useContactDetailsByPractitioner } from "@/hooks/useDatabase";
+import { PractitionerLocations } from "@/components/PractitionerLocations";
+import { usePractitioner, useServicesByPractitioner, useContactDetailsByPractitioner, useLocationsByPractitioner } from "@/hooks/useDatabase";
 import { transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
 import { useEffect, useState } from "react";
 import { Practitioner } from "@/types";
@@ -16,11 +17,13 @@ const PractitionerDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [practitioner, setPractitioner] = useState<Practitioner | null>(null);
+  const [locations, setLocations] = useState<any[]>([]);
   
   const practitionerId = parseInt(id || "0");
   const { data: dbPractitioner, isLoading: practitionerLoading, error: practitionerError } = usePractitioner(practitionerId);
   const { data: dbServices, isLoading: servicesLoading } = useServicesByPractitioner(practitionerId);
   const { data: dbContactDetails, isLoading: contactLoading } = useContactDetailsByPractitioner(practitionerId);
+  const { data: dbLocations, isLoading: locationsLoading } = useLocationsByPractitioner(practitionerId);
 
   useEffect(() => {
     if (dbPractitioner && dbServices && dbContactDetails) {
@@ -31,7 +34,21 @@ const PractitionerDetail = () => {
     }
   }, [dbPractitioner, dbServices, dbContactDetails]);
 
-  if (practitionerLoading || servicesLoading || contactLoading) {
+  useEffect(() => {
+    if (dbLocations) {
+      const transformedLocations = dbLocations.map(loc => ({
+        id: loc.id.toString(),
+        name: loc.name,
+        address: loc.address || "Address not available",
+        city: loc.city,
+        province: loc.province,
+        country: loc.country
+      }));
+      setLocations(transformedLocations);
+    }
+  }, [dbLocations]);
+
+  if (practitionerLoading || servicesLoading || contactLoading || locationsLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">Loading practitioner details...</div>
@@ -133,7 +150,10 @@ const PractitionerDetail = () => {
             />
           </div>
 
-          <PractitionerContact practitioner={practitioner} />
+          <div className="space-y-6">
+            <PractitionerContact practitioner={practitioner} />
+            <PractitionerLocations locations={locations} />
+          </div>
         </div>
       </div>
     </div>

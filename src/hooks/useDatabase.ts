@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { databaseService } from "@/services/database";
 
@@ -74,6 +75,22 @@ export const useContactDetailsByInstitution = (institutionId: number) => {
   return useQuery({
     queryKey: ['contact-details', 'institution', institutionId],
     queryFn: () => databaseService.getContactDetailsByInstitution(institutionId),
+    enabled: !!institutionId,
+  });
+};
+
+export const useLocationsByPractitioner = (practitionerId: number) => {
+  return useQuery({
+    queryKey: ['locations', 'practitioner', practitionerId],
+    queryFn: () => databaseService.getLocationsByPractitioner(practitionerId),
+    enabled: !!practitionerId,
+  });
+};
+
+export const useLocationsByInstitution = (institutionId: number) => {
+  return useQuery({
+    queryKey: ['locations', 'institution', institutionId],
+    queryFn: () => databaseService.getLocationsByInstitution(institutionId),
     enabled: !!institutionId,
   });
 };
