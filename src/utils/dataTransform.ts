@@ -102,9 +102,11 @@ export const transformService = (dbService: DBService): Service => {
 };
 
 export const transformContactDetails = (dbContactDetails: DBContactDetail[]): ContactDetails => {
+  console.log('Transforming contact details:', dbContactDetails);
   const contacts: ContactDetails = {};
   
   dbContactDetails.forEach(contact => {
+    console.log('Processing contact:', contact.contact_type, contact.value, contact.link);
     switch (contact.contact_type) {
       case 'WHATSAPP':
         contacts.whatsapp = contact.link || contact.value;
@@ -118,6 +120,7 @@ export const transformContactDetails = (dbContactDetails: DBContactDetail[]): Co
     }
   });
   
+  console.log('Final transformed contacts:', contacts);
   return contacts;
 };
 

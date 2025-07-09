@@ -9,6 +9,8 @@ interface BureauContactProps {
 }
 
 export const BureauContact = ({ bureau }: BureauContactProps) => {
+  console.log('Bureau contact details:', bureau.contactDetails);
+  
   return (
     <Card>
       <CardHeader>
@@ -44,6 +46,11 @@ export const BureauContact = ({ bureau }: BureauContactProps) => {
             </Button>
           )}
         </div>
+
+        {/* Fallback message if no contact details */}
+        {!bureau.contactDetails.whatsapp && !bureau.contactDetails.website && !bureau.contactDetails.instagram && (
+          <p className="text-muted-foreground text-sm">No contact information available</p>
+        )}
       </CardContent>
     </Card>
   );
