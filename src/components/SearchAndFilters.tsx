@@ -48,7 +48,7 @@ const Dropdown = ({ title, icon, isOpen, onToggle, children, hasActiveFilters }:
       <Button
         variant="outline"
         onClick={onToggle}
-        className={`flex items-center gap-2 bg-lavender/70 border-lavender/60 hover:bg-lavender/80 transition-colors text-foreground ${
+        className={`flex items-center gap-2 bg-lavender border-lavender hover:bg-lavender/90 transition-colors text-lavender-foreground ${
           hasActiveFilters ? 'ring-2 ring-lavender shadow-md bg-lavender' : ''
         }`}
       >
@@ -78,8 +78,8 @@ const FilterChip = ({ label, isSelected, onClick }: FilterChipProps) => (
     onClick={onClick}
     className={`text-sm transition-colors border ${
       isSelected 
-        ? 'bg-lavender text-white hover:bg-lavender/90 border-lavender shadow-md' 
-        : 'bg-lavender/70 hover:bg-lavender/80 border-lavender/60 text-foreground'
+      ? 'bg-lavender text-lavender-foreground hover:bg-lavender/90 border-lavender shadow-md' 
+      : 'bg-lavender/50 hover:bg-lavender/70 border-lavender/60 text-lavender-foreground'
     }`}
   >
     {label}

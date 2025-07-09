@@ -64,8 +64,8 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				lavender: {
-					DEFAULT: 'hsl(var(--lavender-mist))',
-					foreground: 'hsl(var(--foreground))'
+                    DEFAULT: 'hsl(var(--lavender-mist))',
+                    foreground: 'hsl(var(--lavender-foreground))'
 				}
 			},
 			backgroundImage: {

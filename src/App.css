@@ -1,5 +1,6 @@
 :root {
-  --lavender-mist: 270, 40%, 90%; /* This is HSL for #e3d2ee */
+  --lavender-mist: 270 40% 90%;
+  --lavender-foreground: 270 20% 30%;
 }
 #root {
   max-width: 1280px;
