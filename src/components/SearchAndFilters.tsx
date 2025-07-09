@@ -79,7 +79,7 @@ const FilterChip = ({ label, isSelected, onClick }: FilterChipProps) => (
     className={`text-sm transition-colors border ${
       isSelected 
       ? 'bg-lavender text-lavender-foreground hover:bg-lavender/90 border-lavender shadow-md' 
-      : 'bg-lavender/50 hover:bg-lavender/70 border-lavender/60 text-lavender-foreground'
+      : 'bg-lavender/50 hover:bg-lavender/70 border-[hsl(var(--lavender-mist)/0.6)] text-lavender-foreground'
     }`}
   >
     {label}
@@ -428,7 +428,7 @@ export const SearchAndFilters = ({ filters, onFiltersChange, institutionNames }:
             placeholder="Search keyword"
             value={filters.search}
             onChange={(e) => handleFilterChange("search", e.target.value)}
-            className="pl-10 bg-accent/30 border-accent"
+            className="pl-10 bg-white border-[hsl(var(--lavender-mist)/0.6)] text-lavender-foreground placeholder:text-lavender-foreground"
           />
         </div>
       </div>
