@@ -1,3 +1,4 @@
+
 import { Database } from "@/integrations/supabase/types";
 import { Practitioner, Bureau, Service, ContactDetails, ProfessionType, Specialization, InsuranceType } from "@/types";
 
@@ -96,8 +97,8 @@ export const transformService = (dbService: DBService): Service => {
     duration: durationText,
     price: dbService.price || 0,
     mode: mapSessionMode(dbService.session_mode?.[0] || "OFFLINE"),
-    bookingUrl: dbService.book_cta || undefined,
-    learnMoreUrl: dbService.learn_more_cta || undefined,
+    bookingUrl: dbService.book_cta?.toString() || undefined,
+    learnMoreUrl: dbService.learn_more_cta?.toString() || undefined,
   };
 };
 
