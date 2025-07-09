@@ -1,6 +1,7 @@
+
 import { useState, useMemo, useEffect } from "react";
 import React from "react";
-import { FilterState, Practitioner, Institution, UnifiedCardData } from "@/types";
+import { FilterState, Practitioner, Bureau, UnifiedCardData } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { UnifiedCard } from "@/components/UnifiedCard";
@@ -30,7 +31,7 @@ const ProfessionalCounseling = () => {
     return dbPractitioners.map(p => transformPractitioner(p));
   }, [dbPractitioners]);
 
-  const allInstitutions = useMemo(() => {
+  const allBureaus = useMemo(() => {
     if (!dbInstitutions) return [];
     return dbInstitutions.map(institution => transformInstitution(institution));
   }, [dbInstitutions]);
@@ -107,66 +108,66 @@ const ProfessionalCounseling = () => {
     });
   }, [filters, allPractitioners]);
 
-  const filteredInstitutions = useMemo(() => {
-    return allInstitutions.filter((institution: Institution) => {
+  const filteredBureaus = useMemo(() => {
+    return allBureaus.filter((bureau: Bureau) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        if (!institution.name.toLowerCase().includes(searchLower) &&
-            !institution.city.toLowerCase().includes(searchLower)) return false;
+        if (!bureau.name.toLowerCase().includes(searchLower) &&
+            !bureau.city.toLowerCase().includes(searchLower)) return false;
       }
 
       if (filters.locations.length > 0) {
-        const cityCountry = `${institution.city}, Indonesia`;
+        const cityCountry = `${bureau.city}, Indonesia`;
         if (!filters.locations.some(loc => cityCountry.includes(loc.split(',')[0]))) return false;
       }
 
-      if (filters.institutions.length > 0 && !filters.institutions.includes(institution.name)) {
+      if (filters.institutions.length > 0 && !filters.institutions.includes(bureau.name)) {
         return false;
       }
 
       if (filters.professionTypes.length > 0 &&
-          !filters.professionTypes.some(type => institution.professionTypes.includes(type))) {
+          !filters.professionTypes.some(type => bureau.professionTypes.includes(type))) {
         return false;
       }
 
       if (filters.specializations.length > 0 &&
-          !filters.specializations.some(spec => institution.specializations.includes(spec))) {
+          !filters.specializations.some(spec => bureau.specializations.includes(spec))) {
         return false;
       }
 
       if (filters.modes.length > 0 &&
-          !filters.modes.some(mode => institution.modes.includes(mode))) {
+          !filters.modes.some(mode => bureau.modes.includes(mode))) {
         return false;
       }
 
       if (filters.insurance.length > 0 &&
-          !filters.insurance.some(ins => institution.insurance.includes(ins))) {
+          !filters.insurance.some(ins => bureau.insurance.includes(ins))) {
         return false;
       }
 
       return true;
     });
-  }, [filters, allInstitutions]);
+  }, [filters, allBureaus]);
 
   const allResources = useMemo(() => {
-    return [...filteredPractitioners, ...filteredInstitutions];
-  }, [filteredPractitioners, filteredInstitutions]);
+    return [...filteredPractitioners, ...filteredBureaus];
+  }, [filteredPractitioners, filteredBureaus]);
 
   const institutionNames = useMemo(() => {
     const names = new Set<string>();
     allPractitioners.forEach(practitioner => names.add(practitioner.bureauName));
-    allInstitutions.forEach(institution => names.add(institution.name));
+    allBureaus.forEach(bureau => names.add(bureau.name));
     return Array.from(names);
-  }, [allPractitioners, allInstitutions]);
+  }, [allPractitioners, allBureaus]);
 
   const isLoading = practitionersLoading || institutionsLoading;
 
   useEffect(() => {
     if (filters.search) {
-      const totalResults = filteredPractitioners.length + filteredInstitutions.length;
+      const totalResults = filteredPractitioners.length + filteredBureaus.length;
       trackSearch(filters.search, totalResults, 'Professional Counseling');
     }
-  }, [filters.search, filteredPractitioners, filteredInstitutions]);
+  }, [filters.search, filteredPractitioners, filteredBureaus]);
 
   if (isLoading) {
     return (
