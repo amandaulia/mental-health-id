@@ -1,6 +1,5 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { MessageCircle, Globe, Instagram } from "lucide-react";
 import { Bureau } from "@/types";
 
@@ -9,45 +8,48 @@ interface BureauContactProps {
 }
 
 export const BureauContact = ({ bureau }: BureauContactProps) => {
-  console.log('Bureau contact details:', bureau.contactDetails);
-  
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Contact Details</CardTitle>
+        <CardTitle>Contact Information</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Contact Buttons */}
-        <div className="flex flex-wrap gap-2">
-          {bureau.contactDetails.whatsapp && (
-            <Button size="sm" className="flex items-center gap-2" asChild>
-              <a href={bureau.contactDetails.whatsapp} target="_blank" rel="noopener noreferrer">
-                <MessageCircle className="h-4 w-4" />
-                WhatsApp
+        {bureau.contactDetails.whatsapp && (
+          <div className="flex items-center gap-3">
+            <MessageCircle className="h-4 w-4 text-muted-foreground shrink-0" />
+            <div>
+              <p className="font-medium text-sm">WhatsApp</p>
+              <a href={bureau.contactDetails.whatsapp} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
+                Contact via WhatsApp
               </a>
-            </Button>
-          )}
-          
-          {bureau.contactDetails.website && (
-            <Button variant="outline" size="sm" className="flex items-center gap-2" asChild>
-              <a href={bureau.contactDetails.website} target="_blank" rel="noopener noreferrer">
-                <Globe className="h-4 w-4" />
-                Website
+            </div>
+          </div>
+        )}
+        
+        {bureau.contactDetails.website && (
+          <div className="flex items-center gap-3">
+            <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
+            <div>
+              <p className="font-medium text-sm">Website</p>
+              <a href={bureau.contactDetails.website} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
+                Visit Website
               </a>
-            </Button>
-          )}
-          
-          {bureau.contactDetails.instagram && (
-            <Button variant="outline" size="sm" className="flex items-center gap-2" asChild>
-              <a href={bureau.contactDetails.instagram} target="_blank" rel="noopener noreferrer">
-                <Instagram className="h-4 w-4" />
-                Instagram
+            </div>
+          </div>
+        )}
+        
+        {bureau.contactDetails.instagram && (
+          <div className="flex items-center gap-3">
+            <Instagram className="h-4 w-4 text-muted-foreground shrink-0" />
+            <div>
+              <p className="font-medium text-sm">Instagram</p>
+              <a href={bureau.contactDetails.instagram} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
+                View Instagram
               </a>
-            </Button>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
 
-        {/* Fallback message if no contact details */}
         {!bureau.contactDetails.whatsapp && !bureau.contactDetails.website && !bureau.contactDetails.instagram && (
           <p className="text-muted-foreground text-sm">No contact information available</p>
         )}
