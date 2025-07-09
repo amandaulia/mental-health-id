@@ -62,7 +62,10 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+			},
+			lavender: {
+				DEFAULT: 'hsl(var(--lavender-mist))',
+				foreground: 'hsl(var(--foreground))'
 			},
 			backgroundImage: {
 				'gradient-warm': 'var(--gradient-warm)',
