@@ -25,18 +25,18 @@ export const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="#services" className="text-white hover:text-accent-foreground transition-colors font-medium">
-              Services
-            </a>
-            <a href="#about" className="text-white hover:text-accent-foreground transition-colors font-medium">
+            <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium">
               About
             </a>
-            <a href="#contact" className="text-white hover:text-accent-foreground transition-colors font-medium">
-              Contact
+            <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium">
+              Peer Counseling & Support Group
             </a>
-            <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white hover:text-primary">
-              Get Started
-            </Button>
+            <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium">
+              Stress Relief Activities
+            </a>
+            <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium">
+              Organizations & Communities
+            </a>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -54,18 +54,18 @@ export const Header = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden bg-white/10 backdrop-blur-sm rounded-lg m-2 p-4">
             <nav className="flex flex-col space-y-3">
-              <a href="#services" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
-                Services
-              </a>
-              <a href="#about" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
+              <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
                 About
               </a>
-              <a href="#contact" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
-                Contact
+              <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
+                Peer Counseling & Support Group
               </a>
-              <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white hover:text-primary mt-2">
-                Get Started
-              </Button>
+              <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
+                Stress Relief Activities
+              </a>
+              <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium py-2">
+                Organizations & Communities
+              </a>
             </nav>
           </div>
         )}
