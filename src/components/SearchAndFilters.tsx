@@ -319,18 +319,53 @@ export const SearchAndFilters = ({ filters, onFiltersChange, institutionNames }:
                 <label className="text-sm font-medium text-muted-foreground mb-3 block">
                   Session Cost (IDR)
                 </label>
-                <div className="px-2">
-                  <Slider
-                    value={filters.priceRange}
-                    onValueChange={(value) => handleFilterChange("priceRange", value as [number, number])}
-                    max={2000000}
-                    min={0}
-                    step={50000}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                    <span>Rp {filters.priceRange[0].toLocaleString()}</span>
-                    <span>Rp {filters.priceRange[1].toLocaleString()}</span>
+                <div className="space-y-4">
+                  {/* Manual Input Fields */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs text-muted-foreground mb-1 block">Minimum</label>
+                      <Input
+                        type="number"
+                        value={filters.priceRange[0]}
+                        onChange={(e) => {
+                          const newMin = Math.max(0, parseInt(e.target.value) || 0);
+                          const newMax = Math.max(newMin, filters.priceRange[1]);
+                          handleFilterChange("priceRange", [newMin, newMax]);
+                        }}
+                        placeholder="0"
+                        className="text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-muted-foreground mb-1 block">Maximum</label>
+                      <Input
+                        type="number"
+                        value={filters.priceRange[1]}
+                        onChange={(e) => {
+                          const newMax = Math.min(2000000, parseInt(e.target.value) || 2000000);
+                          const newMin = Math.min(newMax, filters.priceRange[0]);
+                          handleFilterChange("priceRange", [newMin, newMax]);
+                        }}
+                        placeholder="2,000,000"
+                        className="text-sm"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Visual Slider */}
+                  <div className="px-2">
+                    <Slider
+                      value={filters.priceRange}
+                      onValueChange={(value) => handleFilterChange("priceRange", value as [number, number])}
+                      max={2000000}
+                      min={0}
+                      step={50000}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                      <span>Rp 0</span>
+                      <span>Rp 2,000,000</span>
+                    </div>
                   </div>
                 </div>
               </div>
