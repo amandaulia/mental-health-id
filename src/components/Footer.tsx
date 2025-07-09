@@ -30,49 +30,41 @@ export const Footer = () => {
           <div>
             <h3 className="text-xl font-semibold mb-4 flex items-center">
               <Heart className="h-5 w-5 mr-2" />
-              Quick Links
+              Counseling Quick Links
             </h3>
             <ul className="space-y-3">
-              <li><a href="#services" className="text-white/80 hover:text-white transition-colors">Find Psychologists</a></li>
-              <li><a href="#services" className="text-white/80 hover:text-white transition-colors">Mental Health Clinics</a></li>
-              <li><a href="#about" className="text-white/80 hover:text-white transition-colors">Support Groups</a></li>
-              <li><a href="#contact" className="text-white/80 hover:text-white transition-colors">Emergency Resources</a></li>
+              <li><a href="#professional-counseling" className="text-white/80 hover:text-white transition-colors">Psychologists</a></li>
+              <li><a href="#professional-counseling" className="text-white/80 hover:text-white transition-colors">Mental Health Clinics</a></li>
+              <li><a href="#peer-counseling" className="text-white/80 hover:text-white transition-colors">Peer Counselors</a></li>
+              <li><a href="#peer-counseling" className="text-white/80 hover:text-white transition-colors">Support Groups</a></li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
             <h3 className="text-xl font-semibold mb-4 flex items-center">
-              <Phone className="h-5 w-5 mr-2" />
-              Contact Us
-            </h3>
+              <Heart className="h-5 w-5 mr-2" />
+              Resources Quick Links
             <ul className="space-y-3">
-              <li className="flex items-center text-white/80">
-                <MapPin className="h-4 w-4 mr-3 flex-shrink-0" />
-                Jakarta, Indonesia
-              </li>
-              <li className="flex items-center text-white/80">
-                <Mail className="h-4 w-4 mr-3 flex-shrink-0" />
-                support@mentalhealth.id
-              </li>
-              <li className="flex items-center text-white/80">
-                <Clock className="h-4 w-4 mr-3 flex-shrink-0" />
-                24/7 Crisis Support Available
-              </li>
+              <li><a href="#stress-relief" className="text-white/80 hover:text-white transition-colors">Activities</a></li>
+              <li><a href="#organizations" className="text-white/80 hover:text-white transition-colors">Organizations</a></li>
+              <li><a href="#organizations" className="text-white/80 hover:text-white transition-colors">Communities</a></li>
             </ul>
           </div>
 
           {/* Mental Health Resources */}
           <div>
-            <h3 className="text-xl font-semibold mb-4">Emergency Support</h3>
+            <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
             <div className="space-y-3">
               <div className="bg-white/10 rounded-lg p-4">
-                <p className="font-medium mb-1">Crisis Hotline</p>
-                <p className="text-white/90">119 ext 8</p>
+                <Phone className="h-5 w-5 mr-2" />
+                <p className="font-medium mb-1">WhatsApp</p>
+                <p className="text-white/90">+62-813-2393-1225</p>
               </div>
               <div className="bg-white/10 rounded-lg p-4">
-                <p className="font-medium mb-1">WhatsApp Support</p>
-                <p className="text-white/90">+62 811-9090-119</p>
+                <MapPin className="h-4 w-4 mr-3 flex-shrink-0" />
+                <p className="font-medium mb-1">Email</p>
+                <p className="text-white/90">elysium.mcare@gmail.com</p>
               </div>
             </div>
           </div>
@@ -81,10 +73,7 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-white/20 pt-6 text-center">
           <p className="text-white/70 mb-2">
-            © 2024 Mental Health Resource Directory. Made with ❤️ for mental wellness.
-          </p>
-          <p className="text-white/60 text-sm">
-            If you're experiencing a mental health emergency, please contact emergency services immediately.
+            © 2025 Elysium Mentalcare. Made with ❤️ for mental wellness.
           </p>
         </div>
       </div>

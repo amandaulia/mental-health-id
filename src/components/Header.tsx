@@ -16,11 +16,6 @@ export const Header = () => {
               alt="Elysium Mental Care"
               className="h-8 sm:h-10 w-auto"
             />
-            <img 
-              src="/lovable-uploads/a33b743b-d652-4614-9ab5-d0c279a825eb.png" 
-              alt="Mental Wellness Movie Club"
-              className="h-6 sm:h-8 w-auto hidden sm:block"
-            />
           </div>
 
           {/* Desktop Navigation */}
