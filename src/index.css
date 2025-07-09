@@ -51,10 +51,8 @@ All colors MUST be HSL.
     /* Calm accent colors */
     --sage-green: 134, 40%, 82%;
     --sky-blue: 200, 70%, 78%;
-    --lavender-mist: 270 40% 90%;
-    --lavender-foreground: 270 20% 30%;
-}
-
+    --lavender-mist: 270, 70%, 88%;
+    --lavender-foreground: 270, 20%, 30%;
 
     /* Original bright colors for Mental Health text */
     --mental-health-bright: 15, 85%, 55%;
@@ -112,7 +110,7 @@ All colors MUST be HSL.
     /* Calm accent colors for dark mode */
     --sage-green: 134, 35%, 65%;
     --sky-blue: 200, 60%, 65%;
-    --lavender-mist: 275, 40%, 70%;
+    --lavender-mist: 270, 60%, 75%;
 
     --gradient-primary: linear-gradient(135deg, hsl(275, 40%, 70%), hsl(15, 85%, 55%));
     --gradient-warm: linear-gradient(180deg, hsl(25, 15%, 8%), hsl(25, 12%, 12%));
