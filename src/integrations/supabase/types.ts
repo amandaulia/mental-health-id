@@ -367,7 +367,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      contact_type: "WHATSAPP" | "WEBSITE" | "INSTAGRAM"
+      contact_type: "WHATSAPP" | "WEBSITE" | "INSTAGRAM" | "FACEBOOK" | "PHONE"
       institution_type: "PRIVATE" | "CLINIC" | "HOSPITAL"
       insurance: "PRIVATE" | "BPJS"
       profession_type: "PSYCHOLOGIST" | "PSCYHIATRIST" | "ART THERAPIST"
@@ -514,7 +514,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      contact_type: ["WHATSAPP", "WEBSITE", "INSTAGRAM"],
+      contact_type: ["WHATSAPP", "WEBSITE", "INSTAGRAM", "FACEBOOK", "PHONE"],
       institution_type: ["PRIVATE", "CLINIC", "HOSPITAL"],
       insurance: ["PRIVATE", "BPJS"],
       profession_type: ["PSYCHOLOGIST", "PSCYHIATRIST", "ART THERAPIST"],

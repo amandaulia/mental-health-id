@@ -1,4 +1,3 @@
-
 import { Database } from "@/integrations/supabase/types";
 import { Practitioner, Bureau, Service, ContactDetails, ProfessionType, Specialization, InsuranceType } from "@/types";
 
