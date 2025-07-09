@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { FilterState } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { trackFeelingsAnalysis, trackSearch, trackFilter } from "@/utils/analytics";
 
 const Index = () => {
   const [feelings, setFeelings] = useState("");
@@ -77,6 +78,9 @@ const Index = () => {
       })) || [];
 
       setRecommendations(recommendedCards);
+      
+      // Track the feelings analysis event
+      trackFeelingsAnalysis(feelings.trim().length, recommendedCards.length);
       
       toast({
         title: "Recommendations Ready",
@@ -154,6 +158,9 @@ const Index = () => {
     const currentArray = filters[type] as string[];
     const newArray = currentArray.filter(item => item !== value);
     setFilters(prev => ({ ...prev, [type]: newArray }));
+    
+    // Track filter removal
+    trackFilter(type, value, 'Home');
   };
 
   const handleClearAllFilters = () => {
@@ -167,6 +174,9 @@ const Index = () => {
       modes: [],
       insurance: []
     });
+    
+    // Track clear all filters
+    trackFilter('clear_all', 'all_filters', 'Home');
   };
 
   const institutionNames = useMemo(() => {
@@ -195,6 +205,17 @@ const Index = () => {
       </div>
     );
   }
+
+  // Track search when filters change
+  React.useEffect(() => {
+    if (filters.search) {
+      const totalResults = filteredProfessionalResources.length + 
+                          filteredPeerCounseling.length + 
+                          filteredActivities.length + 
+                          filteredOrganizations.length;
+      trackSearch(filters.search, totalResults, 'Home');
+    }
+  }, [filters.search, filteredProfessionalResources, filteredPeerCounseling, filteredActivities, filteredOrganizations]);
 
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
