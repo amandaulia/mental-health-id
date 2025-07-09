@@ -134,19 +134,24 @@ export const SearchAndFilters = ({
             <ChevronDown className="h-3 w-3 ml-1" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-64 p-4">
-          <div className="space-y-2">
-            {["Jakarta, Indonesia", "Surabaya, Indonesia", "Medan, Indonesia"].map((location) => (
-              <button
-                key={location}
-                onClick={() => handleLocationSelect(location)}
-                className={`w-full text-left p-2 rounded hover:bg-gray-100 ${
-                  filters.locations.includes(location) ? 'bg-purple-100 text-purple-700' : ''
-                }`}
-              >
-                {location}
-              </button>
-            ))}
+        <PopoverContent className="w-80 p-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Location</h3>
+            <div className="grid grid-cols-1 gap-2">
+              {["Jakarta, Indonesia", "Surabaya, Indonesia", "Medan, Indonesia"].map((location) => (
+                <button
+                  key={location}
+                  onClick={() => handleLocationSelect(location)}
+                  className={`p-3 rounded-lg border transition-colors text-left ${
+                    filters.locations.includes(location)
+                      ? 'bg-purple-100 border-purple-300 text-purple-700'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  {location}
+                </button>
+              ))}
+            </div>
           </div>
         </PopoverContent>
       </Popover>
@@ -168,19 +173,24 @@ export const SearchAndFilters = ({
             <ChevronDown className="h-3 w-3 ml-1" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-64 p-4">
-          <div className="space-y-2 max-h-48 overflow-y-auto">
-            {institutionNames.map((institution) => (
-              <button
-                key={institution}
-                onClick={() => handleInstitutionSelect(institution)}
-                className={`w-full text-left p-2 rounded hover:bg-gray-100 ${
-                  filters.institutions.includes(institution) ? 'bg-purple-100 text-purple-700' : ''
-                }`}
-              >
-                {institution}
-              </button>
-            ))}
+        <PopoverContent className="w-80 p-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Institution</h3>
+            <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+              {institutionNames.map((institution) => (
+                <button
+                  key={institution}
+                  onClick={() => handleInstitutionSelect(institution)}
+                  className={`p-3 rounded-lg border transition-colors text-left ${
+                    filters.institutions.includes(institution)
+                      ? 'bg-purple-100 border-purple-300 text-purple-700'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  {institution}
+                </button>
+              ))}
+            </div>
           </div>
         </PopoverContent>
       </Popover>
@@ -202,19 +212,24 @@ export const SearchAndFilters = ({
             <ChevronDown className="h-3 w-3 ml-1" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-64 p-4">
-          <div className="space-y-2">
-            {["Psychologist", "Psychiatrist", "Counselor", "Therapist"].map((profession) => (
-              <button
-                key={profession}
-                onClick={() => handleProfessionSelect(profession)}
-                className={`w-full text-left p-2 rounded hover:bg-gray-100 ${
-                  filters.professionTypes.includes(profession as ProfessionType) ? 'bg-purple-100 text-purple-700' : ''
-                }`}
-              >
-                {profession}
-              </button>
-            ))}
+        <PopoverContent className="w-80 p-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Profession Type</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {["Psychologist", "Psychiatrist", "Art Therapist", "Music Therapist", "Counselor", "Social Worker"].map((profession) => (
+                <button
+                  key={profession}
+                  onClick={() => handleProfessionSelect(profession)}
+                  className={`p-3 rounded-lg border transition-colors text-center ${
+                    filters.professionTypes.includes(profession as ProfessionType)
+                      ? 'bg-purple-100 border-purple-300 text-purple-700'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  {profession}
+                </button>
+              ))}
+            </div>
           </div>
         </PopoverContent>
       </Popover>
@@ -236,19 +251,24 @@ export const SearchAndFilters = ({
             <ChevronDown className="h-3 w-3 ml-1" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-64 p-4">
-          <div className="space-y-2">
-            {["Depression", "Anxiety", "Trauma", "Relationship Issues"].map((specialization) => (
-              <button
-                key={specialization}
-                onClick={() => handleSpecializationSelect(specialization)}
-                className={`w-full text-left p-2 rounded hover:bg-gray-100 ${
-                  filters.specializations.includes(specialization as Specialization) ? 'bg-purple-100 text-purple-700' : ''
-                }`}
-              >
-                {specialization}
-              </button>
-            ))}
+        <PopoverContent className="w-80 p-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Specializations</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {["Depression", "Anxiety", "Trauma", "Relationship Issues", "ADHD", "OCD", "Personality Disorders", "Family Therapy"].map((specialization) => (
+                <button
+                  key={specialization}
+                  onClick={() => handleSpecializationSelect(specialization)}
+                  className={`p-3 rounded-lg border transition-colors text-center ${
+                    filters.specializations.includes(specialization as Specialization)
+                      ? 'bg-purple-100 border-purple-300 text-purple-700'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  {specialization}
+                </button>
+              ))}
+            </div>
           </div>
         </PopoverContent>
       </Popover>
@@ -270,19 +290,29 @@ export const SearchAndFilters = ({
             <ChevronDown className="h-3 w-3 ml-1" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-64 p-4">
-          <div className="space-y-2">
-            {["text", "voice", "video", "offline"].map((mode) => (
-              <button
-                key={mode}
-                onClick={() => handleModeSelect(mode)}
-                className={`w-full text-left p-2 rounded hover:bg-gray-100 capitalize ${
-                  filters.modes.includes(mode as Mode) ? 'bg-purple-100 text-purple-700' : ''
-                }`}
-              >
-                {mode}
-              </button>
-            ))}
+        <PopoverContent className="w-80 p-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Session Mode</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { value: "text", label: "Text Chat" },
+                { value: "voice", label: "Voice Call" },
+                { value: "video", label: "Video Call" },
+                { value: "offline", label: "In-Person" }
+              ].map((mode) => (
+                <button
+                  key={mode.value}
+                  onClick={() => handleModeSelect(mode.value)}
+                  className={`p-3 rounded-lg border transition-colors text-center ${
+                    filters.modes.includes(mode.value as Mode)
+                      ? 'bg-purple-100 border-purple-300 text-purple-700'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  {mode.label}
+                </button>
+              ))}
+            </div>
           </div>
         </PopoverContent>
       </Popover>
