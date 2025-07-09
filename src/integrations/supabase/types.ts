@@ -136,6 +136,66 @@ export type Database = {
         }
         Relationships: []
       }
+      institution_contacts: {
+        Row: {
+          contact_id: number
+          institution_id: number
+        }
+        Insert: {
+          contact_id: number
+          institution_id: number
+        }
+        Update: {
+          contact_id?: number
+          institution_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "institution_contacts_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contact_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "institution_contacts_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institution"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      institution_locations: {
+        Row: {
+          institution_id: number
+          location_id: number
+        }
+        Insert: {
+          institution_id: number
+          location_id: number
+        }
+        Update: {
+          institution_id?: number
+          location_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "institution_locations_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institution"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "institution_locations_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "location"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       location: {
         Row: {
           address: string | null
@@ -168,6 +228,36 @@ export type Database = {
           province?: string
         }
         Relationships: []
+      }
+      location_contacts: {
+        Row: {
+          contact_id: number
+          location_id: number
+        }
+        Insert: {
+          contact_id: number
+          location_id: number
+        }
+        Update: {
+          contact_id?: number
+          location_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_contacts_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contact_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "location_contacts_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "location"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       location_mapping: {
         Row: {
@@ -274,6 +364,187 @@ export type Database = {
             columns: ["institution_id"]
             isOneToOne: false
             referencedRelation: "institution"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      practitioner_contacts: {
+        Row: {
+          contact_id: number
+          practitioner_id: number
+        }
+        Insert: {
+          contact_id: number
+          practitioner_id: number
+        }
+        Update: {
+          contact_id?: number
+          practitioner_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practitioner_contacts_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contact_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "practitioner_contacts_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "practitioner"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      practitioner_institutions: {
+        Row: {
+          institution_id: number
+          practitioner_id: number
+        }
+        Insert: {
+          institution_id: number
+          practitioner_id: number
+        }
+        Update: {
+          institution_id?: number
+          practitioner_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practitioner_institutions_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institution"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "practitioner_institutions_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "practitioner"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      practitioner_locations: {
+        Row: {
+          location_id: number
+          practitioner_id: number
+        }
+        Insert: {
+          location_id: number
+          practitioner_id: number
+        }
+        Update: {
+          location_id?: number
+          practitioner_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practitioner_locations_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "location"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "practitioner_locations_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "practitioner"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_offering_contacts: {
+        Row: {
+          contact_id: number
+          service_offering_id: number
+        }
+        Insert: {
+          contact_id: number
+          service_offering_id: number
+        }
+        Update: {
+          contact_id?: number
+          service_offering_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_offering_contacts_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contact_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_offering_contacts_service_offering_id_fkey"
+            columns: ["service_offering_id"]
+            isOneToOne: false
+            referencedRelation: "service_offerings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_offerings: {
+        Row: {
+          book_cta: number | null
+          created_at: string
+          duration_override: number | null
+          id: number
+          last_updated_at: string
+          learn_more_cta: number | null
+          location_id: number
+          practitioner_id: number | null
+          price_override: number | null
+          service_id: number
+        }
+        Insert: {
+          book_cta?: number | null
+          created_at?: string
+          duration_override?: number | null
+          id?: number
+          last_updated_at?: string
+          learn_more_cta?: number | null
+          location_id: number
+          practitioner_id?: number | null
+          price_override?: number | null
+          service_id: number
+        }
+        Update: {
+          book_cta?: number | null
+          created_at?: string
+          duration_override?: number | null
+          id?: number
+          last_updated_at?: string
+          learn_more_cta?: number | null
+          location_id?: number
+          practitioner_id?: number | null
+          price_override?: number | null
+          service_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_offerings_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "location"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_offerings_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "practitioner"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_offerings_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
             referencedColumns: ["id"]
           },
         ]
