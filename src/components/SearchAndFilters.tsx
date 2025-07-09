@@ -78,8 +78,8 @@ const FilterChip = ({ label, isSelected, onClick }: FilterChipProps) => (
     onClick={onClick}
     className={`text-sm transition-colors border ${
       isSelected 
-        ? 'bg-lavender text-lavender-foreground hover:bg-lavender/80 border-lavender' 
-        : 'bg-background hover:bg-lavender/20 border-lavender/30 hover:border-lavender text-foreground'
+        ? 'bg-lavender text-white hover:bg-lavender/90 border-lavender' 
+        : 'bg-lavender/60 hover:bg-lavender border-lavender text-white'
     }`}
   >
     {label}
