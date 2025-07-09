@@ -20,34 +20,40 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 const queryClient = new QueryClient();
 
 function App() {
-  useAnalytics();
-
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <div className="min-h-screen bg-background">
-            <Header />
-            <main className="flex-1">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/professional-counseling" element={<ProfessionalCounseling />} />
-                <Route path="/peer-counseling" element={<PeerCounseling />} />
-                <Route path="/stress-relief" element={<StressRelief />} />
-                <Route path="/organizations" element={<Organizations />} />
-                <Route path="/practitioner/:id" element={<PractitionerDetail />} />
-                <Route path="/bureau/:id" element={<BureauDetail />} />
-                <Route path="/peer-counseling/:id" element={<PeerCounselingDetail />} />
-                <Route path="/organizations/:id" element={<OrganizationDetail />} />
-              </Routes>
-            </main>
-            <Footer />
-            <Toaster />
-          </div>
+          <AppContent />
         </BrowserRouter>
       </QueryClientProvider>
     </ErrorBoundary>
+  );
+}
+
+function AppContent() {
+  useAnalytics();
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/professional-counseling" element={<ProfessionalCounseling />} />
+          <Route path="/peer-counseling" element={<PeerCounseling />} />
+          <Route path="/stress-relief" element={<StressRelief />} />
+          <Route path="/organizations" element={<Organizations />} />
+          <Route path="/practitioner/:id" element={<PractitionerDetail />} />
+          <Route path="/bureau/:id" element={<BureauDetail />} />
+          <Route path="/peer-counseling/:id" element={<PeerCounselingDetail />} />
+          <Route path="/organizations/:id" element={<OrganizationDetail />} />
+        </Routes>
+      </main>
+      <Footer />
+      <Toaster />
+    </div>
   );
 }
 
