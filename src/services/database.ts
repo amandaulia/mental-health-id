@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 
@@ -9,16 +10,13 @@ type ContactDetail = Tables['contact_details']['Row'];
 type Location = Tables['location']['Row'];
 
 export const databaseService = {
-  // Fetch all practitioners with their institution and location data
+  // Fetch all practitioners with their institution data (removed location from institution query)
   async getPractitioners() {
     const { data, error } = await supabase
       .from('practitioner')
       .select(`
         *,
-        institution:institution_id(
-          *,
-          location:location_id(*)
-        )
+        institution:institution_id(*)
       `);
     
     if (error) {
@@ -29,16 +27,13 @@ export const databaseService = {
     return data;
   },
 
-  // Fetch single practitioner with related data
+  // Fetch single practitioner with related data (removed location from institution query)
   async getPractitioner(id: number) {
     const { data, error } = await supabase
       .from('practitioner')
       .select(`
         *,
-        institution:institution_id(
-          *,
-          location:location_id(*)
-        )
+        institution:institution_id(*)
       `)
       .eq('id', id)
       .single();
@@ -68,14 +63,11 @@ export const databaseService = {
     return data?.map(item => item.contact_details).filter(Boolean) || [];
   },
 
-  // Fetch all institutions with location data
+  // Fetch all institutions (removed location query)
   async getInstitutions() {
     const { data, error } = await supabase
       .from('institution')
-      .select(`
-        *,
-        location:location_id(*)
-      `);
+      .select('*');
     
     if (error) {
       console.error('Error fetching institutions:', error);
@@ -85,14 +77,11 @@ export const databaseService = {
     return data;
   },
 
-  // Fetch single institution with related data
+  // Fetch single institution (removed location query)
   async getInstitution(id: number) {
     const { data, error } = await supabase
       .from('institution')
-      .select(`
-        *,
-        location:location_id(*)
-      `)
+      .select('*')
       .eq('id', id)
       .single();
     
@@ -168,16 +157,13 @@ export const databaseService = {
     return data;
   },
 
-  // Fetch practitioners by institution
+  // Fetch practitioners by institution (removed location from institution query)
   async getPractitionersByInstitution(institutionId: number) {
     const { data, error } = await supabase
       .from('practitioner')
       .select(`
         *,
-        institution:institution_id(
-          *,
-          location:location_id(*)
-        )
+        institution:institution_id(*)
       `)
       .eq('institution_id', institutionId);
     
@@ -187,5 +173,39 @@ export const databaseService = {
     }
     
     return data;
+  },
+
+  // NEW: Fetch locations for a practitioner using location_mapping
+  async getLocationsByPractitioner(practitionerId: number) {
+    const { data, error } = await supabase
+      .from('location_mapping')
+      .select(`
+        location:location_id(*)
+      `)
+      .eq('practitioner_id', practitionerId);
+    
+    if (error) {
+      console.error('Error fetching locations for practitioner:', error);
+      throw error;
+    }
+    
+    return data?.map(item => item.location).filter(Boolean) || [];
+  },
+
+  // NEW: Fetch locations for an institution using location_mapping
+  async getLocationsByInstitution(institutionId: number) {
+    const { data, error } = await supabase
+      .from('location_mapping')
+      .select(`
+        location:location_id(*)
+      `)
+      .eq('institution_id', institutionId);
+    
+    if (error) {
+      console.error('Error fetching locations for institution:', error);
+      throw error;
+    }
+    
+    return data?.map(item => item.location).filter(Boolean) || [];
   }
 };

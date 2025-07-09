@@ -2,14 +2,10 @@ import { Database } from "@/integrations/supabase/types";
 import { Practitioner, Bureau, Service, ContactDetails, ProfessionType, Specialization, InsuranceType } from "@/types";
 
 type DBPractitioner = Database['public']['Tables']['practitioner']['Row'] & {
-  institution?: Database['public']['Tables']['institution']['Row'] & {
-    location?: Database['public']['Tables']['location']['Row'];
-  };
+  institution?: Database['public']['Tables']['institution']['Row'];
 };
 
-type DBInstitution = Database['public']['Tables']['institution']['Row'] & {
-  location?: Database['public']['Tables']['location']['Row'];
-};
+type DBInstitution = Database['public']['Tables']['institution']['Row'];
 
 type DBService = Database['public']['Tables']['services']['Row'] & {
   institution?: { name: string };
@@ -23,7 +19,6 @@ export const transformPractitioner = (
   contactDetails: ContactDetails = {}
 ): Practitioner => {
   const institution = dbPractitioner.institution;
-  const location = institution?.location;
 
   return {
     id: dbPractitioner.id.toString(),
@@ -37,9 +32,9 @@ export const transformPractitioner = (
     specializations: mapSpecializations(dbPractitioner.specialization || []),
     experience: dbPractitioner.experience ? `${dbPractitioner.experience} years` : undefined,
     education: Array.isArray(dbPractitioner.education) ? dbPractitioner.education.join(", ") : undefined,
-    city: location?.city || "Unknown City",
+    city: "Unknown City", // Will be set from location data separately
     location: {
-      address: location?.address || "Address not available",
+      address: "Address not available", // Will be set from location data separately
       lat: 0,
       lng: 0,
     },
@@ -57,8 +52,6 @@ export const transformInstitution = (
   services: Service[] = [], 
   contactDetails: ContactDetails = {}
 ): Bureau => {
-  const location = dbInstitution.location;
-
   return {
     id: dbInstitution.id.toString(),
     type: "bureau",
@@ -68,9 +61,9 @@ export const transformInstitution = (
     bureauType: mapInstitutionType(dbInstitution.type),
     professionTypes: mapProfessionTypes(dbInstitution.profession_type || []),
     specializations: [], // Will be derived from services or added to schema later
-    city: location?.city || "Unknown City",
+    city: "Unknown City", // Will be set from location data separately
     location: {
-      address: location?.address || "Address not available",
+      address: "Address not available", // Will be set from location data separately
       lat: 0, // Will need to be added to location table later
       lng: 0, // Will need to be added to location table later
     },
