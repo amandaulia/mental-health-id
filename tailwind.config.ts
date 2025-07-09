@@ -62,43 +62,44 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-			},
-			lavender: {
-				DEFAULT: 'hsl(var(--lavender-mist))',
-				foreground: 'hsl(var(--foreground))'
-			}
-		},
-		backgroundImage: {
-			'gradient-warm': 'var(--gradient-warm)',
-			'gradient-primary': 'var(--gradient-primary)',
-			'gradient-accent': 'var(--gradient-accent)'
-		},
-		borderRadius: {
-			lg: 'var(--radius)',
-			md: 'calc(var(--radius) - 2px)',
-			sm: 'calc(var(--radius) - 4px)'
-		},
-		keyframes: {
-			'accordion-down': {
-				from: {
-					height: '0'
 				},
-				to: {
-					height: 'var(--radix-accordion-content-height)'
+				lavender: {
+					DEFAULT: 'hsl(var(--lavender-mist))',
+					foreground: 'hsl(var(--foreground))'
 				}
 			},
-			'accordion-up': {
-				from: {
-					height: 'var(--radix-accordion-content-height)'
+			backgroundImage: {
+				'gradient-warm': 'var(--gradient-warm)',
+				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-accent': 'var(--gradient-accent)'
+			},
+			borderRadius: {
+				lg: 'var(--radius)',
+				md: 'calc(var(--radius) - 2px)',
+				sm: 'calc(var(--radius) - 4px)'
+			},
+			keyframes: {
+				'accordion-down': {
+					from: {
+						height: '0'
+					},
+					to: {
+						height: 'var(--radix-accordion-content-height)'
+					}
 				},
-				to: {
-					height: '0'
+				'accordion-up': {
+					from: {
+						height: 'var(--radix-accordion-content-height)'
+					},
+					to: {
+						height: '0'
+					}
 				}
+			},
+			animation: {
+				'accordion-down': 'accordion-down 0.2s ease-out',
+				'accordion-up': 'accordion-up 0.2s ease-out'
 			}
-		},
-		animation: {
-			'accordion-down': 'accordion-down 0.2s ease-out',
-			'accordion-up': 'accordion-up 0.2s ease-out'
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
