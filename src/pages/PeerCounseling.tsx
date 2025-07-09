@@ -1,5 +1,6 @@
+
 import { useState, useMemo, useEffect } from "react";
-import { FilterState, PeerCounselingData } from "@/types";
+import { FilterState } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";

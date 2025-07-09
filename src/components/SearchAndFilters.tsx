@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -11,7 +12,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { FilterState } from "@/types";
+import { FilterState, ProfessionType, Specialization, Mode, InsuranceType } from "@/types";
 import { trackFormInteraction } from "@/utils/analytics";
 
 interface SearchAndFiltersProps {
@@ -28,44 +29,44 @@ export const SearchAndFilters = ({
   const [priceRange, setPriceRange] = useState(filters.priceRange);
 
   const handleSearchChange = (value: string) => {
-    onFiltersChange(prev => ({ ...prev, search: value }));
+    onFiltersChange({ ...filters, search: value });
     if (value.trim()) {
       trackFormInteraction('search', 'search_input', 'search_term');
     }
   };
 
   const handleLocationChange = (locations: string[]) => {
-    onFiltersChange(prev => ({ ...prev, locations }));
+    onFiltersChange({ ...filters, locations });
     trackFormInteraction('filter', 'location_changed');
   };
 
   const handleInstitutionChange = (institutions: string[]) => {
-    onFiltersChange(prev => ({ ...prev, institutions }));
+    onFiltersChange({ ...filters, institutions });
     trackFormInteraction('filter', 'institution_changed');
   };
 
-  const handleProfessionChange = (professionTypes: string[]) => {
-    onFiltersChange(prev => ({ ...prev, professionTypes }));
+  const handleProfessionChange = (professionTypes: ProfessionType[]) => {
+    onFiltersChange({ ...filters, professionTypes });
     trackFormInteraction('filter', 'profession_changed');
   };
 
-  const handleSpecializationChange = (specializations: string[]) => {
-    onFiltersChange(prev => ({ ...prev, specializations }));
+  const handleSpecializationChange = (specializations: Specialization[]) => {
+    onFiltersChange({ ...filters, specializations });
     trackFormInteraction('filter', 'specialization_changed');
   };
 
-  const handleModeChange = (modes: string[]) => {
-    onFiltersChange(prev => ({ ...prev, modes }));
+  const handleModeChange = (modes: Mode[]) => {
+    onFiltersChange({ ...filters, modes });
     trackFormInteraction('filter', 'mode_changed');
   };
 
-  const handleInsuranceChange = (insurance: string[]) => {
-    onFiltersChange(prev => ({ ...prev, insurance }));
+  const handleInsuranceChange = (insurance: InsuranceType[]) => {
+    onFiltersChange({ ...filters, insurance });
     trackFormInteraction('filter', 'insurance_changed');
   };
 
   const handlePriceRangeChange = (priceRange: [number, number]) => {
-    onFiltersChange(prev => ({ ...prev, priceRange }));
+    onFiltersChange({ ...filters, priceRange });
     trackFormInteraction('filter', 'price_range_changed');
   };
 
@@ -91,9 +92,9 @@ export const SearchAndFilters = ({
 
   const handleProfessionSelect = useCallback(
     (value: string) => {
-      const newProfessions = filters.professionTypes.includes(value)
+      const newProfessions = filters.professionTypes.includes(value as ProfessionType)
         ? filters.professionTypes.filter((prof) => prof !== value)
-        : [...filters.professionTypes, value];
+        : [...filters.professionTypes, value as ProfessionType];
       handleProfessionChange(newProfessions);
     },
     [filters.professionTypes, handleProfessionChange]
@@ -101,9 +102,9 @@ export const SearchAndFilters = ({
 
   const handleSpecializationSelect = useCallback(
     (value: string) => {
-      const newSpecializations = filters.specializations.includes(value)
+      const newSpecializations = filters.specializations.includes(value as Specialization)
         ? filters.specializations.filter((spec) => spec !== value)
-        : [...filters.specializations, value];
+        : [...filters.specializations, value as Specialization];
       handleSpecializationChange(newSpecializations);
     },
     [filters.specializations, handleSpecializationChange]
@@ -111,9 +112,9 @@ export const SearchAndFilters = ({
 
   const handleModeSelect = useCallback(
     (value: string) => {
-      const newModes = filters.modes.includes(value)
+      const newModes = filters.modes.includes(value as Mode)
         ? filters.modes.filter((mode) => mode !== value)
-        : [...filters.modes, value];
+        : [...filters.modes, value as Mode];
       handleModeChange(newModes);
     },
     [filters.modes, handleModeChange]
@@ -121,9 +122,9 @@ export const SearchAndFilters = ({
 
   const handleInsuranceSelect = useCallback(
     (value: string) => {
-      const newInsurance = filters.insurance.includes(value)
+      const newInsurance = filters.insurance.includes(value as InsuranceType)
         ? filters.insurance.filter((ins) => ins !== value)
-        : [...filters.insurance, value];
+        : [...filters.insurance, value as InsuranceType];
       handleInsuranceChange(newInsurance);
     },
     [filters.insurance, handleInsuranceChange]
@@ -212,7 +213,7 @@ export const SearchAndFilters = ({
           defaultValue={filters.priceRange}
           max={2000000}
           step={100000}
-          onValueChange={(value) => setPriceRange(value)}
+          onValueChange={(value) => setPriceRange(value as [number, number])}
           onValueCommit={() => handlePriceRangeChange(priceRange)}
         />
         <div className="flex justify-between text-sm text-muted-foreground">

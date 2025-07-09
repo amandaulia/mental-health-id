@@ -1,3 +1,4 @@
+
 export type Specialization = 
   | "Clinical Psychology"
   | "Child Psychology"
@@ -90,6 +91,39 @@ export interface Bureau {
   lastUpdated: string;
 }
 
+export interface Institution {
+  id: string;
+  type: "institution";
+  image?: string;
+  name: string;
+  businessHours?: string;
+  professionTypes: ProfessionType[];
+  specializations: Specialization[];
+  city: string;
+  location: {
+    address: string;
+    lat: number;
+    lng: number;
+  };
+  insurance: InsuranceType[];
+  modes: Mode[];
+  contactDetails: ContactDetails;
+  isVerified: boolean;
+  lastUpdated: string;
+}
+
+export interface PeerCounselingData {
+  id: string;
+  type: "peer-counseling" | "support-group";
+  image: string;
+  name: string;
+  city: string;
+  isVerified: boolean;
+  specialization: string;
+  serviceType: string;
+  price: number | string;
+}
+
 export type Resource = Practitioner | Bureau;
 
 export interface FilterState {
@@ -107,4 +141,24 @@ export interface FilterTag {
   type: keyof FilterState;
   value: string;
   label: string;
+}
+
+export interface UnifiedCardData {
+  type: "practitioner" | "institution" | "peer-counseling" | "support-group" | "activity";
+  id: string;
+  image?: string;
+  name: string;
+  city: string;
+  isVerified?: boolean;
+  institutionName?: string;
+  organizationName?: string;
+  professionTypes?: ProfessionType[];
+  specializations?: Specialization[];
+  specialization?: string;
+  serviceType?: string;
+  activityType?: string;
+  priceRange?: string;
+  price?: number;
+  insurance?: InsuranceType[];
+  modes?: Mode[];
 }

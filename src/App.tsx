@@ -1,5 +1,5 @@
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Route, Routes } from 'react-router-dom';
 import Index from '@/pages/Index';
 import ProfessionalCounseling from '@/pages/ProfessionalCounseling';
@@ -11,8 +11,8 @@ import BureauDetail from '@/pages/BureauDetail';
 import PeerCounselingDetail from '@/pages/PeerCounselingDetail';
 import OrganizationDetail from '@/pages/OrganizationDetail';
 import About from '@/pages/About';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { Toaster } from "@/components/ui/toaster"
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ErrorBoundary } from "@/components/ErrorBoundary";
