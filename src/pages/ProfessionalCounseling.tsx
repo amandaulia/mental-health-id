@@ -18,7 +18,7 @@ const ProfessionalCounseling = () => {
     institutions: [],
     professionTypes: [],
     specializations: [],
-    priceRange: [0, 2000000],
+    priceRange: [0, 525000],
     modes: [],
     insurance: []
   });
@@ -51,7 +51,7 @@ const ProfessionalCounseling = () => {
       institutions: [],
       professionTypes: [],
       specializations: [],
-      priceRange: [0, 2000000],
+      priceRange: [0, 525000],
       modes: [],
       insurance: []
     });

@@ -360,30 +360,30 @@ export const SearchAndFilters = ({
             <div>
               <h4 className="font-medium text-foreground mb-3">Session Cost (IDR)</h4>
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Minimum</label>
-                    <div className="bg-gray-50 rounded-lg p-3 border">
-                      <span className="text-lg font-medium">{priceRange[0].toLocaleString()}</span>
+                    <label className="text-xs text-muted-foreground mb-1 block">Minimum</label>
+                    <div className="bg-gray-50 rounded-full px-2 py-1 border text-center">
+                      <span className="text-sm font-medium">{priceRange[0].toLocaleString()}</span>
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Maximum</label>
-                    <div className="bg-gray-50 rounded-lg p-3 border">
-                      <span className="text-lg font-medium">{priceRange[1].toLocaleString()}</span>
+                    <label className="text-xs text-muted-foreground mb-1 block">Maximum</label>
+                    <div className="bg-gray-50 rounded-full px-2 py-1 border text-center">
+                      <span className="text-sm font-medium">{priceRange[1].toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
                 
                 <Slider
                   value={priceRange}
-                  max={2000000}
-                  step={100000}
+                  max={525000}
+                  step={25000}
                   onValueChange={(value) => setPriceRange(value as [number, number])}
                   onValueCommit={() => handlePriceRangeChange(priceRange)}
                   className="mb-2"
                 />
-                <div className="flex justify-between text-sm text-muted-foreground">
+                <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Rp {priceRange[0].toLocaleString()}</span>
                   <span>Rp {priceRange[1].toLocaleString()}</span>
                 </div>
