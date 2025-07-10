@@ -16,17 +16,20 @@ import { Footer } from '@/components/Footer';
 import { Toaster } from "@/components/ui/toaster"
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { LanguageProvider } from '@/contexts/LanguageContext';
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <AppContent />
-        </BrowserRouter>
-      </QueryClientProvider>
+      <LanguageProvider>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AppContent />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </LanguageProvider>
     </ErrorBoundary>
   );
 }

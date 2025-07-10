@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Menu, X, Home, Info, Users, Heart, Palette, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <header className="brand-gradient shadow-md sticky top-0 z-50">
@@ -19,42 +22,48 @@ export const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <a href="/" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
-              <Home className="h-4 w-4" />
-              Home
-            </a>
-            <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
-              <Info className="h-4 w-4" />
-              About
-            </a>
-            <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Professional Counseling
-            </a>
-            <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
-              <Heart className="h-4 w-4" />
-              Peer Counseling
-            </a>
-            <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
-              <Palette className="h-4 w-4" />
-              Activities
-            </a>
-            <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
-              <Building2 className="h-4 w-4" />
-              Communities
-            </a>
-          </nav>
+          <div className="hidden md:flex items-center space-x-6">
+            <nav className="flex items-center space-x-6">
+              <a href="/" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                <Home className="h-4 w-4" />
+                {t('header.navigation.home')}
+              </a>
+              <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                <Info className="h-4 w-4" />
+                {t('header.navigation.about')}
+              </a>
+              <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                {t('header.navigation.professional')}
+              </a>
+              <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                <Heart className="h-4 w-4" />
+                {t('header.navigation.peer')}
+              </a>
+              <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                <Palette className="h-4 w-4" />
+                {t('header.navigation.stressRelief')}
+              </a>
+              <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                <Building2 className="h-4 w-4" />
+                {t('header.navigation.organizations')}
+              </a>
+            </nav>
+            <LanguageToggle />
+          </div>
 
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="md:hidden text-white hover:bg-white/10"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
+          {/* Mobile Menu Button and Language Toggle */}
+          <div className="md:hidden flex items-center space-x-2">
+            <LanguageToggle />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/10"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -63,27 +72,27 @@ export const Header = () => {
             <nav className="flex flex-col space-y-3">
               <a href="/" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Home className="h-4 w-4" />
-                Home
+                {t('header.navigation.home')}
               </a>
               <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Info className="h-4 w-4" />
-                About
+                {t('header.navigation.about')}
               </a>
               <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Users className="h-4 w-4" />
-                Professional Counseling
+                {t('header.navigation.professional')}
               </a>
               <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Heart className="h-4 w-4" />
-                Peer Counseling
+                {t('header.navigation.peer')}
               </a>
               <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Palette className="h-4 w-4" />
-                Activities
+                {t('header.navigation.stressRelief')}
               </a>
               <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Building2 className="h-4 w-4" />
-                Communities
+                {t('header.navigation.organizations')}
               </a>
             </nav>
           </div>

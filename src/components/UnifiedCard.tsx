@@ -5,6 +5,7 @@ import { MapPin, Clock, Users, Building2, Heart, Star, CheckCircle, ExternalLink
 import { Link } from "react-router-dom";
 import { ModeIcon } from "./ModeIcon";
 import { trackCardClick } from "@/utils/analytics";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface UnifiedCardData {
   type: "practitioner" | "institution" | "peer-counseling" | "support-group" | "activity" | "organization" | "community";
@@ -42,6 +43,7 @@ interface UnifiedCardProps {
 }
 
 export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
+  const { t } = useLanguage();
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -80,7 +82,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                   {data.isVerified && (
                     <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 flex-shrink-0">
                       <CheckCircle className="h-3 w-3 mr-1" />
-                      Verified
+                      {t('common.verified')}
                     </Badge>
                   )}
                 </div>
@@ -221,7 +223,10 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
               )}
               
               {data.priceRange && (
-                <p className="font-medium text-primary text-sm">{data.priceRange}</p>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-muted-foreground">{t('common.priceRange')}:</span>
+                  <span className="font-medium text-primary text-sm">{data.priceRange}</span>
+                </div>
               )}
               
               <div className="flex items-center gap-2 text-sm text-muted-foreground">

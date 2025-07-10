@@ -19,6 +19,7 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { FilterState, ProfessionType, Specialization, Mode, InsuranceType } from "@/types";
 import { trackFormInteraction } from "@/utils/analytics";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SearchAndFiltersProps {
   filters: FilterState;
@@ -33,6 +34,7 @@ export const SearchAndFilters = ({
 }: SearchAndFiltersProps) => {
   const [priceRange, setPriceRange] = useState(filters.priceRange);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const { t } = useLanguage();
 
   const handleSearchChange = (value: string) => {
     onFiltersChange({ ...filters, search: value });
@@ -133,7 +135,7 @@ export const SearchAndFilters = ({
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3" />
             <Input
               type="text"
-              placeholder="Search..."
+              placeholder={t('search.placeholder')}
               value={filters.search}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-7 text-sm rounded-full border-gray-200 h-8"
@@ -154,7 +156,7 @@ export const SearchAndFilters = ({
                   className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
                   <MapPin className="h-3 w-3" />
-                  <span>Location</span>
+                  <span>{t('search.filters.location')}</span>
                   {getActiveFilterCount(filters.locations) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.locations)}
@@ -703,7 +705,7 @@ export const SearchAndFilters = ({
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3" />
             <Input
               type="text"
-              placeholder="Search..."
+              placeholder={t('search.placeholder')}
               value={filters.search}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-7 text-sm rounded-full border-gray-200 h-8"
