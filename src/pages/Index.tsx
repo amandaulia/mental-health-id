@@ -13,8 +13,12 @@ import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { trackFeelingsAnalysis, trackSearch, trackFilter } from "@/utils/analytics";
+import { Badge } from "@/components/ui/badge";
 
 const Index = () => {
+  // Feature flags
+  const isFeelingsAnalysisEnabled = true; // Set to false to hide the feature
+  
   const [feelings, setFeelings] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [recommendations, setRecommendations] = useState<UnifiedCardData[]>([]);
@@ -226,30 +230,37 @@ const Index = () => {
       </div>
 
       {/* Feelings Analysis Section */}
-      <div className="mb-8 sm:mb-12">
-        <div className="bg-card rounded-xl p-6 card-shadow max-w-4xl mx-auto">
-          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4">
-            How are you feeling today?
-          </h2>
-          <p className="text-muted-foreground mb-4">
-            Share what you're experiencing, and we'll recommend personalized mental health resources for you.
-          </p>
-          <Textarea
-            value={feelings}
-            onChange={(e) => setFeelings(e.target.value)}
-            placeholder="I've been feeling anxious about work lately and having trouble sleeping..."
-            className="min-h-[120px] mb-4"
-          />
-          <Button 
-            onClick={handleFeelingsAnalysis}
-            disabled={isAnalyzing}
-            className="w-full sm:w-auto"
-          >
-            {isAnalyzing ? "Analyzing..." : "Get Personalized Recommendations"}
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+      {isFeelingsAnalysisEnabled && (
+        <div className="mb-8 sm:mb-12">
+          <div className="bg-card rounded-xl p-6 card-shadow max-w-4xl mx-auto">
+            <div className="flex items-center gap-3 mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+                How are you feeling today?
+              </h2>
+              <Badge variant="secondary" className="text-xs">
+                Beta
+              </Badge>
+            </div>
+            <p className="text-muted-foreground mb-4">
+              Share what you're experiencing, and we'll recommend personalized mental health resources for you.
+            </p>
+            <Textarea
+              value={feelings}
+              onChange={(e) => setFeelings(e.target.value)}
+              placeholder="I've been feeling anxious about work lately and having trouble sleeping..."
+              className="min-h-[120px] mb-4"
+            />
+            <Button 
+              onClick={handleFeelingsAnalysis}
+              disabled={isAnalyzing}
+              className="w-full sm:w-auto"
+            >
+              {isAnalyzing ? "Analyzing..." : "Get Personalized Recommendations"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Recommendations Section */}
       {recommendations.length > 0 && (
