@@ -145,15 +145,16 @@ export const SearchAndFilters = ({
       {/* Mobile Filters - Collapsible */}
       {showMobileFilters && (
         <div className="md:hidden">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {/* Location Filter */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-2 h-auto text-xs font-medium justify-center"
+                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
-                  <MapPin className="h-4 w-4" />
+                  <MapPin className="h-3 w-3" />
+                  <span>Location</span>
                   {getActiveFilterCount(filters.locations) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.locations)}
@@ -188,9 +189,10 @@ export const SearchAndFilters = ({
               <PopoverTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-2 h-auto text-xs font-medium justify-center"
+                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
-                  <Building2 className="h-4 w-4" />
+                  <Building2 className="h-3 w-3" />
+                  <span>Institution</span>
                   {getActiveFilterCount(filters.institutions) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.institutions)}
@@ -225,9 +227,10 @@ export const SearchAndFilters = ({
               <PopoverTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-2 h-auto text-xs font-medium justify-center"
+                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
-                  <User className="h-4 w-4" />
+                  <User className="h-3 w-3" />
+                  <span>Profession</span>
                   {getActiveFilterCount(filters.professionTypes) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.professionTypes)}
@@ -262,9 +265,10 @@ export const SearchAndFilters = ({
               <PopoverTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-2 h-auto text-xs font-medium justify-center"
+                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
-                  <Heart className="h-4 w-4" />
+                  <Heart className="h-3 w-3" />
+                  <span>Specializations</span>
                   {getActiveFilterCount(filters.specializations) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.specializations)}
@@ -299,9 +303,10 @@ export const SearchAndFilters = ({
               <PopoverTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-2 h-auto text-xs font-medium justify-center"
+                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
-                  <Monitor className="h-4 w-4" />
+                  <Monitor className="h-3 w-3" />
+                  <span>Session Mode</span>
                   {getActiveFilterCount(filters.modes) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.modes)}
@@ -341,9 +346,10 @@ export const SearchAndFilters = ({
               <PopoverTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-2 h-auto text-xs font-medium justify-center"
+                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
-                  <Settings className="h-4 w-4" />
+                  <Settings className="h-3 w-3" />
+                  <span>Advanced</span>
                   {getActiveFilterCount(filters.insurance) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.insurance)}
