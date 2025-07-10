@@ -101,30 +101,42 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                           +{data.professionTypes.length - 2}
                         </Badge>
                       )}
+                      {data.insurance && data.insurance.length > 0 && (
+                        <>
+                          {data.insurance.slice(0, 2).map((ins) => (
+                            <Badge key={ins} variant="outline" className="text-xs">
+                              {ins === "bpjs" ? "BPJS" : ins === "private" ? "Private Insurance" : "No Insurance"}
+                            </Badge>
+                          ))}
+                        </>
+                      )}
                     </div>
-                    {data.priceRange && (
-                      <p className="font-medium text-primary text-sm mb-2">{data.priceRange}</p>
-                    )}
                   </>
                 )}
 
                 {data.type === "institution" && (
                   <>
                     <div className="flex flex-wrap gap-1 mb-2">
-                      {data.professionTypes?.slice(0, 3).map((type) => (
+                      {data.professionTypes?.slice(0, 2).map((type) => (
                         <Badge key={type} variant="outline" className="text-xs">
                           {type}
                         </Badge>
                       ))}
-                      {data.professionTypes && data.professionTypes.length > 3 && (
+                      {data.professionTypes && data.professionTypes.length > 2 && (
                         <Badge variant="outline" className="text-xs">
-                          +{data.professionTypes.length - 3}
+                          +{data.professionTypes.length - 2}
                         </Badge>
                       )}
+                      {data.insurance && data.insurance.length > 0 && (
+                        <>
+                          {data.insurance.slice(0, 2).map((ins) => (
+                            <Badge key={ins} variant="outline" className="text-xs">
+                              {ins === "bpjs" ? "BPJS" : ins === "private" ? "Private Insurance" : "No Insurance"}
+                            </Badge>
+                          ))}
+                        </>
+                      )}
                     </div>
-                    {data.priceRange && (
-                      <p className="font-medium text-primary text-sm mb-2">{data.priceRange}</p>
-                    )}
                   </>
                 )}
 
@@ -177,11 +189,6 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
             </div>
             
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{data.city}</span>
-              </div>
-              
               {data.specializations && data.specializations.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {data.specializations.slice(0, 2).map((spec) => (
@@ -213,15 +220,14 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                 </div>
               )}
               
-              {data.insurance && data.insurance.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {data.insurance.slice(0, 2).map((ins) => (
-                    <Badge key={ins} variant="outline" className="text-xs">
-                      {ins === "bpjs" ? "BPJS" : ins === "private" ? "Private Insurance" : "No Insurance"}
-                    </Badge>
-                  ))}
-                </div>
+              {data.priceRange && (
+                <p className="font-medium text-primary text-sm">{data.priceRange}</p>
               )}
+              
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <MapPin className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{data.city}</span>
+              </div>
             </div>
           </div>
         </CardContent>
