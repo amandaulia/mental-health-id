@@ -70,57 +70,60 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
                   </div>
                 </div>
 
-                {/* Profession Types */}
-                {bureau.professionTypes.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="font-medium text-sm">Profession Types</p>
-                    {renderToggleableTags(
-                      bureau.professionTypes,
-                      showMoreProfessions,
-                      setShowMoreProfessions,
-                      (type) => (
-                        <Badge variant="outline" className="text-xs">
-                          {type}
-                        </Badge>
-                      )
-                    )}
-                  </div>
-                )}
+                {/* Three-column layout for compact display */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Profession Types */}
+                  {bureau.professionTypes.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="font-medium text-sm">Profession Types</p>
+                      {renderToggleableTags(
+                        bureau.professionTypes,
+                        showMoreProfessions,
+                        setShowMoreProfessions,
+                        (type) => (
+                          <Badge variant="outline" className="text-xs">
+                            {type}
+                          </Badge>
+                        )
+                      )}
+                    </div>
+                  )}
 
-                {/* Available Modes */}
-                {bureau.modes.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="font-medium text-sm">Available Modes</p>
-                    {renderToggleableTags(
-                      bureau.modes,
-                      showMoreModes,
-                      setShowMoreModes,
-                      (mode) => (
-                        <Badge variant="outline" className="flex items-center gap-1 text-xs">
-                          <ModeIcon mode={mode} />
-                          {getModeLabel(mode)}
-                        </Badge>
-                      )
-                    )}
-                  </div>
-                )}
+                  {/* Available Modes */}
+                  {bureau.modes.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="font-medium text-sm">Available Modes</p>
+                      {renderToggleableTags(
+                        bureau.modes,
+                        showMoreModes,
+                        setShowMoreModes,
+                        (mode) => (
+                          <Badge variant="outline" className="flex items-center gap-1 text-xs">
+                            <ModeIcon mode={mode} />
+                            {getModeLabel(mode)}
+                          </Badge>
+                        )
+                      )}
+                    </div>
+                  )}
 
-                {/* Specializations */}
-                {bureau.specializations.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="font-medium text-sm">Specializations</p>
-                    {renderToggleableTags(
-                      bureau.specializations,
-                      showMoreSpecializations,
-                      setShowMoreSpecializations,
-                      (spec) => (
-                        <Badge variant="outline" className="text-xs">
-                          {spec}
-                        </Badge>
-                      )
-                    )}
-                  </div>
-                )}
+                  {/* Specializations */}
+                  {bureau.specializations.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="font-medium text-sm">Specializations</p>
+                      {renderToggleableTags(
+                        bureau.specializations,
+                        showMoreSpecializations,
+                        setShowMoreSpecializations,
+                        (spec) => (
+                          <Badge variant="outline" className="text-xs">
+                            {spec}
+                          </Badge>
+                        )
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
