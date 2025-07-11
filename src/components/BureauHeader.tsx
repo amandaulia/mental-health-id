@@ -107,23 +107,40 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
                     </div>
                   )}
 
-                  {/* Specializations */}
-                  {bureau.specializations.length > 0 && (
+                  {/* Accepted Insurance */}
+                  {bureau.insurance.length > 0 && (
                     <div className="space-y-2">
-                      <p className="font-medium text-sm">Specializations</p>
+                      <p className="font-medium text-sm">Accepted Insurance</p>
                       {renderToggleableTags(
-                        bureau.specializations,
-                        showMoreSpecializations,
-                        setShowMoreSpecializations,
-                        (spec) => (
+                        bureau.insurance,
+                        showMoreInsurance,
+                        setShowMoreInsurance,
+                        (ins) => (
                           <Badge variant="outline" className="text-xs">
-                            {spec}
+                            {getInsuranceLabel(ins)}
                           </Badge>
                         )
                       )}
                     </div>
                   )}
                 </div>
+
+                {/* Specializations - moved below the grid */}
+                {bureau.specializations.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="font-medium text-sm">Specializations</p>
+                    {renderToggleableTags(
+                      bureau.specializations,
+                      showMoreSpecializations,
+                      setShowMoreSpecializations,
+                      (spec) => (
+                        <Badge variant="outline" className="text-xs">
+                          {spec}
+                        </Badge>
+                      )
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -133,23 +150,6 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
             Last updated: {new Date(bureau.lastUpdated).toLocaleDateString()}
           </div>
         </div>
-
-        {/* Accepted Insurance - moved to bottom */}
-        {bureau.insurance.length > 0 && (
-          <div className="space-y-2">
-            <p className="font-medium text-sm">Accepted Insurance</p>
-            {renderToggleableTags(
-              bureau.insurance,
-              showMoreInsurance,
-              setShowMoreInsurance,
-              (ins) => (
-                <Badge variant="outline" className="text-xs">
-                  {getInsuranceLabel(ins)}
-                </Badge>
-              )
-            )}
-          </div>
-        )}
       </CardContent>
     </Card>
   );
