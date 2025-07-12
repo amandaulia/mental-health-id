@@ -1,3 +1,5 @@
+import { Users, Heart, Palette, Building2 } from "lucide-react";
+
 const About = () => {
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
@@ -41,21 +43,33 @@ const About = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="p-4 bg-muted/50 rounded-lg">
-                  <h3 className="font-semibold text-lg mb-2">Professional Counseling Services</h3>
+                  <div className="flex items-center gap-3 mb-2">
+                    <Users className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-lg">Professional Counseling Services</h3>
+                  </div>
                   <p className="text-muted-foreground">Licensed psychologists, psychiatrists, and mental health clinics with detailed profiles, specializations, and contact information.</p>
                 </div>
                 <div className="p-4 bg-muted/50 rounded-lg">
-                  <h3 className="font-semibold text-lg mb-2">Peer Counseling & Support Groups</h3>
+                  <div className="flex items-center gap-3 mb-2">
+                    <Heart className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-lg">Peer Counseling & Support Groups</h3>
+                  </div>
                   <p className="text-muted-foreground">Community-based support groups and peer counseling services for various mental health conditions and life challenges.</p>
                 </div>
               </div>
               <div className="space-y-4">
                 <div className="p-4 bg-muted/50 rounded-lg">
-                  <h3 className="font-semibold text-lg mb-2">Stress Relief Activities</h3>
+                  <div className="flex items-center gap-3 mb-2">
+                    <Palette className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-lg">Stress Relief Activities</h3>
+                  </div>
                   <p className="text-muted-foreground">Art therapy, music therapy, sports activities, and other wellness programs designed to promote mental well-being.</p>
                 </div>
                 <div className="p-4 bg-muted/50 rounded-lg">
-                  <h3 className="font-semibold text-lg mb-2">Organizations & Communities</h3>
+                  <div className="flex items-center gap-3 mb-2">
+                    <Building2 className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-lg">Organizations & Communities</h3>
+                  </div>
                   <p className="text-muted-foreground">Mental health organizations, educational institutions, and community groups dedicated to mental health awareness and support.</p>
                 </div>
               </div>
