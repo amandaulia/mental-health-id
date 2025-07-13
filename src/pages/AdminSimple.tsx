@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import { Plus, X, Upload, Users, Building2, Heart, Palette, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +17,44 @@ import { useToast } from "@/hooks/use-toast";
 export default function AdminSimple() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+
+  // State for existing data for relationships
+  const [existingData, setExistingData] = useState({
+    practitioners: [],
+    institutions: [],
+    organizations: [],
+    peerCounselings: [],
+    activities: [],
+    locations: [],
+    contacts: [],
+    services: []
+  });
+
+  // Relationship states
+  const [practitionerRelations, setPractitionerRelations] = useState({
+    institutions: [],
+    locations: [],
+    contacts: []
+  });
+
+  const [institutionRelations, setInstitutionRelations] = useState({
+    locations: [],
+    contacts: []
+  });
+
+  // Dialog states
+  const [showAddForms, setShowAddForms] = useState({
+    institution: false,
+    location: false,
+    contact: false
+  });
+
+  // New entity forms for dialogs
+  const [newEntityForms, setNewEntityForms] = useState({
+    institution: { name: "", institution_type: "", verified: false },
+    location: { name: "", city: "", province: "", country: "Indonesia", address: "" },
+    contact: { contact_type: "", name: "", value: "", link: "" }
+  });
 
   // Form states for different entities
   const [practitionerForm, setPractitionerForm] = useState({
@@ -95,6 +135,42 @@ export default function AdminSimple() {
   const peerTypes = ["Peer Counseling", "Group Therapy"];
   const contactTypes = ["WhatsApp", "Phone", "Website", "Instagram", "Email"];
 
+  useEffect(() => {
+    loadExistingData();
+  }, []);
+
+  const loadExistingData = async () => {
+    try {
+      const [practitioners, institutions, organizations, peerCounselings, activities, locations, contacts, services] = await Promise.all([
+        supabase.from('practitioner').select('id, name'),
+        supabase.from('institution').select('id, name'),
+        supabase.from('organization').select('id, name'),
+        supabase.from('peer_counseling').select('id, name'),
+        supabase.from('activity').select('id, name'),
+        supabase.from('location').select('id, name, city'),
+        supabase.from('contact_details').select('id, name, value, contact_type'),
+        supabase.from('service').select('id, name')
+      ]);
+
+      setExistingData({
+        practitioners: practitioners.data || [],
+        institutions: institutions.data || [],
+        organizations: organizations.data || [],
+        peerCounselings: peerCounselings.data || [],
+        activities: activities.data || [],
+        locations: locations.data || [],
+        contacts: contacts.data || [],
+        services: services.data || []
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to load existing data",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleArrayField = (value: string, currentArray: string[], setter: (arr: string[]) => void) => {
     if (value && !currentArray.includes(value)) {
       setter([...currentArray, value]);
@@ -132,6 +208,8 @@ export default function AdminSimple() {
 
       // Reset form
       resetForm(entityType);
+      // Refresh existing data for relationships
+      loadExistingData();
 
     } catch (error: any) {
       toast({
@@ -186,54 +264,276 @@ export default function AdminSimple() {
     }
   };
 
-  const DestinationSelector = ({ 
+  const RelationSelector = ({ 
     entityType,
     selectedItems, 
-    onAdd, 
+    existingOptions,
+    onSelectExisting,
     onRemove, 
     placeholder,
-    showAddForm,
-    setShowAddForm
+    onShowAddForm
   }: {
     entityType: string;
     selectedItems: any[];
-    onAdd: (item: any) => void;
-    onRemove: (item: any) => void;
+    existingOptions: any[];
+    onSelectExisting: (item: any) => void;
+    onRemove: (index: number) => void;
     placeholder: string;
-    showAddForm: boolean;
-    setShowAddForm: (show: boolean) => void;
+    onShowAddForm: () => void;
   }) => (
     <div className="space-y-4">
       {selectedItems.map((item, index) => (
-        <div key={index} className="space-y-2">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 relative">
-              <Select>
-                <SelectTrigger className="h-12 bg-background border-2 border-border rounded-lg">
-                  <SelectValue placeholder={item.name || `Selected ${entityType}`} />
-                </SelectTrigger>
-              </Select>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onRemove(item)}
-              className="h-12 w-12 p-0 bg-muted hover:bg-muted/80"
-            >
-              <X className="h-5 w-5" />
-            </Button>
+        <div key={index} className="flex items-center gap-2">
+          <div className="flex-1 relative">
+            <Select>
+              <SelectTrigger className="h-12 bg-background border-2 border-border rounded-lg">
+                <SelectValue placeholder={item.name || `Selected ${entityType}`} />
+              </SelectTrigger>
+            </Select>
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onRemove(index)}
+            className="h-12 w-12 p-0 bg-muted hover:bg-muted/80"
+          >
+            <X className="h-5 w-5" />
+          </Button>
         </div>
       ))}
       
+      {existingOptions.length > 0 && (
+        <div className="space-y-2">
+          <Select onValueChange={(value) => {
+            const selected = existingOptions.find(item => item.id.toString() === value);
+            if (selected) onSelectExisting(selected);
+          }}>
+            <SelectTrigger className="h-12 bg-background border-2 border-border rounded-lg">
+              <SelectValue placeholder={`Select existing ${entityType}`} />
+            </SelectTrigger>
+            <SelectContent>
+              {existingOptions.map((item) => (
+                <SelectItem key={item.id} value={item.id.toString()}>
+                  {item.name || `${item.contact_type}: ${item.value}` || `${item.city}`}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+      
       <Button 
-        onClick={() => setShowAddForm(true)}
+        onClick={onShowAddForm}
         className="w-full h-14 bg-foreground text-background hover:bg-foreground/90 font-medium text-sm tracking-wide"
       >
-        ADD {entityType.toUpperCase()}
+        ADD NEW {entityType.toUpperCase()}
       </Button>
     </div>
   );
+
+  const AddEntityDialog = ({ 
+    entityType, 
+    isOpen, 
+    onClose, 
+    onSave 
+  }: { 
+    entityType: string; 
+    isOpen: boolean; 
+    onClose: () => void; 
+    onSave: (data: any) => void; 
+  }) => {
+    const formData = newEntityForms[entityType as keyof typeof newEntityForms];
+    
+    const updateForm = (updates: any) => {
+      setNewEntityForms(prev => ({
+        ...prev,
+        [entityType]: { ...prev[entityType as keyof typeof prev], ...updates }
+      }));
+    };
+
+    const handleSave = () => {
+      onSave(formData);
+      onClose();
+    };
+
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New {entityType}</DialogTitle>
+            <DialogDescription>Create a new {entityType} and add it to the relationship</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label>Name *</Label>
+              <Input 
+                value={formData.name}
+                onChange={(e) => updateForm({ name: e.target.value })}
+                placeholder={`${entityType} name`}
+              />
+            </div>
+            
+            {entityType === 'institution' && (
+              <div>
+                <Label>Type *</Label>
+                <Select value={(formData as any).institution_type} onValueChange={(value) => updateForm({ institution_type: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {institutionTypes.map((type) => (
+                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {entityType === 'contact' && (
+              <>
+                <div>
+                  <Label>Contact Type *</Label>
+                  <Select value={(formData as any).contact_type} onValueChange={(value) => updateForm({ contact_type: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select contact type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {contactTypes.map((type) => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Value *</Label>
+                  <Input 
+                    value={(formData as any).value}
+                    onChange={(e) => updateForm({ value: e.target.value })}
+                    placeholder="Contact value"
+                  />
+                </div>
+                <div>
+                  <Label>Link</Label>
+                  <Input 
+                    value={(formData as any).link}
+                    onChange={(e) => updateForm({ link: e.target.value })}
+                    placeholder="Optional URL"
+                  />
+                </div>
+              </>
+            )}
+
+            {entityType === 'location' && (
+              <>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label>City *</Label>
+                    <Input 
+                      value={(formData as any).city}
+                      onChange={(e) => updateForm({ city: e.target.value })}
+                      placeholder="City"
+                    />
+                  </div>
+                  <div>
+                    <Label>Province *</Label>
+                    <Input 
+                      value={(formData as any).province}
+                      onChange={(e) => updateForm({ province: e.target.value })}
+                      placeholder="Province"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label>Address</Label>
+                  <Textarea 
+                    value={(formData as any).address}
+                    onChange={(e) => updateForm({ address: e.target.value })}
+                    placeholder="Full address"
+                  />
+                </div>
+              </>
+            )}
+
+            {['institution'].includes(entityType) && (
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  checked={(formData as any).verified}
+                  onCheckedChange={(checked) => updateForm({ verified: !!checked })}
+                />
+                <Label>Verified</Label>
+              </div>
+            )}
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button onClick={handleSave} disabled={!formData.name}>Create & Add</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
+  const handleCreateAndAddEntity = async (entityType: string, formData: any) => {
+    try {
+      setLoading(true);
+      const tableName = entityType === 'contact' ? 'contact_details' : entityType;
+      
+      const { data, error } = await supabase
+        .from(tableName as any)
+        .insert([formData])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Add to appropriate relationship state
+      if (entityType === 'institution') {
+        setPractitionerRelations(prev => ({
+          ...prev,
+          institutions: [...prev.institutions, data]
+        }));
+        setInstitutionRelations(prev => ({
+          ...prev,
+          institutions: [...(prev as any).institutions || [], data]
+        }));
+      } else if (entityType === 'location') {
+        setPractitionerRelations(prev => ({
+          ...prev,
+          locations: [...prev.locations, data]
+        }));
+        setInstitutionRelations(prev => ({
+          ...prev,
+          locations: [...prev.locations, data]
+        }));
+      } else if (entityType === 'contact') {
+        setPractitionerRelations(prev => ({
+          ...prev,
+          contacts: [...prev.contacts, data]
+        }));
+        setInstitutionRelations(prev => ({
+          ...prev,
+          contacts: [...prev.contacts, data]
+        }));
+      }
+
+      // Refresh existing data
+      loadExistingData();
+
+      toast({
+        title: "Success",
+        description: `${entityType} created and added to relationship`,
+      });
+
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const ArrayFieldInput = ({ 
     value, 
@@ -422,6 +722,70 @@ export default function AdminSimple() {
                 <Upload className="h-4 w-4 mr-2" />
                 {loading ? "Creating..." : "Create Practitioner"}
               </Button>
+
+              <Separator className="my-8" />
+
+              {/* Practitioner Relationships */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold">Relationships</h3>
+                
+                <div>
+                  <Label className="text-base font-medium">Institutions</Label>
+                  <RelationSelector
+                    entityType="institution"
+                    selectedItems={practitionerRelations.institutions}
+                    existingOptions={existingData.institutions}
+                    onSelectExisting={(item) => setPractitionerRelations(prev => ({
+                      ...prev,
+                      institutions: [...prev.institutions, item]
+                    }))}
+                    onRemove={(index) => setPractitionerRelations(prev => ({
+                      ...prev,
+                      institutions: prev.institutions.filter((_, i) => i !== index)
+                    }))}
+                    placeholder="Select Institution"
+                    onShowAddForm={() => setShowAddForms(prev => ({ ...prev, institution: true }))}
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-base font-medium">Locations</Label>
+                  <RelationSelector
+                    entityType="location"
+                    selectedItems={practitionerRelations.locations}
+                    existingOptions={existingData.locations}
+                    onSelectExisting={(item) => setPractitionerRelations(prev => ({
+                      ...prev,
+                      locations: [...prev.locations, item]
+                    }))}
+                    onRemove={(index) => setPractitionerRelations(prev => ({
+                      ...prev,
+                      locations: prev.locations.filter((_, i) => i !== index)
+                    }))}
+                    placeholder="Select Location"
+                    onShowAddForm={() => setShowAddForms(prev => ({ ...prev, location: true }))}
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-base font-medium">Contact Details</Label>
+                  <RelationSelector
+                    entityType="contact"
+                    selectedItems={practitionerRelations.contacts}
+                    existingOptions={existingData.contacts}
+                    onSelectExisting={(item) => setPractitionerRelations(prev => ({
+                      ...prev,
+                      contacts: [...prev.contacts, item]
+                    }))}
+                    onRemove={(index) => setPractitionerRelations(prev => ({
+                      ...prev,
+                      contacts: prev.contacts.filter((_, i) => i !== index)
+                    }))}
+                    placeholder="Select Contact"
+                    onShowAddForm={() => setShowAddForms(prev => ({ ...prev, contact: true }))}
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -564,7 +928,163 @@ export default function AdminSimple() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Institution Form */}
+        <TabsContent value="institution">
+          <Card>
+            <CardHeader>
+              <CardTitle>Add Institution</CardTitle>
+              <CardDescription>Add a mental health institution to the directory</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="i-name">Name *</Label>
+                  <Input 
+                    id="i-name"
+                    value={institutionForm.name}
+                    onChange={(e) => setInstitutionForm({...institutionForm, name: e.target.value})}
+                    placeholder="Institution name"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="i-type">Institution Type *</Label>
+                  <Select value={institutionForm.institution_type} onValueChange={(value) => setInstitutionForm({...institutionForm, institution_type: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select institution type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {institutionTypes.map((type) => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="i-image">Image URL</Label>
+                <Input 
+                  id="i-image"
+                  value={institutionForm.image}
+                  onChange={(e) => setInstitutionForm({...institutionForm, image: e.target.value})}
+                  placeholder="Image URL"
+                />
+              </div>
+
+              <div>
+                <Label>Profession Types</Label>
+                <ArrayFieldInput
+                  value=""
+                  options={professionTypes}
+                  currentArray={institutionForm.profession_type}
+                  onAdd={(value) => handleArrayField(value, institutionForm.profession_type, (arr) => setInstitutionForm({...institutionForm, profession_type: arr}))}
+                  onRemove={(value) => removeFromArray(value, institutionForm.profession_type, (arr) => setInstitutionForm({...institutionForm, profession_type: arr}))}
+                  placeholder="Select profession type"
+                />
+              </div>
+
+              <div>
+                <Label>Specializations</Label>
+                <ArrayFieldInput
+                  value=""
+                  options={specializations}
+                  currentArray={institutionForm.specialization}
+                  onAdd={(value) => handleArrayField(value, institutionForm.specialization, (arr) => setInstitutionForm({...institutionForm, specialization: arr}))}
+                  onRemove={(value) => removeFromArray(value, institutionForm.specialization, (arr) => setInstitutionForm({...institutionForm, specialization: arr}))}
+                  placeholder="Select specialization"
+                />
+              </div>
+
+              <div>
+                <Label>Insurance</Label>
+                <ArrayFieldInput
+                  value=""
+                  options={insuranceTypes}
+                  currentArray={institutionForm.insurance}
+                  onAdd={(value) => handleArrayField(value, institutionForm.insurance, (arr) => setInstitutionForm({...institutionForm, insurance: arr}))}
+                  onRemove={(value) => removeFromArray(value, institutionForm.insurance, (arr) => setInstitutionForm({...institutionForm, insurance: arr}))}
+                  placeholder="Select insurance type"
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="i-verified"
+                  checked={institutionForm.verified}
+                  onCheckedChange={(checked) => setInstitutionForm({...institutionForm, verified: !!checked})}
+                />
+                <Label htmlFor="i-verified">Verified</Label>
+              </div>
+
+              <Button 
+                onClick={() => handleSubmit("institution", institutionForm)}
+                disabled={loading || !institutionForm.name || !institutionForm.institution_type}
+                className="w-full"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {loading ? "Creating..." : "Create Institution"}
+              </Button>
+
+              <Separator className="my-8" />
+
+              {/* Institution Relationships */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold">Relationships</h3>
+                
+                <div>
+                  <Label className="text-base font-medium">Locations</Label>
+                  <RelationSelector
+                    entityType="location"
+                    selectedItems={institutionRelations.locations}
+                    existingOptions={existingData.locations}
+                    onSelectExisting={(item) => setInstitutionRelations(prev => ({
+                      ...prev,
+                      locations: [...prev.locations, item]
+                    }))}
+                    onRemove={(index) => setInstitutionRelations(prev => ({
+                      ...prev,
+                      locations: prev.locations.filter((_, i) => i !== index)
+                    }))}
+                    placeholder="Select Location"
+                    onShowAddForm={() => setShowAddForms(prev => ({ ...prev, location: true }))}
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-base font-medium">Contact Details</Label>
+                  <RelationSelector
+                    entityType="contact"
+                    selectedItems={institutionRelations.contacts}
+                    existingOptions={existingData.contacts}
+                    onSelectExisting={(item) => setInstitutionRelations(prev => ({
+                      ...prev,
+                      contacts: [...prev.contacts, item]
+                    }))}
+                    onRemove={(index) => setInstitutionRelations(prev => ({
+                      ...prev,
+                      contacts: prev.contacts.filter((_, i) => i !== index)
+                    }))}
+                    placeholder="Select Contact"
+                    onShowAddForm={() => setShowAddForms(prev => ({ ...prev, contact: true }))}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
+
+      {/* Add Entity Dialogs */}
+      {Object.entries(showAddForms).map(([entityType, isOpen]) => (
+        <AddEntityDialog
+          key={entityType}
+          entityType={entityType}
+          isOpen={isOpen}
+          onClose={() => setShowAddForms(prev => ({ ...prev, [entityType]: false }))}
+          onSave={(data) => handleCreateAndAddEntity(entityType, data)}
+        />
+      ))}
     </div>
   );
 }
