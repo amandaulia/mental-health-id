@@ -52,6 +52,10 @@ export const Header = () => {
                 <Settings className="h-4 w-4" />
                 Admin
               </a>
+              <a href="/admin-relations" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Relations
+              </a>
             </nav>
             <LanguageToggle />
           </div>
@@ -101,6 +105,10 @@ export const Header = () => {
               <a href="/admin" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Settings className="h-4 w-4" />
                 Admin
+              </a>
+              <a href="/admin-relations" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Relations
               </a>
             </nav>
           </div>

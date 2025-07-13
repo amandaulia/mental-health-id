@@ -12,6 +12,7 @@ import PeerCounselingDetail from '@/pages/PeerCounselingDetail';
 import OrganizationDetail from '@/pages/OrganizationDetail';
 import About from '@/pages/About';
 import AdminSimple from '@/pages/AdminSimple';
+import AdminRelations from '@/pages/AdminRelations';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Toaster } from "@/components/ui/toaster"
@@ -53,7 +54,8 @@ function AppContent() {
           <Route path="/bureau/:id" element={<BureauDetail />} />
           <Route path="/peer-counseling/:id" element={<PeerCounselingDetail />} />
           <Route path="/organizations/:id" element={<OrganizationDetail />} />
-          <Route path="/admin" element={<AdminSimple />} />
+            <Route path="/admin" element={<AdminSimple />} />
+            <Route path="/admin-relations" element={<AdminRelations />} />
         </Routes>
       </main>
       <Footer />

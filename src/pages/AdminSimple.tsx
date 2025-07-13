@@ -186,6 +186,55 @@ export default function AdminSimple() {
     }
   };
 
+  const DestinationSelector = ({ 
+    entityType,
+    selectedItems, 
+    onAdd, 
+    onRemove, 
+    placeholder,
+    showAddForm,
+    setShowAddForm
+  }: {
+    entityType: string;
+    selectedItems: any[];
+    onAdd: (item: any) => void;
+    onRemove: (item: any) => void;
+    placeholder: string;
+    showAddForm: boolean;
+    setShowAddForm: (show: boolean) => void;
+  }) => (
+    <div className="space-y-4">
+      {selectedItems.map((item, index) => (
+        <div key={index} className="space-y-2">
+          <div className="flex items-center gap-2">
+            <div className="flex-1 relative">
+              <Select>
+                <SelectTrigger className="h-12 bg-background border-2 border-border rounded-lg">
+                  <SelectValue placeholder={item.name || `Selected ${entityType}`} />
+                </SelectTrigger>
+              </Select>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onRemove(item)}
+              className="h-12 w-12 p-0 bg-muted hover:bg-muted/80"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      ))}
+      
+      <Button 
+        onClick={() => setShowAddForm(true)}
+        className="w-full h-14 bg-foreground text-background hover:bg-foreground/90 font-medium text-sm tracking-wide"
+      >
+        ADD {entityType.toUpperCase()}
+      </Button>
+    </div>
+  );
+
   const ArrayFieldInput = ({ 
     value, 
     options, 
