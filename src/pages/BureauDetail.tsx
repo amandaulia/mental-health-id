@@ -47,13 +47,16 @@ const BureauDetail = () => {
 
   useEffect(() => {
     if (dbLocations) {
-      const transformedLocations = dbLocations.map(loc => ({
+      const validLocations = (dbLocations as any[]).filter((loc: any) => 
+        loc && typeof loc === 'object' && loc.id && loc.name && !loc.error
+      );
+      const transformedLocations = validLocations.map((loc: any) => ({
         id: loc.id.toString(),
-        name: loc.name,
+        name: loc.name || "Unnamed Location",
         address: loc.address || "Address not available",
-        city: loc.city,
-        province: loc.province,
-        country: loc.country
+        city: loc.city || "Unknown City",
+        province: loc.province || "Unknown Province",
+        country: loc.country || "Unknown Country"
       }));
       setLocations(transformedLocations);
     }

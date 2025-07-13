@@ -5,7 +5,7 @@ import { Database } from "@/integrations/supabase/types";
 type Tables = Database['public']['Tables'];
 type Practitioner = Tables['practitioner']['Row'];
 type Institution = Tables['institution']['Row'];
-type Service = Tables['services']['Row'];
+type Service = Tables['service']['Row'];
 type ContactDetail = Tables['contact_details']['Row'];
 type Location = Tables['location']['Row'];
 
@@ -49,9 +49,9 @@ export const databaseService = {
   // Fetch contact details for a practitioner
   async getContactDetailsByPractitioner(practitionerId: number) {
     const { data, error } = await supabase
-      .from('contact_mapping')
+      .from('practitioner_contacts')
       .select(`
-        contact_details:contact_details_id(*)
+        contact_details(*)
       `)
       .eq('practitioner_id', practitionerId);
     
@@ -96,9 +96,9 @@ export const databaseService = {
   // Fetch contact details for an institution
   async getContactDetailsByInstitution(institutionId: number) {
     const { data, error } = await supabase
-      .from('contact_mapping')
+      .from('institution_contacts')
       .select(`
-        contact_details:contact_details_id(*)
+        contact_details(*)
       `)
       .eq('institution_id', institutionId);
     
@@ -113,10 +113,9 @@ export const databaseService = {
   // Fetch services for a practitioner with institution data
   async getServicesByPractitioner(practitionerId: number) {
     const { data, error } = await supabase
-      .from('services')
+      .from('practitioner_services')
       .select(`
-        *,
-        institution:institution_id(name)
+        service(*)
       `)
       .eq('practitioner_id', practitionerId);
     
@@ -131,8 +130,8 @@ export const databaseService = {
   // Fetch services for an institution
   async getServicesByInstitution(institutionId: number) {
     const { data, error } = await supabase
-      .from('services')
-      .select('*')
+      .from('institution_services')
+      .select('service(*)')
       .eq('institution_id', institutionId);
     
     if (error) {
@@ -160,10 +159,9 @@ export const databaseService = {
   // Fetch practitioners by institution (removed location from institution query)
   async getPractitionersByInstitution(institutionId: number) {
     const { data, error } = await supabase
-      .from('practitioner')
+      .from('practitioner_institutions')
       .select(`
-        *,
-        institution:institution_id(*)
+        practitioner(*)
       `)
       .eq('institution_id', institutionId);
     
@@ -172,15 +170,15 @@ export const databaseService = {
       throw error;
     }
     
-    return data;
+    return data?.map(item => item.practitioner).filter(Boolean) || [];
   },
 
   // NEW: Fetch locations for a practitioner using location_mapping
   async getLocationsByPractitioner(practitionerId: number) {
     const { data, error } = await supabase
-      .from('location_mapping')
+      .from('practitioner_locations')
       .select(`
-        location:location_id(*)
+        location(*)
       `)
       .eq('practitioner_id', practitionerId);
     
@@ -195,9 +193,9 @@ export const databaseService = {
   // NEW: Fetch locations for an institution using location_mapping
   async getLocationsByInstitution(institutionId: number) {
     const { data, error } = await supabase
-      .from('location_mapping')
+      .from('institution_locations')
       .select(`
-        location:location_id(*)
+        location(*)
       `)
       .eq('institution_id', institutionId);
     
