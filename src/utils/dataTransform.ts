@@ -7,7 +7,7 @@ type DBPractitioner = Database['public']['Tables']['practitioner']['Row'] & {
 
 type DBInstitution = Database['public']['Tables']['institution']['Row'];
 
-type DBService = Database['public']['Tables']['services']['Row'] & {
+type DBService = Database['public']['Tables']['service']['Row'] & {
   institution?: { name: string };
 };
 
@@ -31,7 +31,7 @@ export const transformPractitioner = (
     image: "/placeholder.svg",
     name: dbPractitioner.name,
     bureauName: institution?.name || "Unknown Bureau",
-    bureauId: dbPractitioner.institution_id?.toString() || "",
+    bureauId: "1", // Will be set from institution relationship
     professionTypes: mapProfessionTypes(dbPractitioner.profession_type || []),
     licenseNumber: dbPractitioner.license_number,
     specializations: mapSpecializations(dbPractitioner.specialization || []),
@@ -64,7 +64,7 @@ export const transformInstitution = (
     image: "/placeholder.svg", // Default placeholder since image field doesn't exist in DB yet
     name: dbInstitution.name,
     businessHours: "Not specified", // Can be added to schema later
-    bureauType: mapInstitutionType(dbInstitution.type),
+    bureauType: mapInstitutionType(dbInstitution.institution_type),
     professionTypes: mapProfessionTypes(dbInstitution.profession_type || []),
     specializations: [], // Will be derived from services or added to schema later
     city: "Unknown City", // Will be set from location data separately
