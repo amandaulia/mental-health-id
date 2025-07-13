@@ -14,7 +14,7 @@ type DBService = Database['public']['Tables']['service']['Row'] & {
 type DBContactDetail = Database['public']['Tables']['contact_details']['Row'];
 
 export const transformPractitioner = (
-  dbPractitioner: DBPractitioner, 
+  dbPractitioner: any, 
   services: Service[] = [], 
   contactDetails: ContactDetails = {}
 ): Practitioner => {
@@ -54,7 +54,7 @@ export const transformPractitioner = (
 };
 
 export const transformInstitution = (
-  dbInstitution: DBInstitution, 
+  dbInstitution: any, 
   services: Service[] = [], 
   contactDetails: ContactDetails = {}
 ): Bureau => {
@@ -82,7 +82,7 @@ export const transformInstitution = (
   };
 };
 
-export const transformService = (dbService: DBService): Service => {
+export const transformService = (dbService: any): Service => {
   const durationHours = dbService.duration ? Math.floor(dbService.duration / 60) : 0;
   const durationMinutes = dbService.duration ? dbService.duration % 60 : 0;
   
@@ -108,27 +108,29 @@ export const transformService = (dbService: DBService): Service => {
   };
 };
 
-export const transformContactDetails = (dbContactDetails: DBContactDetail[]): ContactDetails => {
-  console.log('Transforming contact details:', dbContactDetails);
-  const contacts: ContactDetails = {};
+export const transformContactDetails = (dbContacts: any[]): ContactDetails => {
+  // Filter out any error objects
+  const validContacts = dbContacts.filter(contact => 
+    contact && typeof contact === 'object' && 'contact_type' in contact && !('error' in contact)
+  );
   
-  dbContactDetails.forEach(contact => {
-    console.log('Processing contact:', contact.contact_type, contact.value, contact.link);
+  const contactDetails: ContactDetails = {};
+  
+  validContacts.forEach(contact => {
     switch (contact.contact_type) {
-      case 'WHATSAPP':
-        contacts.whatsapp = contact.link || contact.value;
+      case 'WhatsApp':
+        contactDetails.whatsapp = contact.value;
         break;
-      case 'WEBSITE':
-        contacts.website = contact.link || contact.value;
+      case 'Website':
+        contactDetails.website = contact.value;
         break;
-      case 'INSTAGRAM':
-        contacts.instagram = contact.link || contact.value;
+      case 'Instagram':
+        contactDetails.instagram = contact.value;
         break;
     }
   });
   
-  console.log('Final transformed contacts:', contacts);
-  return contacts;
+  return contactDetails;
 };
 
 // Helper functions to map database enums to frontend types
