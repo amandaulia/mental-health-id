@@ -189,17 +189,89 @@ export default function AdminSimple() {
       // Clean up data based on entity type
       if (entityType === "practitioner") {
         data.experience = formData.experience ? parseFloat(formData.experience) : null;
+        
+        // Create practitioner first
+        const { data: practitionerData, error: practitionerError } = await supabase
+          .from('practitioner')
+          .insert([data])
+          .select()
+          .single();
+
+        if (practitionerError) throw practitionerError;
+
+        // Create relationships for institutions
+        for (const institution of practitionerRelations.institutions) {
+          const { error: relationError } = await supabase
+            .from('practitioner_institutions')
+            .insert({ practitioner_id: practitionerData.id, institution_id: institution.id });
+          if (relationError) throw relationError;
+        }
+
+        // Create relationships for locations
+        for (const location of practitionerRelations.locations) {
+          const { error: relationError } = await supabase
+            .from('practitioner_locations')
+            .insert({ practitioner_id: practitionerData.id, location_id: location.id });
+          if (relationError) throw relationError;
+        }
+
+        // Create relationships for contacts
+        for (const contact of practitionerRelations.contacts) {
+          const { error: relationError } = await supabase
+            .from('practitioner_contacts')
+            .insert({ practitioner_id: practitionerData.id, contact_id: contact.id });
+          if (relationError) throw relationError;
+        }
+
+        // Reset relationship states
+        setPractitionerRelations({ institutions: [], locations: [], contacts: [] });
+        
+      } else if (entityType === "institution") {
+        // Create institution first
+        const { data: institutionData, error: institutionError } = await supabase
+          .from('institution')
+          .insert([data])
+          .select()
+          .single();
+
+        if (institutionError) throw institutionError;
+
+        // Create relationships for locations
+        for (const location of institutionRelations.locations) {
+          const { error: relationError } = await supabase
+            .from('institution_locations')
+            .insert({ institution_id: institutionData.id, location_id: location.id });
+          if (relationError) throw relationError;
+        }
+
+        // Create relationships for contacts
+        for (const contact of institutionRelations.contacts) {
+          const { error: relationError } = await supabase
+            .from('institution_contacts')
+            .insert({ institution_id: institutionData.id, contact_id: contact.id });
+          if (relationError) throw relationError;
+        }
+
+        // Reset relationship states
+        setInstitutionRelations({ locations: [], contacts: [] });
+        
       } else if (entityType === "activity") {
         data.duration = formData.duration ? parseFloat(formData.duration) : null;
         data.price = formData.price ? parseFloat(formData.price) : null;
+        
+        const { error } = await supabase
+          .from('activity')
+          .insert([data] as any);
+
+        if (error) throw error;
+      } else {
+        const tableName = entityType === "contact" ? "contact_details" : entityType;
+        const { error } = await supabase
+          .from(tableName as any)
+          .insert([data] as any);
+
+        if (error) throw error;
       }
-
-      const tableName = entityType === "contact" ? "contact_details" : entityType;
-      const { error } = await supabase
-        .from(tableName as any)
-        .insert([data] as any);
-
-      if (error) throw error;
 
       toast({
         title: "Success",
@@ -705,29 +777,11 @@ export default function AdminSimple() {
                 />
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="p-verified"
-                  checked={practitionerForm.verified}
-                  onCheckedChange={(checked) => setPractitionerForm({...practitionerForm, verified: !!checked})}
-                />
-                <Label htmlFor="p-verified">Verified</Label>
-              </div>
-
-              <Button 
-                onClick={() => handleSubmit("practitioner", practitionerForm)}
-                disabled={loading || !practitionerForm.name}
-                className="w-full"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                {loading ? "Creating..." : "Create Practitioner"}
-              </Button>
-
-              <Separator className="my-8" />
+              <Separator className="my-6" />
 
               {/* Practitioner Relationships */}
               <div className="space-y-6">
-                <h3 className="text-lg font-semibold">Relationships</h3>
+                <h3 className="text-lg font-semibold">Associated Institutions, Locations & Contact Details</h3>
                 
                 <div>
                   <Label className="text-base font-medium">Institutions</Label>
@@ -786,6 +840,24 @@ export default function AdminSimple() {
                   />
                 </div>
               </div>
+
+              <div className="flex items-center space-x-2 mt-6">
+                <Checkbox 
+                  id="p-verified"
+                  checked={practitionerForm.verified}
+                  onCheckedChange={(checked) => setPractitionerForm({...practitionerForm, verified: !!checked})}
+                />
+                <Label htmlFor="p-verified">Verified</Label>
+              </div>
+
+              <Button 
+                onClick={() => handleSubmit("practitioner", practitionerForm)}
+                disabled={loading || !practitionerForm.name}
+                className="w-full mt-6"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {loading ? "Creating..." : "Create Practitioner & Relationships"}
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -1008,29 +1080,11 @@ export default function AdminSimple() {
                 />
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="i-verified"
-                  checked={institutionForm.verified}
-                  onCheckedChange={(checked) => setInstitutionForm({...institutionForm, verified: !!checked})}
-                />
-                <Label htmlFor="i-verified">Verified</Label>
-              </div>
-
-              <Button 
-                onClick={() => handleSubmit("institution", institutionForm)}
-                disabled={loading || !institutionForm.name || !institutionForm.institution_type}
-                className="w-full"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                {loading ? "Creating..." : "Create Institution"}
-              </Button>
-
-              <Separator className="my-8" />
+              <Separator className="my-6" />
 
               {/* Institution Relationships */}
               <div className="space-y-6">
-                <h3 className="text-lg font-semibold">Relationships</h3>
+                <h3 className="text-lg font-semibold">Associated Locations & Contact Details</h3>
                 
                 <div>
                   <Label className="text-base font-medium">Locations</Label>
@@ -1070,6 +1124,24 @@ export default function AdminSimple() {
                   />
                 </div>
               </div>
+
+              <div className="flex items-center space-x-2 mt-6">
+                <Checkbox 
+                  id="i-verified"
+                  checked={institutionForm.verified}
+                  onCheckedChange={(checked) => setInstitutionForm({...institutionForm, verified: !!checked})}
+                />
+                <Label htmlFor="i-verified">Verified</Label>
+              </div>
+
+              <Button 
+                onClick={() => handleSubmit("institution", institutionForm)}
+                disabled={loading || !institutionForm.name || !institutionForm.institution_type}
+                className="w-full mt-6"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {loading ? "Creating..." : "Create Institution & Relationships"}
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
