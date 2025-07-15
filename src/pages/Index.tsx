@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 
 const Index = () => {
   // Feature flags
-  const isFeelingsAnalysisEnabled = false; // Set to false to hide the feature
+  const isFeelingsAnalysisEnabled = true; // Set to false to hide the feature
   
   const [feelings, setFeelings] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
