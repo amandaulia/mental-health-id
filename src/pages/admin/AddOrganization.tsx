@@ -75,7 +75,7 @@ export default function AddOrganization() {
           *,
           organization_contacts(contact_id, contact_details(*))
         `)
-        .eq('id', id)
+        .eq('id', parseInt(id))
         .single();
 
       if (error) throw error;
@@ -107,17 +107,25 @@ export default function AddOrganization() {
     try {
       let organizationId: number;
 
+      const organizationData = {
+        name: formData.name,
+        image: formData.image,
+        description: formData.description,
+        specialization: formData.specialization as any,
+        verified: formData.verified
+      };
+
       if (isEdit) {
         const { error } = await supabase
           .from('organization')
-          .update(formData)
-          .eq('id', id);
+          .update(organizationData)
+          .eq('id', parseInt(id));
         if (error) throw error;
         organizationId = parseInt(id);
       } else {
         const { data, error } = await supabase
           .from('organization')
-          .insert([formData])
+          .insert(organizationData)
           .select()
           .single();
         if (error) throw error;

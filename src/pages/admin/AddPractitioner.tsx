@@ -101,7 +101,7 @@ export default function AddPractitioner() {
           practitioner_locations(location_id, location(*)),
           practitioner_contacts(contact_id, contact_details(*))
         `)
-        .eq('id', id)
+        .eq('id', parseInt(id))
         .single();
 
       if (error) throw error;
@@ -139,8 +139,15 @@ export default function AddPractitioner() {
 
     try {
       const practitionerData = {
-        ...formData,
-        experience: formData.experience ? parseFloat(formData.experience) : null
+        name: formData.name,
+        image: formData.image,
+        experience: formData.experience ? parseFloat(formData.experience) : null,
+        education: formData.education,
+        license_number: formData.license_number,
+        profession_type: formData.profession_type as any,
+        specialization: formData.specialization as any,
+        insurance: formData.insurance as any,
+        verified: formData.verified
       };
 
       let practitionerId: number;
@@ -149,13 +156,13 @@ export default function AddPractitioner() {
         const { error } = await supabase
           .from('practitioner')
           .update(practitionerData)
-          .eq('id', id);
+          .eq('id', parseInt(id));
         if (error) throw error;
         practitionerId = parseInt(id);
       } else {
         const { data, error } = await supabase
           .from('practitioner')
-          .insert([practitionerData])
+          .insert(practitionerData)
           .select()
           .single();
         if (error) throw error;

@@ -99,7 +99,7 @@ export default function AddInstitution() {
           institution_locations(location_id, location(*)),
           institution_contacts(contact_id, contact_details(*))
         `)
-        .eq('id', id)
+        .eq('id', parseInt(id))
         .single();
 
       if (error) throw error;
@@ -136,17 +136,27 @@ export default function AddInstitution() {
     try {
       let institutionId: number;
 
+      const institutionData = {
+        name: formData.name,
+        image: formData.image,
+        institution_type: formData.institution_type as any,
+        profession_type: formData.profession_type as any,
+        specialization: formData.specialization as any,
+        insurance: formData.insurance as any,
+        verified: formData.verified
+      };
+
       if (isEdit) {
         const { error } = await supabase
           .from('institution')
-          .update(formData)
-          .eq('id', id);
+          .update(institutionData)
+          .eq('id', parseInt(id));
         if (error) throw error;
         institutionId = parseInt(id);
       } else {
         const { data, error } = await supabase
           .from('institution')
-          .insert([formData])
+          .insert(institutionData)
           .select()
           .single();
         if (error) throw error;

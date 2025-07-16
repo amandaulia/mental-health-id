@@ -97,7 +97,7 @@ export default function AddActivity() {
           activity_locations(location_id, location(*)),
           activity_contacts(contact_id, contact_details(*))
         `)
-        .eq('id', id)
+        .eq('id', parseInt(id))
         .single();
 
       if (error) throw error;
@@ -133,9 +133,13 @@ export default function AddActivity() {
 
     try {
       const activityData = {
-        ...formData,
+        name: formData.name,
+        description: formData.description,
+        activity_type: formData.activity_type as any,
         duration: formData.duration ? parseFloat(formData.duration) : null,
-        price: formData.price ? parseFloat(formData.price) : null
+        price: formData.price ? parseFloat(formData.price) : null,
+        session_mode: formData.session_mode as any,
+        specialization: formData.specialization as any
       };
 
       let activityId: number;
@@ -144,13 +148,13 @@ export default function AddActivity() {
         const { error } = await supabase
           .from('activity')
           .update(activityData)
-          .eq('id', id);
+          .eq('id', parseInt(id));
         if (error) throw error;
         activityId = parseInt(id);
       } else {
         const { data, error } = await supabase
           .from('activity')
-          .insert([activityData])
+          .insert(activityData)
           .select()
           .single();
         if (error) throw error;

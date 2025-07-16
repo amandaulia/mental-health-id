@@ -12,6 +12,11 @@ import PeerCounselingDetail from '@/pages/PeerCounselingDetail';
 import OrganizationDetail from '@/pages/OrganizationDetail';
 import About from '@/pages/About';
 import AdminSimple from '@/pages/AdminSimple';
+import AddPractitioner from '@/pages/admin/AddPractitioner';
+import AddInstitution from '@/pages/admin/AddInstitution';
+import AddOrganization from '@/pages/admin/AddOrganization';
+import AddPeerCounseling from '@/pages/admin/AddPeerCounseling';
+import AddActivity from '@/pages/admin/AddActivity';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Toaster } from "@/components/ui/toaster"
@@ -54,6 +59,16 @@ function AppContent() {
           <Route path="/peer-counseling/:id" element={<PeerCounselingDetail />} />
           <Route path="/organizations/:id" element={<OrganizationDetail />} />
           <Route path="/admin" element={<AdminSimple />} />
+          <Route path="/admin/practitioner/add" element={<AddPractitioner />} />
+          <Route path="/admin/practitioner/edit/:id" element={<AddPractitioner />} />
+          <Route path="/admin/institution/add" element={<AddInstitution />} />
+          <Route path="/admin/institution/edit/:id" element={<AddInstitution />} />
+          <Route path="/admin/organization/add" element={<AddOrganization />} />
+          <Route path="/admin/organization/edit/:id" element={<AddOrganization />} />
+          <Route path="/admin/peer-counseling/add" element={<AddPeerCounseling />} />
+          <Route path="/admin/peer-counseling/edit/:id" element={<AddPeerCounseling />} />
+          <Route path="/admin/activity/add" element={<AddActivity />} />
+          <Route path="/admin/activity/edit/:id" element={<AddActivity />} />
         </Routes>
       </main>
       <Footer />

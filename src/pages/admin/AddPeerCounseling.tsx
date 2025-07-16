@@ -91,7 +91,7 @@ export default function AddPeerCounseling() {
           peer_counseling_locations(location_id, location(*)),
           peer_counseling_contacts(contact_id, contact_details(*))
         `)
-        .eq('id', id)
+        .eq('id', parseInt(id))
         .single();
 
       if (error) throw error;
@@ -126,17 +126,26 @@ export default function AddPeerCounseling() {
     try {
       let peerCounselingId: number;
 
+      const peerCounselingData = {
+        name: formData.name,
+        image: formData.image,
+        peer_type: formData.peer_type as any,
+        specialization: formData.specialization as any,
+        tags: formData.tags,
+        verified: formData.verified
+      };
+
       if (isEdit) {
         const { error } = await supabase
           .from('peer_counseling')
-          .update(formData)
-          .eq('id', id);
+          .update(peerCounselingData)
+          .eq('id', parseInt(id));
         if (error) throw error;
         peerCounselingId = parseInt(id);
       } else {
         const { data, error } = await supabase
           .from('peer_counseling')
-          .insert([formData])
+          .insert(peerCounselingData)
           .select()
           .single();
         if (error) throw error;
