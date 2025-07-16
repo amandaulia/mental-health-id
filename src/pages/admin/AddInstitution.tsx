@@ -1,39 +1,35 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { RelationManager } from "@/components/admin/RelationManager";
-import { MultiSelectField } from "@/components/admin/MultiSelectField";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { MultiSelectField } from '@/components/admin/MultiSelectField';
+import { RelationshipDropdown } from '@/components/admin/RelationshipDropdown';
+import { AddPractitionerForm } from '@/components/admin/AddPractitionerForm';
+import { AddServiceForm } from '@/components/admin/AddServiceForm';
+import { AddLocationForm } from '@/components/admin/AddLocationForm';
+import { AddContactForm } from '@/components/admin/AddContactForm';
 
 export default function AddInstitution() {
-  const navigate = useNavigate();
   const { id } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const isEdit = !!id;
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    institution_type: "",
-    profession_type: [] as string[],
-    specialization: [] as string[],
-    insurance: [] as string[],
+    name: '',
+    image: '',
+    institution_type: '',
+    profession_type: [],
+    specialization: [],
+    insurance: [],
     verified: false
-  });
-
-  const [relations, setRelations] = useState({
-    practitioners: [] as any[],
-    services: [] as any[],
-    locations: [] as any[],
-    contacts: [] as any[]
   });
 
   const [availableData, setAvailableData] = useState({
@@ -43,17 +39,46 @@ export default function AddInstitution() {
     contacts: [] as any[]
   });
 
-  // Options for dropdowns
-  const institutionTypes = ["Private Practice", "Clinic", "Hospital"];
-  const professionTypes = ["Psychologist", "Psychiatrist", "Therapist"];
-  const specializations = [
-    "Personality Disorders", "Trauma", "Mood Disorders", "ADHD", "Anxiety",
-    "Relationship", "Career", "OCD", "Self Development", "Gender", "Family",
-    "Depression", "Interpersonal", "Education"
+  const [relations, setRelations] = useState({
+    practitioners: [] as any[],
+    services: [] as any[],
+    locations: [] as any[],
+    contacts: [] as any[]
+  });
+
+  const institutionTypes = [
+    'Private Practice',
+    'Clinic',
+    'Hospital'
   ];
-  const insuranceTypes = ["Private Insurance", "BPJS"];
-  const sessionModes = ["Chat", "Voice Call", "Video Call", "Offline"];
-  const contactTypes = ["WhatsApp", "Phone", "Website", "Instagram", "Email"];
+
+  const professionTypes = [
+    'Psychologist',
+    'Psychiatrist',
+    'Therapist'
+  ];
+
+  const specializations = [
+    'Personality Disorders',
+    'Trauma',
+    'Mood Disorders',
+    'ADHD',
+    'Anxiety',
+    'Relationship',
+    'Career',
+    'OCD',
+    'Self Development',
+    'Gender',
+    'Family',
+    'Depression',
+    'Interpersonal',
+    'Education'
+  ];
+
+  const insuranceTypes = [
+    'Private Insurance',
+    'BPJS'
+  ];
 
   useEffect(() => {
     loadAvailableData();
@@ -64,7 +89,7 @@ export default function AddInstitution() {
 
   const loadAvailableData = async () => {
     try {
-      const [practitioners, services, locations, contacts] = await Promise.all([
+      const [practitionersRes, servicesRes, locationsRes, contactsRes] = await Promise.all([
         supabase.from('practitioner').select('*'),
         supabase.from('service').select('*'),
         supabase.from('location').select('*'),
@@ -72,10 +97,10 @@ export default function AddInstitution() {
       ]);
 
       setAvailableData({
-        practitioners: practitioners.data || [],
-        services: services.data || [],
-        locations: locations.data || [],
-        contacts: contacts.data || []
+        practitioners: practitionersRes.data || [],
+        services: servicesRes.data || [],
+        locations: locationsRes.data || [],
+        contacts: contactsRes.data || []
       });
     } catch (error: any) {
       toast({
@@ -87,8 +112,6 @@ export default function AddInstitution() {
   };
 
   const loadInstitutionData = async () => {
-    if (!id) return;
-    
     try {
       const { data: institution, error } = await supabase
         .from('institution')
@@ -134,8 +157,6 @@ export default function AddInstitution() {
     setLoading(true);
 
     try {
-      let institutionId: number;
-
       const institutionData = {
         name: formData.name,
         image: formData.image,
@@ -146,6 +167,8 @@ export default function AddInstitution() {
         verified: formData.verified
       };
 
+      let institutionId: number;
+
       if (isEdit) {
         const { error } = await supabase
           .from('institution')
@@ -153,6 +176,14 @@ export default function AddInstitution() {
           .eq('id', parseInt(id));
         if (error) throw error;
         institutionId = parseInt(id);
+
+        // Delete existing relationships
+        await Promise.all([
+          supabase.from('practitioner_institutions').delete().eq('institution_id', institutionId),
+          supabase.from('institution_services').delete().eq('institution_id', institutionId),
+          supabase.from('institution_locations').delete().eq('institution_id', institutionId),
+          supabase.from('institution_contacts').delete().eq('institution_id', institutionId)
+        ]);
       } else {
         const { data, error } = await supabase
           .from('institution')
@@ -163,18 +194,7 @@ export default function AddInstitution() {
         institutionId = data.id;
       }
 
-      // Handle relationships
-      if (isEdit) {
-        // Delete existing relationships
-        await Promise.all([
-          supabase.from('practitioner_institutions').delete().eq('institution_id', institutionId),
-          supabase.from('institution_services').delete().eq('institution_id', institutionId),
-          supabase.from('institution_locations').delete().eq('institution_id', institutionId),
-          supabase.from('institution_contacts').delete().eq('institution_id', institutionId)
-        ]);
-      }
-
-      // Create new relationships
+      // Insert new relationships
       const relationPromises = [];
 
       if (relations.practitioners.length > 0) {
@@ -232,7 +252,17 @@ export default function AddInstitution() {
     try {
       const { data, error } = await supabase
         .from('practitioner')
-        .insert([practitionerData])
+        .insert({
+          name: practitionerData.name,
+          image: practitionerData.image,
+          experience: practitionerData.experience,
+          education: practitionerData.education,
+          license_number: practitionerData.license_number,
+          profession_type: practitionerData.profession_type,
+          specialization: practitionerData.specialization,
+          insurance: practitionerData.insurance,
+          verified: practitionerData.verified
+        })
         .select()
         .single();
 
@@ -260,7 +290,12 @@ export default function AddInstitution() {
     try {
       const { data, error } = await supabase
         .from('service')
-        .insert([serviceData])
+        .insert({
+          name: serviceData.name,
+          duration: serviceData.duration,
+          price: serviceData.price,
+          session_mode: serviceData.session_mode || []
+        })
         .select()
         .single();
 
@@ -288,7 +323,7 @@ export default function AddInstitution() {
     try {
       const { data, error } = await supabase
         .from('location')
-        .insert([locationData])
+        .insert(locationData)
         .select()
         .single();
 
@@ -316,7 +351,7 @@ export default function AddInstitution() {
     try {
       const { data, error } = await supabase
         .from('contact_details')
-        .insert([contactData])
+        .insert(contactData)
         .select()
         .single();
 
@@ -339,203 +374,152 @@ export default function AddInstitution() {
       });
     }
   };
+
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-6">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/admin')}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Admin
-          </Button>
-          <h1 className="text-3xl font-bold">
-            {isEdit ? 'Edit Institution' : 'Add New Institution'}
-          </h1>
+    <div className="container mx-auto py-8">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="sm" onClick={() => navigate('/admin')}>
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
+        <h1 className="text-2xl font-bold">
+          {isEdit ? 'Edit Institution' : 'Add New Institution'}
+        </h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="name">Name *</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="image">Image URL</Label>
+            <Input
+              id="image"
+              value={formData.image}
+              onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
+            />
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Institution Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Name *</Label>
-                  <Input
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label>Institution Type *</Label>
-                  <Select 
-                    value={formData.institution_type} 
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, institution_type: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {institutionTypes.map((type) => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+        <div>
+          <Label>Institution Type</Label>
+          <Select onValueChange={(value) => setFormData(prev => ({ ...prev, institution_type: value }))}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select institution type" />
+            </SelectTrigger>
+            <SelectContent>
+              {institutionTypes.map(type => (
+                <SelectItem key={type} value={type}>{type}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-              <div>
-                <Label>Image URL</Label>
-                <Input
-                  value={formData.image}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://..."
-                />
-              </div>
+        <div>
+          <MultiSelectField
+            label="Profession Types"
+            options={professionTypes}
+            value={formData.profession_type}
+            onChange={(value) => setFormData(prev => ({ ...prev, profession_type: value }))}
+          />
+        </div>
 
-              <MultiSelectField
-                label="Profession Types"
-                value={formData.profession_type}
-                options={professionTypes}
-                onChange={(value) => setFormData(prev => ({ ...prev, profession_type: value }))}
-              />
+        <div>
+          <MultiSelectField
+            label="Specializations"
+            options={specializations}
+            value={formData.specialization}
+            onChange={(value) => setFormData(prev => ({ ...prev, specialization: value }))}
+          />
+        </div>
 
-              <MultiSelectField
-                label="Specializations"
-                value={formData.specialization}
-                options={specializations}
-                onChange={(value) => setFormData(prev => ({ ...prev, specialization: value }))}
-              />
+        <div>
+          <MultiSelectField
+            label="Insurance"
+            options={insuranceTypes}
+            value={formData.insurance}
+            onChange={(value) => setFormData(prev => ({ ...prev, insurance: value }))}
+          />
+        </div>
 
-              <MultiSelectField
-                label="Insurance"
-                value={formData.insurance}
-                options={insuranceTypes}
-                onChange={(value) => setFormData(prev => ({ ...prev, insurance: value }))}
-              />
+        {/* Relationships Section */}
+        <div className="space-y-6">
+          <h3 className="text-lg font-semibold">Relationships</h3>
+          
+          <RelationshipDropdown
+            label="Practitioners"
+            options={availableData.practitioners}
+            selected={relations.practitioners}
+            onSelect={(practitioner) => setRelations(prev => ({ ...prev, practitioners: [...prev.practitioners, practitioner] }))}
+            onRemove={(practitioner) => setRelations(prev => ({ ...prev, practitioners: prev.practitioners.filter(p => p.id !== practitioner.id) }))}
+            renderOption={(practitioner) => practitioner.name}
+            renderSelected={(practitioner) => practitioner.name}
+            AddNewComponent={AddPractitionerForm}
+            onAddNew={handleAddNewPractitioner}
+          />
 
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  checked={formData.verified}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, verified: !!checked }))}
-                />
-                <Label>Verified</Label>
-              </div>
-            </CardContent>
-          </Card>
+          <RelationshipDropdown
+            label="Services"
+            options={availableData.services}
+            selected={relations.services}
+            onSelect={(service) => setRelations(prev => ({ ...prev, services: [...prev.services, service] }))}
+            onRemove={(service) => setRelations(prev => ({ ...prev, services: prev.services.filter(s => s.id !== service.id) }))}
+            renderOption={(service) => service.name}
+            renderSelected={(service) => service.name}
+            AddNewComponent={AddServiceForm}
+            onAddNew={handleAddNewService}
+          />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Relationships</CardTitle>
-              <CardDescription>Link this institution to practitioners, services, locations, and contacts</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <RelationManager
-                title="Practitioners"
-                entityType="practitioner"
-                selectedItems={relations.practitioners}
-                availableItems={availableData.practitioners}
-                onSelectExisting={(item) => setRelations(prev => ({ 
-                  ...prev, 
-                  practitioners: [...prev.practitioners, item] 
-                }))}
-                onRemove={(index) => setRelations(prev => ({ 
-                  ...prev, 
-                  practitioners: prev.practitioners.filter((_, i) => i !== index) 
-                }))}
-                onAddNew={handleAddNewPractitioner}
-                modalFields={[
-                  { key: 'name', label: 'Name', type: 'text', required: true },
-                  { key: 'image', label: 'Image URL', type: 'text' },
-                  { key: 'experience', label: 'Experience (years)', type: 'number' },
-                  { key: 'verified', label: 'Verified', type: 'checkbox' }
-                ]}
-              />
+          <RelationshipDropdown
+            label="Locations"
+            options={availableData.locations}
+            selected={relations.locations}
+            onSelect={(location) => setRelations(prev => ({ ...prev, locations: [...prev.locations, location] }))}
+            onRemove={(location) => setRelations(prev => ({ ...prev, locations: prev.locations.filter(l => l.id !== location.id) }))}
+            renderOption={(location) => `${location.name || location.city}, ${location.city}`}
+            renderSelected={(location) => `${location.name || location.city}, ${location.city}`}
+            AddNewComponent={AddLocationForm}
+            onAddNew={handleAddNewLocation}
+          />
 
-              <RelationManager
-                title="Services"
-                entityType="service"
-                selectedItems={relations.services}
-                availableItems={availableData.services}
-                onSelectExisting={(item) => setRelations(prev => ({ 
-                  ...prev, 
-                  services: [...prev.services, item] 
-                }))}
-                onRemove={(index) => setRelations(prev => ({ 
-                  ...prev, 
-                  services: prev.services.filter((_, i) => i !== index) 
-                }))}
-                onAddNew={handleAddNewService}
-                modalFields={[
-                  { key: 'name', label: 'Name', type: 'text', required: true },
-                  { key: 'duration', label: 'Duration (minutes)', type: 'number' },
-                  { key: 'price', label: 'Price', type: 'number' },
-                  { key: 'session_mode', label: 'Session Mode', type: 'select', options: sessionModes }
-                ]}
-              />
+          <RelationshipDropdown
+            label="Contact Details"
+            options={availableData.contacts}
+            selected={relations.contacts}
+            onSelect={(contact) => setRelations(prev => ({ ...prev, contacts: [...prev.contacts, contact] }))}
+            onRemove={(contact) => setRelations(prev => ({ ...prev, contacts: prev.contacts.filter(c => c.id !== contact.id) }))}
+            renderOption={(contact) => `${contact.name || contact.contact_type}: ${contact.value}`}
+            renderSelected={(contact) => `${contact.name || contact.contact_type}: ${contact.value}`}
+            AddNewComponent={AddContactForm}
+            onAddNew={handleAddNewContact}
+          />
+        </div>
 
-              <RelationManager
-                title="Locations"
-                entityType="location"
-                selectedItems={relations.locations}
-                availableItems={availableData.locations}
-                onSelectExisting={(item) => setRelations(prev => ({ 
-                  ...prev, 
-                  locations: [...prev.locations, item] 
-                }))}
-                onRemove={(index) => setRelations(prev => ({ 
-                  ...prev, 
-                  locations: prev.locations.filter((_, i) => i !== index) 
-                }))}
-                onAddNew={handleAddNewLocation}
-                modalFields={[
-                  { key: 'name', label: 'Name', type: 'text' },
-                  { key: 'address', label: 'Address', type: 'text' },
-                  { key: 'city', label: 'City', type: 'text', required: true },
-                  { key: 'province', label: 'Province', type: 'text', required: true },
-                  { key: 'country', label: 'Country', type: 'text', required: true }
-                ]}
-              />
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="verified"
+            checked={formData.verified}
+            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, verified: !!checked }))}
+          />
+          <Label htmlFor="verified">Verified</Label>
+        </div>
 
-              <RelationManager
-                title="Contact Details"
-                entityType="contact"
-                selectedItems={relations.contacts}
-                availableItems={availableData.contacts}
-                onSelectExisting={(item) => setRelations(prev => ({ 
-                  ...prev, 
-                  contacts: [...prev.contacts, item] 
-                }))}
-                onRemove={(index) => setRelations(prev => ({ 
-                  ...prev, 
-                  contacts: prev.contacts.filter((_, i) => i !== index) 
-                }))}
-                onAddNew={handleAddNewContact}
-                modalFields={[
-                  { key: 'name', label: 'Name', type: 'text' },
-                  { key: 'contact_type', label: 'Contact Type', type: 'select', options: contactTypes, required: true },
-                  { key: 'value', label: 'Value', type: 'text', required: true },
-                  { key: 'link', label: 'Link', type: 'text' }
-                ]}
-              />
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => navigate('/admin')}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : isEdit ? 'Update Institution' : 'Create Institution'}
-            </Button>
-          </div>
-        </form>
-      </div>
+        <div className="flex gap-4">
+          <Button type="button" variant="outline" onClick={() => navigate('/admin')}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Saving..." : isEdit ? "Update Institution" : "Create Institution & Relationships"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -1,37 +1,32 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { RelationManager } from "@/components/admin/RelationManager";
-import { MultiSelectField } from "@/components/admin/MultiSelectField";
+import { ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { MultiSelectField } from '@/components/admin/MultiSelectField';
+import { RelationshipDropdown } from '@/components/admin/RelationshipDropdown';
+import { AddInstitutionForm } from '@/components/admin/AddInstitutionForm';
+import { AddLocationForm } from '@/components/admin/AddLocationForm';
+import { AddContactForm } from '@/components/admin/AddContactForm';
 
 export default function AddPeerCounseling() {
-  const navigate = useNavigate();
   const { id } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const isEdit = !!id;
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    peer_type: [] as string[],
-    specialization: [] as string[],
-    tags: [] as string[],
+    name: '',
+    image: '',
+    peer_type: [],
+    specialization: [],
+    tags: [],
     verified: false
-  });
-
-  const [relations, setRelations] = useState({
-    institutions: [] as any[],
-    locations: [] as any[],
-    contacts: [] as any[]
   });
 
   const [availableData, setAvailableData] = useState({
@@ -40,15 +35,33 @@ export default function AddPeerCounseling() {
     contacts: [] as any[]
   });
 
-  // Options for dropdowns
-  const peerTypes = ["Peer Counseling", "Group Therapy"];
-  const specializations = [
-    "Personality Disorders", "Trauma", "Mood Disorders", "ADHD", "Anxiety",
-    "Relationship", "Career", "OCD", "Self Development", "Gender", "Family",
-    "Depression", "Interpersonal", "Education"
+  const [relations, setRelations] = useState({
+    institutions: [] as any[],
+    locations: [] as any[],
+    contacts: [] as any[]
+  });
+
+  const peerTypes = [
+    'Peer Counseling',
+    'Group Therapy'
   ];
-  const institutionTypes = ["Private Practice", "Clinic", "Hospital"];
-  const contactTypes = ["WhatsApp", "Phone", "Website", "Instagram", "Email"];
+
+  const specializations = [
+    'Personality Disorders',
+    'Trauma',
+    'Mood Disorders',
+    'ADHD',
+    'Anxiety',
+    'Relationship',
+    'Career',
+    'OCD',
+    'Self Development',
+    'Gender',
+    'Family',
+    'Depression',
+    'Interpersonal',
+    'Education'
+  ];
 
   useEffect(() => {
     loadAvailableData();
@@ -59,16 +72,16 @@ export default function AddPeerCounseling() {
 
   const loadAvailableData = async () => {
     try {
-      const [institutions, locations, contacts] = await Promise.all([
+      const [institutionsRes, locationsRes, contactsRes] = await Promise.all([
         supabase.from('institution').select('*'),
         supabase.from('location').select('*'),
         supabase.from('contact_details').select('*')
       ]);
 
       setAvailableData({
-        institutions: institutions.data || [],
-        locations: locations.data || [],
-        contacts: contacts.data || []
+        institutions: institutionsRes.data || [],
+        locations: locationsRes.data || [],
+        contacts: contactsRes.data || []
       });
     } catch (error: any) {
       toast({
@@ -80,8 +93,6 @@ export default function AddPeerCounseling() {
   };
 
   const loadPeerCounselingData = async () => {
-    if (!id) return;
-    
     try {
       const { data: peerCounseling, error } = await supabase
         .from('peer_counseling')
@@ -124,8 +135,6 @@ export default function AddPeerCounseling() {
     setLoading(true);
 
     try {
-      let peerCounselingId: number;
-
       const peerCounselingData = {
         name: formData.name,
         image: formData.image,
@@ -135,6 +144,8 @@ export default function AddPeerCounseling() {
         verified: formData.verified
       };
 
+      let peerCounselingId: number;
+
       if (isEdit) {
         const { error } = await supabase
           .from('peer_counseling')
@@ -142,6 +153,13 @@ export default function AddPeerCounseling() {
           .eq('id', parseInt(id));
         if (error) throw error;
         peerCounselingId = parseInt(id);
+
+        // Delete existing relationships
+        await Promise.all([
+          supabase.from('institution_peer_counselings').delete().eq('peer_counseling_id', peerCounselingId),
+          supabase.from('peer_counseling_locations').delete().eq('peer_counseling_id', peerCounselingId),
+          supabase.from('peer_counseling_contacts').delete().eq('peer_counseling_id', peerCounselingId)
+        ]);
       } else {
         const { data, error } = await supabase
           .from('peer_counseling')
@@ -152,15 +170,7 @@ export default function AddPeerCounseling() {
         peerCounselingId = data.id;
       }
 
-      // Handle relationships
-      if (isEdit) {
-        await Promise.all([
-          supabase.from('institution_peer_counselings').delete().eq('peer_counseling_id', peerCounselingId),
-          supabase.from('peer_counseling_locations').delete().eq('peer_counseling_id', peerCounselingId),
-          supabase.from('peer_counseling_contacts').delete().eq('peer_counseling_id', peerCounselingId)
-        ]);
-      }
-
+      // Insert new relationships
       const relationPromises = [];
 
       if (relations.institutions.length > 0) {
@@ -206,82 +216,208 @@ export default function AddPeerCounseling() {
     }
   };
 
+  const handleAddNewInstitution = async (institutionData: any) => {
+    try {
+      const { data, error } = await supabase
+        .from('institution')
+        .insert({
+          name: institutionData.name,
+          image: institutionData.image,
+          institution_type: institutionData.institution_type,
+          profession_type: institutionData.profession_type,
+          specialization: institutionData.specialization,
+          insurance: institutionData.insurance,
+          verified: institutionData.verified
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setAvailableData(prev => ({
+        ...prev,
+        institutions: [...prev.institutions, data]
+      }));
+
+      setRelations(prev => ({
+        ...prev,
+        institutions: [...prev.institutions, data]
+      }));
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to create institution",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleAddNewLocation = async (locationData: any) => {
+    try {
+      const { data, error } = await supabase
+        .from('location')
+        .insert(locationData)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setAvailableData(prev => ({
+        ...prev,
+        locations: [...prev.locations, data]
+      }));
+
+      setRelations(prev => ({
+        ...prev,
+        locations: [...prev.locations, data]
+      }));
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to create location",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleAddNewContact = async (contactData: any) => {
+    try {
+      const { data, error } = await supabase
+        .from('contact_details')
+        .insert(contactData)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setAvailableData(prev => ({
+        ...prev,
+        contacts: [...prev.contacts, data]
+      }));
+
+      setRelations(prev => ({
+        ...prev,
+        contacts: [...prev.contacts, data]
+      }));
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to create contact",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-6">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/admin')}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Admin
-          </Button>
-          <h1 className="text-3xl font-bold">
-            {isEdit ? 'Edit Peer Counseling' : 'Add New Peer Counseling'}
-          </h1>
+    <div className="container mx-auto py-8">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="sm" onClick={() => navigate('/admin')}>
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
+        <h1 className="text-2xl font-bold">
+          {isEdit ? 'Edit Peer Counseling' : 'Add New Peer Counseling'}
+        </h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="name">Name *</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="image">Image URL</Label>
+            <Input
+              id="image"
+              value={formData.image}
+              onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
+            />
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Peer Counseling Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Name *</Label>
-                  <Input
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label>Image URL</Label>
-                  <Input
-                    value={formData.image}
-                    onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                    placeholder="https://..."
-                  />
-                </div>
-              </div>
+        <div>
+          <MultiSelectField
+            label="Peer Type"
+            options={peerTypes}
+            value={formData.peer_type}
+            onChange={(value) => setFormData(prev => ({ ...prev, peer_type: value }))}
+          />
+        </div>
 
-              <MultiSelectField
-                label="Peer Types"
-                value={formData.peer_type}
-                options={peerTypes}
-                onChange={(value) => setFormData(prev => ({ ...prev, peer_type: value }))}
-              />
+        <div>
+          <MultiSelectField
+            label="Specializations"
+            options={specializations}
+            value={formData.specialization}
+            onChange={(value) => setFormData(prev => ({ ...prev, specialization: value }))}
+          />
+        </div>
 
-              <MultiSelectField
-                label="Specializations"
-                value={formData.specialization}
-                options={specializations}
-                onChange={(value) => setFormData(prev => ({ ...prev, specialization: value }))}
-              />
+        {/* Relationships Section */}
+        <div className="space-y-6">
+          <h3 className="text-lg font-semibold">Relationships</h3>
+          
+          <RelationshipDropdown
+            label="Institutions"
+            options={availableData.institutions}
+            selected={relations.institutions}
+            onSelect={(institution) => setRelations(prev => ({ ...prev, institutions: [...prev.institutions, institution] }))}
+            onRemove={(institution) => setRelations(prev => ({ ...prev, institutions: prev.institutions.filter(i => i.id !== institution.id) }))}
+            renderOption={(institution) => institution.name}
+            renderSelected={(institution) => institution.name}
+            AddNewComponent={AddInstitutionForm}
+            onAddNew={handleAddNewInstitution}
+          />
 
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  checked={formData.verified}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, verified: !!checked }))}
-                />
-                <Label>Verified</Label>
-              </div>
-            </CardContent>
-          </Card>
+          <RelationshipDropdown
+            label="Locations"
+            options={availableData.locations}
+            selected={relations.locations}
+            onSelect={(location) => setRelations(prev => ({ ...prev, locations: [...prev.locations, location] }))}
+            onRemove={(location) => setRelations(prev => ({ ...prev, locations: prev.locations.filter(l => l.id !== location.id) }))}
+            renderOption={(location) => `${location.name || location.city}, ${location.city}`}
+            renderSelected={(location) => `${location.name || location.city}, ${location.city}`}
+            AddNewComponent={AddLocationForm}
+            onAddNew={handleAddNewLocation}
+          />
 
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => navigate('/admin')}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : isEdit ? 'Update Peer Counseling' : 'Create Peer Counseling'}
-            </Button>
-          </div>
-        </form>
-      </div>
+          <RelationshipDropdown
+            label="Contact Details"
+            options={availableData.contacts}
+            selected={relations.contacts}
+            onSelect={(contact) => setRelations(prev => ({ ...prev, contacts: [...prev.contacts, contact] }))}
+            onRemove={(contact) => setRelations(prev => ({ ...prev, contacts: prev.contacts.filter(c => c.id !== contact.id) }))}
+            renderOption={(contact) => `${contact.name || contact.contact_type}: ${contact.value}`}
+            renderSelected={(contact) => `${contact.name || contact.contact_type}: ${contact.value}`}
+            AddNewComponent={AddContactForm}
+            onAddNew={handleAddNewContact}
+          />
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="verified"
+            checked={formData.verified}
+            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, verified: !!checked }))}
+          />
+          <Label htmlFor="verified">Verified</Label>
+        </div>
+
+        <div className="flex gap-4">
+          <Button type="button" variant="outline" onClick={() => navigate('/admin')}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Saving..." : isEdit ? "Update Peer Counseling" : "Create Peer Counseling & Relationships"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

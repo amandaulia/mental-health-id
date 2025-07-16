@@ -1,47 +1,56 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { RelationManager } from "@/components/admin/RelationManager";
-import { MultiSelectField } from "@/components/admin/MultiSelectField";
+import { ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { MultiSelectField } from '@/components/admin/MultiSelectField';
+import { RelationshipDropdown } from '@/components/admin/RelationshipDropdown';
+import { AddContactForm } from '@/components/admin/AddContactForm';
 
 export default function AddOrganization() {
-  const navigate = useNavigate();
   const { id } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const isEdit = !!id;
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    description: "",
-    specialization: [] as string[],
+    name: '',
+    image: '',
+    description: '',
+    specialization: [],
     verified: false
-  });
-
-  const [relations, setRelations] = useState({
-    contacts: [] as any[]
   });
 
   const [availableData, setAvailableData] = useState({
     contacts: [] as any[]
   });
 
-  // Options for dropdowns
+  const [relations, setRelations] = useState({
+    contacts: [] as any[]
+  });
+
   const specializations = [
-    "Personality Disorders", "Trauma", "Mood Disorders", "ADHD", "Anxiety",
-    "Relationship", "Career", "OCD", "Self Development", "Gender", "Family",
-    "Depression", "Interpersonal", "Education"
+    'Personality Disorders',
+    'Trauma',
+    'Mood Disorders',
+    'ADHD',
+    'Anxiety',
+    'Relationship',
+    'Career',
+    'OCD',
+    'Self Development',
+    'Gender',
+    'Family',
+    'Depression',
+    'Interpersonal',
+    'Education'
   ];
-  const contactTypes = ["WhatsApp", "Phone", "Website", "Instagram", "Email"];
 
   useEffect(() => {
     loadAvailableData();
@@ -52,7 +61,12 @@ export default function AddOrganization() {
 
   const loadAvailableData = async () => {
     try {
-      const { data: contacts } = await supabase.from('contact_details').select('*');
+      const { data: contacts, error } = await supabase
+        .from('contact_details')
+        .select('*');
+
+      if (error) throw error;
+
       setAvailableData({
         contacts: contacts || []
       });
@@ -66,8 +80,6 @@ export default function AddOrganization() {
   };
 
   const loadOrganizationData = async () => {
-    if (!id) return;
-    
     try {
       const { data: organization, error } = await supabase
         .from('organization')
@@ -105,8 +117,6 @@ export default function AddOrganization() {
     setLoading(true);
 
     try {
-      let organizationId: number;
-
       const organizationData = {
         name: formData.name,
         image: formData.image,
@@ -115,6 +125,8 @@ export default function AddOrganization() {
         verified: formData.verified
       };
 
+      let organizationId: number;
+
       if (isEdit) {
         const { error } = await supabase
           .from('organization')
@@ -122,6 +134,9 @@ export default function AddOrganization() {
           .eq('id', parseInt(id));
         if (error) throw error;
         organizationId = parseInt(id);
+
+        // Delete existing relationships
+        await supabase.from('organization_contacts').delete().eq('organization_id', organizationId);
       } else {
         const { data, error } = await supabase
           .from('organization')
@@ -132,11 +147,7 @@ export default function AddOrganization() {
         organizationId = data.id;
       }
 
-      // Handle relationships
-      if (isEdit) {
-        await supabase.from('organization_contacts').delete().eq('organization_id', organizationId);
-      }
-
+      // Insert new relationships
       if (relations.contacts.length > 0) {
         await supabase.from('organization_contacts').insert(
           relations.contacts.map(contact => ({ organization_id: organizationId, contact_id: contact.id }))
@@ -164,7 +175,7 @@ export default function AddOrganization() {
     try {
       const { data, error } = await supabase
         .from('contact_details')
-        .insert([contactData])
+        .insert(contactData)
         .select()
         .single();
 
@@ -189,113 +200,91 @@ export default function AddOrganization() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-6">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/admin')}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Admin
-          </Button>
-          <h1 className="text-3xl font-bold">
-            {isEdit ? 'Edit Organization' : 'Add New Organization'}
-          </h1>
+    <div className="container mx-auto py-8">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="sm" onClick={() => navigate('/admin')}>
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
+        <h1 className="text-2xl font-bold">
+          {isEdit ? 'Edit Organization' : 'Add New Organization'}
+        </h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="name">Name *</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="image">Image URL</Label>
+            <Input
+              id="image"
+              value={formData.image}
+              onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
+            />
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Organization Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Name *</Label>
-                  <Input
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label>Image URL</Label>
-                  <Input
-                    value={formData.image}
-                    onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                    placeholder="https://..."
-                  />
-                </div>
-              </div>
+        <div>
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
+            value={formData.description}
+            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+          />
+        </div>
 
-              <div>
-                <Label>Description</Label>
-                <Textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Organization description"
-                  rows={3}
-                />
-              </div>
+        <div>
+          <MultiSelectField
+            label="Specializations"
+            options={specializations}
+            value={formData.specialization}
+            onChange={(value) => setFormData(prev => ({ ...prev, specialization: value }))}
+          />
+        </div>
 
-              <MultiSelectField
-                label="Specializations"
-                value={formData.specialization}
-                options={specializations}
-                onChange={(value) => setFormData(prev => ({ ...prev, specialization: value }))}
-              />
+        {/* Relationships Section */}
+        <div className="space-y-6">
+          <h3 className="text-lg font-semibold">Relationships</h3>
+          
+          <RelationshipDropdown
+            label="Contact Details"
+            options={availableData.contacts}
+            selected={relations.contacts}
+            onSelect={(contact) => setRelations(prev => ({ ...prev, contacts: [...prev.contacts, contact] }))}
+            onRemove={(contact) => setRelations(prev => ({ ...prev, contacts: prev.contacts.filter(c => c.id !== contact.id) }))}
+            renderOption={(contact) => `${contact.name || contact.contact_type}: ${contact.value}`}
+            renderSelected={(contact) => `${contact.name || contact.contact_type}: ${contact.value}`}
+            AddNewComponent={AddContactForm}
+            onAddNew={handleAddNewContact}
+          />
+        </div>
 
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  checked={formData.verified}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, verified: !!checked }))}
-                />
-                <Label>Verified</Label>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="verified"
+            checked={formData.verified}
+            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, verified: !!checked }))}
+          />
+          <Label htmlFor="verified">Verified</Label>
+        </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Contact Details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RelationManager
-                title="Contact Details"
-                entityType="contact"
-                selectedItems={relations.contacts}
-                availableItems={availableData.contacts}
-                onSelectExisting={(item) => setRelations(prev => ({ 
-                  ...prev, 
-                  contacts: [...prev.contacts, item] 
-                }))}
-                onRemove={(index) => setRelations(prev => ({ 
-                  ...prev, 
-                  contacts: prev.contacts.filter((_, i) => i !== index) 
-                }))}
-                onAddNew={handleAddNewContact}
-                modalFields={[
-                  { key: 'name', label: 'Name', type: 'text' },
-                  { key: 'contact_type', label: 'Contact Type', type: 'select', options: contactTypes, required: true },
-                  { key: 'value', label: 'Value', type: 'text', required: true },
-                  { key: 'link', label: 'Link', type: 'text' }
-                ]}
-              />
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => navigate('/admin')}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : isEdit ? 'Update Organization' : 'Create Organization'}
-            </Button>
-          </div>
-        </form>
-      </div>
+        <div className="flex gap-4">
+          <Button type="button" variant="outline" onClick={() => navigate('/admin')}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Saving..." : isEdit ? "Update Organization" : "Create Organization & Relationships"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }
