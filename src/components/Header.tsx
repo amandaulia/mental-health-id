@@ -48,10 +48,6 @@ export const Header = () => {
                 <Building2 className="h-4 w-4" />
                 {t('header.navigation.organizations')}
               </a>
-              <a href="/admin" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
-                <Settings className="h-4 w-4" />
-                Admin
-              </a>
             </nav>
             <LanguageToggle />
           </div>
