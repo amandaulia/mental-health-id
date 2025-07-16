@@ -1,41 +1,36 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { RelationManager } from "@/components/admin/RelationManager";
-import { MultiSelectField } from "@/components/admin/MultiSelectField";
+import { ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { MultiSelectField } from '@/components/admin/MultiSelectField';
+import { RelationshipDropdown } from '@/components/admin/RelationshipDropdown';
+import { AddServiceForm } from '@/components/admin/AddServiceForm';
+import { AddInstitutionForm } from '@/components/admin/AddInstitutionForm';
+import { AddLocationForm } from '@/components/admin/AddLocationForm';
+import { AddContactForm } from '@/components/admin/AddContactForm';
 
 export default function AddPractitioner() {
-  const navigate = useNavigate();
   const { id } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const isEdit = !!id;
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    experience: "",
+    name: '',
+    image: '',
+    experience: '',
     education: [] as string[],
-    license_number: "",
+    license_number: '',
     profession_type: [] as string[],
     specialization: [] as string[],
     insurance: [] as string[],
     verified: false
-  });
-
-  const [relations, setRelations] = useState({
-    services: [] as any[],
-    institutions: [] as any[],
-    locations: [] as any[],
-    contacts: [] as any[]
   });
 
   const [availableData, setAvailableData] = useState({
@@ -45,17 +40,40 @@ export default function AddPractitioner() {
     contacts: [] as any[]
   });
 
-  // Options for dropdowns
-  const professionTypes = ["Psychologist", "Psychiatrist", "Therapist"];
-  const specializations = [
-    "Personality Disorders", "Trauma", "Mood Disorders", "ADHD", "Anxiety",
-    "Relationship", "Career", "OCD", "Self Development", "Gender", "Family",
-    "Depression", "Interpersonal", "Education"
+  const [relations, setRelations] = useState({
+    services: [] as any[],
+    institutions: [] as any[],
+    locations: [] as any[],
+    contacts: [] as any[]
+  });
+
+  const professionOptions = [
+    'Psychologist',
+    'Psychiatrist', 
+    'Therapist'
   ];
-  const insuranceTypes = ["Private Insurance", "BPJS"];
-  const institutionTypes = ["Private Practice", "Clinic", "Hospital"];
-  const sessionModes = ["Chat", "Voice Call", "Video Call", "Offline"];
-  const contactTypes = ["WhatsApp", "Phone", "Website", "Instagram", "Email"];
+
+  const specializationOptions = [
+    'Personality Disorders',
+    'Trauma',
+    'Mood Disorders',
+    'ADHD',
+    'Anxiety',
+    'Relationship',
+    'Career',
+    'OCD',
+    'Self Development',
+    'Gender',
+    'Family',
+    'Depression',
+    'Interpersonal',
+    'Education'
+  ];
+
+  const insuranceOptions = [
+    'Private Insurance',
+    'BPJS'
+  ];
 
   useEffect(() => {
     loadAvailableData();
@@ -66,7 +84,7 @@ export default function AddPractitioner() {
 
   const loadAvailableData = async () => {
     try {
-      const [services, institutions, locations, contacts] = await Promise.all([
+      const [servicesRes, institutionsRes, locationsRes, contactsRes] = await Promise.all([
         supabase.from('service').select('*'),
         supabase.from('institution').select('*'),
         supabase.from('location').select('*'),
@@ -74,10 +92,10 @@ export default function AddPractitioner() {
       ]);
 
       setAvailableData({
-        services: services.data || [],
-        institutions: institutions.data || [],
-        locations: locations.data || [],
-        contacts: contacts.data || []
+        services: servicesRes.data || [],
+        institutions: institutionsRes.data || [],
+        locations: locationsRes.data || [],
+        contacts: contactsRes.data || []
       });
     } catch (error: any) {
       toast({
@@ -89,8 +107,6 @@ export default function AddPractitioner() {
   };
 
   const loadPractitionerData = async () => {
-    if (!id) return;
-    
     try {
       const { data: practitioner, error } = await supabase
         .from('practitioner')
@@ -159,6 +175,14 @@ export default function AddPractitioner() {
           .eq('id', parseInt(id));
         if (error) throw error;
         practitionerId = parseInt(id);
+
+        // Delete existing relationships
+        await Promise.all([
+          supabase.from('practitioner_services').delete().eq('practitioner_id', practitionerId),
+          supabase.from('practitioner_institutions').delete().eq('practitioner_id', practitionerId),
+          supabase.from('practitioner_locations').delete().eq('practitioner_id', practitionerId),
+          supabase.from('practitioner_contacts').delete().eq('practitioner_id', practitionerId)
+        ]);
       } else {
         const { data, error } = await supabase
           .from('practitioner')
@@ -169,18 +193,7 @@ export default function AddPractitioner() {
         practitionerId = data.id;
       }
 
-      // Handle relationships
-      if (isEdit) {
-        // Delete existing relationships
-        await Promise.all([
-          supabase.from('practitioner_services').delete().eq('practitioner_id', practitionerId),
-          supabase.from('practitioner_institutions').delete().eq('practitioner_id', practitionerId),
-          supabase.from('practitioner_locations').delete().eq('practitioner_id', practitionerId),
-          supabase.from('practitioner_contacts').delete().eq('practitioner_id', practitionerId)
-        ]);
-      }
-
-      // Create new relationships
+      // Insert new relationships
       const relationPromises = [];
 
       if (relations.services.length > 0) {
@@ -238,12 +251,12 @@ export default function AddPractitioner() {
     try {
       const { data, error } = await supabase
         .from('service')
-        .insert([{
+        .insert({
           name: serviceData.name,
-          duration: serviceData.duration ? parseFloat(serviceData.duration) : null,
-          price: serviceData.price ? parseFloat(serviceData.price) : null,
+          duration: serviceData.duration,
+          price: serviceData.price,
           session_mode: serviceData.session_mode || []
-        }])
+        })
         .select()
         .single();
 
@@ -271,7 +284,15 @@ export default function AddPractitioner() {
     try {
       const { data, error } = await supabase
         .from('institution')
-        .insert([institutionData])
+        .insert({
+          name: institutionData.name,
+          image: institutionData.image,
+          institution_type: institutionData.institution_type,
+          profession_type: institutionData.profession_type,
+          specialization: institutionData.specialization,
+          insurance: institutionData.insurance,
+          verified: institutionData.verified
+        })
         .select()
         .single();
 
@@ -299,7 +320,7 @@ export default function AddPractitioner() {
     try {
       const { data, error } = await supabase
         .from('location')
-        .insert([locationData])
+        .insert(locationData)
         .select()
         .single();
 
@@ -327,7 +348,7 @@ export default function AddPractitioner() {
     try {
       const { data, error } = await supabase
         .from('contact_details')
-        .insert([contactData])
+        .insert(contactData)
         .select()
         .single();
 
@@ -352,224 +373,156 @@ export default function AddPractitioner() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-6">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/admin')}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Admin
-          </Button>
-          <h1 className="text-3xl font-bold">
-            {isEdit ? 'Edit Practitioner' : 'Add New Practitioner'}
-          </h1>
+    <div className="container mx-auto py-8">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="sm" onClick={() => navigate('/admin')}>
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
+        <h1 className="text-2xl font-bold">
+          {isEdit ? 'Edit Practitioner' : 'Add New Practitioner'}
+        </h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="name">Name *</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="image">Image URL</Label>
+            <Input
+              id="image"
+              value={formData.image}
+              onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
+            />
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-              <CardDescription>Enter the practitioner's basic details</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Name *</Label>
-                  <Input
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label>Image URL</Label>
-                  <Input
-                    value={formData.image}
-                    onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                    placeholder="https://..."
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Experience (years)</Label>
-                  <Input
-                    type="number"
-                    value={formData.experience}
-                    onChange={(e) => setFormData(prev => ({ ...prev, experience: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label>License Number</Label>
-                  <Input
-                    value={formData.license_number}
-                    onChange={(e) => setFormData(prev => ({ ...prev, license_number: e.target.value }))}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label>Education</Label>
-                <Textarea
-                  value={formData.education.join('\n')}
-                  onChange={(e) => setFormData(prev => ({ 
-                    ...prev, 
-                    education: e.target.value.split('\n').filter(line => line.trim()) 
-                  }))}
-                  placeholder="Enter each education item on a new line"
-                  rows={3}
-                />
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  checked={formData.verified}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, verified: !!checked }))}
-                />
-                <Label>Verified</Label>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Professional Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <MultiSelectField
-                label="Profession Types"
-                value={formData.profession_type}
-                options={professionTypes}
-                onChange={(value) => setFormData(prev => ({ ...prev, profession_type: value }))}
-              />
-
-              <MultiSelectField
-                label="Specializations"
-                value={formData.specialization}
-                options={specializations}
-                onChange={(value) => setFormData(prev => ({ ...prev, specialization: value }))}
-              />
-
-              <MultiSelectField
-                label="Insurance"
-                value={formData.insurance}
-                options={insuranceTypes}
-                onChange={(value) => setFormData(prev => ({ ...prev, insurance: value }))}
-              />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Relationships</CardTitle>
-              <CardDescription>Link this practitioner to services, institutions, locations, and contacts</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <RelationManager
-                title="Services"
-                entityType="service"
-                selectedItems={relations.services}
-                availableItems={availableData.services}
-                onSelectExisting={(item) => setRelations(prev => ({ 
-                  ...prev, 
-                  services: [...prev.services, item] 
-                }))}
-                onRemove={(index) => setRelations(prev => ({ 
-                  ...prev, 
-                  services: prev.services.filter((_, i) => i !== index) 
-                }))}
-                onAddNew={handleAddNewService}
-                modalFields={[
-                  { key: 'name', label: 'Name', type: 'text', required: true },
-                  { key: 'duration', label: 'Duration (minutes)', type: 'number' },
-                  { key: 'price', label: 'Price', type: 'number' },
-                  { key: 'session_mode', label: 'Session Mode', type: 'select', options: sessionModes }
-                ]}
-              />
-
-              <RelationManager
-                title="Institutions"
-                entityType="institution"
-                selectedItems={relations.institutions}
-                availableItems={availableData.institutions}
-                onSelectExisting={(item) => setRelations(prev => ({ 
-                  ...prev, 
-                  institutions: [...prev.institutions, item] 
-                }))}
-                onRemove={(index) => setRelations(prev => ({ 
-                  ...prev, 
-                  institutions: prev.institutions.filter((_, i) => i !== index) 
-                }))}
-                onAddNew={handleAddNewInstitution}
-                modalFields={[
-                  { key: 'name', label: 'Name', type: 'text', required: true },
-                  { key: 'institution_type', label: 'Institution Type', type: 'select', options: institutionTypes, required: true },
-                  { key: 'image', label: 'Image URL', type: 'text' },
-                  { key: 'verified', label: 'Verified', type: 'checkbox' }
-                ]}
-              />
-
-              <RelationManager
-                title="Locations"
-                entityType="location"
-                selectedItems={relations.locations}
-                availableItems={availableData.locations}
-                onSelectExisting={(item) => setRelations(prev => ({ 
-                  ...prev, 
-                  locations: [...prev.locations, item] 
-                }))}
-                onRemove={(index) => setRelations(prev => ({ 
-                  ...prev, 
-                  locations: prev.locations.filter((_, i) => i !== index) 
-                }))}
-                onAddNew={handleAddNewLocation}
-                modalFields={[
-                  { key: 'name', label: 'Name', type: 'text' },
-                  { key: 'address', label: 'Address', type: 'text' },
-                  { key: 'city', label: 'City', type: 'text', required: true },
-                  { key: 'province', label: 'Province', type: 'text', required: true },
-                  { key: 'country', label: 'Country', type: 'text', required: true }
-                ]}
-              />
-
-              <RelationManager
-                title="Contact Details"
-                entityType="contact"
-                selectedItems={relations.contacts}
-                availableItems={availableData.contacts}
-                onSelectExisting={(item) => setRelations(prev => ({ 
-                  ...prev, 
-                  contacts: [...prev.contacts, item] 
-                }))}
-                onRemove={(index) => setRelations(prev => ({ 
-                  ...prev, 
-                  contacts: prev.contacts.filter((_, i) => i !== index) 
-                }))}
-                onAddNew={handleAddNewContact}
-                modalFields={[
-                  { key: 'name', label: 'Name', type: 'text' },
-                  { key: 'contact_type', label: 'Contact Type', type: 'select', options: contactTypes, required: true },
-                  { key: 'value', label: 'Value', type: 'text', required: true },
-                  { key: 'link', label: 'Link', type: 'text' }
-                ]}
-              />
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => navigate('/admin')}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : isEdit ? 'Update Practitioner' : 'Create Practitioner'}
-            </Button>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="experience">Experience (years)</Label>
+            <Input
+              id="experience"
+              type="number"
+              value={formData.experience}
+              onChange={(e) => setFormData(prev => ({ ...prev, experience: e.target.value }))}
+            />
           </div>
-        </form>
-      </div>
+          <div>
+            <Label htmlFor="license_number">License Number</Label>
+            <Input
+              id="license_number"
+              value={formData.license_number}
+              onChange={(e) => setFormData(prev => ({ ...prev, license_number: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        <div>
+          <MultiSelectField
+            label="Profession Types"
+            options={professionOptions}
+            value={formData.profession_type}
+            onChange={(value) => setFormData(prev => ({ ...prev, profession_type: value }))}
+          />
+        </div>
+
+        <div>
+          <MultiSelectField
+            label="Specializations"
+            options={specializationOptions}
+            value={formData.specialization}
+            onChange={(value) => setFormData(prev => ({ ...prev, specialization: value }))}
+          />
+        </div>
+
+        <div>
+          <MultiSelectField
+            label="Insurance"
+            options={insuranceOptions}
+            value={formData.insurance}
+            onChange={(value) => setFormData(prev => ({ ...prev, insurance: value }))}
+          />
+        </div>
+
+        {/* Relationships Section */}
+        <div className="space-y-6">
+          <h3 className="text-lg font-semibold">Relationships</h3>
+          
+          <RelationshipDropdown
+            label="Services"
+            options={availableData.services}
+            selected={relations.services}
+            onSelect={(service) => setRelations(prev => ({ ...prev, services: [...prev.services, service] }))}
+            onRemove={(service) => setRelations(prev => ({ ...prev, services: prev.services.filter(s => s.id !== service.id) }))}
+            renderOption={(service) => service.name}
+            renderSelected={(service) => service.name}
+            AddNewComponent={AddServiceForm}
+            onAddNew={handleAddNewService}
+          />
+
+          <RelationshipDropdown
+            label="Institutions"
+            options={availableData.institutions}
+            selected={relations.institutions}
+            onSelect={(institution) => setRelations(prev => ({ ...prev, institutions: [...prev.institutions, institution] }))}
+            onRemove={(institution) => setRelations(prev => ({ ...prev, institutions: prev.institutions.filter(i => i.id !== institution.id) }))}
+            renderOption={(institution) => institution.name}
+            renderSelected={(institution) => institution.name}
+            AddNewComponent={AddInstitutionForm}
+            onAddNew={handleAddNewInstitution}
+          />
+
+          <RelationshipDropdown
+            label="Locations"
+            options={availableData.locations}
+            selected={relations.locations}
+            onSelect={(location) => setRelations(prev => ({ ...prev, locations: [...prev.locations, location] }))}
+            onRemove={(location) => setRelations(prev => ({ ...prev, locations: prev.locations.filter(l => l.id !== location.id) }))}
+            renderOption={(location) => `${location.name || location.city}, ${location.city}`}
+            renderSelected={(location) => `${location.name || location.city}, ${location.city}`}
+            AddNewComponent={AddLocationForm}
+            onAddNew={handleAddNewLocation}
+          />
+
+          <RelationshipDropdown
+            label="Contact Details"
+            options={availableData.contacts}
+            selected={relations.contacts}
+            onSelect={(contact) => setRelations(prev => ({ ...prev, contacts: [...prev.contacts, contact] }))}
+            onRemove={(contact) => setRelations(prev => ({ ...prev, contacts: prev.contacts.filter(c => c.id !== contact.id) }))}
+            renderOption={(contact) => `${contact.name || contact.contact_type}: ${contact.value}`}
+            renderSelected={(contact) => `${contact.name || contact.contact_type}: ${contact.value}`}
+            AddNewComponent={AddContactForm}
+            onAddNew={handleAddNewContact}
+          />
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="verified"
+            checked={formData.verified}
+            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, verified: !!checked }))}
+          />
+          <Label htmlFor="verified">Verified</Label>
+        </div>
+
+        <div className="flex gap-4">
+          <Button type="button" variant="outline" onClick={() => navigate('/admin')}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Saving..." : isEdit ? "Update Practitioner" : "Create Practitioner & Relationships"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }
