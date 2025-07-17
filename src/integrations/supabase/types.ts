@@ -982,6 +982,30 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       service: {
         Row: {
           book_cta: number | null
@@ -1093,12 +1117,39 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       activity_type:
@@ -1109,6 +1160,7 @@ export type Database = {
         | "Music"
         | "Movie"
         | "Books"
+      app_role: "admin" | "user"
       contact_type: "WhatsApp" | "Phone" | "Website" | "Instagram" | "Email"
       institution_type: "Private Practice" | "Clinic" | "Hospital"
       insurance: "Private Insurance" | "BPJS"
@@ -1266,6 +1318,7 @@ export const Constants = {
         "Movie",
         "Books",
       ],
+      app_role: ["admin", "user"],
       contact_type: ["WhatsApp", "Phone", "Website", "Instagram", "Email"],
       institution_type: ["Private Practice", "Clinic", "Hospital"],
       insurance: ["Private Insurance", "BPJS"],
