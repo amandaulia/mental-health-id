@@ -28,23 +28,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Check if user is admin
-          setTimeout(async () => {
-            try {
-              const { data, error } = await supabase
-                .from('user_roles')
-                .select('role')
-                .eq('user_id', session.user.id)
-                .eq('role', 'admin')
-                .maybeSingle();
-              
-              setIsAdmin(!!data && !error);
-            } catch (error) {
-              console.error('Error checking admin role:', error);
-              setIsAdmin(false);
-            }
-            setLoading(false);
-          }, 0);
+          // All authenticated users are admins
+          setIsAdmin(true);
+          setLoading(false);
         } else {
           setIsAdmin(false);
           setLoading(false);
@@ -58,22 +44,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        setTimeout(async () => {
-          try {
-            const { data, error } = await supabase
-              .from('user_roles')
-              .select('role')
-              .eq('user_id', session.user.id)
-              .eq('role', 'admin')
-              .maybeSingle();
-            
-            setIsAdmin(!!data && !error);
-          } catch (error) {
-            console.error('Error checking admin role:', error);
-            setIsAdmin(false);
-          }
-          setLoading(false);
-        }, 0);
+        // All authenticated users are admins
+        setIsAdmin(true);
+        setLoading(false);
       } else {
         setLoading(false);
       }
