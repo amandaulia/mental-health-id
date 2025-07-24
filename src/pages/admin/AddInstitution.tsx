@@ -294,7 +294,7 @@ export default function AddInstitution() {
           name: serviceData.name,
           duration: serviceData.duration,
           price: serviceData.price,
-          session_mode: serviceData.session_mode || []
+          session_mode: serviceData.session_mode ? serviceData.session_mode.map((mode: string) => mode as any) : []
         })
         .select()
         .single();
@@ -310,10 +310,15 @@ export default function AddInstitution() {
         ...prev,
         services: [...prev.services, data]
       }));
+
+      toast({
+        title: "Success",
+        description: "Service created successfully",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create service",
+        description: `Failed to create service: ${error.message}`,
         variant: "destructive",
       });
     }
@@ -338,10 +343,15 @@ export default function AddInstitution() {
         ...prev,
         locations: [...prev.locations, data]
       }));
+
+      toast({
+        title: "Success",
+        description: "Location created successfully",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create location",
+        description: `Failed to create location: ${error.message}`,
         variant: "destructive",
       });
     }
@@ -351,7 +361,10 @@ export default function AddInstitution() {
     try {
       const { data, error } = await supabase
         .from('contact_details')
-        .insert(contactData)
+        .insert({
+          ...contactData,
+          contact_type: contactData.contact_type as any
+        })
         .select()
         .single();
 
@@ -366,10 +379,15 @@ export default function AddInstitution() {
         ...prev,
         contacts: [...prev.contacts, data]
       }));
+
+      toast({
+        title: "Success",
+        description: "Contact created successfully",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create contact",
+        description: `Failed to create contact: ${error.message}`,
         variant: "destructive",
       });
     }

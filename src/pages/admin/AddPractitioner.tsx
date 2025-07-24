@@ -255,7 +255,7 @@ export default function AddPractitioner() {
           name: serviceData.name,
           duration: serviceData.duration,
           price: serviceData.price,
-          session_mode: serviceData.session_mode || []
+          session_mode: serviceData.session_mode ? serviceData.session_mode.map((mode: string) => mode as any) : []
         })
         .select()
         .single();
@@ -271,10 +271,15 @@ export default function AddPractitioner() {
         ...prev,
         services: [...prev.services, data]
       }));
+
+      toast({
+        title: "Success",
+        description: "Service created successfully",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create service",
+        description: `Failed to create service: ${error.message}`,
         variant: "destructive",
       });
     }
@@ -287,10 +292,10 @@ export default function AddPractitioner() {
         .insert({
           name: institutionData.name,
           image: institutionData.image,
-          institution_type: institutionData.institution_type,
-          profession_type: institutionData.profession_type,
-          specialization: institutionData.specialization,
-          insurance: institutionData.insurance,
+          institution_type: institutionData.institution_type as any,
+          profession_type: institutionData.profession_type as any,
+          specialization: institutionData.specialization as any,
+          insurance: institutionData.insurance as any,
           verified: institutionData.verified
         })
         .select()
@@ -307,10 +312,15 @@ export default function AddPractitioner() {
         ...prev,
         institutions: [...prev.institutions, data]
       }));
+
+      toast({
+        title: "Success",
+        description: "Institution created successfully",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create institution",
+        description: `Failed to create institution: ${error.message}`,
         variant: "destructive",
       });
     }
@@ -335,10 +345,15 @@ export default function AddPractitioner() {
         ...prev,
         locations: [...prev.locations, data]
       }));
+
+      toast({
+        title: "Success",
+        description: "Location created successfully",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create location",
+        description: `Failed to create location: ${error.message}`,
         variant: "destructive",
       });
     }
@@ -348,7 +363,10 @@ export default function AddPractitioner() {
     try {
       const { data, error } = await supabase
         .from('contact_details')
-        .insert(contactData)
+        .insert({
+          ...contactData,
+          contact_type: contactData.contact_type as any
+        })
         .select()
         .single();
 
@@ -363,10 +381,15 @@ export default function AddPractitioner() {
         ...prev,
         contacts: [...prev.contacts, data]
       }));
+
+      toast({
+        title: "Success",
+        description: "Contact created successfully",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create contact",
+        description: `Failed to create contact: ${error.message}`,
         variant: "destructive",
       });
     }

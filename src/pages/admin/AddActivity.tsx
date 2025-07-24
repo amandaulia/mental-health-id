@@ -349,7 +349,10 @@ export default function AddActivity() {
     try {
       const { data, error } = await supabase
         .from('contact_details')
-        .insert(contactData)
+        .insert({
+          ...contactData,
+          contact_type: contactData.contact_type as any
+        })
         .select()
         .single();
 

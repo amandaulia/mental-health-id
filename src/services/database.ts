@@ -10,14 +10,11 @@ type ContactDetail = Tables['contact_details']['Row'];
 type Location = Tables['location']['Row'];
 
 export const databaseService = {
-  // Fetch all practitioners with their institution data (removed location from institution query)
+  // Fetch all practitioners (base data only - relationships fetched separately)
   async getPractitioners() {
     const { data, error } = await supabase
       .from('practitioner')
-      .select(`
-        *,
-        institution:institution_id(*)
-      `);
+      .select('*');
     
     if (error) {
       console.error('Error fetching practitioners:', error);
@@ -27,14 +24,11 @@ export const databaseService = {
     return data;
   },
 
-  // Fetch single practitioner with related data (removed location from institution query)
+  // Fetch single practitioner (base data only - relationships fetched separately)
   async getPractitioner(id: number) {
     const { data, error } = await supabase
       .from('practitioner')
-      .select(`
-        *,
-        institution:institution_id(*)
-      `)
+      .select('*')
       .eq('id', id)
       .single();
     
@@ -63,7 +57,7 @@ export const databaseService = {
     return data?.map(item => item.contact_details).filter(Boolean) || [];
   },
 
-  // Fetch all institutions (removed location query)
+  // Fetch all institutions
   async getInstitutions() {
     const { data, error } = await supabase
       .from('institution')
@@ -77,7 +71,7 @@ export const databaseService = {
     return data;
   },
 
-  // Fetch single institution (removed location query)
+  // Fetch single institution
   async getInstitution(id: number) {
     const { data, error } = await supabase
       .from('institution')
@@ -87,6 +81,137 @@ export const databaseService = {
     
     if (error) {
       console.error('Error fetching institution:', error);
+      throw error;
+    }
+    
+    return data;
+  },
+
+  // NEW: Insert service with proper enum casting
+  async insertService(serviceData: {
+    name: string;
+    duration?: number;
+    price?: number;
+    session_mode?: string[];
+  }) {
+    const { data, error } = await supabase
+      .from('service')
+      .insert({
+        ...serviceData,
+        session_mode: serviceData.session_mode ? serviceData.session_mode.map(mode => mode as any) : []
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error inserting service:', error);
+      throw error;
+    }
+    
+    return data;
+  },
+
+  // NEW: Insert contact with proper enum casting
+  async insertContact(contactData: {
+    name?: string;
+    contact_type: string;
+    value: string;
+    link?: string;
+  }) {
+    const { data, error } = await supabase
+      .from('contact_details')
+      .insert({
+        ...contactData,
+        contact_type: contactData.contact_type as any
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error inserting contact:', error);
+      throw error;
+    }
+    
+    return data;
+  },
+
+  // NEW: Insert location
+  async insertLocation(locationData: {
+    name?: string;
+    address?: string;
+    city: string;
+    province: string;
+    country: string;
+  }) {
+    const { data, error } = await supabase
+      .from('location')
+      .insert(locationData)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error inserting location:', error);
+      throw error;
+    }
+    
+    return data;
+  },
+
+  // NEW: Insert institution with proper enum casting
+  async insertInstitution(institutionData: {
+    name: string;
+    image?: string;
+    institution_type: string;
+    profession_type?: string[];
+    specialization?: string[];
+    insurance?: string[];
+    verified?: boolean;
+  }) {
+    const { data, error } = await supabase
+      .from('institution')
+      .insert({
+        ...institutionData,
+        institution_type: institutionData.institution_type as any,
+        profession_type: institutionData.profession_type as any,
+        specialization: institutionData.specialization as any,
+        insurance: institutionData.insurance as any
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error inserting institution:', error);
+      throw error;
+    }
+    
+    return data;
+  },
+
+  // NEW: Insert practitioner with proper enum casting
+  async insertPractitioner(practitionerData: {
+    name: string;
+    image?: string;
+    experience?: number;
+    education?: string[];
+    license_number?: string;
+    profession_type?: string[];
+    specialization?: string[];
+    insurance?: string[];
+    verified?: boolean;
+  }) {
+    const { data, error } = await supabase
+      .from('practitioner')
+      .insert({
+        ...practitionerData,
+        profession_type: practitionerData.profession_type as any,
+        specialization: practitionerData.specialization as any,
+        insurance: practitionerData.insurance as any
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error inserting practitioner:', error);
       throw error;
     }
     
