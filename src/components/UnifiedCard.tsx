@@ -76,16 +76,29 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
         <CardContent className="p-4">
           <div className="space-y-3">
             <div className="flex items-start justify-between">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="font-semibold text-lg truncate">{data.name}</h3>
-                  {data.isVerified && (
-                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 flex-shrink-0">
-                      <CheckCircle className="h-3 w-3 mr-1" />
-                      {t('common.verified')}
-                    </Badge>
-                  )}
-                </div>
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                {data.image && (
+                  <div className="w-12 h-12 flex-shrink-0">
+                    <img 
+                      src={data.image} 
+                      alt={`${data.name} logo`}
+                      className="w-full h-full object-cover rounded-md"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="font-semibold text-lg truncate">{data.name}</h3>
+                    {data.isVerified && (
+                      <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 flex-shrink-0">
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        {t('common.verified')}
+                      </Badge>
+                    )}
+                  </div>
                 
                 {data.type === "practitioner" && (
                   <>
@@ -187,6 +200,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                     )}
                   </>
                 )}
+                </div>
               </div>
             </div>
             
