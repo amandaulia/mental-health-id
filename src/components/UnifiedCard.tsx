@@ -237,9 +237,9 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
               )}
               
               {data.priceRange && (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md">
                   <span className="text-xs text-muted-foreground">{t('common.priceRange')}:</span>
-                  <span className="font-medium text-primary text-sm">{data.priceRange}</span>
+                  <span className="font-semibold text-primary">{data.priceRange}</span>
                 </div>
               )}
               
