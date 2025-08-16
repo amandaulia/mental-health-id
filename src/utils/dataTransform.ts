@@ -103,8 +103,8 @@ export const transformService = (dbService: any): Service => {
     duration: durationText,
     price: dbService.price || 0,
     mode: mapSessionMode(dbService.session_mode?.[0] || "OFFLINE"),
-    bookingUrl: dbService.book_cta?.toString() || undefined,
-    learnMoreUrl: dbService.learn_more_cta?.toString() || undefined,
+    bookingUrl: dbService.book_cta ? dbService.book_cta.toString() : undefined,
+    learnMoreUrl: dbService.learn_more_cta ? dbService.learn_more_cta.toString() : undefined,
   };
 };
 
