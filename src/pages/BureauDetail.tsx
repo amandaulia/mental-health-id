@@ -31,7 +31,7 @@ const BureauDetail = () => {
 
   useEffect(() => {
     if (dbInstitution && dbServices && dbContactDetails) {
-      const transformedServices = dbServices.map(transformService);
+      const transformedServices = dbServices.map((item: any) => transformService(item.service));
       const contactDetails = transformContactDetails(dbContactDetails);
       setBureau(transformInstitution(dbInstitution, transformedServices, contactDetails));
       setServices(transformedServices);
