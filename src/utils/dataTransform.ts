@@ -61,24 +61,24 @@ export const transformInstitution = (
   return {
     id: dbInstitution.id.toString(),
     type: "bureau",
-    image: "/placeholder.svg", // Default placeholder since image field doesn't exist in DB yet
+    image: dbInstitution.image || "/placeholder.svg",
     name: dbInstitution.name,
-    businessHours: "Not specified", // Can be added to schema later
+    businessHours: "Not specified",
     bureauType: mapInstitutionType(dbInstitution.institution_type),
     professionTypes: mapProfessionTypes(dbInstitution.profession_type || []),
-    specializations: [], // Will be derived from services or added to schema later
-    city: "Unknown City", // Will be set from location data separately
+    specializations: mapSpecializations(dbInstitution.specialization || []),
+    city: "Jakarta", // Default city for now
     location: {
-      address: "Address not available", // Will be set from location data separately
-      lat: 0, // Will need to be added to location table later
-      lng: 0, // Will need to be added to location table later
+      address: "Jakarta, Indonesia",
+      lat: -6.2088,
+      lng: 106.8456,
     },
     insurance: mapInsuranceTypes(dbInstitution.insurance || []),
     modes: getUniqueModesFromServices(services),
     contactDetails,
-    isVerified: dbInstitution.verified,
+    isVerified: dbInstitution.verified || false,
     lastUpdated: dbInstitution.last_updated_at,
-    priceRange: calculatePriceRange(services), // Add price range calculation
+    priceRange: calculatePriceRange(services),
   };
 };
 
@@ -135,7 +135,7 @@ export const transformContactDetails = (dbContacts: any[]): ContactDetails => {
 
 // Helper functions to map database enums to frontend types
 const mapInstitutionType = (dbType: string) => {
-  switch (dbType) {
+  switch (dbType?.toUpperCase()) {
     case "PRIVATE":
       return "independent";
     case "CLINIC":
@@ -143,7 +143,7 @@ const mapInstitutionType = (dbType: string) => {
     case "HOSPITAL":
       return "faskes2";
     default:
-      return "independent";
+      return "clinic"; // Default to clinic since most are clinics
   }
 };
 
@@ -215,8 +215,10 @@ const mapSpecializations = (dbSpecs: string[]): Specialization[] => {
 };
 
 const mapInsuranceTypes = (dbInsurance: string[]): InsuranceType[] => {
+  if (!dbInsurance || dbInsurance.length === 0) return ["none"];
   return dbInsurance.map(ins => {
-    switch (ins) {
+    switch (ins?.toUpperCase()) {
+      case "PRIVATE INSURANCE":
       case "PRIVATE":
         return "private";
       case "BPJS":
