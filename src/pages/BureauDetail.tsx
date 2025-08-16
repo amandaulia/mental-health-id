@@ -41,15 +41,29 @@ const BureauDetail = () => {
         }
       });
       
+      console.log('Contact Link Map:', contactLinkMap);
+      console.log('Raw services:', dbServices);
+      
       const transformedServices = dbServices.map((item: any) => {
         const service = transformService(item.service);
+        console.log('Original service URLs:', { bookingUrl: service.bookingUrl, learnMoreUrl: service.learnMoreUrl });
+        
         // Map CTA IDs to actual contact detail links
         if (service.bookingUrl && contactLinkMap.has(parseInt(service.bookingUrl))) {
           service.bookingUrl = contactLinkMap.get(parseInt(service.bookingUrl));
+        } else {
+          // If no mapping found, clear the URL to prevent wrong redirects
+          service.bookingUrl = undefined;
         }
+        
         if (service.learnMoreUrl && contactLinkMap.has(parseInt(service.learnMoreUrl))) {
           service.learnMoreUrl = contactLinkMap.get(parseInt(service.learnMoreUrl));
+        } else {
+          // If no mapping found, clear the URL to prevent wrong redirects
+          service.learnMoreUrl = undefined;
         }
+        
+        console.log('Final service URLs:', { bookingUrl: service.bookingUrl, learnMoreUrl: service.learnMoreUrl });
         return service;
       });
       
