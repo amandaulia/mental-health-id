@@ -47,9 +47,13 @@ const BureauDetail = () => {
 
   useEffect(() => {
     if (dbLocations) {
-      const validLocations = (dbLocations as any[]).filter((loc: any) => 
-        loc && typeof loc === 'object' && loc.id && loc.name && !loc.error
-      );
+      console.log('Raw dbLocations:', dbLocations);
+      const validLocations = (dbLocations as any[]).filter((loc: any) => {
+        const isValid = loc && typeof loc === 'object' && loc.id && !loc.error;
+        console.log('Location validation:', loc, 'isValid:', isValid);
+        return isValid;
+      });
+      console.log('Valid locations after filter:', validLocations);
       const transformedLocations = validLocations.map((loc: any) => ({
         id: loc.id.toString(),
         name: loc.name || "Unnamed Location",
@@ -58,7 +62,10 @@ const BureauDetail = () => {
         province: loc.province || "Unknown Province",
         country: loc.country || "Unknown Country"
       }));
+      console.log('Transformed locations:', transformedLocations);
       setLocations(transformedLocations);
+    } else {
+      console.log('dbLocations is null/undefined');
     }
   }, [dbLocations]);
 
