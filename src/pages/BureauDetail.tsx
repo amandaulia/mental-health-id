@@ -31,8 +31,28 @@ const BureauDetail = () => {
 
   useEffect(() => {
     if (dbInstitution && dbServices && dbContactDetails) {
-      const transformedServices = dbServices.map((item: any) => transformService(item.service));
       const contactDetails = transformContactDetails(dbContactDetails);
+      
+      // Create a map of contact detail IDs to links
+      const contactLinkMap = new Map();
+      dbContactDetails.forEach((item: any) => {
+        if (item.contact_details) {
+          contactLinkMap.set(item.contact_details.id, item.contact_details.link);
+        }
+      });
+      
+      const transformedServices = dbServices.map((item: any) => {
+        const service = transformService(item.service);
+        // Map CTA IDs to actual contact detail links
+        if (service.bookingUrl && contactLinkMap.has(parseInt(service.bookingUrl))) {
+          service.bookingUrl = contactLinkMap.get(parseInt(service.bookingUrl));
+        }
+        if (service.learnMoreUrl && contactLinkMap.has(parseInt(service.learnMoreUrl))) {
+          service.learnMoreUrl = contactLinkMap.get(parseInt(service.learnMoreUrl));
+        }
+        return service;
+      });
+      
       setBureau(transformInstitution(dbInstitution, transformedServices, contactDetails));
       setServices(transformedServices);
     }
