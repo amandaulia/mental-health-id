@@ -5,8 +5,8 @@ import { FilterState, Practitioner, Bureau, UnifiedCardData } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { UnifiedCard } from "@/components/UnifiedCard";
-import { usePractitioners, useInstitutions } from "@/hooks/useDatabase";
-import { transformPractitioner, transformInstitution } from "@/utils/dataTransform";
+import { usePractitioners, useInstitutions, useServicesByInstitution } from "@/hooks/useDatabase";
+import { transformPractitioner, transformInstitution, transformService } from "@/utils/dataTransform";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { trackSearch, trackFilter } from "@/utils/analytics";
@@ -25,6 +25,11 @@ const ProfessionalCounseling = () => {
 
   const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitioners();
   const { data: dbInstitutions, isLoading: institutionsLoading } = useInstitutions();
+  
+  // Fetch services for each institution to calculate price ranges
+  const institutionIds = dbInstitutions?.map(inst => inst.id) || [];
+  const serviceQueries = institutionIds.map(id => useServicesByInstitution(id));
+  const servicesLoading = serviceQueries.some(query => query.isLoading);
 
   const allPractitioners = useMemo(() => {
     if (!dbPractitioners) return [];
@@ -32,9 +37,18 @@ const ProfessionalCounseling = () => {
   }, [dbPractitioners]);
 
   const allBureaus = useMemo(() => {
-    if (!dbInstitutions) return [];
-    return dbInstitutions.map(institution => transformInstitution(institution));
-  }, [dbInstitutions]);
+    if (!dbInstitutions || servicesLoading) return [];
+    return dbInstitutions.map(institution => {
+      // Get services for this institution
+      const servicesQuery = serviceQueries.find((_, index) => institutionIds[index] === institution.id);
+      const rawServices = servicesQuery?.data || [];
+      // Transform the nested service structure to flat services
+      const services = rawServices.map(item => transformService(item.service));
+      const transformed = transformInstitution(institution, services);
+      console.log('Bureau transform:', institution.name, 'priceRange:', transformed.priceRange, 'services count:', services.length);
+      return transformed;
+    });
+  }, [dbInstitutions, serviceQueries, servicesLoading, institutionIds]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
@@ -160,7 +174,7 @@ const ProfessionalCounseling = () => {
     return Array.from(names);
   }, [allPractitioners, allBureaus]);
 
-  const isLoading = practitionersLoading || institutionsLoading;
+  const isLoading = practitionersLoading || institutionsLoading || servicesLoading;
 
   useEffect(() => {
     if (filters.search) {

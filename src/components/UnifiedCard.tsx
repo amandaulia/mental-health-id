@@ -207,8 +207,8 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
             <div className="space-y-2">
               {data.specializations && data.specializations.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  {data.specializations.slice(0, 2).map((spec) => (
-                    <Badge key={spec} variant="secondary" className="text-xs">
+                  {[...new Set(data.specializations)].slice(0, 2).map((spec, index) => (
+                    <Badge key={`${spec}-${index}`} variant="secondary" className="text-xs">
                       {spec}
                     </Badge>
                   ))}
