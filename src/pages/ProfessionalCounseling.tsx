@@ -1,11 +1,13 @@
 
 import { useState, useMemo, useEffect } from "react";
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { databaseService } from "@/services/database";
 import { FilterState, Practitioner, Bureau, UnifiedCardData } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { UnifiedCard } from "@/components/UnifiedCard";
-import { usePractitioners, useInstitutions, useServicesByInstitution } from "@/hooks/useDatabase";
+import { usePractitioners, useInstitutions } from "@/hooks/useDatabase";
 import { transformPractitioner, transformInstitution, transformService } from "@/utils/dataTransform";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -26,10 +28,27 @@ const ProfessionalCounseling = () => {
   const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitioners();
   const { data: dbInstitutions, isLoading: institutionsLoading } = useInstitutions();
   
-  // Fetch services for each institution to calculate price ranges
-  const institutionIds = dbInstitutions?.map(inst => inst.id) || [];
-  const serviceQueries = institutionIds.map(id => useServicesByInstitution(id));
-  const servicesLoading = serviceQueries.some(query => query.isLoading);
+  // Fetch services for all institutions
+  const { data: allInstitutionServices, isLoading: servicesLoading } = useQuery({
+    queryKey: ['all-institution-services', dbInstitutions?.map(i => i.id)],
+    queryFn: async () => {
+      if (!dbInstitutions) return {};
+      const servicesMap: Record<number, any[]> = {};
+      
+      for (const institution of dbInstitutions) {
+        try {
+          const services = await databaseService.getServicesByInstitution(institution.id);
+          servicesMap[institution.id] = services || [];
+        } catch (error) {
+          console.error(`Error fetching services for institution ${institution.id}:`, error);
+          servicesMap[institution.id] = [];
+        }
+      }
+      
+      return servicesMap;
+    },
+    enabled: !!dbInstitutions && dbInstitutions.length > 0,
+  });
 
   const allPractitioners = useMemo(() => {
     if (!dbPractitioners) return [];
@@ -37,18 +56,17 @@ const ProfessionalCounseling = () => {
   }, [dbPractitioners]);
 
   const allBureaus = useMemo(() => {
-    if (!dbInstitutions || servicesLoading) return [];
+    if (!dbInstitutions || servicesLoading || !allInstitutionServices) return [];
     return dbInstitutions.map(institution => {
-      // Get services for this institution
-      const servicesQuery = serviceQueries.find((_, index) => institutionIds[index] === institution.id);
-      const rawServices = servicesQuery?.data || [];
+      // Get services for this institution from the services map
+      const rawServices = allInstitutionServices[institution.id] || [];
       // Transform the nested service structure to flat services
       const services = rawServices.map(item => transformService(item.service));
       const transformed = transformInstitution(institution, services);
       console.log('Bureau transform:', institution.name, 'priceRange:', transformed.priceRange, 'services count:', services.length);
       return transformed;
     });
-  }, [dbInstitutions, serviceQueries, servicesLoading, institutionIds]);
+  }, [dbInstitutions, allInstitutionServices, servicesLoading]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
