@@ -261,6 +261,7 @@ const ProfessionalCounseling = () => {
               isVerified: resource.isVerified,
               professionTypes: resource.professionTypes,
               specializations: resource.specializations,
+              priceRange: resource.priceRange,
               insurance: resource.insurance,
               modes: resource.modes
             };
