@@ -119,7 +119,11 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                       {data.insurance && data.insurance.length > 0 && (
                         <>
                           {data.insurance.slice(0, 2).map((ins) => (
-                            <Badge key={ins} variant="outline" className="text-xs">
+                            <Badge 
+                              key={ins} 
+                              variant={ins === "bpjs" ? "bpjs" : ins === "private" ? "private" : "outline"} 
+                              className="text-xs"
+                            >
                               {ins === "bpjs" ? "BPJS" : ins === "private" ? "Private Insurance" : "No Insurance"}
                             </Badge>
                           ))}
@@ -145,7 +149,11 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                       {data.insurance && data.insurance.length > 0 && (
                         <>
                           {data.insurance.slice(0, 2).map((ins) => (
-                            <Badge key={ins} variant="outline" className="text-xs">
+                            <Badge 
+                              key={ins} 
+                              variant={ins === "bpjs" ? "bpjs" : ins === "private" ? "private" : "outline"} 
+                              className="text-xs"
+                            >
                               {ins === "bpjs" ? "BPJS" : ins === "private" ? "Private Insurance" : "No Insurance"}
                             </Badge>
                           ))}

@@ -135,7 +135,11 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
                 {getUniqueInsurance().length > 0 && (
                   <div className="flex flex-wrap gap-1">
                     {getUniqueInsurance().map((insurance) => (
-                      <Badge key={insurance} variant="secondary" className="text-xs">
+                      <Badge 
+                        key={insurance} 
+                        variant={insurance === "bpjs" ? "bpjs" : insurance === "private" ? "private" : "secondary"} 
+                        className="text-xs"
+                      >
                         {insurance === "private" ? "Private Insurance" : 
                          insurance === "bpjs" ? "BPJS" : 
                          insurance === "none" ? "No Insurance" : insurance}

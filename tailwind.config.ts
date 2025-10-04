@@ -66,6 +66,14 @@ export default {
 				lavender: {
                     DEFAULT: 'hsl(var(--lavender-mist))',
                     foreground: 'hsl(var(--lavender-foreground))'
+				},
+				'insurance-bpjs': {
+					DEFAULT: 'hsl(var(--insurance-bpjs))',
+					foreground: 'hsl(var(--insurance-bpjs-foreground))'
+				},
+				'insurance-private': {
+					DEFAULT: 'hsl(var(--insurance-private))',
+					foreground: 'hsl(var(--insurance-private-foreground))'
 				}
 			},
 			backgroundImage: {
