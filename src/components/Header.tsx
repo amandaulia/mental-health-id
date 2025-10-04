@@ -1,15 +1,12 @@
 import { useState } from "react";
-import { Menu, X, Home, Info, Users, Heart, Palette, Building2, Settings, LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Menu, X, Home, Info, Users, Heart, Palette, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useAuth } from "@/contexts/AuthContext";
 import { LanguageToggle } from "@/components/LanguageToggle";
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
-  const { user, isAdmin, signOut } = useAuth();
 
   return (
     <header className="brand-gradient shadow-md sticky top-0 z-50">
@@ -52,26 +49,7 @@ export const Header = () => {
                 {t('header.navigation.organizations')}
               </a>
             </nav>
-            <div className="flex items-center space-x-4">
-              {user ? (
-                <div className="flex items-center space-x-2">
-                  {isAdmin && (
-                    <Button variant="outline" size="sm" asChild className="text-white border-white hover:bg-white hover:text-primary">
-                      <Link to="/admin">Admin</Link>
-                    </Button>
-                  )}
-                  <Button variant="ghost" size="sm" onClick={signOut} className="text-white hover:bg-white/10">
-                    <LogOut className="h-4 w-4 mr-1" />
-                    Sign Out
-                  </Button>
-                </div>
-              ) : (
-                <Button variant="outline" size="sm" asChild className="text-white border-white hover:bg-white hover:text-primary">
-                  <Link to="/auth">Admin Login</Link>
-                </Button>
-              )}
-              <LanguageToggle />
-            </div>
+            <LanguageToggle />
           </div>
 
           {/* Mobile Menu Button and Language Toggle */}
@@ -116,25 +94,6 @@ export const Header = () => {
                 <Building2 className="h-4 w-4" />
                 {t('header.navigation.organizations')}
               </a>
-              {user ? (
-                <>
-                  {isAdmin && (
-                    <Link to="/admin" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
-                      <Settings className="h-4 w-4" />
-                      Admin
-                    </Link>
-                  )}
-                  <button onClick={signOut} className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
-                    <LogOut className="h-4 w-4" />
-                    Sign Out
-                  </button>
-                </>
-              ) : (
-                <Link to="/auth" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
-                  Admin Login
-                </Link>
-              )}
             </nav>
           </div>
         )}
