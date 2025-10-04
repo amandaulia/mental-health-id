@@ -3,6 +3,7 @@ import { Menu, X, Home, Info, Users, Heart, Palette, Building2 } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { featureFlags } from "@/config/features";
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -40,14 +41,18 @@ export const Header = () => {
                 <Heart className="h-4 w-4" />
                 {t('header.navigation.peer')}
               </a>
-              <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
-                <Palette className="h-4 w-4" />
-                {t('header.navigation.stressRelief')}
-              </a>
-              <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
-                <Building2 className="h-4 w-4" />
-                {t('header.navigation.organizations')}
-              </a>
+              {featureFlags.stressRelief && (
+                <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                  <Palette className="h-4 w-4" />
+                  {t('header.navigation.stressRelief')}
+                </a>
+              )}
+              {featureFlags.organizations && (
+                <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  {t('header.navigation.organizations')}
+                </a>
+              )}
             </nav>
             <LanguageToggle />
           </div>
@@ -86,14 +91,18 @@ export const Header = () => {
                 <Heart className="h-4 w-4" />
                 {t('header.navigation.peer')}
               </a>
-              <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
-                <Palette className="h-4 w-4" />
-                {t('header.navigation.stressRelief')}
-              </a>
-              <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
-                <Building2 className="h-4 w-4" />
-                {t('header.navigation.organizations')}
-              </a>
+              {featureFlags.stressRelief && (
+                <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                  <Palette className="h-4 w-4" />
+                  {t('header.navigation.stressRelief')}
+                </a>
+              )}
+              {featureFlags.organizations && (
+                <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  {t('header.navigation.organizations')}
+                </a>
+              )}
             </nav>
           </div>
         )}
