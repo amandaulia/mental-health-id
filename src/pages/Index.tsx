@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { trackFeelingsAnalysis, trackSearch, trackFilter } from "@/utils/analytics";
 import { Badge } from "@/components/ui/badge";
+import { featureFlags } from "@/config/features";
 
 const Index = () => {
   // Feature flags
@@ -399,73 +400,77 @@ const Index = () => {
         </div>
 
         {/* Stress Relief Activities Preview */}
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-              Stress Relief Activities
-            </h2>
-            <Button variant="outline" asChild>
-              <a href="/stress-relief">
-                View All <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredActivities.slice(0, 3).map((item, index) => {
-              const cardData: UnifiedCardData = {
-                type: "activity",
-                id: item.id,
-                image: item.image,
-                name: item.name,
-                city: item.city,
-                organizationName: item.organizationName,
-                activityType: item.activityType,
-                price: typeof item.price === 'string' ? parseInt(item.price) : item.price
-              };
+        {featureFlags.stressRelief && (
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+                Stress Relief Activities
+              </h2>
+              <Button variant="outline" asChild>
+                <a href="/stress-relief">
+                  View All <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredActivities.slice(0, 3).map((item, index) => {
+                const cardData: UnifiedCardData = {
+                  type: "activity",
+                  id: item.id,
+                  image: item.image,
+                  name: item.name,
+                  city: item.city,
+                  organizationName: item.organizationName,
+                  activityType: item.activityType,
+                  price: typeof item.price === 'string' ? parseInt(item.price) : item.price
+                };
 
-              return (
-                <div key={`activity-${item.id}-${index}`} className="transform transition-all duration-200 hover:scale-[1.02]">
-                  <UnifiedCard data={cardData} />
-                </div>
-              );
-            })}
+                return (
+                  <div key={`activity-${item.id}-${index}`} className="transform transition-all duration-200 hover:scale-[1.02]">
+                    <UnifiedCard data={cardData} />
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Organizations & Communities Preview */}
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-              Organizations & Communities
-            </h2>
-            <Button variant="outline" asChild>
-              <a href="/organizations">
-                View All <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredOrganizations.slice(0, 3).map((item, index) => {
-              const cardData: UnifiedCardData = {
-                type: item.type === "organization" ? "organization" : "community",
-                id: item.id,
-                image: item.image,
-                name: item.name,
-                city: item.city,
-                organizationType: item.organizationType
-              };
+        {featureFlags.organizations && (
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+                Organizations & Communities
+              </h2>
+              <Button variant="outline" asChild>
+                <a href="/organizations">
+                  View All <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredOrganizations.slice(0, 3).map((item, index) => {
+                const cardData: UnifiedCardData = {
+                  type: item.type === "organization" ? "organization" : "community",
+                  id: item.id,
+                  image: item.image,
+                  name: item.name,
+                  city: item.city,
+                  organizationType: item.organizationType
+                };
 
-              return (
-                <div key={`org-${item.id}-${index}`} className="transform transition-all duration-200 hover:scale-[1.02]">
-                  <UnifiedCard 
-                    data={cardData} 
-                    linkTo={`/organizations/${item.id}`}
-                  />
-                </div>
-              );
-            })}
+                return (
+                  <div key={`org-${item.id}-${index}`} className="transform transition-all duration-200 hover:scale-[1.02]">
+                    <UnifiedCard 
+                      data={cardData} 
+                      linkTo={`/organizations/${item.id}`}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
