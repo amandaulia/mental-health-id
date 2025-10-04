@@ -177,8 +177,8 @@ export const PractitionerHeader = ({
                   {practitioner.insurance.map((ins) => (
                     <Badge 
                       key={ins} 
-                      variant="outline"
-                      className="cursor-pointer hover:bg-secondary/80"
+                      variant={ins === "bpjs" ? "bpjs" : ins === "private" ? "private" : "outline"}
+                      className="cursor-pointer hover:opacity-80"
                       onClick={() => onTagClick('insurance', ins)}
                     >
                       {getInsuranceLabel(ins)}

@@ -53,6 +53,12 @@ All colors MUST be HSL.
     --sky-blue: 200, 70%, 78%;
     --lavender-mist: 270, 70%, 88%;
     --lavender-foreground: 270, 20%, 30%;
+    
+    /* Insurance badge colors */
+    --insurance-bpjs: 134, 50%, 85%;
+    --insurance-bpjs-foreground: 134, 60%, 25%;
+    --insurance-private: 200, 60%, 85%;
+    --insurance-private-foreground: 200, 70%, 25%;
 
     /* Original bright colors for Mental Health text */
     --mental-health-bright: 15, 85%, 55%;
@@ -111,6 +117,12 @@ All colors MUST be HSL.
     --sage-green: 134, 35%, 65%;
     --sky-blue: 200, 60%, 65%;
     --lavender-mist: 270, 60%, 75%;
+    
+    /* Insurance badge colors for dark mode */
+    --insurance-bpjs: 134, 45%, 35%;
+    --insurance-bpjs-foreground: 134, 50%, 85%;
+    --insurance-private: 200, 50%, 35%;
+    --insurance-private-foreground: 200, 60%, 85%;
 
     --gradient-primary: linear-gradient(135deg, hsl(275, 40%, 70%), hsl(15, 85%, 55%));
     --gradient-warm: linear-gradient(180deg, hsl(25, 15%, 8%), hsl(25, 12%, 12%));
