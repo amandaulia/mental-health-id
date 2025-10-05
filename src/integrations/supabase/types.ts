@@ -1117,11 +1117,39 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       update_user_app_metadata: {
         Args: { new_app_metadata: Json; user_id: string }
         Returns: undefined
@@ -1136,8 +1164,21 @@ export type Database = {
         | "Music"
         | "Movie"
         | "Books"
-      contact_type: "WhatsApp" | "Phone" | "Website" | "Instagram" | "Email"
-      institution_type: "Private Practice" | "Clinic" | "Hospital"
+      app_role: "admin" | "moderator" | "user"
+      contact_type:
+        | "WhatsApp"
+        | "Phone"
+        | "Website"
+        | "Instagram"
+        | "Email"
+        | "Application"
+      institution_type:
+        | "Private Practice"
+        | "Clinic"
+        | "Faskes 1"
+        | "Faskes 2"
+        | "Faskes 3"
+        | "Private Hospital"
       insurance: "Private Insurance" | "BPJS"
       peer_type: "Peer Counseling" | "Group Therapy"
       profession_type: "Psychologist" | "Psychiatrist" | "Therapist"
@@ -1157,6 +1198,8 @@ export type Database = {
         | "Depression"
         | "Interpersonal"
         | "Education"
+        | "Children/Adolescence"
+        | "Hypnotherapy"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1293,8 +1336,23 @@ export const Constants = {
         "Movie",
         "Books",
       ],
-      contact_type: ["WhatsApp", "Phone", "Website", "Instagram", "Email"],
-      institution_type: ["Private Practice", "Clinic", "Hospital"],
+      app_role: ["admin", "moderator", "user"],
+      contact_type: [
+        "WhatsApp",
+        "Phone",
+        "Website",
+        "Instagram",
+        "Email",
+        "Application",
+      ],
+      institution_type: [
+        "Private Practice",
+        "Clinic",
+        "Faskes 1",
+        "Faskes 2",
+        "Faskes 3",
+        "Private Hospital",
+      ],
       insurance: ["Private Insurance", "BPJS"],
       peer_type: ["Peer Counseling", "Group Therapy"],
       profession_type: ["Psychologist", "Psychiatrist", "Therapist"],
@@ -1314,6 +1372,8 @@ export const Constants = {
         "Depression",
         "Interpersonal",
         "Education",
+        "Children/Adolescence",
+        "Hypnotherapy",
       ],
     },
   },
