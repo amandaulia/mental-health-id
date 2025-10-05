@@ -25,8 +25,53 @@ const ProfessionalCounseling = () => {
     insurance: []
   });
 
+
   const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitioners();
   const { data: dbInstitutions, isLoading: institutionsLoading } = useInstitutions();
+  
+  // Fetch locations for practitioners
+  const { data: practitionerLocations, isLoading: practitionerLocationsLoading } = useQuery({
+    queryKey: ['all-practitioner-locations', dbPractitioners?.map(p => p.id)],
+    queryFn: async () => {
+      if (!dbPractitioners) return {};
+      const locationsMap: Record<number, any[]> = {};
+      
+      for (const practitioner of dbPractitioners) {
+        try {
+          const locations = await databaseService.getLocationsByPractitioner(practitioner.id);
+          locationsMap[practitioner.id] = locations || [];
+        } catch (error) {
+          console.error(`Error fetching locations for practitioner ${practitioner.id}:`, error);
+          locationsMap[practitioner.id] = [];
+        }
+      }
+      
+      return locationsMap;
+    },
+    enabled: !!dbPractitioners && dbPractitioners.length > 0,
+  });
+
+  // Fetch locations for institutions
+  const { data: institutionLocations, isLoading: institutionLocationsLoading } = useQuery({
+    queryKey: ['all-institution-locations', dbInstitutions?.map(i => i.id)],
+    queryFn: async () => {
+      if (!dbInstitutions) return {};
+      const locationsMap: Record<number, any[]> = {};
+      
+      for (const institution of dbInstitutions) {
+        try {
+          const locations = await databaseService.getLocationsByInstitution(institution.id);
+          locationsMap[institution.id] = locations || [];
+        } catch (error) {
+          console.error(`Error fetching locations for institution ${institution.id}:`, error);
+          locationsMap[institution.id] = [];
+        }
+      }
+      
+      return locationsMap;
+    },
+    enabled: !!dbInstitutions && dbInstitutions.length > 0,
+  });
   
   // Fetch services for all institutions
   const { data: allInstitutionServices, isLoading: servicesLoading } = useQuery({
@@ -51,22 +96,41 @@ const ProfessionalCounseling = () => {
   });
 
   const allPractitioners = useMemo(() => {
-    if (!dbPractitioners) return [];
-    return dbPractitioners.map(p => transformPractitioner(p));
-  }, [dbPractitioners]);
+    if (!dbPractitioners || !practitionerLocations) return [];
+    return dbPractitioners.map(p => {
+      const locations = practitionerLocations[p.id] || [];
+      const cities = locations.map((loc: any) => loc.city).filter(Boolean);
+      const cityString = cities.length > 0 ? cities.join(', ') : 'Unknown City';
+      
+      const transformed = transformPractitioner(p);
+      return {
+        ...transformed,
+        city: cityString
+      };
+    });
+  }, [dbPractitioners, practitionerLocations]);
 
   const allBureaus = useMemo(() => {
-    if (!dbInstitutions || servicesLoading || !allInstitutionServices) return [];
+    if (!dbInstitutions || servicesLoading || !allInstitutionServices || !institutionLocations) return [];
     return dbInstitutions.map(institution => {
       // Get services for this institution from the services map
       const rawServices = allInstitutionServices[institution.id] || [];
       // Transform the nested service structure to flat services
       const services = rawServices.map(item => transformService(item.service));
+      
+      // Get locations for this institution
+      const locations = institutionLocations[institution.id] || [];
+      const cities = locations.map((loc: any) => loc.city).filter(Boolean);
+      const cityString = cities.length > 0 ? cities.join(', ') : 'Unknown City';
+      
       const transformed = transformInstitution(institution, services);
       console.log('Bureau transform:', institution.name, 'priceRange:', transformed.priceRange, 'services count:', services.length);
-      return transformed;
+      return {
+        ...transformed,
+        city: cityString
+      };
     });
-  }, [dbInstitutions, allInstitutionServices, servicesLoading]);
+  }, [dbInstitutions, allInstitutionServices, institutionLocations, servicesLoading]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
@@ -192,7 +256,7 @@ const ProfessionalCounseling = () => {
     return Array.from(names);
   }, [allPractitioners, allBureaus]);
 
-  const isLoading = practitionersLoading || institutionsLoading || servicesLoading;
+  const isLoading = practitionersLoading || institutionsLoading || servicesLoading || practitionerLocationsLoading || institutionLocationsLoading;
 
   useEffect(() => {
     if (filters.search) {
