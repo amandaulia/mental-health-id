@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Clock, Users, Building2, Heart, Star, CheckCircle, ExternalLink } from "lucide-react";
+import { MapPin, Clock, Users, Building2, Heart, Star, CheckCircle, ExternalLink, Coins } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ModeIcon } from "./ModeIcon";
 import { trackCardClick } from "@/utils/analytics";
@@ -246,7 +246,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
               
               {data.priceRange && (
                 <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md">
-                  <span className="text-xs text-muted-foreground">{t('common.priceRange')}:</span>
+                  <Coins className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                   <span className="font-semibold text-primary">{data.priceRange}</span>
                 </div>
               )}
