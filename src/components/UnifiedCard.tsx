@@ -229,16 +229,10 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
               )}
               
               {data.modes && data.modes.length > 0 && (
-                <div className="flex items-center gap-1">
-                  {data.modes.slice(0, 3).map((mode) => (
-                    <div key={mode} className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
+                  {data.modes.slice(0, 4).map((mode) => (
+                    <div key={mode} className="text-muted-foreground">
                       <ModeIcon mode={mode} />
-                      <span className="text-xs text-muted-foreground">
-                        {mode === "text" ? "Chat" : 
-                         mode === "voice" ? "Voice" : 
-                         mode === "video" ? "Video" : 
-                         mode === "offline" ? "Offline" : mode}
-                      </span>
                     </div>
                   ))}
                 </div>
