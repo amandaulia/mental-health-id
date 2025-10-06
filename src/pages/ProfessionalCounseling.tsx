@@ -73,8 +73,30 @@ const ProfessionalCounseling = () => {
     enabled: !!dbInstitutions && dbInstitutions.length > 0,
   });
   
+  // Fetch services for all practitioners
+  const { data: allPractitionerServices, isLoading: practitionerServicesLoading } = useQuery({
+    queryKey: ['all-practitioner-services', dbPractitioners?.map(p => p.id)],
+    queryFn: async () => {
+      if (!dbPractitioners) return {};
+      const servicesMap: Record<number, any[]> = {};
+      
+      for (const practitioner of dbPractitioners) {
+        try {
+          const services = await databaseService.getServicesByPractitioner(practitioner.id);
+          servicesMap[practitioner.id] = services || [];
+        } catch (error) {
+          console.error(`Error fetching services for practitioner ${practitioner.id}:`, error);
+          servicesMap[practitioner.id] = [];
+        }
+      }
+      
+      return servicesMap;
+    },
+    enabled: !!dbPractitioners && dbPractitioners.length > 0,
+  });
+
   // Fetch services for all institutions
-  const { data: allInstitutionServices, isLoading: servicesLoading } = useQuery({
+  const { data: allInstitutionServices, isLoading: institutionServicesLoading } = useQuery({
     queryKey: ['all-institution-services', dbInstitutions?.map(i => i.id)],
     queryFn: async () => {
       if (!dbInstitutions) return {};
@@ -96,27 +118,37 @@ const ProfessionalCounseling = () => {
   });
 
   const allPractitioners = useMemo(() => {
-    if (!dbPractitioners || !practitionerLocations) return [];
+    if (!dbPractitioners || !practitionerLocations || !allPractitionerServices) return [];
     return dbPractitioners.map(p => {
       const locations = practitionerLocations[p.id] || [];
       const cities = locations.map((loc: any) => loc.city).filter(Boolean);
       const cityString = cities.length > 0 ? cities.join(', ') : 'Unknown City';
       
+      // Get session modes from services
+      const rawServices = allPractitionerServices[p.id] || [];
+      const allModes = rawServices.flatMap((item: any) => item.service?.session_mode || []);
+      const uniqueModes = Array.from(new Set(allModes));
+      
       const transformed = transformPractitioner(p);
       return {
         ...transformed,
-        city: cityString
+        city: cityString,
+        modes: uniqueModes
       };
     });
-  }, [dbPractitioners, practitionerLocations]);
+  }, [dbPractitioners, practitionerLocations, allPractitionerServices]);
 
   const allBureaus = useMemo(() => {
-    if (!dbInstitutions || servicesLoading || !allInstitutionServices || !institutionLocations) return [];
+    if (!dbInstitutions || institutionServicesLoading || !allInstitutionServices || !institutionLocations) return [];
     return dbInstitutions.map(institution => {
       // Get services for this institution from the services map
       const rawServices = allInstitutionServices[institution.id] || [];
       // Transform the nested service structure to flat services
       const services = rawServices.map(item => transformService(item.service));
+      
+      // Get session modes from services
+      const allModes = rawServices.flatMap((item: any) => item.service?.session_mode || []);
+      const uniqueModes = Array.from(new Set(allModes));
       
       // Get locations for this institution
       const locations = institutionLocations[institution.id] || [];
@@ -127,10 +159,11 @@ const ProfessionalCounseling = () => {
       console.log('Bureau transform:', institution.name, 'priceRange:', transformed.priceRange, 'services count:', services.length);
       return {
         ...transformed,
-        city: cityString
+        city: cityString,
+        modes: uniqueModes
       };
     });
-  }, [dbInstitutions, allInstitutionServices, institutionLocations, servicesLoading]);
+  }, [dbInstitutions, allInstitutionServices, institutionLocations, institutionServicesLoading]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
@@ -256,7 +289,7 @@ const ProfessionalCounseling = () => {
     return Array.from(names);
   }, [allPractitioners, allBureaus]);
 
-  const isLoading = practitionersLoading || institutionsLoading || servicesLoading || practitionerLocationsLoading || institutionLocationsLoading;
+  const isLoading = practitionersLoading || institutionsLoading || practitionerServicesLoading || institutionServicesLoading || practitionerLocationsLoading || institutionLocationsLoading;
 
   useEffect(() => {
     if (filters.search) {
