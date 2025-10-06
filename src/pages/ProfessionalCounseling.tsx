@@ -127,7 +127,7 @@ const ProfessionalCounseling = () => {
       // Get session modes from services
       const rawServices = allPractitionerServices[p.id] || [];
       const allModes = rawServices.flatMap((item: any) => item.service?.session_mode || []);
-      const uniqueModes = Array.from(new Set(allModes));
+      const uniqueModes = Array.from(new Set(allModes.map((mode: string) => mode.toLowerCase()))) as any;
       
       const transformed = transformPractitioner(p);
       return {
@@ -148,7 +148,7 @@ const ProfessionalCounseling = () => {
       
       // Get session modes from services
       const allModes = rawServices.flatMap((item: any) => item.service?.session_mode || []);
-      const uniqueModes = Array.from(new Set(allModes));
+      const uniqueModes = Array.from(new Set(allModes.map((mode: string) => mode.toLowerCase()))) as any;
       
       // Get locations for this institution
       const locations = institutionLocations[institution.id] || [];
