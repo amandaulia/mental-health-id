@@ -234,7 +234,7 @@ const ProfessionalCounseling = () => {
       institutions: [],
       professionTypes: [],
       specializations: [],
-      priceRange: [filterOptions.minPrice || 0, filterOptions.maxPrice || 525000],
+      priceRange: [filterOptions.minPrice || 0, filterOptions.maxPrice || 0],
       modes: [],
       insurance: []
     });
@@ -270,11 +270,12 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
-      const practitionerPrice = practitioner.services.map(s => s.price);
-      const minPrice = Math.min(...practitionerPrice);
-      const maxPrice = Math.max(...practitionerPrice);
-      if (filters.priceRange && (minPrice < filters.priceRange[0] || maxPrice > filters.priceRange[1])) {
-        return false;
+      // Check if any service price falls within the selected price range
+      if (filters.priceRange && practitioner.services.length > 0) {
+        const hasServiceInRange = practitioner.services.some(service => 
+          service.price >= filters.priceRange[0] && service.price <= filters.priceRange[1]
+        );
+        if (!hasServiceInRange) return false;
       }
 
       if (filters.modes.length > 0 &&
@@ -316,6 +317,20 @@ const ProfessionalCounseling = () => {
       if (filters.specializations.length > 0 &&
           !filters.specializations.some(spec => bureau.specializations.includes(spec))) {
         return false;
+      }
+
+      // Check if bureau price range overlaps with selected price range
+      if (filters.priceRange && bureau.priceRange) {
+        // Extract min/max from priceRange string like "Rp 100,000 - Rp 500,000"
+        const priceMatch = bureau.priceRange.match(/[\d.,]+/g);
+        if (priceMatch && priceMatch.length >= 2) {
+          const bureauMin = parseFloat(priceMatch[0].replace(/[.,]/g, ''));
+          const bureauMax = parseFloat(priceMatch[1].replace(/[.,]/g, ''));
+          // Check if ranges overlap
+          if (bureauMax < filters.priceRange[0] || bureauMin > filters.priceRange[1]) {
+            return false;
+          }
+        }
       }
 
       if (filters.modes.length > 0 &&
