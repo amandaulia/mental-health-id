@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Clock, Users, Building2, Heart, Star, CheckCircle, ExternalLink, Hospital } from "lucide-react";
+import { MapPin, Clock, Users, Building2, Heart, Star, CheckCircle, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ModeIcon } from "./ModeIcon";
 import { trackCardClick } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
+import clinicPlaceholder from "@/assets/clinic-placeholder.png";
 
 export interface UnifiedCardData {
   type: "practitioner" | "institution" | "peer-counseling" | "support-group" | "activity" | "organization" | "community";
@@ -78,28 +79,14 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-3 flex-1 min-w-0">
                 <div className="w-12 h-12 flex-shrink-0">
-                  {data.image ? (
-                    <img 
-                      src={data.image} 
-                      alt={`${data.name} logo`}
-                      className="w-full h-full object-cover rounded-md"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const parent = target.parentElement;
-                        if (parent) {
-                          const placeholder = document.createElement('div');
-                          placeholder.className = 'w-full h-full bg-purple-100 rounded-md flex items-center justify-center border border-purple-300';
-                          placeholder.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v4"/><path d="M14 14h-4"/><path d="M14 18h-4"/><path d="M14 8h-4"/><path d="M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2"/><path d="M18 22V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v18"/></svg>';
-                          parent.appendChild(placeholder);
-                        }
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-purple-100 rounded-md flex items-center justify-center border border-purple-300">
-                      <Hospital className="h-6 w-6 text-purple-600" />
-                    </div>
-                  )}
+                  <img 
+                    src={data.image || clinicPlaceholder} 
+                    alt={`${data.name} logo`}
+                    className="w-full h-full object-cover rounded-md"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = clinicPlaceholder;
+                    }}
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">

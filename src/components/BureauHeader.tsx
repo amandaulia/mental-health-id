@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ModeIcon } from "./ModeIcon";
 import { Bureau } from "@/types";
 import { useState } from "react";
-import { Hospital } from "lucide-react";
+import clinicPlaceholder from "@/assets/clinic-placeholder.png";
 
 interface BureauHeaderProps {
   bureau: Bureau;
@@ -54,28 +54,14 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
             {/* Left side - Image and Basic Info */}
             <div className="flex flex-col sm:flex-row gap-4 flex-1">
               <div className="flex-shrink-0">
-                {bureau.image ? (
-                  <img
-                    src={bureau.image}
-                    alt={bureau.name}
-                    className="w-32 h-32 rounded-lg object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const parent = target.parentElement;
-                      if (parent) {
-                        const placeholder = document.createElement('div');
-                        placeholder.className = 'w-32 h-32 bg-purple-100 rounded-lg flex items-center justify-center border-2 border-purple-300';
-                        placeholder.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v4"/><path d="M14 14h-4"/><path d="M14 18h-4"/><path d="M14 8h-4"/><path d="M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2"/><path d="M18 22V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v18"/></svg>';
-                        parent.appendChild(placeholder);
-                      }
-                    }}
-                  />
-                ) : (
-                  <div className="w-32 h-32 bg-purple-100 rounded-lg flex items-center justify-center border-2 border-purple-300">
-                    <Hospital className="h-12 w-12 text-purple-600" />
-                  </div>
-                )}
+                <img
+                  src={bureau.image || clinicPlaceholder}
+                  alt={bureau.name}
+                  className="w-32 h-32 rounded-lg object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = clinicPlaceholder;
+                  }}
+                />
               </div>
               
               <div className="flex-1 space-y-4">
