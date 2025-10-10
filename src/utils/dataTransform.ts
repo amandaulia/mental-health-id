@@ -133,37 +133,34 @@ export const transformContactDetails = (dbContacts: any[]): ContactDetails => {
 const mapInstitutionType = (dbType: string): BureauType => {
   switch (dbType) {
     case "Private Practice":
-      return "independent";
+      return "Private Practice";
     case "Clinic":
-      return "clinic";
+      return "Clinic";
     case "Faskes 1":
-      return "faskes1";
+      return "Faskes1";
     case "Faskes 2":
-      return "faskes2";
+      return "Faskes2";
     case "Faskes 3":
     case "Private Hospital":
-      return "faskes2";
+      return "Faskes2";
     default:
-      return "clinic";
+      return "Clinic";
   }
 };
 
 const mapSessionMode = (dbMode: string) => {
   const normalizedMode = dbMode?.toUpperCase().replace(/\s/g, '_');
   switch (normalizedMode) {
-    case "TEXT":
-    case "CHAT":
-      return "text";
-    case "VOICE":
-    case "VOICE_CALL":
-      return "voice";
-    case "VIDEO":
-    case "VIDEO_CALL":
-      return "video";
-    case "OFFLINE":
-      return "offline";
+    case "Chat":
+      return "Text/Chat";
+    case "Voice Call":
+      return "Voice Call";
+    case "Video Call":
+      return "Video Call";
+    case "Offline":
+      return "In-Person";
     default:
-      return "offline";
+      return "Others";
   }
 };
 
@@ -185,36 +182,40 @@ const mapProfessionTypes = (dbTypes: string[]): ProfessionType[] => {
 const mapSpecializations = (dbSpecs: string[]): Specialization[] => {
   const mapped = dbSpecs.map(spec => {
     switch (spec) {
-      case "PERSONALITY":
-        return "Clinical Psychology";
-      case "TRAUMA":
-        return "Trauma Therapy";
-      case "MOOD":
-        return "Depression";
+      case "Personality Disorders:
+        return "Personality Disorders";
+      case "Trauma":
+        return "Trauma";
+      case "Mood Disorders":
+        return "Mood Disorders";
       case "ADHD":
-        return "Anxiety Disorders";
-      case "ANXIETY":
-        return "Anxiety Disorders";
-      case "RELATIONSHIP":
-        return "Couples Therapy";
-      case "CAREER":
-        return "Couples Therapy";
+        return "ADHD";
+      case "Anxiety":
+        return "Anxiety";
+      case "Relationship":
+        return "Relationship";
+      case "Career":
+        return "Career";
       case "OCD":
-        return "Anxiety Disorders";
-      case "SELF_DEVELOPMENT":
-        return "Clinical Psychology";
-      case "GENDER":
-        return "Family Therapy";
-      case "FAMILY":
-        return "Family Therapy";
-      case "DEPRESSION":
+        return "OCD";
+      case "Self Development":
+        return "Self Development";
+      case "Gender":
+        return "Gender";
+      case "Family":
+        return "Family";
+      case "Depression":
         return "Depression";
-      case "INTERPERSONAL":
-        return "Family Therapy";
-      case "EDUCATION":
-        return "Child Psychology";
+      case "Interpersonal":
+        return "Interpersonal";
+      case "Education":
+        return "Education";
+      case "Children/Adolescence":
+        return "Children/Adolescence";
+      case "Hypnotherapy":
+        return "Hypnotherapy";
       default:
-        return "Clinical Psychology";
+        return "Others";
     }
   });
   
@@ -228,9 +229,9 @@ const mapInsuranceTypes = (dbInsurance: string[]): InsuranceType[] => {
     switch (ins?.toUpperCase()) {
       case "PRIVATE INSURANCE":
       case "PRIVATE":
-        return "private";
+        return "Private Insurance";
       case "BPJS":
-        return "bpjs";
+        return "BPJS";
       default:
         return "none";
     }
