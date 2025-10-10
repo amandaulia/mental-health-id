@@ -96,13 +96,18 @@ export const transformService = (dbService: any): Service => {
   }
   if (!durationText) durationText = "Duration not specified";
 
+  // Handle multiple session modes
+  const sessionModes = dbService.session_mode || ["OFFLINE"];
+  const mappedModes = sessionModes.map((mode: string) => mapSessionMode(mode));
+  
   return {
     id: dbService.id.toString(),
     name: dbService.name,
     institutionName: dbService.institution?.name,
     duration: durationText,
     price: dbService.price ?? null,
-    mode: mapSessionMode(dbService.session_mode?.[0] || "OFFLINE"),
+    mode: mappedModes[0], // Keep first mode for backward compatibility
+    modes: mappedModes, // All modes for display
     bookingUrl: dbService.book_cta ? dbService.book_cta.toString() : undefined,
     learnMoreUrl: dbService.learn_more_cta ? dbService.learn_more_cta.toString() : undefined,
   };

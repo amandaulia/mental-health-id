@@ -33,6 +33,7 @@ export interface Service {
   duration: string;
   price: number;
   mode: Mode;
+  modes?: Mode[]; // For services with multiple session modes
   bookingUrl?: string;
   learnMoreUrl?: string;
 }
