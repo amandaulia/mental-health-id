@@ -52,7 +52,43 @@ export const BureauContact = ({ bureau }: BureauContactProps) => {
       <CardContent className="space-y-6">
         {bureau.contactDetails && bureau.contactDetails.length > 0 ? (
           <>
-            {/* Grouped Phone/WhatsApp by Location */}
+            {/* Other contacts not grouped by location (Website, Instagram, etc.) - shown first */}
+            {otherContacts.map((contact, index) => {
+              const Icon = getContactIcon(contact.type);
+              const displayText = contact.type === 'Application' ? 'Application' : contact.value;
+              const shouldHaveLink = contact.type !== 'Phone' && contact.link;
+
+              return (
+                <AnalyticsWrapper
+                  key={`other-${index}`}
+                  trackingType={shouldHaveLink ? "external-link" : "contact"}
+                  trackingData={{
+                    contactType: contact.type.toLowerCase(),
+                    resourceName: bureau.name,
+                    resourceType: "bureau",
+                    linkUrl: contact.link,
+                    linkText: displayText,
+                    context: `bureau-${bureau.name}`
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div>
+                      <p className="font-medium text-sm">{contact.type}</p>
+                      {shouldHaveLink ? (
+                        <a href={contact.link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
+                          {displayText}
+                        </a>
+                      ) : (
+                        <p className="text-sm">{displayText}</p>
+                      )}
+                    </div>
+                  </div>
+                </AnalyticsWrapper>
+              );
+            })}
+
+            {/* Grouped Phone/WhatsApp by Location - shown after */}
             {Object.entries(groupedContacts).map(([locationName, contacts]) => (
               <div key={locationName} className="space-y-3">
                 <h4 className="font-semibold text-sm text-muted-foreground">{locationName}</h4>
@@ -94,42 +130,6 @@ export const BureauContact = ({ bureau }: BureauContactProps) => {
                 </div>
               </div>
             ))}
-
-            {/* Other contacts not grouped by location */}
-            {otherContacts.map((contact, index) => {
-              const Icon = getContactIcon(contact.type);
-              const displayText = contact.type === 'Application' ? 'Application' : contact.value;
-              const shouldHaveLink = contact.type !== 'Phone' && contact.link;
-
-              return (
-                <AnalyticsWrapper
-                  key={`other-${index}`}
-                  trackingType={shouldHaveLink ? "external-link" : "contact"}
-                  trackingData={{
-                    contactType: contact.type.toLowerCase(),
-                    resourceName: bureau.name,
-                    resourceType: "bureau",
-                    linkUrl: contact.link,
-                    linkText: displayText,
-                    context: `bureau-${bureau.name}`
-                  }}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <div>
-                      <p className="font-medium text-sm">{contact.type}</p>
-                      {shouldHaveLink ? (
-                        <a href={contact.link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
-                          {displayText}
-                        </a>
-                      ) : (
-                        <p className="text-sm">{displayText}</p>
-                      )}
-                    </div>
-                  </div>
-                </AnalyticsWrapper>
-              );
-            })}
           </>
         ) : (
           <p className="text-muted-foreground text-sm">No contact information available</p>
