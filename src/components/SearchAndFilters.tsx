@@ -30,6 +30,7 @@ interface SearchAndFiltersProps {
     specializations: string[];
     sessionModes: string[];
     insuranceTypes: string[];
+    minPrice: number;
     maxPrice: number;
   };
 }
@@ -51,6 +52,7 @@ export const SearchAndFilters = ({
   const specializations = filterOptions?.specializations || ["Depression", "Anxiety", "Trauma", "Relationship Issues", "ADHD", "OCD", "Personality Disorders", "Family Therapy"];
   const sessionModeOptions = filterOptions?.sessionModes || ["text", "voice", "video", "offline"];
   const insuranceOptions = filterOptions?.insuranceTypes || ["private", "bpjs", "none"];
+  const minPrice = filterOptions?.minPrice || 0;
   const maxPrice = filterOptions?.maxPrice || 525000;
 
   const getModeLabel = (mode: string) => {
@@ -562,7 +564,7 @@ export const SearchAndFilters = ({
                       onChange={(e) => handleMinPriceChange(e.target.value)}
                       onBlur={handlePriceInputBlur}
                       className="text-sm"
-                      min={0}
+                      min={minPrice}
                       max={maxPrice}
                     />
                   </div>
@@ -574,7 +576,7 @@ export const SearchAndFilters = ({
                       onChange={(e) => handleMaxPriceChange(e.target.value)}
                       onBlur={handlePriceInputBlur}
                       className="text-sm"
-                      min={0}
+                      min={minPrice}
                       max={maxPrice}
                     />
                   </div>
@@ -582,6 +584,7 @@ export const SearchAndFilters = ({
                 
                 <Slider
                   value={priceRange}
+                  min={minPrice}
                   max={maxPrice}
                   step={25000}
                   onValueChange={(value) => setPriceRange(value as [number, number])}
