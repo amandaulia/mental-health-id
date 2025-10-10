@@ -60,20 +60,15 @@ export const BureauLocations = ({ locations, bureauName = "Bureau" }: BureauLoca
                   }}
                 >
                   <Button
-                    asChild
                     variant="outline"
                     className="w-full"
+                    onClick={() => {
+                      window.open(mapsUrl, '_blank', 'noopener,noreferrer');
+                    }}
                   >
-                    <a
-                      href={mapsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer nofollow"
-                      className="flex items-center justify-center gap-2"
-                    >
-                      <MapPin className="h-4 w-4" />
-                      Open in Google Maps
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
+                    <MapPin className="h-4 w-4" />
+                    Open in Google Maps
+                    <ExternalLink className="h-3 w-3" />
                   </Button>
                 </AnalyticsWrapper>
               </div>
