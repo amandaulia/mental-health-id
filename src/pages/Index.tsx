@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FilterState, Practitioner, Bureau } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
+import { Separator } from "@/components/ui/separator";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
 import { usePractitioners, useInstitutions, usePeerCounseling } from "@/hooks/useDatabase";
 import { transformPractitioner, transformInstitution, transformService } from "@/utils/dataTransform";
@@ -483,6 +484,9 @@ const Index = () => {
           </div>
         </div>
 
+        {/* Separator */}
+        <Separator className="my-8" />
+
         {/* Peer Counseling & Support Groups Preview */}
         <div>
           <div className="flex items-center justify-between mb-6">
@@ -491,7 +495,7 @@ const Index = () => {
                 Peer Counseling & Support Groups
               </h2>
               {filteredPeerCounseling.length === 0 && (
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="secondary" className="text-xs bg-purple-200 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-700">
                   Coming Soon
                 </Badge>
               )}
