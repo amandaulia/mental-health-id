@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, ExternalLink } from "lucide-react";
+import { AnalyticsWrapper } from "./AnalyticsWrapper";
 
 interface Location {
   id: string;
@@ -13,9 +14,10 @@ interface Location {
 
 interface BureauLocationsProps {
   locations: Location[];
+  bureauName?: string;
 }
 
-export const BureauLocations = ({ locations }: BureauLocationsProps) => {
+export const BureauLocations = ({ locations, bureauName = "Bureau" }: BureauLocationsProps) => {
   if (locations.length === 0) return null;
 
   return (
@@ -49,22 +51,31 @@ export const BureauLocations = ({ locations }: BureauLocationsProps) => {
                 </div>
 
                 {/* Open in Google Maps Button */}
-                <Button
-                  asChild
-                  variant="outline"
-                  className="w-full"
+                <AnalyticsWrapper
+                  trackingType="external-link"
+                  trackingData={{
+                    linkUrl: mapsUrl,
+                    linkText: `Google Maps - ${location.name || location.city}`,
+                    context: `bureau-location-${bureauName}`
+                  }}
                 >
-                  <a
-                    href={mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2"
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full"
                   >
-                    <MapPin className="h-4 w-4" />
-                    Open in Google Maps
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
-                </Button>
+                    <a
+                      href={mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      className="flex items-center justify-center gap-2"
+                    >
+                      <MapPin className="h-4 w-4" />
+                      Open in Google Maps
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </Button>
+                </AnalyticsWrapper>
               </div>
             </Card>
           );
