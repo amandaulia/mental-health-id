@@ -101,7 +101,7 @@ export const transformService = (dbService: any): Service => {
     name: dbService.name,
     institutionName: dbService.institution?.name,
     duration: durationText,
-    price: dbService.price || 0,
+    price: dbService.price ?? null,
     mode: mapSessionMode(dbService.session_mode?.[0] || "OFFLINE"),
     bookingUrl: dbService.book_cta ? dbService.book_cta.toString() : undefined,
     learnMoreUrl: dbService.learn_more_cta ? dbService.learn_more_cta.toString() : undefined,
