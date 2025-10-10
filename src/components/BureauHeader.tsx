@@ -93,17 +93,14 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
                   {bureau.modes.length > 0 && (
                     <div className="space-y-2">
                       <p className="font-medium text-sm">Available Modes</p>
-                      {renderToggleableTags(
-                        bureau.modes,
-                        showMoreModes,
-                        setShowMoreModes,
-                        (mode) => (
-                          <Badge variant="outline" className="flex items-center gap-1 text-xs">
+                      <div className="flex flex-wrap gap-2 items-center">
+                        {bureau.modes.map((mode, index) => (
+                          <Badge key={index} variant="outline" className="flex items-center gap-1 text-xs">
                             <ModeIcon mode={mode} />
                             {getModeLabel(mode)}
                           </Badge>
-                        )
-                      )}
+                        ))}
+                      </div>
                     </div>
                   )}
 
