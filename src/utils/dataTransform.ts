@@ -125,7 +125,8 @@ export const transformContactDetails = (dbContacts: any[]): ContactDetails => {
   return validContacts.map(contact => ({
     type: contact.contact_type,
     value: contact.value,
-    link: contact.link
+    link: contact.link,
+    location: contact.location || null
   }));
 };
 
