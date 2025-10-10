@@ -1,5 +1,5 @@
 import { Database } from "@/integrations/supabase/types";
-import { Practitioner, Bureau, Service, ContactDetails, ProfessionType, Specialization, InsuranceType } from "@/types";
+import { Practitioner, Bureau, Service, ContactDetails, ProfessionType, Specialization, InsuranceType, BureauType } from "@/types";
 
 type DBPractitioner = Database['public']['Tables']['practitioner']['Row'] & {
   institution?: Database['public']['Tables']['institution']['Row'];
@@ -127,16 +127,21 @@ export const transformContactDetails = (dbContacts: any[]): ContactDetails => {
 };
 
 // Helper functions to map database enums to frontend types
-const mapInstitutionType = (dbType: string) => {
-  switch (dbType?.toUpperCase()) {
-    case "PRIVATE":
+const mapInstitutionType = (dbType: string): BureauType => {
+  switch (dbType) {
+    case "Private Practice":
       return "independent";
-    case "CLINIC":
+    case "Clinic":
       return "clinic";
-    case "HOSPITAL":
+    case "Faskes 1":
+      return "faskes1";
+    case "Faskes 2":
+      return "faskes2";
+    case "Faskes 3":
+    case "Private Hospital":
       return "faskes2";
     default:
-      return "clinic"; // Default to clinic since most are clinics
+      return "clinic";
   }
 };
 
