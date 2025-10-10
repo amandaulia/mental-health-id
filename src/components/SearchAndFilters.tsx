@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { FilterState, ProfessionType, Specialization, Mode, InsuranceType } from "@/types";
 import { trackFormInteraction } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -194,6 +195,11 @@ export const SearchAndFilters = ({
 
   const handlePriceInputBlur = () => {
     handlePriceRangeChange(priceRange);
+  };
+
+  const handleIncludeNullPriceChange = (checked: boolean) => {
+    onFiltersChange({ ...filters, includeNullPrice: checked });
+    trackFormInteraction('filter', 'include_null_price_changed');
   };
 
   const getActiveFilterCount = (filterArray: any[]) => {
@@ -397,6 +403,20 @@ export const SearchAndFilters = ({
                     <div className="flex justify-between text-xs text-muted-foreground">
                       <span>Rp {priceRange[0].toLocaleString()}</span>
                       <span>Rp {priceRange[1].toLocaleString()}</span>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2 pt-2 border-t">
+                      <Checkbox 
+                        id="include-null-price-mobile"
+                        checked={filters.includeNullPrice || false}
+                        onCheckedChange={handleIncludeNullPriceChange}
+                      />
+                      <label 
+                        htmlFor="include-null-price-mobile"
+                        className="text-sm text-foreground cursor-pointer"
+                      >
+                        Include price upon request
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -618,6 +638,20 @@ export const SearchAndFilters = ({
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Rp {priceRange[0].toLocaleString()}</span>
                   <span>Rp {priceRange[1].toLocaleString()}</span>
+                </div>
+                
+                <div className="flex items-center space-x-2 pt-2 border-t">
+                  <Checkbox 
+                    id="include-null-price"
+                    checked={filters.includeNullPrice || false}
+                    onCheckedChange={handleIncludeNullPriceChange}
+                  />
+                  <label 
+                    htmlFor="include-null-price"
+                    className="text-sm text-foreground cursor-pointer"
+                  >
+                    Include price upon request
+                  </label>
                 </div>
               </div>
             </div>
