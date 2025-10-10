@@ -211,7 +211,7 @@ const BureauDetail = () => {
                                   <span>{getModeLabel(service.mode)}</span>
                                 </div>
                               </div>
-                              <p className={`text-lg mt-2 ${service.price == null ? 'text-muted-foreground' : service.price === 0 ? 'font-medium text-primary' : 'font-medium text-primary'}`}>
+                              <p className={`mt-2 ${service.price == null ? 'text-sm text-muted-foreground italic' : service.price === 0 ? 'text-lg font-medium text-primary' : 'text-lg font-medium text-primary'}`}>
                                 {service.price == null 
                                   ? 'Price available upon consultation' 
                                   : service.price === 0 
