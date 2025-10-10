@@ -13,6 +13,7 @@ import { useInstitution, usePractitionersByInstitution, useServicesByInstitution
 import { transformInstitution, transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
 import { Bureau, Practitioner, Service } from "@/types";
 import { BureauLocations } from "@/components/BureauLocations";
+import { supabase } from "@/integrations/supabase/client";
 
 const BureauDetail = () => {
   const { id } = useParams();
@@ -30,51 +31,54 @@ const BureauDetail = () => {
   const { data: dbLocations, isLoading: locationsLoading } = useLocationsByInstitution(institutionId);
 
   useEffect(() => {
-    if (dbInstitution && dbServices && dbContactDetails) {
-      const contactDetails = transformContactDetails(dbContactDetails);
-      
-      // Create a map of contact detail IDs to links
-      const contactLinkMap = new Map();
-      dbContactDetails.forEach((item: any) => {
-        if (item.contact_details) {
-          contactLinkMap.set(item.contact_details.id, item.contact_details.link);
-        }
-      });
-      
-      console.log('Contact Link Map:', contactLinkMap);
-      console.log('Raw services:', dbServices);
-      
-      const transformedServices = dbServices.map((item: any) => {
-        const service = transformService(item.service);
-        console.log('Service session mode data:', {
-          serviceName: service.name,
-          rawSessionMode: item.service.session_mode,
-          transformedMode: service.mode
+    const fetchServiceCTAs = async () => {
+      if (dbInstitution && dbServices && dbContactDetails) {
+        const contactDetails = transformContactDetails(dbContactDetails);
+        
+        // Extract all unique CTA IDs from services
+        const ctaIds = new Set<number>();
+        dbServices.forEach((item: any) => {
+          if (item.service?.book_cta) ctaIds.add(item.service.book_cta);
+          if (item.service?.learn_more_cta) ctaIds.add(item.service.learn_more_cta);
         });
-        console.log('Original service URLs:', { bookingUrl: service.bookingUrl, learnMoreUrl: service.learnMoreUrl });
+
+        // Fetch contact details for these CTA IDs
+        const { data: ctaContacts } = await supabase
+          .from('contact_details')
+          .select('*')
+          .in('id', Array.from(ctaIds));
         
-        // Map CTA IDs to actual contact detail links
-        if (service.bookingUrl && contactLinkMap.has(parseInt(service.bookingUrl))) {
-          service.bookingUrl = contactLinkMap.get(parseInt(service.bookingUrl));
-        } else {
-          // If no mapping found, clear the URL to prevent wrong redirects
-          service.bookingUrl = undefined;
-        }
+        // Create a map of contact detail IDs to links
+        const contactLinkMap = new Map();
+        ctaContacts?.forEach((contact: any) => {
+          contactLinkMap.set(contact.id, contact.link);
+        });
         
-        if (service.learnMoreUrl && contactLinkMap.has(parseInt(service.learnMoreUrl))) {
-          service.learnMoreUrl = contactLinkMap.get(parseInt(service.learnMoreUrl));
-        } else {
-          // If no mapping found, clear the URL to prevent wrong redirects
-          service.learnMoreUrl = undefined;
-        }
+        const transformedServices = dbServices.map((item: any) => {
+          const service = transformService(item.service);
+          
+          // Map CTA IDs to actual contact detail links
+          if (service.bookingUrl && contactLinkMap.has(parseInt(service.bookingUrl))) {
+            service.bookingUrl = contactLinkMap.get(parseInt(service.bookingUrl));
+          } else {
+            service.bookingUrl = undefined;
+          }
+          
+          if (service.learnMoreUrl && contactLinkMap.has(parseInt(service.learnMoreUrl))) {
+            service.learnMoreUrl = contactLinkMap.get(parseInt(service.learnMoreUrl));
+          } else {
+            service.learnMoreUrl = undefined;
+          }
+          
+          return service;
+        });
         
-        console.log('Final service URLs:', { bookingUrl: service.bookingUrl, learnMoreUrl: service.learnMoreUrl });
-        return service;
-      });
-      
-      setBureau(transformInstitution(dbInstitution, transformedServices, contactDetails));
-      setServices(transformedServices);
-    }
+        setBureau(transformInstitution(dbInstitution, transformedServices, contactDetails));
+        setServices(transformedServices);
+      }
+    };
+
+    fetchServiceCTAs();
   }, [dbInstitution, dbServices, dbContactDetails]);
 
   useEffect(() => {
