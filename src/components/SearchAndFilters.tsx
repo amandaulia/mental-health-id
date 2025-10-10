@@ -30,6 +30,7 @@ interface SearchAndFiltersProps {
     specializations: string[];
     sessionModes: string[];
     insuranceTypes: string[];
+    maxPrice: number;
   };
 }
 
@@ -41,6 +42,8 @@ export const SearchAndFilters = ({
 }: SearchAndFiltersProps) => {
   const [priceRange, setPriceRange] = useState(filters.priceRange);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [minPriceInput, setMinPriceInput] = useState(filters.priceRange[0].toString());
+  const [maxPriceInput, setMaxPriceInput] = useState(filters.priceRange[1].toString());
   const { t } = useLanguage();
 
   // Default filter options (fallback)
@@ -48,6 +51,7 @@ export const SearchAndFilters = ({
   const specializations = filterOptions?.specializations || ["Depression", "Anxiety", "Trauma", "Relationship Issues", "ADHD", "OCD", "Personality Disorders", "Family Therapy"];
   const sessionModeOptions = filterOptions?.sessionModes || ["text", "voice", "video", "offline"];
   const insuranceOptions = filterOptions?.insuranceTypes || ["private", "bpjs", "none"];
+  const maxPrice = filterOptions?.maxPrice || 525000;
 
   const getModeLabel = (mode: string) => {
     const labels: Record<string, string> = {
@@ -58,6 +62,13 @@ export const SearchAndFilters = ({
     };
     return labels[mode] || mode;
   };
+
+  // Update local state when filters change from parent
+  useState(() => {
+    setPriceRange(filters.priceRange);
+    setMinPriceInput(filters.priceRange[0].toString());
+    setMaxPriceInput(filters.priceRange[1].toString());
+  });
 
   const handleSearchChange = (value: string) => {
     onFiltersChange({ ...filters, search: value });
@@ -134,7 +145,29 @@ export const SearchAndFilters = ({
 
   const handlePriceRangeChange = (priceRange: [number, number]) => {
     onFiltersChange({ ...filters, priceRange });
+    setMinPriceInput(priceRange[0].toString());
+    setMaxPriceInput(priceRange[1].toString());
     trackFormInteraction('filter', 'price_range_changed');
+  };
+
+  const handleMinPriceChange = (value: string) => {
+    setMinPriceInput(value);
+    const numValue = parseInt(value) || 0;
+    const newMin = Math.max(0, Math.min(numValue, priceRange[1]));
+    const newRange: [number, number] = [newMin, priceRange[1]];
+    setPriceRange(newRange);
+  };
+
+  const handleMaxPriceChange = (value: string) => {
+    setMaxPriceInput(value);
+    const numValue = parseInt(value) || maxPrice;
+    const newMax = Math.max(priceRange[0], Math.min(numValue, maxPrice));
+    const newRange: [number, number] = [priceRange[0], newMax];
+    setPriceRange(newRange);
+  };
+
+  const handlePriceInputBlur = () => {
+    handlePriceRangeChange(priceRange);
   };
 
   const getActiveFilterCount = (filterArray: any[]) => {
@@ -303,21 +336,33 @@ export const SearchAndFilters = ({
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="text-xs text-muted-foreground mb-1 block">Minimum</label>
-                        <div className="bg-gray-50 rounded-full px-2 py-1 border text-center">
-                          <span className="text-sm font-medium">{priceRange[0].toLocaleString()}</span>
-                        </div>
+                        <Input
+                          type="number"
+                          value={minPriceInput}
+                          onChange={(e) => handleMinPriceChange(e.target.value)}
+                          onBlur={handlePriceInputBlur}
+                          className="text-sm"
+                          min={0}
+                          max={maxPrice}
+                        />
                       </div>
                       <div>
                         <label className="text-xs text-muted-foreground mb-1 block">Maximum</label>
-                        <div className="bg-gray-50 rounded-full px-2 py-1 border text-center">
-                          <span className="text-sm font-medium">{priceRange[1].toLocaleString()}</span>
-                        </div>
+                        <Input
+                          type="number"
+                          value={maxPriceInput}
+                          onChange={(e) => handleMaxPriceChange(e.target.value)}
+                          onBlur={handlePriceInputBlur}
+                          className="text-sm"
+                          min={0}
+                          max={maxPrice}
+                        />
                       </div>
                     </div>
                     
                     <Slider
                       value={priceRange}
-                      max={525000}
+                      max={maxPrice}
                       step={25000}
                       onValueChange={(value) => setPriceRange(value as [number, number])}
                       onValueCommit={() => handlePriceRangeChange(priceRange)}
@@ -511,21 +556,33 @@ export const SearchAndFilters = ({
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">Minimum</label>
-                    <div className="bg-gray-50 rounded-full px-2 py-1 border text-center">
-                      <span className="text-sm font-medium">{priceRange[0].toLocaleString()}</span>
-                    </div>
+                    <Input
+                      type="number"
+                      value={minPriceInput}
+                      onChange={(e) => handleMinPriceChange(e.target.value)}
+                      onBlur={handlePriceInputBlur}
+                      className="text-sm"
+                      min={0}
+                      max={maxPrice}
+                    />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">Maximum</label>
-                    <div className="bg-gray-50 rounded-full px-2 py-1 border text-center">
-                      <span className="text-sm font-medium">{priceRange[1].toLocaleString()}</span>
-                    </div>
+                    <Input
+                      type="number"
+                      value={maxPriceInput}
+                      onChange={(e) => handleMaxPriceChange(e.target.value)}
+                      onBlur={handlePriceInputBlur}
+                      className="text-sm"
+                      min={0}
+                      max={maxPrice}
+                    />
                   </div>
                 </div>
                 
                 <Slider
                   value={priceRange}
-                  max={525000}
+                  max={maxPrice}
                   step={25000}
                   onValueChange={(value) => setPriceRange(value as [number, number])}
                   onValueCommit={() => handlePriceRangeChange(priceRange)}
