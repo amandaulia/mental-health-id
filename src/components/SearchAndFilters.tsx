@@ -79,6 +79,12 @@ export const SearchAndFilters = ({
     return labels[type] || type;
   };
 
+  const getInsuranceLabel = (insurance: string) => {
+    if (insurance === "bpjs") return "BPJS";
+    if (insurance === "private") return "Private";
+    return insurance.charAt(0).toUpperCase() + insurance.slice(1);
+  };
+
   // Update local state when filters change from parent
   useEffect(() => {
     setPriceRange(filters.priceRange);
@@ -453,7 +459,7 @@ export const SearchAndFilters = ({
                             : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                         }`}
                       >
-                        {insurance.charAt(0).toUpperCase() + insurance.slice(1)}
+                        {getInsuranceLabel(insurance)}
                       </button>
                     ))}
                   </div>
@@ -689,7 +695,7 @@ export const SearchAndFilters = ({
                         : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                     }`}
                   >
-                    {insurance.charAt(0).toUpperCase() + insurance.slice(1)}
+                    {getInsuranceLabel(insurance)}
                   </button>
                 ))}
               </div>
