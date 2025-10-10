@@ -25,16 +25,39 @@ interface SearchAndFiltersProps {
   filters: FilterState;
   onFiltersChange: (filters: FilterState) => void;
   institutionNames: string[];
+  filterOptions?: {
+    cities: string[];
+    specializations: string[];
+    sessionModes: string[];
+    insuranceTypes: string[];
+  };
 }
 
 export const SearchAndFilters = ({
   filters,
   onFiltersChange,
-  institutionNames
+  institutionNames,
+  filterOptions
 }: SearchAndFiltersProps) => {
   const [priceRange, setPriceRange] = useState(filters.priceRange);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const { t } = useLanguage();
+
+  // Default filter options (fallback)
+  const cities = filterOptions?.cities || ["Jakarta, Indonesia", "Surabaya, Indonesia", "Medan, Indonesia"];
+  const specializations = filterOptions?.specializations || ["Depression", "Anxiety", "Trauma", "Relationship Issues", "ADHD", "OCD", "Personality Disorders", "Family Therapy"];
+  const sessionModeOptions = filterOptions?.sessionModes || ["text", "voice", "video", "offline"];
+  const insuranceOptions = filterOptions?.insuranceTypes || ["private", "bpjs", "none"];
+
+  const getModeLabel = (mode: string) => {
+    const labels: Record<string, string> = {
+      text: "Text Chat",
+      voice: "Voice Call",
+      video: "Video Call",
+      offline: "In-Person"
+    };
+    return labels[mode] || mode;
+  };
 
   const handleSearchChange = (value: string) => {
     onFiltersChange({ ...filters, search: value });
@@ -168,7 +191,7 @@ export const SearchAndFilters = ({
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-foreground">City</h3>
                   <div className="flex flex-wrap gap-1">
-                    {["Jakarta, Indonesia", "Surabaya, Indonesia", "Medan, Indonesia"].map((location) => (
+                    {cities.map((location) => (
                       <button
                         key={location}
                         onClick={() => handleLocationSelect(location)}
@@ -206,7 +229,7 @@ export const SearchAndFilters = ({
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-foreground">Specialization</h3>
                   <div className="flex flex-wrap gap-1">
-                    {["Depression", "Anxiety", "Trauma", "Relationship Issues", "ADHD", "OCD", "Personality Disorders", "Family Therapy"].map((specialization) => (
+                    {specializations.map((specialization) => (
                       <button
                         key={specialization}
                         onClick={() => handleSpecializationSelect(specialization)}
@@ -244,22 +267,17 @@ export const SearchAndFilters = ({
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-foreground">Session Mode</h3>
                   <div className="flex flex-wrap gap-1">
-                    {[
-                      { value: "text", label: "Text Chat" },
-                      { value: "voice", label: "Voice Call" },
-                      { value: "video", label: "Video Call" },
-                      { value: "offline", label: "In-Person" }
-                    ].map((mode) => (
+                    {sessionModeOptions.map((mode) => (
                       <button
-                        key={mode.value}
-                        onClick={() => handleModeSelect(mode.value)}
+                        key={mode}
+                        onClick={() => handleModeSelect(mode)}
                         className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
-                          filters.modes.includes(mode.value as Mode)
+                          filters.modes.includes(mode as Mode)
                             ? 'bg-purple-100 border-purple-300 text-purple-700'
                             : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                         }`}
                       >
-                        {mode.label}
+                        {getModeLabel(mode)}
                       </button>
                     ))}
                   </div>
@@ -334,17 +352,17 @@ export const SearchAndFilters = ({
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-foreground">Insurance</h3>
                   <div className="flex flex-wrap gap-1">
-                    {["Private", "BPJS", "None"].map((insurance) => (
+                    {insuranceOptions.map((insurance) => (
                       <button
                         key={insurance}
-                        onClick={() => handleInsuranceSelect(insurance.toLowerCase())}
+                        onClick={() => handleInsuranceSelect(insurance)}
                         className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${
-                          filters.insurance.includes(insurance.toLowerCase() as InsuranceType)
+                          filters.insurance.includes(insurance as InsuranceType)
                             ? 'bg-purple-100 border-purple-300 text-purple-700'
                             : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                         }`}
                       >
-                        {insurance}
+                        {insurance.charAt(0).toUpperCase() + insurance.slice(1)}
                       </button>
                     ))}
                   </div>
@@ -378,7 +396,7 @@ export const SearchAndFilters = ({
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">City</h3>
               <div className="flex flex-wrap gap-1">
-                {["Jakarta, Indonesia", "Surabaya, Indonesia", "Medan, Indonesia"].map((location) => (
+                {cities.map((location) => (
                   <button
                     key={location}
                     onClick={() => handleLocationSelect(location)}
@@ -417,7 +435,7 @@ export const SearchAndFilters = ({
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">Specialization</h3>
               <div className="flex flex-wrap gap-1">
-                {["Depression", "Anxiety", "Trauma", "Relationship Issues", "ADHD", "OCD", "Personality Disorders", "Family Therapy"].map((specialization) => (
+                {specializations.map((specialization) => (
                   <button
                     key={specialization}
                     onClick={() => handleSpecializationSelect(specialization)}
@@ -456,22 +474,17 @@ export const SearchAndFilters = ({
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">Session Mode</h3>
               <div className="flex flex-wrap gap-1">
-                {[
-                  { value: "text", label: "Text Chat" },
-                  { value: "voice", label: "Voice Call" },
-                  { value: "video", label: "Video Call" },
-                  { value: "offline", label: "In-Person" }
-                ].map((mode) => (
+                {sessionModeOptions.map((mode) => (
                   <button
-                    key={mode.value}
-                    onClick={() => handleModeSelect(mode.value)}
+                    key={mode}
+                    onClick={() => handleModeSelect(mode)}
                     className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
-                      filters.modes.includes(mode.value as Mode)
+                      filters.modes.includes(mode as Mode)
                         ? 'bg-purple-100 border-purple-300 text-purple-700'
                         : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                     }`}
                   >
-                    {mode.label}
+                    {getModeLabel(mode)}
                   </button>
                 ))}
               </div>
@@ -548,17 +561,17 @@ export const SearchAndFilters = ({
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">Insurance</h3>
               <div className="flex flex-wrap gap-1">
-                {["Private", "BPJS", "None"].map((insurance) => (
+                {insuranceOptions.map((insurance) => (
                   <button
                     key={insurance}
-                    onClick={() => handleInsuranceSelect(insurance.toLowerCase())}
+                    onClick={() => handleInsuranceSelect(insurance)}
                     className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${
-                      filters.insurance.includes(insurance.toLowerCase() as InsuranceType)
+                      filters.insurance.includes(insurance as InsuranceType)
                         ? 'bg-purple-100 border-purple-300 text-purple-700'
                         : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                     }`}
                   >
-                    {insurance}
+                    {insurance.charAt(0).toUpperCase() + insurance.slice(1)}
                   </button>
                 ))}
               </div>
