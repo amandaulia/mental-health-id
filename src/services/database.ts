@@ -45,7 +45,8 @@ export const databaseService = {
     const { data, error } = await supabase
       .from('practitioner_contacts')
       .select(`
-        contact_details(*)
+        contact_id,
+        contact_details:contact_id(*)
       `)
       .eq('practitioner_id', practitionerId);
     
@@ -223,7 +224,8 @@ export const databaseService = {
     const { data, error } = await supabase
       .from('institution_contacts')
       .select(`
-        contact_details(*)
+        contact_id,
+        contact_details:contact_id(*)
       `)
       .eq('institution_id', institutionId);
     
