@@ -211,8 +211,12 @@ const BureauDetail = () => {
                                   <span>{getModeLabel(service.mode)}</span>
                                 </div>
                               </div>
-                              <p className="font-medium text-primary text-lg mt-2">
-                                {formatPrice(service.price)}
+                              <p className={`text-lg mt-2 ${service.price == null ? 'text-muted-foreground' : service.price === 0 ? 'font-medium text-primary' : 'font-medium text-primary'}`}>
+                                {service.price == null 
+                                  ? 'Price available upon consultation' 
+                                  : service.price === 0 
+                                  ? 'Free' 
+                                  : formatPrice(service.price)}
                               </p>
                             </div>
                             <div className="flex gap-2">
