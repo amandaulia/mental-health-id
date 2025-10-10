@@ -540,7 +540,7 @@ const BureauDetail = () => {
           {/* Contact Details and Locations Sidebar */}
           <div className="space-y-6">
             <BureauContact bureau={bureau} />
-            <BureauLocations locations={locations} />
+            <BureauLocations locations={locations} bureauName={bureau.name} />
           </div>
         </div>
       </div>
