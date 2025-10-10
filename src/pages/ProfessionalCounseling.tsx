@@ -206,7 +206,7 @@ const ProfessionalCounseling = () => {
       institutions: [],
       professionTypes: [],
       specializations: [],
-      priceRange: [0, 525000],
+      priceRange: [0, filterOptions.maxPrice || 525000],
       modes: [],
       insurance: []
     });
@@ -320,6 +320,7 @@ const ProfessionalCounseling = () => {
     const specializations = new Set<string>();
     const sessionModes = new Set<string>();
     const insuranceTypes = new Set<string>();
+    let maxPrice = 525000; // default
 
     [...allPractitioners, ...allBureaus].forEach(resource => {
       // Extract city - exclude "Unknown City" and ensure proper formatting
@@ -336,15 +337,45 @@ const ProfessionalCounseling = () => {
 
       // Extract insurance types
       resource.insurance.forEach(ins => insuranceTypes.add(ins));
+
+      // Calculate max price
+      if (resource.type === 'practitioner') {
+        const prices = resource.services.map(s => s.price).filter(Boolean);
+        if (prices.length > 0) {
+          maxPrice = Math.max(maxPrice, ...prices);
+        }
+      } else {
+        // For bureau, extract from priceRange string
+        if (resource.priceRange) {
+          const priceMatch = resource.priceRange.match(/[\d.,]+/g);
+          if (priceMatch) {
+            const prices = priceMatch.map(p => parseFloat(p.replace(/[.,]/g, '')));
+            maxPrice = Math.max(maxPrice, ...prices);
+          }
+        }
+      }
     });
 
     return {
       cities: Array.from(cities).sort(),
       specializations: Array.from(specializations).sort(),
       sessionModes: Array.from(sessionModes).sort(),
-      insuranceTypes: Array.from(insuranceTypes).sort()
+      insuranceTypes: Array.from(insuranceTypes).sort(),
+      maxPrice: Math.ceil(maxPrice / 25000) * 25000 // Round up to nearest 25000
     };
   }, [allPractitioners, allBureaus]);
+
+  // Update price range when filterOptions change
+  const prevMaxPrice = React.useRef(525000);
+  React.useEffect(() => {
+    if (filterOptions.maxPrice && filterOptions.maxPrice !== prevMaxPrice.current) {
+      prevMaxPrice.current = filterOptions.maxPrice;
+      setFilters(prev => ({
+        ...prev,
+        priceRange: [0, filterOptions.maxPrice]
+      }));
+    }
+  }, [filterOptions.maxPrice]);
 
   const isLoading = practitionersLoading || institutionsLoading || practitionerServicesLoading || institutionServicesLoading || practitionerLocationsLoading || institutionLocationsLoading;
 
