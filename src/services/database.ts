@@ -8,6 +8,30 @@ type Service = Tables["service"]["Row"];
 type ContactDetail = Tables["contact_details"]["Row"];
 type Location = Tables["location"]["Row"];
 
+/**
+ * Ensure links are ABSOLUTE so the app doesn’t route them relatively (e.g. /bureau/...)
+ * - Keeps http(s), mailto:, tel: as-is
+ * - Adds https:// to bare domains or www.* links
+ */
+function normalizeLink(raw?: string | null): string | null {
+  if (!raw) return null;
+  const link = raw.trim();
+
+  // Already absolute or special schemes
+  if (/^(?:https?:|mailto:|tel:)/i.test(link)) return link;
+
+  // Bare domain or www.* → force https://
+  if (/^(?:www\.)?[a-z0-9.-]+\.[a-z]{2,}(?:[/?#].*)?$/i.test(link)) {
+    return `https://${link.replace(/^\/+/, "")}`;
+  }
+
+  // Anything else that starts with a slash we'll leave as-is (likely internal)
+  if (/^\//.test(link)) return link;
+
+  // Fallback: force https:// (prevents relative routing under /bureau/*)
+  return `https://${link}`;
+}
+
 export const databaseService = {
   // Fetch all practitioners (base data only - relationships fetched separately)
   async getPractitioners() {
@@ -96,12 +120,13 @@ export const databaseService = {
     return data;
   },
 
-  // NEW: Insert contact with proper enum casting
+  // NEW: Insert contact with proper enum casting — auto-normalize link
   async insertContact(contactData: { name?: string; contact_type: string; value: string; link?: string }) {
     const { data, error } = await supabase
       .from("contact_details")
       .insert({
         ...contactData,
+        link: normalizeLink(contactData.link || null) ?? null,
         contact_type: contactData.contact_type as any,
       })
       .select()
@@ -233,7 +258,7 @@ export const databaseService = {
     return data;
   },
 
-  // ✅ UPDATED: Fetch services for an institution with book_cta and learn_more_cta links
+  // ✅ UPDATED: Fetch services for an institution with book_cta and learn_more_cta links, then normalize them
   async getServicesByInstitution(institutionId: number) {
     const { data, error } = await supabase
       .from("institution_services")
@@ -253,14 +278,19 @@ export const databaseService = {
       throw error;
     }
 
-    return (data ?? []).map((row: any) => ({
-      ...row,
-      service: {
-        ...row.service,
-        book_link: row.service?.book_contact?.link ?? null,
-        learn_more_link: row.service?.learn_more_contact?.link ?? null,
-      },
-    }));
+    // Flatten + normalize links to avoid relative-routing like /bureau/{id}
+    return (data ?? []).map((row: any) => {
+      const book_link = normalizeLink(row.service?.book_contact?.link ?? null);
+      const learn_more_link = normalizeLink(row.service?.learn_more_contact?.link ?? null);
+      return {
+        ...row,
+        service: {
+          ...row.service,
+          book_link,
+          learn_more_link,
+        },
+      };
+    });
   },
 
   // Fetch contact details (generic function that can be used for both practitioners and institutions)
@@ -344,3 +374,18 @@ export const databaseService = {
     return data || [];
   },
 };
+
+/**
+ * RENDERING TIP:
+ * For external links, use <a> with an absolute URL (after normalizeLink).
+ * Avoid using <Link> from 'next/link' for external links unless you’re sure
+ * the URL is absolute (starts with http/https/mailto/tel).
+ *
+ * Example:
+ * {service.book_link && (
+ *   <a href={service.book_link} target="_blank" rel="noopener noreferrer">Book</a>
+ * )}
+ * {service.learn_more_link && (
+ *   <a href={service.learn_more_link} target="_blank" rel="noopener noreferrer">Learn more</a>
+ * )}
+ */
