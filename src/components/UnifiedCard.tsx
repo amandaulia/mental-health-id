@@ -77,18 +77,25 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
           <div className="space-y-3">
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-3 flex-1 min-w-0">
-                {data.image && (
-                  <div className="w-12 h-12 flex-shrink-0">
+                <div className="w-12 h-12 flex-shrink-0">
+                  {data.image ? (
                     <img 
                       src={data.image} 
                       alt={`${data.name} logo`}
                       className="w-full h-full object-cover rounded-md"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
+                        const parent = (e.target as HTMLImageElement).parentElement;
+                        if (parent) {
+                          parent.innerHTML = '<div class="w-full h-full bg-muted rounded-md flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></div>';
+                        }
                       }}
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div className="w-full h-full bg-muted rounded-md flex items-center justify-center">
+                      <Building2 className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="font-semibold text-lg truncate">{data.name}</h3>
