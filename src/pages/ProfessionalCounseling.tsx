@@ -121,7 +121,7 @@ const ProfessionalCounseling = () => {
     if (!dbPractitioners || !practitionerLocations || !allPractitionerServices) return [];
     return dbPractitioners.map(p => {
       const locations = practitionerLocations[p.id] || [];
-      const cities = locations.map((loc: any) => loc.city).filter(Boolean);
+      const cities = Array.from(new Set(locations.map((loc: any) => loc.city).filter(Boolean)));
       const cityString = cities.length > 0 ? cities.join(', ') : 'Unknown City';
       
       // Get session modes from services and map them to the correct format
@@ -178,7 +178,7 @@ const ProfessionalCounseling = () => {
       
       // Get locations for this institution
       const locations = institutionLocations[institution.id] || [];
-      const cities = locations.map((loc: any) => loc.city).filter(Boolean);
+      const cities = Array.from(new Set(locations.map((loc: any) => loc.city).filter(Boolean)));
       const cityString = cities.length > 0 ? cities.join(', ') : 'Unknown City';
       
       const transformed = transformInstitution(institution, services);
