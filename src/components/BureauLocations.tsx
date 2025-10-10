@@ -49,11 +49,8 @@ export const BureauLocations = ({ locations }: BureauLocationsProps) => {
                 {/* Map Preview - Click to open in Google Maps */}
                 <a
                   href={mapsUrl}
-                  target="_top"
+                  target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => {
-                    console.log('Link clicked!', mapsUrl);
-                  }}
                   className="block bg-muted rounded-lg h-48 hover:bg-muted/80 transition-colors group no-underline"
                 >
                   <div className="h-full flex flex-col items-center justify-center">
