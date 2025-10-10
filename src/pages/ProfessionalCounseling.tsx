@@ -19,6 +19,7 @@ const ProfessionalCounseling = () => {
     search: "",
     locations: [],
     institutions: [],
+    institutionTypes: [],
     professionTypes: [],
     specializations: [],
     priceRange: [0, 2000000], // Will be updated by useEffect
@@ -232,6 +233,7 @@ const ProfessionalCounseling = () => {
       search: "",
       locations: [],
       institutions: [],
+      institutionTypes: [],
       professionTypes: [],
       specializations: [],
       priceRange: [filterOptions.minPrice || 0, filterOptions.maxPrice || 0],
@@ -309,6 +311,10 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
+      if (filters.institutionTypes.length > 0 && !filters.institutionTypes.includes(bureau.bureauType)) {
+        return false;
+      }
+
       if (filters.professionTypes.length > 0 &&
           !filters.professionTypes.some(type => bureau.professionTypes.includes(type))) {
         return false;
@@ -363,6 +369,7 @@ const ProfessionalCounseling = () => {
     const specializations = new Set<string>();
     const sessionModes = new Set<string>();
     const insuranceTypes = new Set<string>();
+    const institutionTypes = new Set<string>();
 
 
     [...allPractitioners, ...allBureaus].forEach(resource => {
@@ -378,10 +385,15 @@ const ProfessionalCounseling = () => {
       // Extract session modes
       resource.modes.forEach(mode => sessionModes.add(mode));
 
-      // Extract insurance types
-      resource.insurance.forEach(ins => insuranceTypes.add(ins));
+      // Extract insurance types (excluding "none")
+      resource.insurance.filter(ins => ins !== "none").forEach(ins => insuranceTypes.add(ins));
 
       // Price calculation removed - using direct database query instead
+    });
+
+    // Extract institution types from bureaus
+    allBureaus.forEach(bureau => {
+      institutionTypes.add(bureau.bureauType);
     });
 
     return {
@@ -389,6 +401,7 @@ const ProfessionalCounseling = () => {
       specializations: Array.from(specializations).sort(),
       sessionModes: Array.from(sessionModes).sort(),
       insuranceTypes: Array.from(insuranceTypes).sort(),
+      institutionTypes: Array.from(institutionTypes).sort(),
       minPrice: priceRange?.minPrice || 0,
       maxPrice: priceRange?.maxPrice || 0
     };
