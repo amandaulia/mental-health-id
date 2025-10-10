@@ -520,7 +520,7 @@ const ProfessionalCounseling = () => {
 
       {/* Prominent loading indicator */}
       {(isInitialLoading || isLoadingMore) && (
-        <div className="mb-8 p-6 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl border border-primary/20 animate-fade-in">
+        <div className="mb-8 p-6 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl animate-fade-in">
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary/30 border-t-primary"></div>
