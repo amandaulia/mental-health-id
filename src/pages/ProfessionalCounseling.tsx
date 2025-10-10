@@ -124,10 +124,19 @@ const ProfessionalCounseling = () => {
       const cities = locations.map((loc: any) => loc.city).filter(Boolean);
       const cityString = cities.length > 0 ? cities.join(', ') : 'Unknown City';
       
-      // Get session modes from services
+      // Get session modes from services and map them to the correct format
+      const mapMode = (mode: string): string => {
+        const normalized = mode.toLowerCase().trim();
+        if (normalized === 'video call') return 'video';
+        if (normalized === 'chat') return 'text';
+        if (normalized === 'voice call') return 'voice';
+        if (normalized === 'offline') return 'offline';
+        return normalized;
+      };
+      
       const rawServices = allPractitionerServices[p.id] || [];
       const allModes = rawServices.flatMap((item: any) => item.service?.session_mode || []);
-      const uniqueModes = Array.from(new Set(allModes.map((mode: string) => mode.toLowerCase()))) as any;
+      const uniqueModes = Array.from(new Set(allModes.map((mode: string) => mapMode(mode)))) as any;
       
       const transformed = transformPractitioner(p);
       return {
@@ -146,13 +155,18 @@ const ProfessionalCounseling = () => {
       // Transform the nested service structure to flat services
       const services = rawServices.map(item => transformService(item.service));
       
-      // Get session modes from services
-      const allModes = rawServices.flatMap((item: any) => item.service?.session_mode || []);
-      const uniqueModes = Array.from(new Set(allModes.map((mode: string) => mode.toLowerCase()))) as any;
+      // Get session modes from services and map them to the correct format
+      const mapMode = (mode: string): string => {
+        const normalized = mode.toLowerCase().trim();
+        if (normalized === 'video call') return 'video';
+        if (normalized === 'chat') return 'text';
+        if (normalized === 'voice call') return 'voice';
+        if (normalized === 'offline') return 'offline';
+        return normalized;
+      };
       
-      if (institution.name === 'Kalm' || institution.name === 'Ibunda') {
-        console.log('Institution modes debug:', institution.name, 'rawModes:', allModes, 'uniqueModes:', uniqueModes);
-      }
+      const allModes = rawServices.flatMap((item: any) => item.service?.session_mode || []);
+      const uniqueModes = Array.from(new Set(allModes.map((mode: string) => mapMode(mode)))) as any;
       
       // Get locations for this institution
       const locations = institutionLocations[institution.id] || [];
