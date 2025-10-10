@@ -6,7 +6,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
-import { ArrowLeft, Clock, Search, Monitor, Settings } from "lucide-react";
+import { ArrowLeft, Clock, Search, Monitor, Settings, X } from "lucide-react";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { BureauHeader } from "@/components/BureauHeader";
 import { BureauContact } from "@/components/BureauContact";
@@ -27,7 +27,7 @@ const BureauDetail = () => {
   
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMode, setSelectedMode] = useState<Mode | "all">("all");
+  const [selectedModes, setSelectedModes] = useState<Mode[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000000]);
   const [minPriceInput, setMinPriceInput] = useState("0");
   const [maxPriceInput, setMaxPriceInput] = useState("2000000");
@@ -70,6 +70,16 @@ const BureauDetail = () => {
       
       setBureau(transformInstitution(dbInstitution, transformedServices, contactDetails));
       setServices(transformedServices);
+      
+      // Set price range from actual data
+      const prices = transformedServices.map(s => s.price ?? 0).filter(p => p > 0);
+      if (prices.length > 0) {
+        const minPrice = Math.min(...prices);
+        const maxPrice = Math.max(...prices);
+        setPriceRange([minPrice, maxPrice]);
+        setMinPriceInput(minPrice.toString());
+        setMaxPriceInput(maxPrice.toString());
+      }
     }
   }, [dbInstitution, dbServices, dbContactDetails]);
 
@@ -165,14 +175,17 @@ const BureauDetail = () => {
     }
     
     // Filter by mode
-    const serviceModes = service.modes || [service.mode];
-    const modeMatch = selectedMode === "all" || serviceModes.includes(selectedMode);
+    if (selectedModes.length > 0) {
+      const serviceModes = service.modes || [service.mode];
+      const modeMatch = serviceModes.some(mode => selectedModes.includes(mode));
+      if (!modeMatch) return false;
+    }
     
     // Filter by price range
     const servicePrice = service.price ?? 0;
     const priceMatch = servicePrice >= priceRange[0] && servicePrice <= priceRange[1];
     
-    return modeMatch && priceMatch;
+    return priceMatch;
   });
 
   // Get max price for slider
@@ -191,6 +204,48 @@ const BureauDetail = () => {
     const newMax = Math.max(priceRange[0], Math.min(numValue, maxPrice));
     setPriceRange([priceRange[0], newMax]);
   };
+
+  const toggleMode = (mode: Mode) => {
+    setSelectedModes(prev => 
+      prev.includes(mode) 
+        ? prev.filter(m => m !== mode)
+        : [...prev, mode]
+    );
+  };
+
+  const removeFilter = (type: 'mode' | 'price' | 'search', value?: Mode) => {
+    if (type === 'mode' && value) {
+      setSelectedModes(prev => prev.filter(m => m !== value));
+    } else if (type === 'price') {
+      const prices = services.map(s => s.price ?? 0).filter(p => p > 0);
+      if (prices.length > 0) {
+        const minPrice = Math.min(...prices);
+        const maxPrice = Math.max(...prices);
+        setPriceRange([minPrice, maxPrice]);
+        setMinPriceInput(minPrice.toString());
+        setMaxPriceInput(maxPrice.toString());
+      }
+    } else if (type === 'search') {
+      setSearchQuery("");
+    }
+  };
+
+  const clearAllFilters = () => {
+    setSelectedModes([]);
+    setSearchQuery("");
+    const prices = services.map(s => s.price ?? 0).filter(p => p > 0);
+    if (prices.length > 0) {
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      setPriceRange([minPrice, maxPrice]);
+      setMinPriceInput(minPrice.toString());
+      setMaxPriceInput(maxPrice.toString());
+    }
+  };
+
+  const hasActiveFilters = selectedModes.length > 0 || searchQuery !== "" || 
+    (services.length > 0 && (priceRange[0] !== Math.min(...services.map(s => s.price ?? 0).filter(p => p > 0)) || 
+    priceRange[1] !== Math.max(...services.map(s => s.price ?? 0).filter(p => p > 0))));
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -236,132 +291,164 @@ const BureauDetail = () => {
                 <CardHeader className="space-y-6">
                   <CardTitle>Our Services ({filteredServices.length})</CardTitle>
                   
-                  {/* Search Bar */}
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input
-                      type="text"
-                      placeholder="Search services..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 rounded-full border-gray-200"
-                    />
-                  </div>
-                  
-                  {/* Filters */}
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-foreground">Filters</h3>
+                  {/* Filters and Search in one line */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {/* Search Bar */}
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                      <Input
+                        type="text"
+                        placeholder="Search services..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10 rounded-full border-gray-200"
+                      />
+                    </div>
                     
-                    <div className="flex flex-wrap gap-2">
-                      {/* Session Mode Filter */}
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button 
-                            variant="outline" 
-                            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium justify-center flex items-center gap-2"
-                          >
-                            <Monitor className="h-4 w-4" />
-                            <span>Session Mode</span>
-                            {selectedMode !== "all" && (
-                              <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">
-                                1
-                              </Badge>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-80 p-6">
-                          <div className="space-y-4">
-                            <h3 className="text-lg font-semibold text-foreground">Session Mode</h3>
-                            <div className="flex flex-wrap gap-2">
+                    {/* Session Mode Filter */}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium justify-center flex items-center gap-2"
+                        >
+                          <Monitor className="h-4 w-4" />
+                          <span>Session Mode</span>
+                          {selectedModes.length > 0 && (
+                            <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">
+                              {selectedModes.length}
+                            </Badge>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80 p-6">
+                        <div className="space-y-4">
+                          <h3 className="text-lg font-semibold text-foreground">Session Mode</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {allModes.map(mode => (
                               <button
-                                onClick={() => setSelectedMode("all")}
+                                key={mode}
+                                onClick={() => toggleMode(mode as Mode)}
                                 className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
-                                  selectedMode === "all"
+                                  selectedModes.includes(mode as Mode)
                                     ? 'bg-purple-100 border-purple-300 text-purple-700'
                                     : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                                 }`}
                               >
-                                All Modes
+                                {getModeLabel(mode)}
                               </button>
-                              {allModes.map(mode => (
-                                <button
-                                  key={mode}
-                                  onClick={() => setSelectedMode(mode as Mode)}
-                                  className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
-                                    selectedMode === mode
-                                      ? 'bg-purple-100 border-purple-300 text-purple-700'
-                                      : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
-                                  }`}
-                                >
-                                  {getModeLabel(mode)}
-                                </button>
-                              ))}
-                            </div>
+                            ))}
                           </div>
-                        </PopoverContent>
-                      </Popover>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
 
-                      {/* Price Range Filter */}
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button 
-                            variant="outline" 
-                            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium justify-center flex items-center gap-2"
-                          >
-                            <Settings className="h-4 w-4" />
-                            <span>Price Range</span>
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-80 p-6">
+                    {/* Price Range Filter */}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium justify-center flex items-center gap-2"
+                        >
+                          <Settings className="h-4 w-4" />
+                          <span>Price Range</span>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80 p-6">
+                        <div className="space-y-4">
+                          <h3 className="text-lg font-semibold text-foreground">Session Cost (IDR)</h3>
                           <div className="space-y-4">
-                            <h3 className="text-lg font-semibold text-foreground">Session Cost (IDR)</h3>
-                            <div className="space-y-4">
-                              <div className="grid grid-cols-2 gap-2">
-                                <div>
-                                  <label className="text-xs text-muted-foreground mb-1 block">Minimum</label>
-                                  <Input
-                                    type="number"
-                                    value={minPriceInput}
-                                    onChange={(e) => handleMinPriceChange(e.target.value)}
-                                    className="text-sm"
-                                    min={0}
-                                    max={maxPrice}
-                                  />
-                                </div>
-                                <div>
-                                  <label className="text-xs text-muted-foreground mb-1 block">Maximum</label>
-                                  <Input
-                                    type="number"
-                                    value={maxPriceInput}
-                                    onChange={(e) => handleMaxPriceChange(e.target.value)}
-                                    className="text-sm"
-                                    min={0}
-                                    max={maxPrice}
-                                  />
-                                </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <label className="text-xs text-muted-foreground mb-1 block">Minimum</label>
+                                <Input
+                                  type="number"
+                                  value={minPriceInput}
+                                  onChange={(e) => handleMinPriceChange(e.target.value)}
+                                  className="text-sm"
+                                  min={0}
+                                  max={maxPrice}
+                                />
                               </div>
-                              
-                              <Slider
-                                value={priceRange}
-                                max={maxPrice}
-                                step={25000}
-                                onValueChange={(value) => {
-                                  setPriceRange(value as [number, number]);
-                                  setMinPriceInput(value[0].toString());
-                                  setMaxPriceInput(value[1].toString());
-                                }}
-                                className="mb-2"
-                              />
-                              <div className="flex justify-between text-xs text-muted-foreground">
-                                <span>Rp {priceRange[0].toLocaleString()}</span>
-                                <span>Rp {priceRange[1].toLocaleString()}</span>
+                              <div>
+                                <label className="text-xs text-muted-foreground mb-1 block">Maximum</label>
+                                <Input
+                                  type="number"
+                                  value={maxPriceInput}
+                                  onChange={(e) => handleMaxPriceChange(e.target.value)}
+                                  className="text-sm"
+                                  min={0}
+                                  max={maxPrice}
+                                />
                               </div>
                             </div>
+                            
+                            <Slider
+                              value={priceRange}
+                              max={maxPrice}
+                              step={25000}
+                              onValueChange={(value) => {
+                                setPriceRange(value as [number, number]);
+                                setMinPriceInput(value[0].toString());
+                                setMaxPriceInput(value[1].toString());
+                              }}
+                              className="mb-2"
+                            />
+                            <div className="flex justify-between text-xs text-muted-foreground">
+                              <span>Rp {priceRange[0].toLocaleString()}</span>
+                              <span>Rp {priceRange[1].toLocaleString()}</span>
+                            </div>
                           </div>
-                        </PopoverContent>
-                      </Popover>
-                    </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </div>
+
+                  {/* Active Filters */}
+                  {hasActiveFilters && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Active filters:</span>
+                      {selectedModes.map(mode => (
+                        <Badge 
+                          key={mode}
+                          variant="secondary"
+                          className="gap-1 pr-1"
+                        >
+                          {getModeLabel(mode)}
+                          <button
+                            onClick={() => removeFilter('mode', mode)}
+                            className="ml-1 hover:bg-muted rounded-full p-0.5"
+                          >
+                            <span className="sr-only">Remove</span>
+                            ×
+                          </button>
+                        </Badge>
+                      ))}
+                      {searchQuery && (
+                        <Badge 
+                          variant="secondary"
+                          className="gap-1 pr-1"
+                        >
+                          Search: {searchQuery}
+                          <button
+                            onClick={() => removeFilter('search')}
+                            className="ml-1 hover:bg-muted rounded-full p-0.5"
+                          >
+                            <span className="sr-only">Remove</span>
+                            ×
+                          </button>
+                        </Badge>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearAllFilters}
+                        className="h-6 text-xs"
+                      >
+                        Clear all
+                      </Button>
+                    </div>
+                  )}
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
