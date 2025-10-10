@@ -148,12 +148,16 @@ const mapInstitutionType = (dbType: string) => {
 };
 
 const mapSessionMode = (dbMode: string) => {
-  switch (dbMode) {
+  const normalizedMode = dbMode?.toUpperCase().replace(/\s/g, '_');
+  switch (normalizedMode) {
     case "TEXT":
+    case "CHAT":
       return "text";
     case "VOICE":
+    case "VOICE_CALL":
       return "voice";
     case "VIDEO":
+    case "VIDEO_CALL":
       return "video";
     case "OFFLINE":
       return "offline";
