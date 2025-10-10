@@ -315,6 +315,34 @@ const Index = () => {
     return Array.from(names);
   }, [allProfessionalResources]);
 
+  const filterOptions = useMemo(() => {
+    const cities = new Set<string>();
+    const specializations = new Set<string>();
+    const sessionModes = new Set<string>();
+    const insuranceTypes = new Set<string>();
+
+    allProfessionalResources.forEach(resource => {
+      if (resource.city && resource.city !== 'Unknown City') {
+        const cityName = resource.city.split(',')[0].trim();
+        cities.add(`${cityName}, Indonesia`);
+      }
+
+      resource.specializations.forEach(spec => specializations.add(spec));
+      resource.modes.forEach(mode => sessionModes.add(mode));
+      resource.insurance.filter(ins => ins !== "none").forEach(ins => insuranceTypes.add(ins));
+    });
+
+    return {
+      cities: Array.from(cities).sort(),
+      specializations: Array.from(specializations).sort(),
+      sessionModes: Array.from(sessionModes).sort(),
+      insuranceTypes: Array.from(insuranceTypes).sort(),
+      institutionTypes: [],
+      minPrice: 0,
+      maxPrice: 2000000
+    };
+  }, [allProfessionalResources]);
+
   const isLoading = practitionersLoading || institutionsLoading || practitionerServicesLoading || institutionServicesLoading || practitionerLocationsLoading || institutionLocationsLoading || peerCounselingLoading;
 
   useEffect(() => {
@@ -403,15 +431,13 @@ const Index = () => {
       )}
 
       {/* Search and Browse Section */}
-      <div className="mb-8 sm:mb-10">
-        <div className="bg-card rounded-xl p-6 card-shadow">
-          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-6">
-            Browse All Resources
-          </h2>
+      <div className="mb-6">
+        <div className="bg-card rounded-lg p-4">
           <SearchAndFilters
             filters={filters}
             onFiltersChange={setFilters}
             institutionNames={institutionNames}
+            filterOptions={filterOptions}
           />
         </div>
         <div className="mt-4">
