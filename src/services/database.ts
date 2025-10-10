@@ -264,11 +264,7 @@ export const databaseService = {
       .from("institution_services")
       .select(
         `
-        service(
-          *,
-          book_contact:contact_details!service_book_cta_fkey(id, link),
-          learn_more_contact:contact_details!service_learn_more_cta_fkey(id, link)
-        )
+        service(*)
       `,
       )
       .eq("institution_id", institutionId);
@@ -278,16 +274,50 @@ export const databaseService = {
       throw error;
     }
 
-    // Flatten + normalize links to avoid relative-routing like /bureau/{id}
-    return (data ?? []).map((row: any) => {
-      const book_link = normalizeLink(row.service?.book_contact?.link ?? null);
-      const learn_more_link = normalizeLink(row.service?.learn_more_contact?.link ?? null);
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    // Get all unique CTA IDs
+    const ctaIds = new Set<number>();
+    data.forEach((item: any) => {
+      if (item.service?.book_cta) ctaIds.add(item.service.book_cta);
+      if (item.service?.learn_more_cta) ctaIds.add(item.service.learn_more_cta);
+    });
+
+    if (ctaIds.size === 0) {
+      return data;
+    }
+
+    // Fetch contact details for all CTAs
+    const { data: contactData, error: contactError } = await supabase
+      .from('contact_details')
+      .select('id, link')
+      .in('id', Array.from(ctaIds));
+
+    if (contactError) {
+      console.error("Error fetching contact details:", contactError);
+      return data;
+    }
+
+    // Create a map of contact ID to normalized link
+    const contactMap = new Map<number, string | null>();
+    contactData?.forEach(c => {
+      const normalized = normalizeLink(c.link);
+      contactMap.set(c.id, normalized);
+    });
+    
+    // Return services with properly structured contact objects
+    return data.map((row: any) => {
+      const bookLink = row.service?.book_cta ? contactMap.get(row.service.book_cta) : null;
+      const learnMoreLink = row.service?.learn_more_cta ? contactMap.get(row.service.learn_more_cta) : null;
+      
       return {
         ...row,
         service: {
           ...row.service,
-          book_link,
-          learn_more_link,
+          book_contact: bookLink ? { link: bookLink } : null,
+          learn_more_contact: learnMoreLink ? { link: learnMoreLink } : null,
         },
       };
     });
