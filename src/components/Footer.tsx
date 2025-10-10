@@ -19,14 +19,14 @@ export const Footer = () => {
             />
           </div>
           <p className="text-white/90 max-w-2xl text-lg">
-            Your trusted directory for mental health resources. Connecting you with qualified psychologists,
+            Your directory for mental health resources. Connecting you with  psychologists,
             psychiatrists, and mental health clinics across Indonesia.
           </p>
         </div>
 
         {/* Footer Content Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          {/* Quick Links */}
+          {/* Quick Links
           <div>
             <h3 className="text-xl font-semibold mb-4 flex items-center">Counseling Quick Links</h3>
             <ul className="space-y-3">
@@ -51,6 +51,15 @@ export const Footer = () => {
                 </a>
               </li>
             </ul>
+          </div> */}
+          <div className="md:col-start-1">
+            <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
+            <div className="space-y-3">
+              <div className="bg-white/10 rounded-lg p-4">
+                <p className="font-medium mb-1">📞 WhatsApp</p>
+                <p className="text-white/90">+62-813-2393-1225</p>
+              </div>
+            </div>
           </div>
 
           {/* 
@@ -64,15 +73,19 @@ export const Footer = () => {
               <li><a href="#organizations" className="text-white/80 hover:text-white transition-colors">Communities</a></li>
             </ul>
           </div>*/}
+          <div className="md:col-start-2">
+            <h3 className="text-xl font-semibold mb-4"></h3>
+            <div className="space-y-3">
+              <div className="bg-white/10 rounded-lg p-4">
+                <p className="font-medium mb-1">📷 Instagram</p>
+                <p className="text-white/90">@mentalwellnessmovieclub</p>
+              </div>
+            </div>
+          </div>
 
           {/* Mental Health Resources */}
           <div className="md:col-start-3">
             <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
-            <div className="space-y-3">
-              <div className="bg-white/10 rounded-lg p-4">
-                <p className="font-medium mb-1">📞 WhatsApp</p>
-                <p className="text-white/90">+62-813-2393-1225</p>
-              </div>
               <div className="bg-white/10 rounded-lg p-4">
                 <p className="font-medium mb-1">📧 Email</p>
                 <p className="text-white/90">elysium.mcare@gmail.com</p>
