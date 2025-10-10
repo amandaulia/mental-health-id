@@ -130,16 +130,13 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
                 {bureau.specializations.length > 0 && (
                   <div className="space-y-2">
                     <p className="font-medium text-sm">Specializations</p>
-                    {renderToggleableTags(
-                      bureau.specializations,
-                      showMoreSpecializations,
-                      setShowMoreSpecializations,
-                      (spec) => (
-                        <Badge variant="outline" className="text-xs">
+                    <div className="flex flex-wrap gap-2">
+                      {bureau.specializations.map((spec, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
                           {spec}
                         </Badge>
-                      )
-                    )}
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
