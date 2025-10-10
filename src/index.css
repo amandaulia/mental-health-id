@@ -55,10 +55,10 @@ All colors MUST be HSL.
     --lavender-foreground: 270, 20%, 30%;
     
     /* Insurance badge colors */
-    --insurance-bpjs: 134, 50%, 85%;
-    --insurance-bpjs-foreground: 134, 60%, 25%;
-    --insurance-private: 200, 60%, 85%;
-    --insurance-private-foreground: 200, 70%, 25%;
+    --insurance-bpjs: 134, 50%, 90%;
+    --insurance-bpjs-foreground: 134, 70%, 30%;
+    --insurance-private: 200, 70%, 90%;
+    --insurance-private-foreground: 200, 80%, 30%;
 
     /* Original bright colors for Mental Health text */
     --mental-health-bright: 15, 85%, 55%;
