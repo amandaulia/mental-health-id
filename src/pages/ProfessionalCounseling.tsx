@@ -322,9 +322,10 @@ const ProfessionalCounseling = () => {
     const insuranceTypes = new Set<string>();
 
     [...allPractitioners, ...allBureaus].forEach(resource => {
-      // Extract city
-      if (resource.city) {
-        cities.add(`${resource.city}, Indonesia`);
+      // Extract city - exclude "Unknown City" and ensure proper formatting
+      if (resource.city && resource.city !== 'Unknown City') {
+        const cityName = resource.city.split(',')[0].trim(); // Extract just the city name
+        cities.add(`${cityName}, Indonesia`);
       }
 
       // Extract specializations
