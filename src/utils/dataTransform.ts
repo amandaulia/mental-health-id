@@ -178,7 +178,7 @@ const mapProfessionTypes = (dbTypes: string[]): ProfessionType[] => {
 };
 
 const mapSpecializations = (dbSpecs: string[]): Specialization[] => {
-  return dbSpecs.map(spec => {
+  const mapped = dbSpecs.map(spec => {
     switch (spec) {
       case "PERSONALITY":
         return "Clinical Psychology";
@@ -211,7 +211,10 @@ const mapSpecializations = (dbSpecs: string[]): Specialization[] => {
       default:
         return "Clinical Psychology";
     }
-  }) as Specialization[];
+  });
+  
+  // Remove duplicates
+  return Array.from(new Set(mapped)) as Specialization[];
 };
 
 const mapInsuranceTypes = (dbInsurance: string[]): InsuranceType[] => {
