@@ -150,6 +150,10 @@ const ProfessionalCounseling = () => {
       const allModes = rawServices.flatMap((item: any) => item.service?.session_mode || []);
       const uniqueModes = Array.from(new Set(allModes.map((mode: string) => mode.toLowerCase()))) as any;
       
+      if (institution.name === 'Kalm' || institution.name === 'Ibunda') {
+        console.log('Institution modes debug:', institution.name, 'rawModes:', allModes, 'uniqueModes:', uniqueModes);
+      }
+      
       // Get locations for this institution
       const locations = institutionLocations[institution.id] || [];
       const cities = locations.map((loc: any) => loc.city).filter(Boolean);
