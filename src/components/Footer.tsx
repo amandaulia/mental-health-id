@@ -74,7 +74,7 @@ export const Footer = () => {
             </ul>
           </div>*/}
           <div className="md:col-start-2">
-            <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
+            <h3 className="text-xl font-semibold mb-4"></h3>
             <div className="space-y-3">
               <div className="bg-white/10 rounded-lg p-4">
                 <p className="font-medium mb-1">📷 Instagram</p>
@@ -85,7 +85,7 @@ export const Footer = () => {
 
           {/* Mental Health Resources */}
           <div className="md:col-start-3">
-            <h3 className="text-xl font-semibold mb-4"> </h3>
+            <h3 className="text-xl font-semibold mb-4"></h3>
             <div className="bg-white/10 rounded-lg p-4">
               <p className="font-medium mb-1">📧 Email</p>
               <p className="text-white/90">elysium.mcare@gmail.com</p>
