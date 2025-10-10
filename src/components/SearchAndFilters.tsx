@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, Building2, User, Heart, Monitor, Settings, ChevronDown, Filter, X } from "lucide-react";
 import {
@@ -80,11 +80,11 @@ export const SearchAndFilters = ({
   };
 
   // Update local state when filters change from parent
-  useState(() => {
+  useEffect(() => {
     setPriceRange(filters.priceRange);
     setMinPriceInput(filters.priceRange[0].toString());
     setMaxPriceInput(filters.priceRange[1].toString());
-  });
+  }, [filters.priceRange]);
 
   const handleSearchChange = (value: string) => {
     onFiltersChange({ ...filters, search: value });
