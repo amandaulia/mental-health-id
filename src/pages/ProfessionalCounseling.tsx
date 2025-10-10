@@ -315,6 +315,36 @@ const ProfessionalCounseling = () => {
     return Array.from(names);
   }, [allPractitioners, allBureaus]);
 
+  const filterOptions = useMemo(() => {
+    const cities = new Set<string>();
+    const specializations = new Set<string>();
+    const sessionModes = new Set<string>();
+    const insuranceTypes = new Set<string>();
+
+    [...allPractitioners, ...allBureaus].forEach(resource => {
+      // Extract city
+      if (resource.city) {
+        cities.add(`${resource.city}, Indonesia`);
+      }
+
+      // Extract specializations
+      resource.specializations.forEach(spec => specializations.add(spec));
+
+      // Extract session modes
+      resource.modes.forEach(mode => sessionModes.add(mode));
+
+      // Extract insurance types
+      resource.insurance.forEach(ins => insuranceTypes.add(ins));
+    });
+
+    return {
+      cities: Array.from(cities).sort(),
+      specializations: Array.from(specializations).sort(),
+      sessionModes: Array.from(sessionModes).sort(),
+      insuranceTypes: Array.from(insuranceTypes).sort()
+    };
+  }, [allPractitioners, allBureaus]);
+
   const isLoading = practitionersLoading || institutionsLoading || practitionerServicesLoading || institutionServicesLoading || practitionerLocationsLoading || institutionLocationsLoading;
 
   useEffect(() => {
@@ -355,6 +385,7 @@ const ProfessionalCounseling = () => {
             filters={filters}
             onFiltersChange={setFilters}
             institutionNames={institutionNames}
+            filterOptions={filterOptions}
           />
         </div>
         <div className="mt-4">
