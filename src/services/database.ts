@@ -256,15 +256,9 @@ export const databaseService = {
 
   // Fetch services for an institution with contact details for CTAs
   async getServicesByInstitution(institutionId: number) {
-    const { data, error } = await supabase
+    const { data: servicesData, error } = await supabase
       .from('institution_services')
-      .select(`
-        service (
-          *,
-          book_contact:book_cta (id, link),
-          learn_more_contact:learn_more_cta (id, link)
-        )
-      `)
+      .select('service(*)')
       .eq('institution_id', institutionId);
     
     if (error) {
@@ -272,7 +266,35 @@ export const databaseService = {
       throw error;
     }
     
-    return data;
+    // Get all unique CTA IDs
+    const ctaIds = new Set<number>();
+    servicesData?.forEach((item: any) => {
+      if (item.service?.book_cta) ctaIds.add(item.service.book_cta);
+      if (item.service?.learn_more_cta) ctaIds.add(item.service.learn_more_cta);
+    });
+    
+    // Fetch contact details for all CTAs
+    const { data: contactData, error: contactError } = await supabase
+      .from('contact_details')
+      .select('id, link')
+      .in('id', Array.from(ctaIds));
+    
+    if (contactError) {
+      console.error('Error fetching contact details:', contactError);
+    }
+    
+    // Create a map of contact ID to link
+    const contactMap = new Map(contactData?.map(c => [c.id, c.link]) || []);
+    
+    // Enhance services with contact links
+    return servicesData?.map((item: any) => ({
+      ...item,
+      service: {
+        ...item.service,
+        book_contact: item.service?.book_cta ? { id: item.service.book_cta, link: contactMap.get(item.service.book_cta) } : null,
+        learn_more_contact: item.service?.learn_more_cta ? { id: item.service.learn_more_cta, link: contactMap.get(item.service.learn_more_cta) } : null,
+      }
+    }));
   },
 
   // Fetch contact details (generic function that can be used for both practitioners and institutions)
