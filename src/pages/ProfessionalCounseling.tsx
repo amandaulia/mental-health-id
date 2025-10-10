@@ -136,7 +136,11 @@ const ProfessionalCounseling = () => {
       
       const rawServices = allPractitionerServices[p.id] || [];
       const allModes = rawServices.flatMap((item: any) => item.service?.session_mode || []);
-      const uniqueModes = Array.from(new Set(allModes.map((mode: string) => mapMode(mode)))) as any;
+      const uniqueModesSet = Array.from(new Set(allModes.map((mode: string) => mapMode(mode))));
+      
+      // Sort modes in the desired order: text, voice, video, offline
+      const modeOrder = ['text', 'voice', 'video', 'offline'];
+      const uniqueModes = uniqueModesSet.sort((a, b) => modeOrder.indexOf(a) - modeOrder.indexOf(b)) as any;
       
       const transformed = transformPractitioner(p);
       return {
@@ -166,7 +170,11 @@ const ProfessionalCounseling = () => {
       };
       
       const allModes = rawServices.flatMap((item: any) => item.service?.session_mode || []);
-      const uniqueModes = Array.from(new Set(allModes.map((mode: string) => mapMode(mode)))) as any;
+      const uniqueModesSet = Array.from(new Set(allModes.map((mode: string) => mapMode(mode))));
+      
+      // Sort modes in the desired order: text, voice, video, offline
+      const modeOrder = ['text', 'voice', 'video', 'offline'];
+      const uniqueModes = uniqueModesSet.sort((a, b) => modeOrder.indexOf(a) - modeOrder.indexOf(b)) as any;
       
       // Get locations for this institution
       const locations = institutionLocations[institution.id] || [];
