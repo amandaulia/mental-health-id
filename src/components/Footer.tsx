@@ -66,7 +66,7 @@ export const Footer = () => {
           </div>*/}
 
           {/* Mental Health Resources */}
-          <div>
+          <div className="md:col-start-3">
             <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
             <div className="space-y-3">
               <div className="bg-white/10 rounded-lg p-4">
