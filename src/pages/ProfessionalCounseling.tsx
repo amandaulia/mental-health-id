@@ -359,9 +359,7 @@ const ProfessionalCounseling = () => {
       }
     });
 
-    // Only reset if no prices were found in the data
-    if (minPrice === Infinity) minPrice = 0;
-    if (maxPrice === 0) maxPrice = 0;
+    // Keep the calculated prices from database - don't override with hardcoded values
 
     return {
       cities: Array.from(cities).sort(),
