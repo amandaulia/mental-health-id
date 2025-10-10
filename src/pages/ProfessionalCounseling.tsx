@@ -361,7 +361,7 @@ const ProfessionalCounseling = () => {
 
     // Set defaults if no prices found
     if (minPrice === Infinity) minPrice = 0;
-    if (maxPrice === 0) maxPrice = 525000;
+    if (maxPrice === 0) maxPrice = 3799000;
 
     return {
       cities: Array.from(cities).sort(),
