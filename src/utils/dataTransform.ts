@@ -152,16 +152,16 @@ const mapInstitutionType = (dbType: string): BureauType => {
 const mapSessionMode = (dbMode: string) => {
   const normalizedMode = dbMode?.toUpperCase().replace(/\s/g, '_');
   switch (normalizedMode) {
-    case "Chat":
-      return "Text/Chat";
-    case "Voice Call":
-      return "Voice Call";
-    case "Video Call":
-      return "Video Call";
-    case "Offline":
-      return "In-Person";
+    case "CHAT":
+      return "text";
+    case "VOICE_CALL":
+      return "voice";
+    case "VIDEO_CALL":
+      return "video";
+    case "OFFLINE":
+      return "offline";
     default:
-      return "Others";
+      return "offline"; // Default to offline instead of "Others"
   }
 };
 
