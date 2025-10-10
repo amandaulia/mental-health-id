@@ -265,13 +265,21 @@ export const databaseService = {
       console.error('Error fetching services:', error);
       throw error;
     }
+
+    if (!servicesData || servicesData.length === 0) {
+      return [];
+    }
     
     // Get all unique CTA IDs
     const ctaIds = new Set<number>();
-    servicesData?.forEach((item: any) => {
+    servicesData.forEach((item: any) => {
       if (item.service?.book_cta) ctaIds.add(item.service.book_cta);
       if (item.service?.learn_more_cta) ctaIds.add(item.service.learn_more_cta);
     });
+    
+    if (ctaIds.size === 0) {
+      return servicesData;
+    }
     
     // Fetch contact details for all CTAs
     const { data: contactData, error: contactError } = await supabase
@@ -281,20 +289,35 @@ export const databaseService = {
     
     if (contactError) {
       console.error('Error fetching contact details:', contactError);
+      return servicesData;
     }
     
     // Create a map of contact ID to link
-    const contactMap = new Map(contactData?.map(c => [c.id, c.link]) || []);
+    const contactMap = new Map<number, string | null>();
+    contactData?.forEach(c => {
+      if (c.link) {
+        contactMap.set(c.id, c.link);
+      }
+    });
+    
+    console.log('Contact map:', Object.fromEntries(contactMap));
     
     // Enhance services with contact links
-    return servicesData?.map((item: any) => ({
-      ...item,
-      service: {
-        ...item.service,
-        book_contact: item.service?.book_cta ? { id: item.service.book_cta, link: contactMap.get(item.service.book_cta) } : null,
-        learn_more_contact: item.service?.learn_more_cta ? { id: item.service.learn_more_cta, link: contactMap.get(item.service.learn_more_cta) } : null,
-      }
-    }));
+    return servicesData.map((item: any) => {
+      const bookLink = item.service?.book_cta ? contactMap.get(item.service.book_cta) : null;
+      const learnMoreLink = item.service?.learn_more_cta ? contactMap.get(item.service.learn_more_cta) : null;
+      
+      console.log(`Service ${item.service?.id}: book_cta=${item.service?.book_cta}, bookLink=${bookLink}, learn_more_cta=${item.service?.learn_more_cta}, learnMoreLink=${learnMoreLink}`);
+      
+      return {
+        ...item,
+        service: {
+          ...item.service,
+          book_contact: bookLink ? { id: item.service.book_cta, link: bookLink } : null,
+          learn_more_contact: learnMoreLink ? { id: item.service.learn_more_cta, link: learnMoreLink } : null,
+        }
+      };
+    });
   },
 
   // Fetch contact details (generic function that can be used for both practitioners and institutions)
