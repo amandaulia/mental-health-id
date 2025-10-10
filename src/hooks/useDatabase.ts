@@ -101,3 +101,10 @@ export const useLocations = () => {
     queryFn: databaseService.getLocations,
   });
 };
+
+export const usePeerCounseling = () => {
+  return useQuery({
+    queryKey: ['peer-counseling'],
+    queryFn: databaseService.getPeerCounseling,
+  });
+};
