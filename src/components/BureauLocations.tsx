@@ -29,6 +29,9 @@ export const BureauLocations = ({ locations }: BureauLocationsProps) => {
           const encodedAddress = encodeURIComponent(location.address);
           const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
           
+          console.log('Location data:', location);
+          console.log('Maps URL:', mapsUrl);
+          
           return (
             <Card key={location.id} className="p-4">
               <div className="space-y-3">
@@ -48,13 +51,18 @@ export const BureauLocations = ({ locations }: BureauLocationsProps) => {
                   href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-muted rounded-lg h-48 flex flex-col items-center justify-center hover:bg-muted/80 transition-colors group no-underline"
+                  onClick={(e) => {
+                    console.log('Link clicked!', mapsUrl);
+                  }}
+                  className="block bg-muted rounded-lg h-48 hover:bg-muted/80 transition-colors group no-underline"
                 >
-                  <MapPin className="h-8 w-8 text-muted-foreground mb-2 group-hover:text-foreground transition-colors" />
-                  <p className="text-muted-foreground text-sm group-hover:text-foreground transition-colors flex items-center gap-1">
-                    Click to open in Google Maps
-                    <ExternalLink className="h-3 w-3" />
-                  </p>
+                  <div className="h-full flex flex-col items-center justify-center">
+                    <MapPin className="h-8 w-8 text-muted-foreground mb-2 group-hover:text-foreground transition-colors" />
+                    <p className="text-muted-foreground text-sm group-hover:text-foreground transition-colors flex items-center gap-1">
+                      Click to open in Google Maps
+                      <ExternalLink className="h-3 w-3" />
+                    </p>
+                  </div>
                 </a>
               </div>
             </Card>
