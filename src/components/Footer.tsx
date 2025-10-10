@@ -19,8 +19,8 @@ export const Footer = () => {
             />
           </div>
           <p className="text-white/90 max-w-2xl text-lg">
-            Your directory for mental health resources. Connecting you with  psychologists,
-            psychiatrists, and mental health clinics across Indonesia.
+            Your directory for mental health resources. Connecting you with psychologists, psychiatrists, and mental
+            health clinics across Indonesia.
           </p>
         </div>
 
@@ -53,7 +53,7 @@ export const Footer = () => {
             </ul>
           </div> */}
           <div className="md:col-start-1">
-            <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
+            <h3 className="text-xl font-semibold mb-4"> </h3>
             <div className="space-y-3">
               <div className="bg-white/10 rounded-lg p-4">
                 <p className="font-medium mb-1">📞 WhatsApp</p>
@@ -74,7 +74,7 @@ export const Footer = () => {
             </ul>
           </div>*/}
           <div className="md:col-start-2">
-            <h3 className="text-xl font-semibold mb-4"></h3>
+            <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
             <div className="space-y-3">
               <div className="bg-white/10 rounded-lg p-4">
                 <p className="font-medium mb-1">📷 Instagram</p>
@@ -85,11 +85,11 @@ export const Footer = () => {
 
           {/* Mental Health Resources */}
           <div className="md:col-start-3">
-            <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
-              <div className="bg-white/10 rounded-lg p-4">
-                <p className="font-medium mb-1">📧 Email</p>
-                <p className="text-white/90">elysium.mcare@gmail.com</p>
-              </div>
+            <h3 className="text-xl font-semibold mb-4"> </h3>
+            <div className="bg-white/10 rounded-lg p-4">
+              <p className="font-medium mb-1">📧 Email</p>
+              <p className="text-white/90">elysium.mcare@gmail.com</p>
+            </div>
           </div>
         </div>
 
