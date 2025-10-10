@@ -219,7 +219,7 @@ export const databaseService = {
     return data;
   },
 
-  // Fetch contact details for an institution
+  // Fetch contact details for an institution with location information
   async getContactDetailsByInstitution(institutionId: number) {
     const { data, error } = await supabase
       .from("institution_contacts")
@@ -236,7 +236,31 @@ export const databaseService = {
       throw error;
     }
 
-    return data?.map((item) => item.contact_details).filter(Boolean) || [];
+    const contacts = data?.map((item) => item.contact_details).filter(Boolean) || [];
+
+    // Fetch location information for each contact
+    const contactsWithLocations = await Promise.all(
+      contacts.map(async (contact: any) => {
+        const { data: locationData } = await supabase
+          .from("location_contacts")
+          .select(`
+            location:location_id(
+              id,
+              name,
+              address,
+              city
+            )
+          `)
+          .eq("contact_id", contact.id);
+
+        return {
+          ...contact,
+          location: locationData?.[0]?.location || null
+        };
+      })
+    );
+
+    return contactsWithLocations;
   },
 
   // Fetch services for a practitioner with institution data
