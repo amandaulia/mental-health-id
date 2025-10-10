@@ -1,4 +1,5 @@
 import { Users, Heart, Palette, Building2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const About = () => {
   return (
@@ -49,7 +50,8 @@ const About = () => {
                   </div>
                   <p className="text-muted-foreground">Licensed psychologists, psychiatrists, and mental health clinics with detailed profiles, specializations, and contact information.</p>
                 </div>
-                <div className="p-4 bg-muted/50 rounded-lg">
+                <div className="p-4 bg-muted/50 rounded-lg relative">
+                  <Badge className="absolute top-2 right-2 bg-amber-500 text-white">Coming Soon</Badge>
                   <div className="flex items-center gap-3 mb-2">
                     <Heart className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-lg">Peer Counseling & Support Groups</h3>
@@ -58,14 +60,16 @@ const About = () => {
                 </div>
               </div>
               <div className="space-y-4">
-                <div className="p-4 bg-muted/50 rounded-lg">
+                <div className="p-4 bg-muted/50 rounded-lg relative">
+                  <Badge className="absolute top-2 right-2 bg-amber-500 text-white">Coming Soon</Badge>
                   <div className="flex items-center gap-3 mb-2">
                     <Palette className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-lg">Stress Relief Activities</h3>
                   </div>
                   <p className="text-muted-foreground">Art therapy, music therapy, sports activities, and other wellness programs designed to promote mental well-being.</p>
                 </div>
-                <div className="p-4 bg-muted/50 rounded-lg">
+                <div className="p-4 bg-muted/50 rounded-lg relative">
+                  <Badge className="absolute top-2 right-2 bg-amber-500 text-white">Coming Soon</Badge>
                   <div className="flex items-center gap-3 mb-2">
                     <Building2 className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-lg">Organizations & Communities</h3>
