@@ -26,8 +26,9 @@ export const BureauLocations = ({ locations }: BureauLocationsProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         {locations.map((location) => {
-          const encodedAddress = encodeURIComponent(location.address);
-          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+          const locationQuery = `${location.name || ''} ${location.address}`.trim();
+          const encodedQuery = encodeURIComponent(locationQuery);
+          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedQuery}`;
           
           console.log('Location data:', location);
           console.log('Maps URL:', mapsUrl);
