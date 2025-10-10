@@ -254,11 +254,17 @@ export const databaseService = {
     return data;
   },
 
-  // Fetch services for an institution
+  // Fetch services for an institution with contact details for CTAs
   async getServicesByInstitution(institutionId: number) {
     const { data, error } = await supabase
       .from('institution_services')
-      .select('service(*)')
+      .select(`
+        service (
+          *,
+          book_contact:book_cta (id, link),
+          learn_more_contact:learn_more_cta (id, link)
+        )
+      `)
       .eq('institution_id', institutionId);
     
     if (error) {

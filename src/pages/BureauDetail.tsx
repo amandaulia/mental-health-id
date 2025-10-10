@@ -13,7 +13,6 @@ import { useInstitution, usePractitionersByInstitution, useServicesByInstitution
 import { transformInstitution, transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
 import { Bureau, Practitioner, Service } from "@/types";
 import { BureauLocations } from "@/components/BureauLocations";
-import { supabase } from "@/integrations/supabase/client";
 
 const BureauDetail = () => {
   const { id } = useParams();
@@ -31,83 +30,32 @@ const BureauDetail = () => {
   const { data: dbLocations, isLoading: locationsLoading } = useLocationsByInstitution(institutionId);
 
   useEffect(() => {
-    const fetchServiceCTAs = async () => {
-      if (dbInstitution && dbServices) {
-        // Extract all unique CTA IDs from services
-        const ctaIds = new Set<number>();
-        dbServices.forEach((item: any) => {
-          if (item.service?.book_cta) ctaIds.add(item.service.book_cta);
-          if (item.service?.learn_more_cta) ctaIds.add(item.service.learn_more_cta);
-        });
-
-        console.log('CTA IDs to fetch:', Array.from(ctaIds));
-
-        // Fetch contact details for these CTA IDs
-        const { data: ctaContacts, error } = await supabase
-          .from('contact_details')
-          .select('*')
-          .in('id', Array.from(ctaIds));
+    if (dbInstitution && dbServices) {
+      const transformedServices = dbServices.map((item: any) => {
+        const service = transformService(item.service);
         
-        if (error) {
-          console.error('Error fetching CTA contacts:', error);
-          return;
+        // Use the joined contact details for CTAs
+        if (item.service?.book_contact?.link) {
+          service.bookingUrl = item.service.book_contact.link;
         }
-
-        console.log('Fetched CTA contacts:', ctaContacts);
         
-        // Create a map of contact detail IDs to links
-        const contactLinkMap = new Map();
-        ctaContacts?.forEach((contact: any) => {
-          contactLinkMap.set(contact.id, contact.link);
-        });
+        if (item.service?.learn_more_contact?.link) {
+          service.learnMoreUrl = item.service.learn_more_contact.link;
+        }
         
-        console.log('Contact link map:', Object.fromEntries(contactLinkMap));
-        
-        const transformedServices = dbServices.map((item: any) => {
-          const service = transformService(item.service);
-          
-          console.log('Processing service:', service.name, {
-            bookingUrlId: service.bookingUrl,
-            learnMoreUrlId: service.learnMoreUrl
-          });
-          
-          // Map CTA IDs to actual contact detail links
-          if (service.bookingUrl && contactLinkMap.has(parseInt(service.bookingUrl))) {
-            service.bookingUrl = contactLinkMap.get(parseInt(service.bookingUrl));
-            console.log('  -> Set booking URL to:', service.bookingUrl);
-          } else {
-            service.bookingUrl = undefined;
-          }
-          
-          if (service.learnMoreUrl && contactLinkMap.has(parseInt(service.learnMoreUrl))) {
-            service.learnMoreUrl = contactLinkMap.get(parseInt(service.learnMoreUrl));
-            console.log('  -> Set learn more URL to:', service.learnMoreUrl);
-          } else {
-            service.learnMoreUrl = undefined;
-          }
-          
-          return service;
-        });
-        
-        console.log('Final transformed services:', transformedServices.map(s => ({
-          name: s.name,
-          bookingUrl: s.bookingUrl,
-          learnMoreUrl: s.learnMoreUrl
-        })));
-        
-        // Also get institution contact details for the sidebar
-        const contactDetails = dbContactDetails ? transformContactDetails(dbContactDetails) : {
-          whatsapp: undefined,
-          website: undefined,
-          instagram: undefined
-        };
-        
-        setBureau(transformInstitution(dbInstitution, transformedServices, contactDetails));
-        setServices(transformedServices);
-      }
-    };
-
-    fetchServiceCTAs();
+        return service;
+      });
+      
+      // Get institution contact details for the sidebar
+      const contactDetails = dbContactDetails ? transformContactDetails(dbContactDetails) : {
+        whatsapp: undefined,
+        website: undefined,
+        instagram: undefined
+      };
+      
+      setBureau(transformInstitution(dbInstitution, transformedServices, contactDetails));
+      setServices(transformedServices);
+    }
   }, [dbInstitution, dbServices, dbContactDetails]);
 
   useEffect(() => {
