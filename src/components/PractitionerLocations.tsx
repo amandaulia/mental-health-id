@@ -49,7 +49,7 @@ export const PractitionerLocations = ({ locations }: PractitionerLocationsProps)
                 {/* Map Preview - Click to open in Google Maps */}
                 <a
                   href={mapsUrl}
-                  target="_blank"
+                  target="_top"
                   rel="noopener noreferrer"
                   onClick={(e) => {
                     console.log('Link clicked!', mapsUrl);

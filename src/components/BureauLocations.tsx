@@ -49,7 +49,7 @@ export const BureauLocations = ({ locations }: BureauLocationsProps) => {
                 {/* Map Preview - Click to open in Google Maps */}
                 <a
                   href={mapsUrl}
-                  target="_blank"
+                  target="_top"
                   rel="noopener noreferrer"
                   onClick={(e) => {
                     console.log('Link clicked!', mapsUrl);
