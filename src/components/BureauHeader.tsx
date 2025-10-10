@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ModeIcon } from "./ModeIcon";
 import { Bureau } from "@/types";
 import { useState } from "react";
+import { Hospital } from "lucide-react";
 
 interface BureauHeaderProps {
   bureau: Bureau;
@@ -53,11 +54,28 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
             {/* Left side - Image and Basic Info */}
             <div className="flex flex-col sm:flex-row gap-4 flex-1">
               <div className="flex-shrink-0">
-                <img
-                  src={bureau.image || "/placeholder.svg"}
-                  alt={bureau.name}
-                  className="w-32 h-32 rounded-lg object-cover"
-                />
+                {bureau.image ? (
+                  <img
+                    src={bureau.image}
+                    alt={bureau.name}
+                    className="w-32 h-32 rounded-lg object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'w-32 h-32 bg-primary/10 rounded-lg flex items-center justify-center';
+                        placeholder.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M12 6v4"/><path d="M14 14h-4"/><path d="M14 18h-4"/><path d="M14 8h-4"/><path d="M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2"/><path d="M18 22V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v18"/></svg>';
+                        parent.appendChild(placeholder);
+                      }
+                    }}
+                  />
+                ) : (
+                  <div className="w-32 h-32 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Hospital className="h-12 w-12 text-primary" />
+                  </div>
+                )}
               </div>
               
               <div className="flex-1 space-y-4">
