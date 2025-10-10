@@ -359,9 +359,9 @@ const ProfessionalCounseling = () => {
       }
     });
 
-    // Set defaults if no prices found
+    // Use calculated prices from database, only set defaults if truly no data
     if (minPrice === Infinity) minPrice = 0;
-    if (maxPrice === 0) maxPrice = 3799000;
+    if (maxPrice === 0) maxPrice = minPrice > 0 ? minPrice : 100000; // Use minPrice if available, otherwise reasonable default
 
     return {
       cities: Array.from(cities).sort(),
