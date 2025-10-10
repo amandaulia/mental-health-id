@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { MapPin, ExternalLink } from "lucide-react";
 
 interface Location {
@@ -47,21 +48,23 @@ export const BureauLocations = ({ locations }: BureauLocationsProps) => {
                   </div>
                 </div>
 
-                {/* Map Preview - Click to open in Google Maps */}
-                <a
-                  href={mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block bg-muted rounded-lg h-48 hover:bg-muted/80 transition-colors group no-underline"
+                {/* Open in Google Maps Button */}
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full"
                 >
-                  <div className="h-full flex flex-col items-center justify-center">
-                    <MapPin className="h-8 w-8 text-muted-foreground mb-2 group-hover:text-foreground transition-colors" />
-                    <p className="text-muted-foreground text-sm group-hover:text-foreground transition-colors flex items-center gap-1">
-                      Click to open in Google Maps
-                      <ExternalLink className="h-3 w-3" />
-                    </p>
-                  </div>
-                </a>
+                  <a
+                    href={mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <MapPin className="h-4 w-4" />
+                    Open in Google Maps
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </Button>
               </div>
             </Card>
           );
