@@ -20,7 +20,7 @@ const ProfessionalCounseling = () => {
     institutions: [],
     professionTypes: [],
     specializations: [],
-    priceRange: [0, 525000],
+    priceRange: [0, 2000000], // Will be updated by useEffect
     modes: [],
     insurance: []
   });
@@ -206,7 +206,7 @@ const ProfessionalCounseling = () => {
       institutions: [],
       professionTypes: [],
       specializations: [],
-      priceRange: [0, filterOptions.maxPrice || 525000],
+      priceRange: [filterOptions.minPrice || 0, filterOptions.maxPrice || 525000],
       modes: [],
       insurance: []
     });
@@ -320,7 +320,8 @@ const ProfessionalCounseling = () => {
     const specializations = new Set<string>();
     const sessionModes = new Set<string>();
     const insuranceTypes = new Set<string>();
-    let maxPrice = 525000; // default
+    let minPrice = Infinity;
+    let maxPrice = 0;
 
     [...allPractitioners, ...allBureaus].forEach(resource => {
       // Extract city - exclude "Unknown City" and ensure proper formatting
@@ -338,10 +339,11 @@ const ProfessionalCounseling = () => {
       // Extract insurance types
       resource.insurance.forEach(ins => insuranceTypes.add(ins));
 
-      // Calculate max price
+      // Calculate min and max price
       if (resource.type === 'practitioner') {
-        const prices = resource.services.map(s => s.price).filter(Boolean);
+        const prices = resource.services.map(s => s.price).filter(p => p != null && p > 0);
         if (prices.length > 0) {
+          minPrice = Math.min(minPrice, ...prices);
           maxPrice = Math.max(maxPrice, ...prices);
         }
       } else {
@@ -350,32 +352,40 @@ const ProfessionalCounseling = () => {
           const priceMatch = resource.priceRange.match(/[\d.,]+/g);
           if (priceMatch) {
             const prices = priceMatch.map(p => parseFloat(p.replace(/[.,]/g, '')));
+            minPrice = Math.min(minPrice, ...prices);
             maxPrice = Math.max(maxPrice, ...prices);
           }
         }
       }
     });
 
+    // Set defaults if no prices found
+    if (minPrice === Infinity) minPrice = 0;
+    if (maxPrice === 0) maxPrice = 525000;
+
     return {
       cities: Array.from(cities).sort(),
       specializations: Array.from(specializations).sort(),
       sessionModes: Array.from(sessionModes).sort(),
       insuranceTypes: Array.from(insuranceTypes).sort(),
+      minPrice: Math.floor(minPrice / 25000) * 25000, // Round down to nearest 25000
       maxPrice: Math.ceil(maxPrice / 25000) * 25000 // Round up to nearest 25000
     };
   }, [allPractitioners, allBureaus]);
 
   // Update price range when filterOptions change
+  const prevMinPrice = React.useRef(0);
   const prevMaxPrice = React.useRef(525000);
   React.useEffect(() => {
-    if (filterOptions.maxPrice && filterOptions.maxPrice !== prevMaxPrice.current) {
+    if (filterOptions.minPrice !== prevMinPrice.current || filterOptions.maxPrice !== prevMaxPrice.current) {
+      prevMinPrice.current = filterOptions.minPrice;
       prevMaxPrice.current = filterOptions.maxPrice;
       setFilters(prev => ({
         ...prev,
-        priceRange: [0, filterOptions.maxPrice]
+        priceRange: [filterOptions.minPrice, filterOptions.maxPrice]
       }));
     }
-  }, [filterOptions.maxPrice]);
+  }, [filterOptions.minPrice, filterOptions.maxPrice]);
 
   const isLoading = practitionersLoading || institutionsLoading || practitionerServicesLoading || institutionServicesLoading || practitionerLocationsLoading || institutionLocationsLoading;
 
