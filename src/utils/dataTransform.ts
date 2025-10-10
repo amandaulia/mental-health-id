@@ -133,18 +133,18 @@ export const transformContactDetails = (dbContacts: any[]): ContactDetails => {
 const mapInstitutionType = (dbType: string): BureauType => {
   switch (dbType) {
     case "Private Practice":
-      return "Private Practice";
+      return "independent";
     case "Clinic":
-      return "Clinic";
+      return "clinic";
     case "Faskes 1":
-      return "Faskes1";
+      return "faskes1";
     case "Faskes 2":
-      return "Faskes2";
+      return "faskes2";
     case "Faskes 3":
     case "Private Hospital":
-      return "Faskes2";
+      return "faskes2";
     default:
-      return "Clinic";
+      return "clinic";
   }
 };
 
@@ -182,7 +182,7 @@ const mapProfessionTypes = (dbTypes: string[]): ProfessionType[] => {
 const mapSpecializations = (dbSpecs: string[]): Specialization[] => {
   const mapped = dbSpecs.map(spec => {
     switch (spec) {
-      case "Personality Disorders:
+      case "Personality Disorders":
         return "Personality Disorders";
       case "Trauma":
         return "Trauma";
