@@ -166,13 +166,7 @@ const BureauDetail = () => {
           
           <Button 
             variant="outline" 
-            onClick={() => {
-              if (window.history.length > 1) {
-                navigate(-1);
-              } else {
-                navigate('/professional-counseling');
-              }
-            }} 
+            onClick={() => navigate('/professional-counseling')} 
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
