@@ -206,15 +206,26 @@ const BureauDetail = () => {
                               {service.institutionName && (
                                 <p className="text-sm text-muted-foreground">{service.institutionName}</p>
                               )}
-                              <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                              <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground flex-wrap">
                                 <div className="flex items-center gap-1">
                                   <Clock className="h-4 w-4" />
                                   <span>{service.duration}</span>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                  <ModeIcon mode={service.mode} />
-                                  <span>{getModeLabel(service.mode)}</span>
-                                </div>
+                                {service.modes && service.modes.length > 0 ? (
+                                  <div className="flex items-center gap-2">
+                                    {service.modes.map((mode, idx) => (
+                                      <div key={idx} className="flex items-center gap-1">
+                                        <ModeIcon mode={mode} />
+                                        <span>{getModeLabel(mode)}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center gap-1">
+                                    <ModeIcon mode={service.mode} />
+                                    <span>{getModeLabel(service.mode)}</span>
+                                  </div>
+                                )}
                               </div>
                               <p className={`mt-2 ${service.price == null ? 'text-sm text-muted-foreground italic' : service.price === 0 ? 'text-lg font-medium text-primary' : 'text-lg font-medium text-primary'}`}>
                                 {service.price == null 
