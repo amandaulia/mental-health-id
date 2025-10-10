@@ -5,7 +5,7 @@ import { FilterState, Practitioner, Bureau } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
-import { usePractitioners, useInstitutions } from "@/hooks/useDatabase";
+import { usePractitioners, useInstitutions, usePeerCounseling } from "@/hooks/useDatabase";
 import { transformPractitioner, transformInstitution, transformService } from "@/utils/dataTransform";
 import { databaseService } from "@/services/database";
 import { mockPeerCounselingData, mockActivitiesData, mockOrganizationsData } from "@/data/mockData";
@@ -40,6 +40,7 @@ const Index = () => {
   const { toast } = useToast();
   const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitioners();
   const { data: dbInstitutions, isLoading: institutionsLoading } = useInstitutions();
+  const { data: dbPeerCounseling, isLoading: peerCounselingLoading } = usePeerCounseling();
 
   // Fetch services for all practitioners
   const { data: allPractitionerServices, isLoading: practitionerServicesLoading } = useQuery({
@@ -243,15 +244,16 @@ const Index = () => {
   }, [filters, allProfessionalResources]);
 
   const filteredPeerCounseling = useMemo(() => {
-    return mockPeerCounselingData.filter((item) => {
+    if (!dbPeerCounseling) return [];
+    
+    return dbPeerCounseling.filter((item) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        if (!item.name.toLowerCase().includes(searchLower) && 
-            !item.city.toLowerCase().includes(searchLower)) return false;
+        if (!item.name.toLowerCase().includes(searchLower)) return false;
       }
       return true;
     });
-  }, [filters]);
+  }, [filters, dbPeerCounseling]);
 
   const filteredActivities = useMemo(() => {
     return mockActivitiesData.filter((item) => {
@@ -312,7 +314,7 @@ const Index = () => {
     return Array.from(names);
   }, [allProfessionalResources]);
 
-  const isLoading = practitionersLoading || institutionsLoading || practitionerServicesLoading || institutionServicesLoading || practitionerLocationsLoading || institutionLocationsLoading;
+  const isLoading = practitionersLoading || institutionsLoading || practitionerServicesLoading || institutionServicesLoading || practitionerLocationsLoading || institutionLocationsLoading || peerCounselingLoading;
 
   useEffect(() => {
     if (filters.search) {
@@ -435,7 +437,7 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredProfessionalResources.slice(0, 3).map((resource, index) => {
+            {filteredProfessionalResources.slice(0, 9).map((resource, index) => {
               let cardData: UnifiedCardData;
               
               if (resource.type === "practitioner") {
@@ -484,39 +486,50 @@ const Index = () => {
         {/* Peer Counseling & Support Groups Preview */}
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-              Peer Counseling & Support Groups
-            </h2>
-            <Button variant="outline" asChild>
-              <a href="/peer-counseling">
-                View All <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
+            <div className="flex items-center gap-3">
+              <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+                Peer Counseling & Support Groups
+              </h2>
+              {filteredPeerCounseling.length === 0 && (
+                <Badge variant="secondary" className="text-xs">
+                  Coming Soon
+                </Badge>
+              )}
+            </div>
+            {filteredPeerCounseling.length > 0 && (
+              <Button variant="outline" asChild>
+                <a href="/peer-counseling">
+                  View All <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+            )}
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredPeerCounseling.slice(0, 3).map((item, index) => {
-              const cardData: UnifiedCardData = {
-                type: item.type === "peer-counseling" ? "peer-counseling" : "support-group",
-                id: item.id,
-                image: item.image,
-                name: item.name,
-                city: item.city,
-                isVerified: item.isVerified,
-                specialization: item.specialization,
-                serviceType: item.serviceType,
-                price: typeof item.price === 'string' ? parseInt(item.price) : item.price
-              };
+          {filteredPeerCounseling.length > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredPeerCounseling.slice(0, 3).map((item, index) => {
+                const cardData: UnifiedCardData = {
+                  type: "peer-counseling",
+                  id: item.id.toString(),
+                  image: item.image,
+                  name: item.name,
+                  city: "Jakarta",
+                  isVerified: item.verified,
+                  specialization: item.specialization?.[0] || "General",
+                  serviceType: item.peer_type?.[0] || "Peer Counseling",
+                  price: 0
+                };
 
-              return (
-                <div key={`peer-${item.id}-${index}`} className="transform transition-all duration-200 hover:scale-[1.02]">
-                  <UnifiedCard 
-                    data={cardData} 
-                    linkTo={`/peer-counseling/${item.id}`}
-                  />
-                </div>
-              );
-            })}
-          </div>
+                return (
+                  <div key={`peer-${item.id}-${index}`} className="transform transition-all duration-200 hover:scale-[1.02]">
+                    <UnifiedCard 
+                      data={cardData} 
+                      linkTo={`/peer-counseling/${item.id}`}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Stress Relief Activities Preview */}
