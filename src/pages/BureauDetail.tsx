@@ -164,7 +164,17 @@ const BureauDetail = () => {
             </BreadcrumbList>
           </Breadcrumb>
           
-          <Button variant="outline" onClick={() => navigate(-1)} className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate('/professional-counseling');
+              }
+            }} 
+            className="flex items-center gap-2"
+          >
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
