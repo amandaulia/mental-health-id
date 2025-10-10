@@ -230,9 +230,9 @@ const mapInsuranceTypes = (dbInsurance: string[]): InsuranceType[] => {
     switch (ins?.toUpperCase()) {
       case "PRIVATE INSURANCE":
       case "PRIVATE":
-        return "Private Insurance";
+        return "private";
       case "BPJS":
-        return "BPJS";
+        return "bpjs";
       default:
         return "none";
     }
