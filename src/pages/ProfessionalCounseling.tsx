@@ -16,6 +16,7 @@ import { ArrowRight } from "lucide-react";
 import { trackSearch, trackFilter } from "@/utils/analytics";
 
 const ProfessionalCounseling = () => {
+  const [visibleCards, setVisibleCards] = useState(0);
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     locations: [],
@@ -455,6 +456,31 @@ const ProfessionalCounseling = () => {
   const isInitialLoading = practitionersLoading && institutionsLoading;
   const isLoadingMore = practitionerServicesLoading || institutionServicesLoading || practitionerLocationsLoading || institutionLocationsLoading;
 
+  // Staggered card reveal effect - show 3 cards at a time (1 row)
+  useEffect(() => {
+    if (allResources.length > 0 && !isLoadingMore) {
+      const cardsPerRow = 3;
+      const totalRows = Math.ceil(allResources.length / cardsPerRow);
+      let currentRow = 0;
+      
+      const interval = setInterval(() => {
+        currentRow++;
+        setVisibleCards(currentRow * cardsPerRow);
+        
+        if (currentRow >= totalRows) {
+          clearInterval(interval);
+        }
+      }, 100); // Show a new row every 100ms
+      
+      return () => clearInterval(interval);
+    }
+  }, [allResources.length, isLoadingMore]);
+
+  // Reset visible cards when filters change
+  useEffect(() => {
+    setVisibleCards(0);
+  }, [filters]);
+
   useEffect(() => {
     if (filters.search) {
       const totalResults = filteredPractitioners.length + filteredBureaus.length;
@@ -492,16 +518,28 @@ const ProfessionalCounseling = () => {
         </div>
       </div>
 
-      {/* Loading indicator */}
-      {isLoadingMore && allResources.length > 0 && (
-        <div className="mb-4 flex items-center justify-center gap-2 text-muted-foreground animate-fade-in">
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-          <span className="text-sm">Loading more resources...</span>
+      {/* Prominent loading indicator */}
+      {(isInitialLoading || isLoadingMore) && (
+        <div className="mb-8 p-6 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl border border-primary/20 animate-fade-in">
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative">
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary/30 border-t-primary"></div>
+              <div className="absolute inset-0 h-12 w-12 animate-ping rounded-full border-4 border-primary/20"></div>
+            </div>
+            <div className="text-center">
+              <p className="text-lg font-medium text-foreground mb-1">
+                {isInitialLoading ? "Loading mental health resources..." : "Loading more resources..."}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Please wait while we fetch the data
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {allResources.map((resource) => {
+        {allResources.slice(0, visibleCards).map((resource, index) => {
           let cardData: UnifiedCardData;
 
           if (resource.type === "practitioner") {
@@ -557,7 +595,11 @@ const ProfessionalCounseling = () => {
           }
 
           return (
-            <div key={resource.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+            <div 
+              key={resource.id} 
+              className="transform transition-all duration-200 hover:scale-[1.02] animate-fade-in"
+              style={{ animationDelay: `${(index % 3) * 50}ms` }}
+            >
               <UnifiedCard
                 data={cardData}
                 linkTo={resource.type === "practitioner" ? `/practitioner/${resource.id}` : `/bureau/${resource.id}`}
@@ -565,49 +607,15 @@ const ProfessionalCounseling = () => {
             </div>
           );
         })}
-        
-        {/* Show skeleton cards while data is still loading */}
-        {isLoadingMore && allResources.length > 0 && Array.from({ length: 6 }).map((_, i) => (
-          <div key={`skeleton-${i}`} className="rounded-xl border bg-card p-4">
-            <Skeleton className="h-48 w-full mb-4" />
-            <Skeleton className="h-6 w-3/4 mb-2" />
-            <Skeleton className="h-4 w-1/2 mb-4" />
-            <div className="flex gap-2">
-              <Skeleton className="h-6 w-16" />
-              <Skeleton className="h-6 w-16" />
-            </div>
-          </div>
-        ))}
       </div>
 
       {allResources.length === 0 && !isInitialLoading && !isLoadingMore && (
-        <div className="text-center mt-8">
+        <div className="text-center mt-8 animate-fade-in">
           <p className="text-muted-foreground">No resources found matching your criteria.</p>
           <Button variant="link" onClick={handleClearAllFilters}>Clear All Filters</Button>
         </div>
       )}
       
-      {isInitialLoading && (
-        <>
-          <div className="mb-6 flex items-center justify-center gap-2 text-muted-foreground animate-fade-in">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-            <span>Loading mental health resources...</span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <div key={`initial-skeleton-${i}`} className="rounded-xl border bg-card p-4">
-                <Skeleton className="h-48 w-full mb-4" />
-                <Skeleton className="h-6 w-3/4 mb-2" />
-                <Skeleton className="h-4 w-1/2 mb-4" />
-                <div className="flex gap-2">
-                  <Skeleton className="h-6 w-16" />
-                  <Skeleton className="h-6 w-16" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
     </div>
   );
 };
