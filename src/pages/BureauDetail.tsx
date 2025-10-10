@@ -3,7 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { ArrowLeft, Clock } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { ArrowLeft, Clock, Filter } from "lucide-react";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { BureauHeader } from "@/components/BureauHeader";
 import { BureauContact } from "@/components/BureauContact";
@@ -11,7 +13,7 @@ import { ModeIcon } from "@/components/ModeIcon";
 import { useState, useEffect } from "react";
 import { useInstitution, usePractitionersByInstitution, useServicesByInstitution, useContactDetailsByInstitution, useLocationsByInstitution } from "@/hooks/useDatabase";
 import { transformInstitution, transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
-import { Bureau, Practitioner, Service } from "@/types";
+import { Bureau, Practitioner, Service, Mode } from "@/types";
 import { BureauLocations } from "@/components/BureauLocations";
 
 const BureauDetail = () => {
@@ -21,6 +23,10 @@ const BureauDetail = () => {
   const [practitioners, setPractitioners] = useState<Practitioner[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [locations, setLocations] = useState<any[]>([]);
+  
+  // Filter states
+  const [selectedMode, setSelectedMode] = useState<Mode | "all">("all");
+  const [priceRange, setPriceRange] = useState<number[]>([0, 2000000]);
   
   const institutionId = parseInt(id || "0");
   const { data: dbInstitution, isLoading: institutionLoading, error: institutionError } = useInstitution(institutionId);
@@ -141,6 +147,27 @@ const BureauDetail = () => {
     }
   };
 
+  // Get unique modes from all services
+  const allModes = Array.from(new Set(
+    services.flatMap(service => service.modes || [service.mode])
+  ));
+
+  // Filter services based on selected filters
+  const filteredServices = services.filter(service => {
+    // Filter by mode
+    const serviceModes = service.modes || [service.mode];
+    const modeMatch = selectedMode === "all" || serviceModes.includes(selectedMode);
+    
+    // Filter by price range
+    const servicePrice = service.price ?? 0;
+    const priceMatch = servicePrice >= priceRange[0] && servicePrice <= priceRange[1];
+    
+    return modeMatch && priceMatch;
+  });
+
+  // Get max price for slider
+  const maxPrice = Math.max(...services.map(s => s.price ?? 0), 2000000);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto space-y-8">
@@ -183,11 +210,54 @@ const BureauDetail = () => {
             {services.length > 0 && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Our Services ({services.length})</CardTitle>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <CardTitle>Our Services ({filteredServices.length})</CardTitle>
+                    <div className="flex items-center gap-2">
+                      <Filter className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Filter by:</span>
+                    </div>
+                  </div>
+                  
+                  {/* Filters */}
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Session Mode</label>
+                      <Select 
+                        value={selectedMode} 
+                        onValueChange={(value) => setSelectedMode(value as Mode | "all")}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Modes" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Modes</SelectItem>
+                          {allModes.map(mode => (
+                            <SelectItem key={mode} value={mode}>
+                              {getModeLabel(mode)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">
+                        Price Range: {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
+                      </label>
+                      <Slider
+                        value={priceRange}
+                        onValueChange={setPriceRange}
+                        min={0}
+                        max={maxPrice}
+                        step={50000}
+                        className="mt-2"
+                      />
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {services.map((service, index) => (
+                    {filteredServices.map((service, index) => (
                       <Card key={index} className="p-4">
                         <div className="space-y-3">
                           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -245,6 +315,11 @@ const BureauDetail = () => {
                         </div>
                       </Card>
                     ))}
+                    {filteredServices.length === 0 && (
+                      <div className="text-center py-8 text-muted-foreground">
+                        No services match the selected filters.
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
