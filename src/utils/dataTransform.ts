@@ -83,8 +83,11 @@ export const transformInstitution = (
 };
 
 export const transformService = (dbService: any): Service => {
-  const durationHours = dbService.duration ? Math.floor(dbService.duration / 60) : 0;
-  const durationMinutes = dbService.duration ? dbService.duration % 60 : 0;
+  // Handle nested service structure from database joins
+  const service = dbService.service || dbService;
+  
+  const durationHours = service.duration ? Math.floor(service.duration / 60) : 0;
+  const durationMinutes = service.duration ? service.duration % 60 : 0;
   
   let durationText = "";
   if (durationHours > 0) {
@@ -97,19 +100,19 @@ export const transformService = (dbService: any): Service => {
   if (!durationText) durationText = "Duration not specified";
 
   // Handle multiple session modes
-  const sessionModes = dbService.session_mode || ["OFFLINE"];
+  const sessionModes = service.session_mode || ["OFFLINE"];
   const mappedModes = sessionModes.map((mode: string) => mapSessionMode(mode));
   
   return {
-    id: dbService.id.toString(),
-    name: dbService.name,
-    institutionName: dbService.institution?.name,
+    id: service.id?.toString() || 'unknown',
+    name: service.name || "Unnamed Service",
+    institutionName: service.institution?.name,
     duration: durationText,
-    price: dbService.price ?? null,
+    price: service.price ?? 0,
     mode: mappedModes[0], // Keep first mode for backward compatibility
     modes: mappedModes, // All modes for display
-    bookingUrl: dbService.book_cta ? dbService.book_cta.toString() : undefined,
-    learnMoreUrl: dbService.learn_more_cta ? dbService.learn_more_cta.toString() : undefined,
+    bookingUrl: service.book_cta ? service.book_cta.toString() : undefined,
+    learnMoreUrl: service.learn_more_cta ? service.learn_more_cta.toString() : undefined,
   };
 };
 
