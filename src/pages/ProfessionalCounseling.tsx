@@ -25,7 +25,7 @@ const ProfessionalCounseling = () => {
     priceRange: [0, 2000000], // Will be updated by useEffect
     modes: [],
     insurance: [],
-    includeNullPrice: false
+    includeNullPrice: true
   });
 
 
