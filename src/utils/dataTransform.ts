@@ -242,8 +242,8 @@ const mapInsuranceTypes = (dbInsurance: string[]): InsuranceType[] => {
 };
 
 const getUniqueModesFromServices = (services: Service[]) => {
-  const modes = services.map(service => service.mode);
-  return [...new Set(modes)];
+  const allModes = services.flatMap(service => service.modes || [service.mode]);
+  return [...new Set(allModes)];
 };
 
 // Helper function to calculate price range from services
