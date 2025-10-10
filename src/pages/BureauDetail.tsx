@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
 import { ArrowLeft, Clock, Filter } from "lucide-react";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { BureauHeader } from "@/components/BureauHeader";
@@ -209,49 +209,67 @@ const BureauDetail = () => {
             {/* Services Section */}
             {services.length > 0 && (
               <Card>
-                <CardHeader>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <CardTitle>Our Services ({filteredServices.length})</CardTitle>
-                    <div className="flex items-center gap-2">
-                      <Filter className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">Filter by:</span>
-                    </div>
-                  </div>
+                <CardHeader className="space-y-6">
+                  <CardTitle>Our Services ({filteredServices.length})</CardTitle>
                   
                   {/* Filters */}
-                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Session Mode</label>
-                      <Select 
-                        value={selectedMode} 
-                        onValueChange={(value) => setSelectedMode(value as Mode | "all")}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="All Modes" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Modes</SelectItem>
-                          {allModes.map(mode => (
-                            <SelectItem key={mode} value={mode}>
-                              {getModeLabel(mode)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Filter className="h-4 w-4" />
+                      <span className="text-sm font-medium">Filter by:</span>
                     </div>
                     
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">
-                        Price Range: {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
-                      </label>
-                      <Slider
-                        value={priceRange}
-                        onValueChange={setPriceRange}
-                        min={0}
-                        max={maxPrice}
-                        step={50000}
-                        className="mt-2"
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl mx-auto">
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Session Mode</label>
+                        <Select 
+                          value={selectedMode} 
+                          onValueChange={(value) => setSelectedMode(value as Mode | "all")}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="All Modes" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Modes</SelectItem>
+                            {allModes.map(mode => (
+                              <SelectItem key={mode} value={mode}>
+                                {getModeLabel(mode)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Price Range</label>
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1">
+                            <Input
+                              type="number"
+                              placeholder="Min"
+                              value={priceRange[0]}
+                              onChange={(e) => {
+                                const value = Math.max(0, Math.min(Number(e.target.value), priceRange[1]));
+                                setPriceRange([value, priceRange[1]]);
+                              }}
+                              className="w-full"
+                            />
+                          </div>
+                          <span className="text-muted-foreground">-</span>
+                          <div className="flex-1">
+                            <Input
+                              type="number"
+                              placeholder="Max"
+                              value={priceRange[1]}
+                              onChange={(e) => {
+                                const value = Math.max(priceRange[0], Number(e.target.value));
+                                setPriceRange([priceRange[0], value]);
+                              }}
+                              className="w-full"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </CardHeader>
