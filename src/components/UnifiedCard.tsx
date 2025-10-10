@@ -105,7 +105,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                     {data.institutionName && (
                       <p className="text-sm text-muted-foreground mb-2">{data.institutionName}</p>
                     )}
-                    <div className="flex flex-wrap gap-1 mb-2">
+                    <div className="flex flex-wrap gap-1 mb-3">
                       {data.professionTypes?.slice(0, 2).map((type) => (
                         <Badge key={type} variant="outline" className="text-xs">
                           {type}
@@ -116,15 +116,15 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                           +{data.professionTypes.length - 2}
                         </Badge>
                       )}
-                      {data.insurance && data.insurance.length > 0 && (
+                      {data.insurance && data.insurance.filter(ins => ins !== "none").length > 0 && (
                         <>
-                          {data.insurance.slice(0, 2).map((ins) => (
+                          {data.insurance.filter(ins => ins !== "none").slice(0, 2).map((ins) => (
                             <Badge 
                               key={ins} 
                               variant={ins === "bpjs" ? "bpjs" : ins === "private" ? "private" : "outline"} 
                               className="text-xs"
                             >
-                              {ins === "bpjs" ? "BPJS" : ins === "private" ? "Private Insurance" : "No Insurance"}
+                              {ins === "bpjs" ? "BPJS" : "Private Insurance"}
                             </Badge>
                           ))}
                         </>
@@ -135,7 +135,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
 
                 {data.type === "institution" && (
                   <>
-                    <div className="flex flex-wrap gap-1 mb-2">
+                    <div className="flex flex-wrap gap-1 mb-3">
                       {data.professionTypes?.slice(0, 2).map((type) => (
                         <Badge key={type} variant="outline" className="text-xs">
                           {type}
@@ -146,15 +146,15 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                           +{data.professionTypes.length - 2}
                         </Badge>
                       )}
-                      {data.insurance && data.insurance.length > 0 && (
+                      {data.insurance && data.insurance.filter(ins => ins !== "none").length > 0 && (
                         <>
-                          {data.insurance.slice(0, 2).map((ins) => (
+                          {data.insurance.filter(ins => ins !== "none").slice(0, 2).map((ins) => (
                             <Badge 
                               key={ins} 
                               variant={ins === "bpjs" ? "bpjs" : ins === "private" ? "private" : "outline"} 
                               className="text-xs"
                             >
-                              {ins === "bpjs" ? "BPJS" : ins === "private" ? "Private Insurance" : "No Insurance"}
+                              {ins === "bpjs" ? "BPJS" : "Private Insurance"}
                             </Badge>
                           ))}
                         </>
@@ -214,7 +214,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
             
             <div className="space-y-2">
               {data.specializations && data.specializations.length > 0 && (
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1 mb-3">
                   {[...new Set(data.specializations)].slice(0, 2).map((spec, index) => (
                     <Badge key={`${spec}-${index}`} variant="secondary" className="text-xs">
                       {spec}
@@ -239,16 +239,18 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
               )}
               
               {data.priceRange && (
-                <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md">
-                  <span className="text-sm font-medium text-muted-foreground">Rp</span>
-                  <span className="font-semibold text-primary">{data.priceRange}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Rp</span>
+                  <span className="text-sm font-medium">{data.priceRange}</span>
                 </div>
               )}
               
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{data.city}</span>
-              </div>
+              {data.city && data.city !== "Unknown City" && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <MapPin className="h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">{data.city}</span>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
