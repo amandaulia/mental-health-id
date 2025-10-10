@@ -305,8 +305,21 @@ const ProfessionalCounseling = () => {
     return allBureaus.filter((bureau: Bureau) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
+        // Map bureau type to label for search
+        const getBureauTypeLabel = (type: string) => {
+          const labels: Record<string, string> = {
+            independent: "Private Practice",
+            clinic: "Clinic",
+            faskes1: "Faskes 1",
+            faskes2: "Faskes 2"
+          };
+          return labels[type] || type;
+        };
+        const bureauTypeLabel = getBureauTypeLabel(bureau.bureauType).toLowerCase();
+        
         if (!bureau.name.toLowerCase().includes(searchLower) &&
-            !bureau.city.toLowerCase().includes(searchLower)) return false;
+            !bureau.city.toLowerCase().includes(searchLower) &&
+            !bureauTypeLabel.includes(searchLower)) return false;
       }
 
       if (filters.locations.length > 0) {
