@@ -65,15 +65,15 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
                       const parent = target.parentElement;
                       if (parent) {
                         const placeholder = document.createElement('div');
-                        placeholder.className = 'w-32 h-32 bg-primary/10 rounded-lg flex items-center justify-center';
-                        placeholder.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M12 6v4"/><path d="M14 14h-4"/><path d="M14 18h-4"/><path d="M14 8h-4"/><path d="M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2"/><path d="M18 22V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v18"/></svg>';
+                        placeholder.className = 'w-32 h-32 bg-purple-100 rounded-lg flex items-center justify-center border-2 border-purple-300';
+                        placeholder.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v4"/><path d="M14 14h-4"/><path d="M14 18h-4"/><path d="M14 8h-4"/><path d="M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2"/><path d="M18 22V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v18"/></svg>';
                         parent.appendChild(placeholder);
                       }
                     }}
                   />
                 ) : (
-                  <div className="w-32 h-32 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <Hospital className="h-12 w-12 text-primary" />
+                  <div className="w-32 h-32 bg-purple-100 rounded-lg flex items-center justify-center border-2 border-purple-300">
+                    <Hospital className="h-12 w-12 text-purple-600" />
                   </div>
                 )}
               </div>
