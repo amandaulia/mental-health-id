@@ -24,7 +24,8 @@ const ProfessionalCounseling = () => {
     specializations: [],
     priceRange: [0, 2000000], // Will be updated by useEffect
     modes: [],
-    insurance: []
+    insurance: [],
+    includeNullPrice: false
   });
 
 
@@ -238,7 +239,8 @@ const ProfessionalCounseling = () => {
       specializations: [],
       priceRange: [filterOptions.minPrice || 0, filterOptions.maxPrice || 0],
       modes: [],
-      insurance: []
+      insurance: [],
+      includeNullPrice: false
     });
     
     trackFilter('clear_all', 'all_filters', 'Professional Counseling');
@@ -274,9 +276,14 @@ const ProfessionalCounseling = () => {
 
       // Check if any service price falls within the selected price range
       if (filters.priceRange && practitioner.services.length > 0) {
-        const hasServiceInRange = practitioner.services.some(service => 
-          service.price >= filters.priceRange[0] && service.price <= filters.priceRange[1]
-        );
+        const hasServiceInRange = practitioner.services.some(service => {
+          // If includeNullPrice is true and service price is null/0, include it
+          if (filters.includeNullPrice && (!service.price || service.price === 0)) {
+            return true;
+          }
+          // Otherwise check if price is within range
+          return service.price >= filters.priceRange[0] && service.price <= filters.priceRange[1];
+        });
         if (!hasServiceInRange) return false;
       }
 
@@ -326,16 +333,26 @@ const ProfessionalCounseling = () => {
       }
 
       // Check if bureau price range overlaps with selected price range
-      if (filters.priceRange && bureau.priceRange) {
-        // Extract min/max from priceRange string like "Rp 100,000 - Rp 500,000"
-        const priceMatch = bureau.priceRange.match(/[\d.,]+/g);
-        if (priceMatch && priceMatch.length >= 2) {
-          const bureauMin = parseFloat(priceMatch[0].replace(/[.,]/g, ''));
-          const bureauMax = parseFloat(priceMatch[1].replace(/[.,]/g, ''));
-          // Check if ranges overlap
-          if (bureauMax < filters.priceRange[0] || bureauMin > filters.priceRange[1]) {
-            return false;
+      if (filters.priceRange) {
+        // If includeNullPrice is true and bureau has no price range, include it
+        if (filters.includeNullPrice && !bureau.priceRange) {
+          return true;
+        }
+        
+        if (bureau.priceRange) {
+          // Extract min/max from priceRange string like "Rp 100,000 - Rp 500,000"
+          const priceMatch = bureau.priceRange.match(/[\d.,]+/g);
+          if (priceMatch && priceMatch.length >= 2) {
+            const bureauMin = parseFloat(priceMatch[0].replace(/[.,]/g, ''));
+            const bureauMax = parseFloat(priceMatch[1].replace(/[.,]/g, ''));
+            // Check if ranges overlap
+            if (bureauMax < filters.priceRange[0] || bureauMin > filters.priceRange[1]) {
+              return false;
+            }
           }
+        } else if (!filters.includeNullPrice) {
+          // If no price range and not including null prices, exclude
+          return false;
         }
       }
 

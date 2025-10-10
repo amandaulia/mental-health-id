@@ -141,6 +141,7 @@ export interface FilterState {
   priceRange: [number, number];
   modes: Mode[];
   insurance: InsuranceType[];
+  includeNullPrice?: boolean; // Include services/institutions with null prices
 }
 
 export interface FilterTag {
