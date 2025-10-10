@@ -50,29 +50,29 @@ const About = () => {
                   </div>
                   <p className="text-muted-foreground">Licensed psychologists, psychiatrists, and mental health clinics with detailed profiles, specializations, and contact information.</p>
                 </div>
-                <div className="p-4 bg-muted/50 rounded-lg relative">
-                  <Badge className="absolute top-2 right-2 bg-amber-500 text-white pointer-events-none">Coming Soon</Badge>
-                  <div className="flex items-center gap-3 mb-2 pr-24">
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3 mb-2">
                     <Heart className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-lg">Peer Counseling & Support Groups</h3>
+                    <Badge className="bg-amber-500 text-white ml-auto">Coming Soon</Badge>
                   </div>
                   <p className="text-muted-foreground">Community-based support groups and peer counseling services for various mental health conditions and life challenges.</p>
                 </div>
               </div>
               <div className="space-y-4">
-                <div className="p-4 bg-muted/50 rounded-lg relative">
-                  <Badge className="absolute top-2 right-2 bg-amber-500 text-white pointer-events-none">Coming Soon</Badge>
-                  <div className="flex items-center gap-3 mb-2 pr-24">
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3 mb-2">
                     <Palette className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-lg">Stress Relief Activities</h3>
+                    <Badge className="bg-amber-500 text-white ml-auto">Coming Soon</Badge>
                   </div>
                   <p className="text-muted-foreground">Art therapy, music therapy, sports activities, and other wellness programs designed to promote mental well-being.</p>
                 </div>
-                <div className="p-4 bg-muted/50 rounded-lg relative">
-                  <Badge className="absolute top-2 right-2 bg-amber-500 text-white pointer-events-none">Coming Soon</Badge>
-                  <div className="flex items-center gap-3 mb-2 pr-24">
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3 mb-2">
                     <Building2 className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-lg">Organizations & Communities</h3>
+                    <Badge className="bg-amber-500 text-white ml-auto">Coming Soon</Badge>
                   </div>
                   <p className="text-muted-foreground">Mental health organizations, educational institutions, and community groups dedicated to mental health awareness and support.</p>
                 </div>
