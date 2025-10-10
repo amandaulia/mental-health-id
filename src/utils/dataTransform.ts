@@ -28,7 +28,7 @@ export const transformPractitioner = (
   return {
     id: dbPractitioner.id.toString(),
     type: "practitioner",
-    image: "/placeholder.svg",
+    image: dbPractitioner.image || null,
     name: dbPractitioner.name,
     bureauName: institution?.name || "Unknown Bureau",
     bureauId: "1", // Will be set from institution relationship
@@ -61,7 +61,7 @@ export const transformInstitution = (
   return {
     id: dbInstitution.id.toString(),
     type: "bureau",
-    image: dbInstitution.image || "/placeholder.svg",
+    image: dbInstitution.image || null,
     name: dbInstitution.name,
     businessHours: "Not specified",
     bureauType: mapInstitutionType(dbInstitution.institution_type),
