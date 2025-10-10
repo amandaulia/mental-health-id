@@ -46,6 +46,11 @@ const BureauDetail = () => {
       
       const transformedServices = dbServices.map((item: any) => {
         const service = transformService(item.service);
+        console.log('Service session mode data:', {
+          serviceName: service.name,
+          rawSessionMode: item.service.session_mode,
+          transformedMode: service.mode
+        });
         console.log('Original service URLs:', { bookingUrl: service.bookingUrl, learnMoreUrl: service.learnMoreUrl });
         
         // Map CTA IDs to actual contact detail links
