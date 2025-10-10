@@ -262,15 +262,11 @@ export const databaseService = {
   async getServicesByInstitution(institutionId: number) {
     const { data, error } = await supabase
       .from("institution_services")
-      .select(
-        `
-        service(*)
-      `,
-      )
+      .select(`service(*)`)
       .eq("institution_id", institutionId);
 
     if (error) {
-      console.error("Error fetching services with contact links:", error);
+      console.error("Error fetching services:", error);
       throw error;
     }
 
@@ -278,18 +274,29 @@ export const databaseService = {
       return [];
     }
 
-    // Get all unique CTA IDs
+    console.log('Raw services from DB:', data);
+
+    // Get all unique CTA IDs from book_cta and learn_more_cta columns
     const ctaIds = new Set<number>();
     data.forEach((item: any) => {
-      if (item.service?.book_cta) ctaIds.add(item.service.book_cta);
-      if (item.service?.learn_more_cta) ctaIds.add(item.service.learn_more_cta);
+      if (item.service?.book_cta) {
+        console.log(`Service "${item.service.name}" has book_cta: ${item.service.book_cta}`);
+        ctaIds.add(item.service.book_cta);
+      }
+      if (item.service?.learn_more_cta) {
+        console.log(`Service "${item.service.name}" has learn_more_cta: ${item.service.learn_more_cta}`);
+        ctaIds.add(item.service.learn_more_cta);
+      }
     });
 
     if (ctaIds.size === 0) {
+      console.log('No CTAs found in services');
       return data;
     }
 
-    // Fetch contact details for all CTAs
+    console.log('Fetching contact_details for IDs:', Array.from(ctaIds));
+
+    // Fetch the link column from contact_details table for these IDs
     const { data: contactData, error: contactError } = await supabase
       .from('contact_details')
       .select('id, link')
@@ -300,17 +307,22 @@ export const databaseService = {
       return data;
     }
 
-    // Create a map of contact ID to normalized link
+    console.log('Contact details fetched from DB:', contactData);
+
+    // Create a map: contact_details.id -> contact_details.link (normalized)
     const contactMap = new Map<number, string | null>();
-    contactData?.forEach(c => {
-      const normalized = normalizeLink(c.link);
-      contactMap.set(c.id, normalized);
+    contactData?.forEach(contact => {
+      const normalized = normalizeLink(contact.link);
+      console.log(`Contact ID ${contact.id}: raw link="${contact.link}" → normalized="${normalized}"`);
+      contactMap.set(contact.id, normalized);
     });
     
-    // Return services with properly structured contact objects
+    // Map the links back to services
     return data.map((row: any) => {
       const bookLink = row.service?.book_cta ? contactMap.get(row.service.book_cta) : null;
       const learnMoreLink = row.service?.learn_more_cta ? contactMap.get(row.service.learn_more_cta) : null;
+      
+      console.log(`Service "${row.service?.name}": book_cta=${row.service?.book_cta} → link="${bookLink}", learn_more_cta=${row.service?.learn_more_cta} → link="${learnMoreLink}"`);
       
       return {
         ...row,

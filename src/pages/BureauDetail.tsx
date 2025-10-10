@@ -31,16 +31,25 @@ const BureauDetail = () => {
 
   useEffect(() => {
     if (dbInstitution && dbServices) {
+      console.log('dbServices in BureauDetail:', dbServices);
+      
       const transformedServices = dbServices.map((item: any) => {
         const service = transformService(item.service);
+        
+        console.log('Processing service:', item.service?.name, {
+          book_contact: item.service?.book_contact,
+          learn_more_contact: item.service?.learn_more_contact
+        });
         
         // Use the joined contact details for CTAs
         if (item.service?.book_contact?.link) {
           service.bookingUrl = item.service.book_contact.link;
+          console.log(`Set bookingUrl for "${service.name}":`, service.bookingUrl);
         }
         
         if (item.service?.learn_more_contact?.link) {
           service.learnMoreUrl = item.service.learn_more_contact.link;
+          console.log(`Set learnMoreUrl for "${service.name}":`, service.learnMoreUrl);
         }
         
         return service;
