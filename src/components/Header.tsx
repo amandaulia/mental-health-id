@@ -37,10 +37,12 @@ export const Header = () => {
                 <Users className="h-4 w-4" />
                 {t('header.navigation.professional')}
               </a>
-              <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
-                <Heart className="h-4 w-4" />
-                {t('header.navigation.peer')}
-              </a>
+              {featureFlags.peerCounseling && (
+                <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                  <Heart className="h-4 w-4" />
+                  {t('header.navigation.peer')}
+                </a>
+              )}
               {featureFlags.stressRelief && (
                 <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
                   <Palette className="h-4 w-4" />
@@ -54,12 +56,12 @@ export const Header = () => {
                 </a>
               )}
             </nav>
-            <LanguageToggle />
+            {featureFlags.languageOptions && <LanguageToggle />}
           </div>
 
           {/* Mobile Menu Button and Language Toggle */}
           <div className="md:hidden flex items-center space-x-2">
-            <LanguageToggle />
+            {featureFlags.languageOptions && <LanguageToggle />}
             <Button
               variant="ghost"
               size="sm"
@@ -87,10 +89,12 @@ export const Header = () => {
                 <Users className="h-4 w-4" />
                 {t('header.navigation.professional')}
               </a>
-              <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
-                <Heart className="h-4 w-4" />
-                {t('header.navigation.peer')}
-              </a>
+              {featureFlags.peerCounseling && (
+                <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                  <Heart className="h-4 w-4" />
+                  {t('header.navigation.peer')}
+                </a>
+              )}
               {featureFlags.stressRelief && (
                 <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                   <Palette className="h-4 w-4" />
