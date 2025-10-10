@@ -52,8 +52,9 @@ export const SearchAndFilters = ({
   const specializations = filterOptions?.specializations || ["Depression", "Anxiety", "Trauma", "Relationship Issues", "ADHD", "OCD", "Personality Disorders", "Family Therapy"];
   const sessionModeOptions = filterOptions?.sessionModes || ["text", "voice", "video", "offline"];
   const insuranceOptions = filterOptions?.insuranceTypes || ["private", "bpjs", "none"];
-  const minPrice = filterOptions?.minPrice ?? 0;
-  const maxPrice = filterOptions?.maxPrice ?? 5000000;
+  // Use prices directly from database without fallbacks
+  const minPrice = filterOptions?.minPrice || 0;
+  const maxPrice = filterOptions?.maxPrice || 0;
 
   const getModeLabel = (mode: string) => {
     const labels: Record<string, string> = {
