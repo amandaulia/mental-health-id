@@ -238,10 +238,12 @@ export const databaseService = {
 
     const contacts = data?.map((item) => item.contact_details).filter(Boolean) || [];
 
+    console.log('Fetched contacts before location mapping:', contacts);
+
     // Fetch location information for each contact
     const contactsWithLocations = await Promise.all(
       contacts.map(async (contact: any) => {
-        const { data: locationData } = await supabase
+        const { data: locationData, error: locError } = await supabase
           .from("location_contacts")
           .select(`
             location:location_id(
@@ -253,12 +255,20 @@ export const databaseService = {
           `)
           .eq("contact_id", contact.id);
 
+        if (locError) {
+          console.error(`Error fetching location for contact ${contact.id}:`, locError);
+        }
+
+        console.log(`Contact ${contact.id} (${contact.contact_type}):`, locationData);
+
         return {
           ...contact,
           location: locationData?.[0]?.location || null
         };
       })
     );
+
+    console.log('Contacts with locations:', contactsWithLocations);
 
     return contactsWithLocations;
   },
