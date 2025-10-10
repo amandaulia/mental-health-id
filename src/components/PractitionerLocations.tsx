@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, ExternalLink } from "lucide-react";
 
@@ -18,7 +17,7 @@ interface PractitionerLocationsProps {
 export const PractitionerLocations = ({ locations }: PractitionerLocationsProps) => {
   const handleMapClick = (address: string) => {
     const encodedAddress = encodeURIComponent(address);
-    window.open(`https://maps.google.com/?q=${encodedAddress}`, '_blank');
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, "_blank");
   };
 
   if (locations.length === 0) return null;
@@ -26,7 +25,9 @@ export const PractitionerLocations = ({ locations }: PractitionerLocationsProps)
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Location{locations.length > 1 ? 's' : ''} ({locations.length})</CardTitle>
+        <CardTitle>
+          Location{locations.length > 1 ? "s" : ""} ({locations.length})
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {locations.map((location) => (
@@ -35,18 +36,16 @@ export const PractitionerLocations = ({ locations }: PractitionerLocationsProps)
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  {location.name && (
-                    <p className="font-semibold text-lg mb-1">{location.name}</p>
-                  )}
+                  {location.name && <p className="font-semibold text-lg mb-1">{location.name}</p>}
                   <p className="font-medium">{location.address}</p>
                   <p className="text-sm text-muted-foreground">
                     {location.city}, {location.province}, {location.country}
                   </p>
                 </div>
               </div>
-              
+
               {/* Map Preview - Click to open in Google Maps */}
-              <div 
+              <div
                 onClick={() => handleMapClick(location.address)}
                 className="bg-muted rounded-lg h-48 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/80 transition-colors group"
               >
