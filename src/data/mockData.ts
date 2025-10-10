@@ -40,11 +40,11 @@ export const mockPractitioners: Practitioner[] = [
       }
     ],
     modes: ["text", "video", "offline"],
-    contactDetails: {
-      whatsapp: "+6281234567890",
-      website: "https://mindcare.com",
-      instagram: "https://instagram.com/drsarahjohnson"
-    },
+    contactDetails: [
+      { type: "WhatsApp", value: "+6281234567890", link: "https://wa.me/6281234567890" },
+      { type: "Website", value: "https://mindcare.com", link: "https://mindcare.com" },
+      { type: "Instagram", value: "@drsarahjohnson", link: "https://instagram.com/drsarahjohnson" }
+    ],
     insurance: ["private", "bpjs"],
     isVerified: true,
     lastUpdated: "2024-01-15"
@@ -88,10 +88,10 @@ export const mockPractitioners: Practitioner[] = [
       }
     ],
     modes: ["voice", "video", "offline"],
-    contactDetails: {
-      whatsapp: "+6281987654321",
-      website: "https://serenity-clinic.com"
-    },
+    contactDetails: [
+      { type: "WhatsApp", value: "+6281987654321", link: "https://wa.me/6281987654321" },
+      { type: "Website", value: "https://serenity-clinic.com", link: "https://serenity-clinic.com" }
+    ],
     insurance: ["private"],
     isVerified: true,
     lastUpdated: "2024-01-10"
@@ -115,11 +115,11 @@ export const mockBureaus: Bureau[] = [
     },
     insurance: ["private", "bpjs"],
     modes: ["text", "video", "offline"],
-    contactDetails: {
-      whatsapp: "+6281234567890",
-      website: "https://mindcare.com",
-      instagram: "https://instagram.com/mindcare"
-    },
+    contactDetails: [
+      { type: "WhatsApp", value: "+6281234567890", link: "https://wa.me/6281234567890" },
+      { type: "Website", value: "https://mindcare.com", link: "https://mindcare.com" },
+      { type: "Instagram", value: "@mindcare", link: "https://instagram.com/mindcare" }
+    ],
     isVerified: true,
     lastUpdated: "2024-01-15"
   },
@@ -139,10 +139,10 @@ export const mockBureaus: Bureau[] = [
     },
     insurance: ["private"],
     modes: ["voice", "video", "offline"],
-    contactDetails: {
-      whatsapp: "+6281987654321",
-      website: "https://serenity-clinic.com"
-    },
+    contactDetails: [
+      { type: "WhatsApp", value: "+6281987654321", link: "https://wa.me/6281987654321" },
+      { type: "Website", value: "https://serenity-clinic.com", link: "https://serenity-clinic.com" }
+    ],
     isVerified: true,
     lastUpdated: "2024-01-10"
   }

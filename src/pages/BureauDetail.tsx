@@ -56,11 +56,7 @@ const BureauDetail = () => {
       });
       
       // Get institution contact details for the sidebar
-      const contactDetails = dbContactDetails ? transformContactDetails(dbContactDetails) : {
-        whatsapp: undefined,
-        website: undefined,
-        instagram: undefined
-      };
+      const contactDetails = dbContactDetails ? transformContactDetails(dbContactDetails) : [];
       
       setBureau(transformInstitution(dbInstitution, transformedServices, contactDetails));
       setServices(transformedServices);

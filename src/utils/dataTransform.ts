@@ -16,7 +16,7 @@ type DBContactDetail = Database['public']['Tables']['contact_details']['Row'];
 export const transformPractitioner = (
   dbPractitioner: any, 
   services: Service[] = [], 
-  contactDetails: ContactDetails = {}
+  contactDetails: ContactDetails = []
 ): Practitioner => {
   const institution = dbPractitioner.institution;
   
@@ -56,7 +56,7 @@ export const transformPractitioner = (
 export const transformInstitution = (
   dbInstitution: any, 
   services: Service[] = [], 
-  contactDetails: ContactDetails = {}
+  contactDetails: ContactDetails = []
 ): Bureau => {
   return {
     id: dbInstitution.id.toString(),
@@ -119,23 +119,11 @@ export const transformContactDetails = (dbContacts: any[]): ContactDetails => {
     contact && typeof contact === 'object' && 'contact_type' in contact && !('error' in contact)
   );
   
-  const contactDetails: ContactDetails = {};
-  
-  validContacts.forEach(contact => {
-    switch (contact.contact_type) {
-      case 'WhatsApp':
-        contactDetails.whatsapp = contact.value;
-        break;
-      case 'Website':
-        contactDetails.website = contact.value;
-        break;
-      case 'Instagram':
-        contactDetails.instagram = contact.value;
-        break;
-    }
-  });
-  
-  return contactDetails;
+  return validContacts.map(contact => ({
+    type: contact.contact_type,
+    value: contact.value,
+    link: contact.link
+  }));
 };
 
 // Helper functions to map database enums to frontend types
