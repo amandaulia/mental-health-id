@@ -30,6 +30,7 @@ interface SearchAndFiltersProps {
     specializations: string[];
     sessionModes: string[];
     insuranceTypes: string[];
+    institutionTypes?: string[];
     minPrice: number;
     maxPrice: number;
   };
@@ -51,7 +52,8 @@ export const SearchAndFilters = ({
   const cities = filterOptions?.cities || ["Jakarta, Indonesia", "Surabaya, Indonesia", "Medan, Indonesia"];
   const specializations = filterOptions?.specializations || ["Depression", "Anxiety", "Trauma", "Relationship Issues", "ADHD", "OCD", "Personality Disorders", "Family Therapy"];
   const sessionModeOptions = filterOptions?.sessionModes || ["text", "voice", "video", "offline"];
-  const insuranceOptions = filterOptions?.insuranceTypes || ["private", "bpjs", "none"];
+  const insuranceOptions = filterOptions?.insuranceTypes || ["private", "bpjs"];
+  const institutionTypeOptions = filterOptions?.institutionTypes || [];
   // Use prices directly from database without fallbacks
   const minPrice = filterOptions?.minPrice || 0;
   const maxPrice = filterOptions?.maxPrice || 0;
@@ -142,6 +144,17 @@ export const SearchAndFilters = ({
         : [...filters.insurance, value as InsuranceType];
       onFiltersChange({ ...filters, insurance: newInsurance });
       trackFormInteraction('filter', 'insurance_changed');
+    },
+    [filters, onFiltersChange]
+  );
+
+  const handleInstitutionTypeSelect = useCallback(
+    (value: string) => {
+      const newInstitutionTypes = filters.institutionTypes.includes(value as any)
+        ? filters.institutionTypes.filter((type) => type !== value)
+        : [...filters.institutionTypes, value as any];
+      onFiltersChange({ ...filters, institutionTypes: newInstitutionTypes });
+      trackFormInteraction('filter', 'institution_type_changed');
     },
     [filters, onFiltersChange]
   );
@@ -639,6 +652,47 @@ export const SearchAndFilters = ({
             </div>
           </PopoverContent>
         </Popover>
+
+        {/* Institution Type Filter */}
+        {institutionTypeOptions.length > 0 && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
+              >
+                <Building2 className="h-3 w-3 mr-1" />
+                Institution Type
+                {getActiveFilterCount(filters.institutionTypes) > 0 && (
+                  <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
+                    {getActiveFilterCount(filters.institutionTypes)}
+                  </Badge>
+                )}
+                <ChevronDown className="h-3 w-3 ml-1" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">Institution Type</h3>
+                <div className="flex flex-wrap gap-1">
+                  {institutionTypeOptions.map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => handleInstitutionTypeSelect(type)}
+                      className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                        filters.institutionTypes.includes(type as any)
+                          ? 'bg-purple-100 border-purple-300 text-purple-700'
+                          : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                      }`}
+                    >
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        )}
 
         <div className="h-6 w-px bg-border mx-1"></div>
 

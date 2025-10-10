@@ -135,6 +135,7 @@ export interface FilterState {
   search: string;
   locations: string[]; // Cities/Countries
   institutions: string[]; // Institution names
+  institutionTypes: BureauType[]; // Institution types
   professionTypes: ProfessionType[];
   specializations: Specialization[];
   priceRange: [number, number];
