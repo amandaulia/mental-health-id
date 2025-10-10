@@ -38,11 +38,13 @@ export interface Service {
   learnMoreUrl?: string;
 }
 
-export interface ContactDetails {
-  whatsapp?: string;
-  website?: string;
-  instagram?: string;
+export interface ContactDetail {
+  type: "WhatsApp" | "Phone" | "Website" | "Instagram" | "Email" | "Application";
+  value: string;
+  link?: string;
 }
+
+export type ContactDetails = ContactDetail[];
 
 export interface Practitioner {
   id: string;
