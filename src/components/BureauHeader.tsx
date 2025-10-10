@@ -91,7 +91,7 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
 
                   {/* Available Modes */}
                   {bureau.modes.length > 0 && (
-                    <div className="space-y-2">
+                    <div className="space-y-2 md:col-span-2">
                       <p className="font-medium text-sm">Available Modes</p>
                       <div className="flex flex-wrap gap-2 items-center">
                         {bureau.modes.map((mode, index) => (
