@@ -68,6 +68,16 @@ export const SearchAndFilters = ({
     return labels[mode] || mode;
   };
 
+  const getInstitutionTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      independent: "Private Practice",
+      clinic: "Clinic",
+      faskes1: "Faskes 1",
+      faskes2: "Faskes 2"
+    };
+    return labels[type] || type;
+  };
+
   // Update local state when filters change from parent
   useState(() => {
     setPriceRange(filters.priceRange);
@@ -685,7 +695,7 @@ export const SearchAndFilters = ({
                           : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                       }`}
                     >
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                      {getInstitutionTypeLabel(type)}
                     </button>
                   ))}
                 </div>
