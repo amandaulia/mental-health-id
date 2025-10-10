@@ -90,7 +90,6 @@ export const Footer = () => {
                 <p className="font-medium mb-1">📧 Email</p>
                 <p className="text-white/90">elysium.mcare@gmail.com</p>
               </div>
-            </div>
           </div>
         </div>
 
