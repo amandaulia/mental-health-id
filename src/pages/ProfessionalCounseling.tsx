@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect } from "react";
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { databaseService } from "@/services/database";
+import { supabase } from "@/integrations/supabase/client";
 import { FilterState, Practitioner, Bureau, UnifiedCardData } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
@@ -115,6 +116,33 @@ const ProfessionalCounseling = () => {
       return servicesMap;
     },
     enabled: !!dbInstitutions && dbInstitutions.length > 0,
+  });
+  
+  // Query min/max prices directly from service table
+  const { data: priceRange } = useQuery({
+    queryKey: ['service-price-range'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('service')
+        .select('price')
+        .not('price', 'is', null)
+        .gt('price', 0);
+      
+      if (error) throw error;
+      
+      if (!data || data.length === 0) {
+        return { minPrice: 0, maxPrice: 5000000 };
+      }
+      
+      const prices = data.map(s => s.price).filter(p => p != null && p > 0);
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      
+      return {
+        minPrice: Math.floor(minPrice / 25000) * 25000,
+        maxPrice: Math.ceil(maxPrice / 25000) * 25000
+      };
+    }
   });
 
   const allPractitioners = useMemo(() => {
@@ -320,8 +348,7 @@ const ProfessionalCounseling = () => {
     const specializations = new Set<string>();
     const sessionModes = new Set<string>();
     const insuranceTypes = new Set<string>();
-    let minPrice = Infinity;
-    let maxPrice = 0;
+
 
     [...allPractitioners, ...allBureaus].forEach(resource => {
       // Extract city - exclude "Unknown City" and ensure proper formatting
@@ -339,37 +366,18 @@ const ProfessionalCounseling = () => {
       // Extract insurance types
       resource.insurance.forEach(ins => insuranceTypes.add(ins));
 
-      // Calculate min and max price
-      if (resource.type === 'practitioner') {
-        const prices = resource.services.map(s => s.price).filter(p => p != null && p > 0);
-        if (prices.length > 0) {
-          minPrice = Math.min(minPrice, ...prices);
-          maxPrice = Math.max(maxPrice, ...prices);
-        }
-      } else {
-        // For bureau, extract from priceRange string
-        if (resource.priceRange) {
-          const priceMatch = resource.priceRange.match(/[\d.,]+/g);
-          if (priceMatch) {
-            const prices = priceMatch.map(p => parseFloat(p.replace(/[.,]/g, '')));
-            minPrice = Math.min(minPrice, ...prices);
-            maxPrice = Math.max(maxPrice, ...prices);
-          }
-        }
-      }
+      // Price calculation removed - using direct database query instead
     });
-
-    // Keep the calculated prices from database - don't override with hardcoded values
 
     return {
       cities: Array.from(cities).sort(),
       specializations: Array.from(specializations).sort(),
       sessionModes: Array.from(sessionModes).sort(),
       insuranceTypes: Array.from(insuranceTypes).sort(),
-      minPrice: Math.floor(minPrice / 25000) * 25000, // Round down to nearest 25000
-      maxPrice: Math.ceil(maxPrice / 25000) * 25000 // Round up to nearest 25000
+      minPrice: priceRange?.minPrice || 0,
+      maxPrice: priceRange?.maxPrice || 0
     };
-  }, [allPractitioners, allBureaus]);
+  }, [allPractitioners, allBureaus, priceRange]);
 
   // Update price range when filterOptions change
   const prevMinPrice = React.useRef(0);
