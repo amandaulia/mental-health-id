@@ -3,9 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Clock, Filter } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Slider } from "@/components/ui/slider";
+import { ArrowLeft, Clock, Search, Monitor, Settings } from "lucide-react";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { BureauHeader } from "@/components/BureauHeader";
 import { BureauContact } from "@/components/BureauContact";
@@ -25,8 +26,11 @@ const BureauDetail = () => {
   const [locations, setLocations] = useState<any[]>([]);
   
   // Filter states
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedMode, setSelectedMode] = useState<Mode | "all">("all");
-  const [priceRange, setPriceRange] = useState<number[]>([0, 2000000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000000]);
+  const [minPriceInput, setMinPriceInput] = useState("0");
+  const [maxPriceInput, setMaxPriceInput] = useState("2000000");
   
   const institutionId = parseInt(id || "0");
   const { data: dbInstitution, isLoading: institutionLoading, error: institutionError } = useInstitution(institutionId);
@@ -129,13 +133,13 @@ const BureauDetail = () => {
   };
 
   const getModeLabel = (mode: string) => {
-    switch (mode) {
-      case "text": return "Chat";
-      case "voice": return "Voice Call";
-      case "video": return "Video Call";
-      case "offline": return "Offline";
-      default: return mode;
-    }
+    const labels: Record<string, string> = {
+      text: "Text Chat",
+      voice: "Voice Call",
+      video: "Video Call",
+      offline: "In-Person"
+    };
+    return labels[mode] || mode;
   };
 
   const getInsuranceLabel = (ins: string) => {
@@ -154,6 +158,12 @@ const BureauDetail = () => {
 
   // Filter services based on selected filters
   const filteredServices = services.filter(service => {
+    // Filter by search
+    if (searchQuery) {
+      const searchLower = searchQuery.toLowerCase();
+      if (!service.name.toLowerCase().includes(searchLower)) return false;
+    }
+    
     // Filter by mode
     const serviceModes = service.modes || [service.mode];
     const modeMatch = selectedMode === "all" || serviceModes.includes(selectedMode);
@@ -167,6 +177,20 @@ const BureauDetail = () => {
 
   // Get max price for slider
   const maxPrice = Math.max(...services.map(s => s.price ?? 0), 2000000);
+
+  const handleMinPriceChange = (value: string) => {
+    setMinPriceInput(value);
+    const numValue = parseInt(value) || 0;
+    const newMin = Math.max(0, Math.min(numValue, priceRange[1]));
+    setPriceRange([newMin, priceRange[1]]);
+  };
+
+  const handleMaxPriceChange = (value: string) => {
+    setMaxPriceInput(value);
+    const numValue = parseInt(value) || maxPrice;
+    const newMax = Math.max(priceRange[0], Math.min(numValue, maxPrice));
+    setPriceRange([priceRange[0], newMax]);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -212,64 +236,130 @@ const BureauDetail = () => {
                 <CardHeader className="space-y-6">
                   <CardTitle>Our Services ({filteredServices.length})</CardTitle>
                   
+                  {/* Search Bar */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <Input
+                      type="text"
+                      placeholder="Search services..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10 rounded-full border-gray-200"
+                    />
+                  </div>
+                  
                   {/* Filters */}
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Filter className="h-4 w-4" />
-                      <span className="text-sm font-medium">Filter by:</span>
-                    </div>
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-semibold text-foreground">Filters</h3>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl mx-auto">
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Session Mode</label>
-                        <Select 
-                          value={selectedMode} 
-                          onValueChange={(value) => setSelectedMode(value as Mode | "all")}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="All Modes" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Modes</SelectItem>
-                            {allModes.map(mode => (
-                              <SelectItem key={mode} value={mode}>
-                                {getModeLabel(mode)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Price Range</label>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1">
-                            <Input
-                              type="number"
-                              placeholder="Min"
-                              value={priceRange[0]}
-                              onChange={(e) => {
-                                const value = Math.max(0, Math.min(Number(e.target.value), priceRange[1]));
-                                setPriceRange([value, priceRange[1]]);
-                              }}
-                              className="w-full"
-                            />
+                    <div className="flex flex-wrap gap-2">
+                      {/* Session Mode Filter */}
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium justify-center flex items-center gap-2"
+                          >
+                            <Monitor className="h-4 w-4" />
+                            <span>Session Mode</span>
+                            {selectedMode !== "all" && (
+                              <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">
+                                1
+                              </Badge>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80 p-6">
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-foreground">Session Mode</h3>
+                            <div className="flex flex-wrap gap-2">
+                              <button
+                                onClick={() => setSelectedMode("all")}
+                                className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                                  selectedMode === "all"
+                                    ? 'bg-purple-100 border-purple-300 text-purple-700'
+                                    : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                                }`}
+                              >
+                                All Modes
+                              </button>
+                              {allModes.map(mode => (
+                                <button
+                                  key={mode}
+                                  onClick={() => setSelectedMode(mode as Mode)}
+                                  className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                                    selectedMode === mode
+                                      ? 'bg-purple-100 border-purple-300 text-purple-700'
+                                      : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                                  }`}
+                                >
+                                  {getModeLabel(mode)}
+                                </button>
+                              ))}
+                            </div>
                           </div>
-                          <span className="text-muted-foreground">-</span>
-                          <div className="flex-1">
-                            <Input
-                              type="number"
-                              placeholder="Max"
-                              value={priceRange[1]}
-                              onChange={(e) => {
-                                const value = Math.max(priceRange[0], Number(e.target.value));
-                                setPriceRange([priceRange[0], value]);
-                              }}
-                              className="w-full"
-                            />
+                        </PopoverContent>
+                      </Popover>
+
+                      {/* Price Range Filter */}
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium justify-center flex items-center gap-2"
+                          >
+                            <Settings className="h-4 w-4" />
+                            <span>Price Range</span>
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80 p-6">
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-foreground">Session Cost (IDR)</h3>
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                  <label className="text-xs text-muted-foreground mb-1 block">Minimum</label>
+                                  <Input
+                                    type="number"
+                                    value={minPriceInput}
+                                    onChange={(e) => handleMinPriceChange(e.target.value)}
+                                    className="text-sm"
+                                    min={0}
+                                    max={maxPrice}
+                                  />
+                                </div>
+                                <div>
+                                  <label className="text-xs text-muted-foreground mb-1 block">Maximum</label>
+                                  <Input
+                                    type="number"
+                                    value={maxPriceInput}
+                                    onChange={(e) => handleMaxPriceChange(e.target.value)}
+                                    className="text-sm"
+                                    min={0}
+                                    max={maxPrice}
+                                  />
+                                </div>
+                              </div>
+                              
+                              <Slider
+                                value={priceRange}
+                                max={maxPrice}
+                                step={25000}
+                                onValueChange={(value) => {
+                                  setPriceRange(value as [number, number]);
+                                  setMinPriceInput(value[0].toString());
+                                  setMaxPriceInput(value[1].toString());
+                                }}
+                                className="mb-2"
+                              />
+                              <div className="flex justify-between text-xs text-muted-foreground">
+                                <span>Rp {priceRange[0].toLocaleString()}</span>
+                                <span>Rp {priceRange[1].toLocaleString()}</span>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
+                        </PopoverContent>
+                      </Popover>
                     </div>
                   </div>
                 </CardHeader>
