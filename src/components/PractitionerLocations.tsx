@@ -1,8 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { MapPin, ExternalLink } from "lucide-react";
-import { useState } from "react";
 
 interface Location {
   id: string;
@@ -18,15 +16,6 @@ interface PractitionerLocationsProps {
 }
 
 export const PractitionerLocations = ({ locations }: PractitionerLocationsProps) => {
-  const [expandedMaps, setExpandedMaps] = useState<Record<string, boolean>>({});
-
-  const toggleMapExpansion = (locationId: string) => {
-    setExpandedMaps(prev => ({
-      ...prev,
-      [locationId]: !prev[locationId]
-    }));
-  };
-
   const handleMapClick = (address: string) => {
     const encodedAddress = encodeURIComponent(address);
     window.open(`https://maps.google.com/?q=${encodedAddress}`, '_blank');
@@ -56,33 +45,16 @@ export const PractitionerLocations = ({ locations }: PractitionerLocationsProps)
                 </div>
               </div>
               
-              {/* Map Preview */}
-              <div className="space-y-2">
-                <div className={`bg-muted rounded-lg flex items-center justify-center transition-all duration-200 relative group ${
-                  expandedMaps[location.id] ? 'h-96' : 'h-48'
-                }`}>
-                  <p className="text-muted-foreground">Map preview</p>
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-lg cursor-pointer">
-                    <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-                      <Button 
-                        variant="secondary" 
-                        size="sm" 
-                        onClick={() => toggleMapExpansion(location.id)}
-                      >
-                        {expandedMaps[location.id] ? 'Collapse' : 'Expand'}
-                      </Button>
-                      <Button 
-                        variant="secondary" 
-                        size="sm" 
-                        onClick={() => handleMapClick(location.address)}
-                        className="flex items-center gap-1"
-                      >
-                        <ExternalLink className="h-3 w-3" />
-                        Google Maps
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+              {/* Map Preview - Click to open in Google Maps */}
+              <div 
+                onClick={() => handleMapClick(location.address)}
+                className="bg-muted rounded-lg h-48 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/80 transition-colors group"
+              >
+                <MapPin className="h-8 w-8 text-muted-foreground mb-2 group-hover:text-foreground transition-colors" />
+                <p className="text-muted-foreground text-sm group-hover:text-foreground transition-colors flex items-center gap-1">
+                  Click to open in Google Maps
+                  <ExternalLink className="h-3 w-3" />
+                </p>
               </div>
             </div>
           </Card>
