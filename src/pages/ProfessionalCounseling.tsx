@@ -15,7 +15,8 @@ import { ArrowRight } from "lucide-react";
 import { trackSearch, trackFilter } from "@/utils/analytics";
 
 const ProfessionalCounseling = () => {
-  const [visibleCards, setVisibleCards] = useState(0);
+  const [batchedResources, setBatchedResources] = useState<(Practitioner | Bureau)[]>([]);
+  const [isLoadingBatch, setIsLoadingBatch] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     locations: [],
@@ -470,30 +471,35 @@ const ProfessionalCounseling = () => {
     practitionerLocationsLoading ||
     institutionLocationsLoading;
 
-  // Staggered card reveal effect - show 3 cards at a time (1 row)
+  // Progressive loading effect - load and show 3 cards at a time
   useEffect(() => {
-    if (allResources.length > 0 && !isLoadingMore) {
-      const cardsPerRow = 3;
-      const totalRows = Math.ceil(allResources.length / cardsPerRow);
-      let currentRow = 0;
+    if (allResources.length > 0) {
+      setBatchedResources([]);
+      setIsLoadingBatch(true);
+      
+      const cardsPerBatch = 3;
+      let currentIndex = 0;
 
-      const interval = setInterval(() => {
-        currentRow++;
-        setVisibleCards(currentRow * cardsPerRow);
-
-        if (currentRow >= totalRows) {
-          clearInterval(interval);
+      const loadNextBatch = () => {
+        if (currentIndex < allResources.length) {
+          const nextBatch = allResources.slice(currentIndex, currentIndex + cardsPerBatch);
+          setBatchedResources(prev => [...prev, ...nextBatch]);
+          currentIndex += cardsPerBatch;
+          
+          if (currentIndex < allResources.length) {
+            setTimeout(loadNextBatch, 150);
+          } else {
+            setIsLoadingBatch(false);
+          }
         }
-      }, 100); // Show a new row every 100ms
+      };
 
-      return () => clearInterval(interval);
+      loadNextBatch();
+    } else {
+      setBatchedResources([]);
+      setIsLoadingBatch(false);
     }
-  }, [allResources.length, isLoadingMore]);
-
-  // Reset visible cards when filters change
-  useEffect(() => {
-    setVisibleCards(0);
-  }, [filters]);
+  }, [allResources]);
 
   useEffect(() => {
     if (filters.search) {
@@ -547,8 +553,15 @@ const ProfessionalCounseling = () => {
         </div>
       )}
 
+      {isLoadingBatch && batchedResources.length > 0 && (
+        <div className="mb-4 flex items-center justify-center gap-2 text-muted-foreground animate-fade-in">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+          <span className="text-sm">Loading more...</span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {allResources.slice(0, visibleCards).map((resource, index) => {
+        {batchedResources.map((resource, index) => {
           let cardData: UnifiedCardData;
 
           if (resource.type === "practitioner") {
