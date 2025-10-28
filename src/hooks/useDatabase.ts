@@ -2,6 +2,26 @@
 import { useQuery } from "@tanstack/react-query";
 import { databaseService } from "@/services/database";
 
+// OPTIMIZED: Fetch practitioners with all relations in one query
+export const usePractitionersWithRelations = () => {
+  return useQuery({
+    queryKey: ['practitioners-with-relations'],
+    queryFn: databaseService.getAllPractitionersWithRelations,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
+};
+
+// OPTIMIZED: Fetch institutions with all relations in one query
+export const useInstitutionsWithRelations = () => {
+  return useQuery({
+    queryKey: ['institutions-with-relations'],
+    queryFn: databaseService.getAllInstitutionsWithRelations,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
+};
+
 export const usePractitioners = () => {
   return useQuery({
     queryKey: ['practitioners'],
