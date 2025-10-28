@@ -33,6 +33,75 @@ function normalizeLink(raw?: string | null): string | null {
 }
 
 export const databaseService = {
+  // OPTIMIZED: Fetch all practitioners with all their relations in ONE query
+  async getAllPractitionersWithRelations() {
+    const { data, error } = await supabase
+      .from("practitioner")
+      .select(`
+        *,
+        practitioner_locations(
+          location(*)
+        ),
+        practitioner_services(
+          service(
+            *,
+            book_contact:book_cta(id, link),
+            learn_more_contact:learn_more_cta(id, link)
+          )
+        )
+      `);
+
+    if (error) {
+      console.error("Error fetching practitioners with relations:", error);
+      throw error;
+    }
+
+    return data || [];
+  },
+
+  // OPTIMIZED: Fetch all institutions with all their relations in ONE query
+  async getAllInstitutionsWithRelations() {
+    const { data, error } = await supabase
+      .from("institution")
+      .select(`
+        *,
+        institution_locations(
+          location(*)
+        ),
+        institution_services(
+          service(
+            *,
+            book_contact:book_cta(id, link),
+            learn_more_contact:learn_more_cta(id, link)
+          )
+        )
+      `);
+
+    if (error) {
+      console.error("Error fetching institutions with relations:", error);
+      throw error;
+    }
+
+    // Normalize links for CTAs
+    return (data || []).map(institution => ({
+      ...institution,
+      institution_services: institution.institution_services?.map((is: any) => ({
+        ...is,
+        service: is.service ? {
+          ...is.service,
+          book_contact: is.service.book_contact?.link ? {
+            ...is.service.book_contact,
+            link: normalizeLink(is.service.book_contact.link)
+          } : null,
+          learn_more_contact: is.service.learn_more_contact?.link ? {
+            ...is.service.learn_more_contact,
+            link: normalizeLink(is.service.learn_more_contact.link)
+          } : null,
+        } : null
+      })) || []
+    }));
+  },
+
   // Fetch all practitioners (base data only - relationships fetched separately)
   async getPractitioners() {
     const { data, error } = await supabase.from("practitioner").select("*");
