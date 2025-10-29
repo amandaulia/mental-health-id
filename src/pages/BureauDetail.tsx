@@ -482,13 +482,11 @@ const BureauDetail = () => {
                                   </div>
                                 )}
                               </div>
-                              <p className={`mt-2 ${service.price == null ? 'text-sm text-muted-foreground italic' : service.price === 0 ? 'text-lg font-medium text-primary' : 'text-lg font-medium text-primary'}`}>
-                                {service.price == null 
-                                  ? 'Price available upon consultation' 
-                                  : service.price === 0 
-                                  ? 'Free' 
-                                  : formatPrice(service.price)}
-                              </p>
+              <p className={`mt-2 ${service.price == null || service.price === 0 ? 'text-sm text-muted-foreground italic' : 'text-lg font-medium text-primary'}`}>
+                {service.price == null || service.price === 0
+                  ? 'Price available upon request' 
+                  : formatPrice(service.price)}
+              </p>
                             </div>
                             <div className="flex gap-2">
                               {service.bookingUrl && (
