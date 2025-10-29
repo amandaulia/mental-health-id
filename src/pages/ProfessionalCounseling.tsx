@@ -8,8 +8,6 @@ import { UnifiedCard } from "@/components/UnifiedCard";
 import { usePractitionersWithRelations, useInstitutionsWithRelations } from "@/hooks/useDatabase";
 import { Button } from "@/components/ui/button";
 import { trackSearch, trackFilter } from "@/utils/analytics";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -397,41 +395,49 @@ const ProfessionalCounseling = () => {
   }, [filters.search]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <div className="container mx-auto px-4 py-8 sm:py-12">
+      {/* Hero Section */}
+      <div className="mb-8 sm:mb-12 text-center">
+        <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
+          <span className="gradient-text">Professional Counseling</span>
+        </h1>
+        <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
+          Find licensed mental health professionals - psychologists, psychiatrists, and clinics ready to support you. 🌟
+        </p>
+      </div>
 
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Professional Counseling</h1>
-          <p className="text-muted-foreground">Find licensed mental health professionals</p>
+      {/* Search and Browse Section */}
+      <div className="mb-6">
+        <div className="bg-card rounded-lg p-4">
+          <SearchAndFilters
+            filters={filters}
+            onFiltersChange={setFilters}
+            filterOptions={filterOptions}
+            institutionNames={institutionNames}
+          />
         </div>
+        <div className="mt-4">
+          <FilterTags
+            filters={filters}
+            onRemoveFilter={handleRemoveFilter}
+            onClearAll={handleClearAllFilters}
+          />
+        </div>
+      </div>
 
-        <SearchAndFilters
-          filters={filters}
-          onFiltersChange={setFilters}
-          filterOptions={filterOptions}
-          institutionNames={institutionNames}
-        />
-
-        <FilterTags
-          filters={filters}
-          onRemoveFilter={handleRemoveFilter}
-          onClearAll={handleClearAllFilters}
-        />
-
-        {/* Loading indicator */}
-        {isInitialLoading && (
-          <div className="mb-8 p-6 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl animate-fade-in">
-            <div className="flex items-center justify-center gap-3">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-              <span className="text-lg font-medium text-foreground">
-                Loading...
-              </span>
-            </div>
+      {/* Loading indicator */}
+      {isInitialLoading && (
+        <div className="mb-8 p-6 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl animate-fade-in">
+          <div className="flex items-center justify-center gap-3">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+            <span className="text-lg font-medium text-foreground">
+              Loading...
+            </span>
           </div>
-        )}
+        </div>
+      )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {paginatedResources.map((resource: any, index: number) => {
             let cardData: UnifiedCardData;
 
@@ -473,33 +479,30 @@ const ProfessionalCounseling = () => {
 
             return <UnifiedCard key={`${resource.type}-${resource.id}`} data={cardData} linkTo={linkTo} />;
           })}
+      </div>
+
+      {/* Load More Button */}
+      {hasMore && !isInitialLoading && (
+        <div className="mt-8 flex justify-center">
+          <Button
+            onClick={handleLoadMore}
+            size="lg"
+            variant="outline"
+            className="min-w-[200px]"
+          >
+            Load More ({paginatedResources.length} of {allResources.length})
+          </Button>
         </div>
+      )}
 
-        {/* Load More Button */}
-        {hasMore && !isInitialLoading && (
-          <div className="mt-8 flex justify-center">
-            <Button
-              onClick={handleLoadMore}
-              size="lg"
-              variant="outline"
-              className="min-w-[200px]"
-            >
-              Load More ({paginatedResources.length} of {allResources.length})
-            </Button>
-          </div>
-        )}
-
-        {allResources.length === 0 && !isInitialLoading && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-4">No results found</p>
-            <Button onClick={handleClearAllFilters} variant="outline">
-              Clear Filters
-            </Button>
-          </div>
-        )}
-      </main>
-
-      <Footer />
+      {allResources.length === 0 && !isInitialLoading && (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground mb-4">No results found</p>
+          <Button onClick={handleClearAllFilters} variant="outline">
+            Clear Filters
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
