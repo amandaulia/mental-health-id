@@ -115,17 +115,22 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                           +{data.professionTypes.length - 2}
                         </Badge>
                       )}
-                      {data.insurance && data.insurance.filter(ins => ins !== "none").length > 0 && (
+                      {data.insurance && data.insurance.filter(ins => ins?.toLowerCase() !== "none").length > 0 && (
                         <>
-                          {data.insurance.filter(ins => ins !== "none").slice(0, 2).map((ins) => (
-                            <Badge 
-                              key={ins} 
-                              variant={ins === "bpjs" ? "bpjs" : ins === "private" ? "private" : "outline"} 
-                              className="text-xs"
-                            >
-                              {ins === "bpjs" ? "BPJS" : "Private Insurance"}
-                            </Badge>
-                          ))}
+                          {Array.from(new Set(data.insurance.filter(ins => ins?.toLowerCase() !== "none"))).slice(0, 2).map((ins) => {
+                            const n = ins.toLowerCase();
+                            const isBpjs = n === "bpjs";
+                            const isPrivate = n === "private" || n === "private insurance";
+                            return (
+                              <Badge
+                                key={ins}
+                                variant={isBpjs ? "bpjs" : isPrivate ? "private" : "outline"}
+                                className="text-xs"
+                              >
+                                {isBpjs ? "BPJS" : isPrivate ? "Private Insurance" : ins}
+                              </Badge>
+                            );
+                          })}
                         </>
                       )}
                     </div>
@@ -145,17 +150,22 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                           +{data.professionTypes.length - 2}
                         </Badge>
                       )}
-                      {data.insurance && data.insurance.filter(ins => ins !== "none").length > 0 && (
+                      {data.insurance && data.insurance.filter(ins => ins?.toLowerCase() !== "none").length > 0 && (
                         <>
-                          {data.insurance.filter(ins => ins !== "none").slice(0, 2).map((ins) => (
-                            <Badge 
-                              key={ins} 
-                              variant={ins === "bpjs" ? "bpjs" : ins === "private" ? "private" : "outline"} 
-                              className="text-xs"
-                            >
-                              {ins === "bpjs" ? "BPJS" : "Private Insurance"}
-                            </Badge>
-                          ))}
+                          {Array.from(new Set(data.insurance.filter(ins => ins?.toLowerCase() !== "none"))).slice(0, 2).map((ins) => {
+                            const n = ins.toLowerCase();
+                            const isBpjs = n === "bpjs";
+                            const isPrivate = n === "private" || n === "private insurance";
+                            return (
+                              <Badge
+                                key={ins}
+                                variant={isBpjs ? "bpjs" : isPrivate ? "private" : "outline"}
+                                className="text-xs"
+                              >
+                                {isBpjs ? "BPJS" : isPrivate ? "Private Insurance" : ins}
+                              </Badge>
+                            );
+                          })}
                         </>
                       )}
                     </div>
