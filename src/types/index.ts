@@ -22,7 +22,7 @@ export type ProfessionType =
 
 export type Mode = "text" | "voice" | "video" | "offline";
 
-export type InsuranceType = "none" | "private" | "bpjs";
+export type InsuranceType = string;
 
 export type BureauType = "independent" | "clinic" | "faskes1" | "faskes2";
 
