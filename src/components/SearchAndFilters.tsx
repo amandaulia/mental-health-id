@@ -53,7 +53,7 @@ export const SearchAndFilters = ({
   const cities = filterOptions?.cities || ["Jakarta, Indonesia", "Surabaya, Indonesia", "Medan, Indonesia"];
   const specializations = filterOptions?.specializations || ["Depression", "Anxiety", "Trauma", "Relationship Issues", "ADHD", "OCD", "Personality Disorders", "Family Therapy"];
   const sessionModeOptions = filterOptions?.sessionModes || ["text", "voice", "video", "offline"];
-  const insuranceOptions = filterOptions?.insuranceTypes || ["private", "bpjs"];
+  const insuranceOptions = filterOptions?.insuranceTypes || [];
   const institutionTypeOptions = filterOptions?.institutionTypes || [];
   // Use prices directly from database without fallbacks
   const minPrice = filterOptions?.minPrice || 0;
@@ -80,9 +80,11 @@ export const SearchAndFilters = ({
   };
 
   const getInsuranceLabel = (insurance: string) => {
-    if (insurance === "bpjs") return "BPJS";
-    if (insurance === "private") return "Private";
-    return insurance.charAt(0).toUpperCase() + insurance.slice(1);
+    const normalized = insurance.toLowerCase();
+    if (normalized === "bpjs") return "BPJS";
+    if (normalized === "private" || normalized === "private insurance") return "Private Insurance";
+    if (normalized === "none") return "No Insurance";
+    return insurance;
   };
 
   // Update local state when filters change from parent
