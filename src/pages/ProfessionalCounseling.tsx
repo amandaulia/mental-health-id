@@ -11,6 +11,24 @@ import { trackSearch, trackFilter } from "@/utils/analytics";
 
 const ITEMS_PER_PAGE = 12;
 
+const canonicalizeInsurance = (insurance: string) => {
+  const normalized = insurance?.trim().toLowerCase();
+  if (normalized === "bpjs") return "BPJS";
+  if (normalized === "private" || normalized === "private insurance") return "Private Insurance";
+  if (normalized === "none") return "none";
+  return insurance?.trim() || "";
+};
+
+const normalizeInsuranceList = (insurance: string[] = []) => {
+  return Array.from(new Set(insurance.map(canonicalizeInsurance).filter(Boolean)));
+};
+
+const hasInsuranceMatch = (resourceInsurance: string[] = [], selectedInsurance: string[] = []) => {
+  const resourceValues = normalizeInsuranceList(resourceInsurance);
+  const selectedValues = normalizeInsuranceList(selectedInsurance);
+  return selectedValues.some((selected) => resourceValues.includes(selected));
+};
+
 const ProfessionalCounseling = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<FilterState>({
@@ -60,6 +78,7 @@ const ProfessionalCounseling = () => {
     return practitionersData.map((practitioner: any) => {
       const locations = practitioner.practitioner_locations?.map((pl: any) => pl.location).filter(Boolean) || [];
       const services = practitioner.practitioner_services?.map((ps: any) => ps.service).filter(Boolean) || [];
+      const institutionInsurance = practitioner.practitioner_institutions?.flatMap((pi: any) => pi.institution?.insurance || []) || [];
 
       // Extract cities from locations
       const cities = Array.from(new Set(locations.map((loc: any) => loc.city).filter(Boolean)));
@@ -93,7 +112,7 @@ const ProfessionalCounseling = () => {
         image: practitioner.image,
         professionTypes: practitioner.profession_type || [],
         specializations: practitioner.specialization || [],
-        insurance: practitioner.insurance || [],
+        insurance: normalizeInsuranceList([...institutionInsurance, ...(practitioner.insurance || [])]),
         verified: practitioner.verified || false,
         city: cityString,
         modes: uniqueModes,
@@ -144,7 +163,7 @@ const ProfessionalCounseling = () => {
         bureauType: institution.institution_type,
         professionTypes: institution.profession_type || [],
         specializations: institution.specialization || [],
-        insurance: institution.insurance || [],
+        insurance: normalizeInsuranceList(institution.insurance || []),
         verified: institution.verified || false,
         city: cityString,
         modes: uniqueModes,
@@ -225,7 +244,7 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
-      if (filters.insurance.length > 0 && !filters.insurance.some((ins) => practitioner.insurance.includes(ins))) {
+      if (filters.insurance.length > 0 && !hasInsuranceMatch(practitioner.insurance, filters.insurance)) {
         return false;
       }
 
@@ -284,10 +303,6 @@ const ProfessionalCounseling = () => {
       }
 
       if (filters.priceRange) {
-        if (filters.includeNullPrice && !bureau.priceRange) {
-          return true;
-        }
-
         if (bureau.priceRange) {
           const priceMatch = bureau.priceRange.match(/[\d.,]+/g);
           if (priceMatch && priceMatch.length >= 2) {
@@ -306,7 +321,7 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
-      if (filters.insurance.length > 0 && !filters.insurance.some((ins) => bureau.insurance.includes(ins))) {
+      if (filters.insurance.length > 0 && !hasInsuranceMatch(bureau.insurance, filters.insurance)) {
         return false;
       }
 
@@ -340,7 +355,10 @@ const ProfessionalCounseling = () => {
 
       resource.specializations.forEach((spec: any) => specializations.add(spec));
       resource.modes.forEach((mode: any) => sessionModes.add(mode));
-      resource.insurance.filter((ins: any) => ins !== "none").forEach((ins: any) => insuranceTypes.add(ins));
+      resource.insurance
+        .map((ins: any) => canonicalizeInsurance(ins))
+        .filter((ins: any) => ins && ins !== "none")
+        .forEach((ins: any) => insuranceTypes.add(ins));
     });
 
     allBureaus.forEach((bureau: any) => {
