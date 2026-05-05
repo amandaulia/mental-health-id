@@ -39,6 +39,9 @@ export const databaseService = {
       .from("practitioner")
       .select(`
         *,
+        practitioner_institutions(
+          institution(*)
+        ),
         practitioner_locations(
           location(*)
         ),
