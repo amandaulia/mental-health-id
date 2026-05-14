@@ -23,6 +23,17 @@ const normalizeInsuranceList = (insurance: string[] = []) => {
   return Array.from(new Set(insurance.map(canonicalizeInsurance).filter(Boolean)));
 };
 
+const formatRupiah = (price: number) =>
+  price === 0 ? "Free" : `Rp ${price.toLocaleString()}`;
+
+const buildPriceRange = (prices: number[]): string | null => {
+  if (prices.length === 0) return null;
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  if (minPrice === maxPrice) return formatRupiah(minPrice);
+  return `${formatRupiah(minPrice)} - ${formatRupiah(maxPrice)}`;
+};
+
 const hasInsuranceMatch = (resourceInsurance: string[] = [], selectedInsurance: string[] = []) => {
   const resourceValues = normalizeInsuranceList(resourceInsurance);
   const selectedValues = normalizeInsuranceList(selectedInsurance);
@@ -99,10 +110,10 @@ const ProfessionalCounseling = () => {
       const modeOrder = ["text", "voice", "video", "offline"];
       const uniqueModes = uniqueModesSet.sort((a: any, b: any) => modeOrder.indexOf(a) - modeOrder.indexOf(b));
 
-      // Calculate price range
-      const prices = services.map((s: any) => s.price).filter((p: any) => p != null);
-      const minPrice = prices.length > 0 ? Math.min(...prices) : null;
-      const maxPrice = prices.length > 0 ? Math.max(...prices) : null;
+      // Calculate price range (include 0 as "Free")
+      const prices = services
+        .map((s: any) => s.price)
+        .filter((p: any): p is number => p != null);
 
       return {
         type: "practitioner" as const,
@@ -116,7 +127,7 @@ const ProfessionalCounseling = () => {
         verified: practitioner.verified || false,
         city: cityString,
         modes: uniqueModes,
-        priceRange: minPrice && maxPrice ? `Rp ${minPrice.toLocaleString()} - Rp ${maxPrice.toLocaleString()}` : null,
+        priceRange: buildPriceRange(prices),
         services,
         locations,
       };
@@ -150,10 +161,10 @@ const ProfessionalCounseling = () => {
       const modeOrder = ["text", "voice", "video", "offline"];
       const uniqueModes = uniqueModesSet.sort((a: any, b: any) => modeOrder.indexOf(a) - modeOrder.indexOf(b));
 
-      // Calculate price range
-      const prices = services.map((s: any) => s.price).filter((p: any) => p != null);
-      const minPrice = prices.length > 0 ? Math.min(...prices) : null;
-      const maxPrice = prices.length > 0 ? Math.max(...prices) : null;
+      // Calculate price range (include 0 as "Free")
+      const prices = services
+        .map((s: any) => s.price)
+        .filter((p: any): p is number => p != null);
 
       return {
         type: "bureau" as const,
@@ -167,7 +178,7 @@ const ProfessionalCounseling = () => {
         verified: institution.verified || false,
         city: cityString,
         modes: uniqueModes,
-        priceRange: minPrice && maxPrice ? `Rp ${minPrice.toLocaleString()} - Rp ${maxPrice.toLocaleString()}` : null,
+        priceRange: buildPriceRange(prices),
         services,
         locations,
       };
