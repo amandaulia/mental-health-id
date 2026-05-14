@@ -63,7 +63,7 @@ const ProfessionalCounseling = () => {
   const { data: priceRange } = useQuery({
     queryKey: ["service-price-range"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("service").select("price").not("price", "is", null).gt("price", 0);
+      const { data, error } = await supabase.from("service").select("price").not("price", "is", null);
 
       if (error) throw error;
 
@@ -71,7 +71,7 @@ const ProfessionalCounseling = () => {
         return { minPrice: 0, maxPrice: 5000000 };
       }
 
-      const prices = data.map((s) => s.price).filter((p) => p != null && p > 0);
+      const prices = data.map((s) => s.price).filter((p) => p != null);
       const minPrice = Math.min(...prices);
       const maxPrice = Math.max(...prices);
 
@@ -313,19 +313,12 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
-      if (filters.priceRange) {
-        if (bureau.priceRange) {
-          const priceMatch = bureau.priceRange.match(/[\d.,]+/g);
-          if (priceMatch && priceMatch.length >= 2) {
-            const bureauMin = parseFloat(priceMatch[0].replace(/[.,]/g, ""));
-            const bureauMax = parseFloat(priceMatch[1].replace(/[.,]/g, ""));
-            if (bureauMax < filters.priceRange[0] || bureauMin > filters.priceRange[1]) {
-              return false;
-            }
-          }
-        } else if (!filters.includeNullPrice) {
-          return false;
-        }
+      if (filters.priceRange && bureau.services.length > 0) {
+        const hasServiceInRange = bureau.services.some((service: any) => {
+          if (service.price == null) return filters.includeNullPrice;
+          return service.price >= filters.priceRange[0] && service.price <= filters.priceRange[1];
+        });
+        if (!hasServiceInRange) return false;
       }
 
       if (filters.modes.length > 0 && !filters.modes.some((mode) => bureau.modes.includes(mode))) {
