@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Mail, Globe, Instagram } from "lucide-react";
+import { PhoneCallButton } from "@/components/PhoneCallButton";
 
 // Mock detailed data (in real app, this would come from API/database)
 const mockDetailData: { [key: string]: any } = {
