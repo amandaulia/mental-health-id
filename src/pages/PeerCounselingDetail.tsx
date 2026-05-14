@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Mail, Globe, Instagram, DollarSign, Clock, Users } from "lucide-react";
+import { PhoneCallButton } from "@/components/PhoneCallButton";
 
 // Mock detailed data (in real app, this would come from API/database)
 const mockDetailData: { [key: string]: any } = {
@@ -180,9 +181,7 @@ const PeerCounselingDetail = () => {
                 <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
                   <p className="font-medium text-sm">Phone</p>
-                  <a href={`tel:${data.phone}`} className="text-sm text-primary hover:text-primary-hover">
-                    {data.phone}
-                  </a>
+                  <PhoneCallButton phone={data.phone} asLink />
                 </div>
               </div>
               
@@ -223,10 +222,7 @@ const PeerCounselingDetail = () => {
               <CardTitle>Get Support</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full" onClick={() => window.open(`tel:${data.phone}`)}>
-                <Phone className="h-4 w-4 mr-2" />
-                Call Now
-              </Button>
+              <PhoneCallButton phone={data.phone} className="w-full" />
               <Button variant="outline" className="w-full" onClick={() => window.open(`mailto:${data.email}`)}>
                 <Mail className="h-4 w-4 mr-2" />
                 Send Email
