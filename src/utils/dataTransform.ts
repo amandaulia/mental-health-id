@@ -246,7 +246,7 @@ const getUniqueModesFromServices = (services: Service[]) => {
 
 // Helper function to calculate price range from services
 const calculatePriceRange = (services: Service[]): string | undefined => {
-  const prices = services.map(s => s.price).filter(price => price && price > 0);
+  const prices = services.map(s => s.price).filter(price => price != null);
   
   if (prices.length === 0) return undefined;
   
