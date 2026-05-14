@@ -20,6 +20,7 @@ interface PhoneCallButtonProps {
   size?: React.ComponentProps<typeof Button>["size"];
   /** Render as a plain text link instead of a button */
   asLink?: boolean;
+  onClick?: () => void;
 }
 
 /**
@@ -33,12 +34,14 @@ export const PhoneCallButton = ({
   variant,
   size,
   asLink = false,
+  onClick,
 }: PhoneCallButtonProps) => {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const handleClick = (e: React.MouseEvent) => {
+    onClick?.();
     if (isMobile) {
       window.location.href = `tel:${phone}`;
       return;
