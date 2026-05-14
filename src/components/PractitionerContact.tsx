@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageCircle, Globe, Instagram, Phone, Mail, ExternalLink } from "lucide-react";
 import { Practitioner } from "@/types";
 import { AnalyticsWrapper } from "./AnalyticsWrapper";
+import { PhoneCallButton } from "./PhoneCallButton";
 
 interface PractitionerContactProps {
   practitioner: Practitioner;
@@ -61,6 +62,10 @@ export const PractitionerContact = ({ practitioner }: PractitionerContactProps) 
                       <a href={contact.link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
                         {displayText}
                       </a>
+                    ) : contact.type === 'Phone' ? (
+                      <PhoneCallButton phone={contact.value} asLink>
+                        {displayText}
+                      </PhoneCallButton>
                     ) : (
                       <p className="text-sm">{displayText}</p>
                     )}
