@@ -23,6 +23,17 @@ const normalizeInsuranceList = (insurance: string[] = []) => {
   return Array.from(new Set(insurance.map(canonicalizeInsurance).filter(Boolean)));
 };
 
+const formatRupiah = (price: number) =>
+  price === 0 ? "Free" : `Rp ${price.toLocaleString()}`;
+
+const buildPriceRange = (prices: number[]): string | null => {
+  if (prices.length === 0) return null;
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  if (minPrice === maxPrice) return formatRupiah(minPrice);
+  return `${formatRupiah(minPrice)} - ${formatRupiah(maxPrice)}`;
+};
+
 const hasInsuranceMatch = (resourceInsurance: string[] = [], selectedInsurance: string[] = []) => {
   const resourceValues = normalizeInsuranceList(resourceInsurance);
   const selectedValues = normalizeInsuranceList(selectedInsurance);
@@ -52,7 +63,7 @@ const ProfessionalCounseling = () => {
   const { data: priceRange } = useQuery({
     queryKey: ["service-price-range"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("service").select("price").not("price", "is", null).gt("price", 0);
+      const { data, error } = await supabase.from("service").select("price").not("price", "is", null);
 
       if (error) throw error;
 
@@ -60,7 +71,7 @@ const ProfessionalCounseling = () => {
         return { minPrice: 0, maxPrice: 5000000 };
       }
 
-      const prices = data.map((s) => s.price).filter((p) => p != null && p > 0);
+      const prices = data.map((s) => s.price).filter((p) => p != null);
       const minPrice = Math.min(...prices);
       const maxPrice = Math.max(...prices);
 
@@ -99,10 +110,10 @@ const ProfessionalCounseling = () => {
       const modeOrder = ["text", "voice", "video", "offline"];
       const uniqueModes = uniqueModesSet.sort((a: any, b: any) => modeOrder.indexOf(a) - modeOrder.indexOf(b));
 
-      // Calculate price range
-      const prices = services.map((s: any) => s.price).filter((p: any) => p != null);
-      const minPrice = prices.length > 0 ? Math.min(...prices) : null;
-      const maxPrice = prices.length > 0 ? Math.max(...prices) : null;
+      // Calculate price range (include 0 as "Free")
+      const prices = services
+        .map((s: any) => s.price)
+        .filter((p: any): p is number => p != null);
 
       return {
         type: "practitioner" as const,
@@ -116,7 +127,7 @@ const ProfessionalCounseling = () => {
         verified: practitioner.verified || false,
         city: cityString,
         modes: uniqueModes,
-        priceRange: minPrice && maxPrice ? `Rp ${minPrice.toLocaleString()} - Rp ${maxPrice.toLocaleString()}` : null,
+        priceRange: buildPriceRange(prices),
         services,
         locations,
       };
@@ -150,10 +161,10 @@ const ProfessionalCounseling = () => {
       const modeOrder = ["text", "voice", "video", "offline"];
       const uniqueModes = uniqueModesSet.sort((a: any, b: any) => modeOrder.indexOf(a) - modeOrder.indexOf(b));
 
-      // Calculate price range
-      const prices = services.map((s: any) => s.price).filter((p: any) => p != null);
-      const minPrice = prices.length > 0 ? Math.min(...prices) : null;
-      const maxPrice = prices.length > 0 ? Math.max(...prices) : null;
+      // Calculate price range (include 0 as "Free")
+      const prices = services
+        .map((s: any) => s.price)
+        .filter((p: any): p is number => p != null);
 
       return {
         type: "bureau" as const,
@@ -167,7 +178,7 @@ const ProfessionalCounseling = () => {
         verified: institution.verified || false,
         city: cityString,
         modes: uniqueModes,
-        priceRange: minPrice && maxPrice ? `Rp ${minPrice.toLocaleString()} - Rp ${maxPrice.toLocaleString()}` : null,
+        priceRange: buildPriceRange(prices),
         services,
         locations,
       };
@@ -302,19 +313,12 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
-      if (filters.priceRange) {
-        if (bureau.priceRange) {
-          const priceMatch = bureau.priceRange.match(/[\d.,]+/g);
-          if (priceMatch && priceMatch.length >= 2) {
-            const bureauMin = parseFloat(priceMatch[0].replace(/[.,]/g, ""));
-            const bureauMax = parseFloat(priceMatch[1].replace(/[.,]/g, ""));
-            if (bureauMax < filters.priceRange[0] || bureauMin > filters.priceRange[1]) {
-              return false;
-            }
-          }
-        } else if (!filters.includeNullPrice) {
-          return false;
-        }
+      if (filters.priceRange && bureau.services.length > 0) {
+        const hasServiceInRange = bureau.services.some((service: any) => {
+          if (service.price == null) return filters.includeNullPrice;
+          return service.price >= filters.priceRange[0] && service.price <= filters.priceRange[1];
+        });
+        if (!hasServiceInRange) return false;
       }
 
       if (filters.modes.length > 0 && !filters.modes.some((mode) => bureau.modes.includes(mode))) {

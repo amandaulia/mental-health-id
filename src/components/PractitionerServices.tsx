@@ -50,8 +50,18 @@ export const PractitionerServices = ({
                       <span>{getModeLabel(service.mode)}</span>
                     </div>
                   </div>
-                  <p className="font-medium text-primary text-lg mt-2">
-                    {formatPrice(service.price)}
+                  <p
+                    className={`mt-2 ${
+                      service.price == null
+                        ? "text-sm text-muted-foreground italic"
+                        : "font-medium text-primary text-lg"
+                    }`}
+                  >
+                    {service.price == null
+                      ? "Price available upon request"
+                      : service.price === 0
+                      ? "Free"
+                      : formatPrice(service.price)}
                   </p>
                 </div>
                 <div className="flex gap-2">
