@@ -5,6 +5,10 @@ import { ModeIcon } from "./ModeIcon";
 import { Clock } from "lucide-react";
 import { Practitioner } from "@/types";
 import { trackBookingClick } from "@/utils/analytics";
+import { PhoneCallButton } from "./PhoneCallButton";
+
+const isTelLink = (url: string) => /^tel:/i.test(url);
+const stripTel = (url: string) => url.replace(/^tel:/i, "");
 
 interface PractitionerServicesProps {
   practitioner: Practitioner;
@@ -66,27 +70,48 @@ export const PractitionerServices = ({
                 </div>
                 <div className="flex gap-2">
                   {service.bookingUrl && (
-                    <Button 
-                      size="sm" 
-                      asChild
-                      onClick={() => handleBookingClick(service.name, service.price)}
-                    >
-                      <a href={service.bookingUrl} target="_blank" rel="noopener noreferrer">
+                    isTelLink(service.bookingUrl) ? (
+                      <PhoneCallButton
+                        phone={stripTel(service.bookingUrl)}
+                        size="sm"
+                        onClick={() => handleBookingClick(service.name, service.price)}
+                      >
                         Book Now
-                      </a>
-                    </Button>
+                      </PhoneCallButton>
+                    ) : (
+                      <Button
+                        size="sm"
+                        asChild
+                        onClick={() => handleBookingClick(service.name, service.price)}
+                      >
+                        <a href={service.bookingUrl} target="_blank" rel="noopener noreferrer">
+                          Book Now
+                        </a>
+                      </Button>
+                    )
                   )}
                   {service.learnMoreUrl && (
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      asChild
-                      onClick={() => handleLearnMoreClick(service.name)}
-                    >
-                      <a href={service.learnMoreUrl} target="_blank" rel="noopener noreferrer">
+                    isTelLink(service.learnMoreUrl) ? (
+                      <PhoneCallButton
+                        phone={stripTel(service.learnMoreUrl)}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleLearnMoreClick(service.name)}
+                      >
                         Learn More
-                      </a>
-                    </Button>
+                      </PhoneCallButton>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        onClick={() => handleLearnMoreClick(service.name)}
+                      >
+                        <a href={service.learnMoreUrl} target="_blank" rel="noopener noreferrer">
+                          Learn More
+                        </a>
+                      </Button>
+                    )
                   )}
                 </div>
               </div>
