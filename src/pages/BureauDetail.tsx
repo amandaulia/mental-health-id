@@ -71,8 +71,10 @@ const BureauDetail = () => {
       setBureau(transformInstitution(dbInstitution, transformedServices, contactDetails));
       setServices(transformedServices);
       
-      // Set price range from actual data
-      const prices = transformedServices.map(s => s.price ?? 0).filter(p => p > 0);
+      // Set price range from actual data (include 0 as a valid price)
+      const prices = transformedServices
+        .map(s => s.price)
+        .filter((p): p is number => p != null);
       if (prices.length > 0) {
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
@@ -181,15 +183,17 @@ const BureauDetail = () => {
       if (!modeMatch) return false;
     }
     
-    // Filter by price range
-    const servicePrice = service.price ?? 0;
-    const priceMatch = servicePrice >= priceRange[0] && servicePrice <= priceRange[1];
-    
+    // Filter by price range — services with no price (null) always pass
+    if (service.price == null) return true;
+    const priceMatch = service.price >= priceRange[0] && service.price <= priceRange[1];
     return priceMatch;
   });
 
   // Get max price for slider
-  const maxPrice = Math.max(...services.map(s => s.price ?? 0), 2000000);
+  const maxPrice = Math.max(
+    ...services.map(s => s.price).filter((p): p is number => p != null),
+    2000000
+  );
 
   const handleMinPriceChange = (value: string) => {
     setMinPriceInput(value);
@@ -217,7 +221,7 @@ const BureauDetail = () => {
     if (type === 'mode' && value) {
       setSelectedModes(prev => prev.filter(m => m !== value));
     } else if (type === 'price') {
-      const prices = services.map(s => s.price ?? 0).filter(p => p > 0);
+      const prices = services.map(s => s.price).filter((p): p is number => p != null);
       if (prices.length > 0) {
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
@@ -233,7 +237,7 @@ const BureauDetail = () => {
   const clearAllFilters = () => {
     setSelectedModes([]);
     setSearchQuery("");
-    const prices = services.map(s => s.price ?? 0).filter(p => p > 0);
+    const prices = services.map(s => s.price).filter((p): p is number => p != null);
     if (prices.length > 0) {
       const minPrice = Math.min(...prices);
       const maxPrice = Math.max(...prices);
@@ -243,9 +247,10 @@ const BureauDetail = () => {
     }
   };
 
-  const hasActiveFilters = selectedModes.length > 0 || searchQuery !== "" || 
-    (services.length > 0 && (priceRange[0] !== Math.min(...services.map(s => s.price ?? 0).filter(p => p > 0)) || 
-    priceRange[1] !== Math.max(...services.map(s => s.price ?? 0).filter(p => p > 0))));
+  const validPrices = services.map(s => s.price).filter((p): p is number => p != null);
+  const hasActiveFilters = selectedModes.length > 0 || searchQuery !== "" ||
+    (validPrices.length > 0 && (priceRange[0] !== Math.min(...validPrices) ||
+    priceRange[1] !== Math.max(...validPrices)));
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -482,10 +487,12 @@ const BureauDetail = () => {
                                   </div>
                                 )}
                               </div>
-              <p className={`mt-2 ${service.price == null || service.price === 0 ? 'text-sm text-muted-foreground italic' : 'text-lg font-medium text-primary'}`}>
-                {service.price == null || service.price === 0
-                  ? 'Price available upon request' 
-                  : formatPrice(service.price)}
+              <p className={`mt-2 ${service.price == null ? 'text-sm text-muted-foreground italic' : 'text-lg font-medium text-primary'}`}>
+                {service.price == null
+                  ? 'Price available upon request'
+                  : service.price === 0
+                    ? 'Free'
+                    : formatPrice(service.price)}
               </p>
                             </div>
                             <div className="flex gap-2">
