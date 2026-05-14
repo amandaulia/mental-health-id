@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageCircle, Globe, Instagram, Phone, Mail, ExternalLink } from "lucide-react";
 import { Bureau } from "@/types";
 import { AnalyticsWrapper } from "./AnalyticsWrapper";
+import { PhoneCallButton } from "./PhoneCallButton";
 
 interface BureauContactProps {
   bureau: Bureau;
