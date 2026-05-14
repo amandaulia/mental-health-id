@@ -80,6 +80,10 @@ export const BureauContact = ({ bureau }: BureauContactProps) => {
                         <a href={contact.link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
                           {displayText}
                         </a>
+                      ) : contact.type === 'Phone' ? (
+                        <PhoneCallButton phone={contact.value} asLink>
+                          {displayText}
+                        </PhoneCallButton>
                       ) : (
                         <p className="text-sm">{displayText}</p>
                       )}
@@ -120,6 +124,10 @@ export const BureauContact = ({ bureau }: BureauContactProps) => {
                               <a href={contact.link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
                                 {displayText}
                               </a>
+                            ) : contact.type === 'Phone' ? (
+                              <PhoneCallButton phone={contact.value} asLink>
+                                {displayText}
+                              </PhoneCallButton>
                             ) : (
                               <p className="text-sm">{displayText}</p>
                             )}
