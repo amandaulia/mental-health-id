@@ -246,36 +246,22 @@ const getUniqueModesFromServices = (services: Service[]) => {
 
 // Helper function to calculate price range from services
 const calculatePriceRange = (services: Service[]): string | undefined => {
-  const prices = services.map(s => s.price).filter(price => price != null);
-  
+  const prices = services.map(s => s.price).filter((p): p is number => p != null);
+
   if (prices.length === 0) return undefined;
-  
-  if (prices.length === 1) {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      maximumFractionDigits: 0
-    }).format(prices[0]);
-  }
-  
+
+  const fmt = (p: number) =>
+    p === 0
+      ? 'Free'
+      : new Intl.NumberFormat('id-ID', {
+          style: 'currency',
+          currency: 'IDR',
+          maximumFractionDigits: 0,
+        }).format(p);
+
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
-  
-  if (minPrice === maxPrice) {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      maximumFractionDigits: 0
-    }).format(minPrice);
-  }
-  
-  return `${new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    maximumFractionDigits: 0
-  }).format(minPrice)} - ${new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    maximumFractionDigits: 0
-  }).format(maxPrice)}`;
+
+  if (minPrice === maxPrice) return fmt(minPrice);
+  return `${fmt(minPrice)} - ${fmt(maxPrice)}`;
 };
