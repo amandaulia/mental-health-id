@@ -16,6 +16,10 @@ import { useInstitution, usePractitionersByInstitution, useServicesByInstitution
 import { transformInstitution, transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
 import { Bureau, Practitioner, Service, Mode } from "@/types";
 import { BureauLocations } from "@/components/BureauLocations";
+import { PhoneCallButton } from "@/components/PhoneCallButton";
+
+const isTelLink = (url: string) => /^tel:/i.test(url);
+const stripTel = (url: string) => url.replace(/^tel:/i, "");
 
 const BureauDetail = () => {
   const { id } = useParams();
@@ -497,18 +501,30 @@ const BureauDetail = () => {
                             </div>
                             <div className="flex gap-2">
                               {service.bookingUrl && (
-                                <Button size="sm" asChild>
-                                  <a href={service.bookingUrl} target="_blank" rel="noopener noreferrer">
+                                isTelLink(service.bookingUrl) ? (
+                                  <PhoneCallButton phone={stripTel(service.bookingUrl)} size="sm">
                                     Book Now
-                                  </a>
-                                </Button>
+                                  </PhoneCallButton>
+                                ) : (
+                                  <Button size="sm" asChild>
+                                    <a href={service.bookingUrl} target="_blank" rel="noopener noreferrer">
+                                      Book Now
+                                    </a>
+                                  </Button>
+                                )
                               )}
                               {service.learnMoreUrl && (
-                                <Button variant="outline" size="sm" asChild>
-                                  <a href={service.learnMoreUrl} target="_blank" rel="noopener noreferrer">
+                                isTelLink(service.learnMoreUrl) ? (
+                                  <PhoneCallButton phone={stripTel(service.learnMoreUrl)} variant="outline" size="sm">
                                     Learn More
-                                  </a>
-                                </Button>
+                                  </PhoneCallButton>
+                                ) : (
+                                  <Button variant="outline" size="sm" asChild>
+                                    <a href={service.learnMoreUrl} target="_blank" rel="noopener noreferrer">
+                                      Learn More
+                                    </a>
+                                  </Button>
+                                )
                               )}
                             </div>
                           </div>
