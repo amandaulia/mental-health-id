@@ -122,7 +122,10 @@ const translations = {
       hypnotherapy: "Hypnotherapy",
       interpersonal: "Interpersonal",
       moodDisorders: "Mood Disorders",
-      selfDevelopment: "Self Development"
+      selfDevelopment: "Self Development",
+      eatingDisorders: "Eating Disorders",
+      grief: "Grief",
+      psychiatry: "Psychiatry"
     },
     sessionModes: {
       chat: "Chat",
@@ -196,6 +199,103 @@ const translations = {
         title: "About Mental Health Directory Indonesia",
         description: "Learn about the Mental Health Directory Indonesia — a free, comprehensive guide to mental health professionals, peer counseling, and wellness resources across Indonesia."
       }
+    },
+    footer: {
+      description: "Your directory for mental health resources. Connecting you with psychologists, psychiatrists, and mental health clinics across Indonesia."
+    },
+    home: {
+      sections: {
+        professional: {
+          title: "Professional Counseling",
+          description: "Find licensed mental health professionals — psychologists, psychiatrists, and clinics ready to support you.",
+          cta: "Search & Filter"
+        },
+        peer: {
+          title: "Peer Counseling",
+          description: "Connect with peer counselors and support groups who care.",
+          cta: "Find Peer Support"
+        },
+        stressRelief: {
+          title: "Stress Relief",
+          description: "Discover self-help and wellness programs that support your mental health.",
+          cta: "Find Activities"
+        },
+        organizations: {
+          title: "Organizations",
+          description: "Connect with communities and discover resources that help you grow.",
+          ctaRecent: "Recent Organizations & Communities",
+          ctaAll: "All Organizations & Communities"
+        },
+        about: {
+          title: "About Mental Health Directory",
+          subtitle: "Your comprehensive guide to mental health resources and support in Indonesia.",
+          q1: "What is the Mental Health Directory?",
+          q2: "What information will Mental Health Directory provide?",
+          a1: "The Mental Health Directory is a comprehensive platform designed to help individuals find qualified mental health professionals, support groups, and wellness resources across Indonesia. We understand our platform serves as a bridge between those seeking help and qualified professionals, providing detailed information about specializations, accommodations, counseling centers, and various Professional Counseling Services.",
+          professionalTitle: "Professional Counseling Services",
+          professionalDesc: "Licensed psychologists, psychiatrists, and mental health clinics with detailed profiles, specializations, and contact information.",
+          peerTitle: "Peer & Support Counseling",
+          peerBadge: "Coming Soon",
+          peerDesc: "Community-based support groups and peer counseling services for various mental health conditions and life challenges.",
+          stressReliefTitle: "Stress Relief Activities",
+          stressReliefBadge: "Coming Soon",
+          stressReliefDesc: "Art therapy, music therapy, sports activities, and other wellness programs designed to promote mental well-being.",
+          organizationsTitle: "Organizations",
+          organizationsBadge: "Coming Soon",
+          organizationsDesc: "Mental health organizations, educational institutions, and community groups dedicated to mental health awareness and support."
+        }
+      }
+    },
+    detail: {
+      back: "Back",
+      home: "Home",
+      practitionerDetails: "Practitioner Details",
+      bureauDetails: "Bureau Details",
+      loading: "Loading...",
+      notFound: "Not found",
+      error: "An error occurred. Please try again.",
+      experience: "Experience",
+      education: "Education",
+      licenseNumber: "License Number",
+      lastUpdated: "Last updated",
+      professionTypes: "Profession Types",
+      specializations: "Specializations",
+      sessionModes: "Session Modes",
+      insurance: "Insurance",
+      services: "Services",
+      contactInfo: "Contact Information",
+      locations: "Locations",
+      noContactInfo: "No contact information available",
+      noServices: "No services available",
+      book: "Book",
+      learnMore: "Learn More",
+      showAll: "Show all",
+      showLess: "Show less",
+      practitioners: "Practitioners",
+      noInsurance: "No Insurance",
+      privateInsurance: "Private Insurance"
+    },
+    filters: {
+      activeFilters: "Active Filters",
+      clearAll: "Clear all",
+      clearFilters: "Clear Filters",
+      noResults: "No results found",
+      noActivities: "No activities found matching your criteria.",
+      loadMore: "Load More",
+      city: "City",
+      institution: "Institution",
+      institutionType: "Institution Type",
+      profession: "Profession",
+      specialization: "Specialization",
+      sessionMode: "Session Mode",
+      priceRange: "Price Range (IDR)",
+      insurance: "Insurance"
+    },
+    errors: {
+      somethingWrong: "Something went wrong",
+      unexpected: "We're sorry, something unexpected happened. Please try refreshing the page.",
+      tryAgain: "Try Again",
+      refresh: "Refresh Page"
     }
   },
   id: {
