@@ -12,10 +12,12 @@ import { transformPractitioner, transformService, transformContactDetails } from
 import { useEffect, useState } from "react";
 import { Practitioner } from "@/types";
 import { trackError } from "@/utils/analytics";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const PractitionerDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [practitioner, setPractitioner] = useState<Practitioner | null>(null);
   const [locations, setLocations] = useState<any[]>([]);
   
@@ -103,8 +105,8 @@ const PractitionerDetail = () => {
 
   const getInsuranceLabel = (ins: string) => {
     switch (ins) {
-      case "none": return "No Insurance";
-      case "PRIVATE": return "Private Insurance";
+      case "none": return t('insurance.noInsurance');
+      case "PRIVATE": return t('insurance.privateInsurance');
       case "BPJS": return "BPJS";
       default: return ins;
     }
