@@ -238,6 +238,7 @@ const translations = {
       },
       sectionHeading: {
         professional: "Professional Counseling",
+        clinics: "Clinics & Hospitals",
         peer: "Peer Counseling & Support Groups",
         stressRelief: "Stress Relief Activities",
         organizations: "Organizations & Communities"
@@ -644,6 +645,7 @@ const translations = {
       },
       sectionHeading: {
         professional: "Konseling Profesional",
+        clinics: "Klinik & Rumah Sakit",
         peer: "Konseling Sebaya & Kelompok Dukungan",
         stressRelief: "Aktivitas Stress Relief",
         organizations: "Organisasi & Komunitas"
