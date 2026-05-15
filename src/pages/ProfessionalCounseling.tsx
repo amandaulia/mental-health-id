@@ -105,7 +105,7 @@ const ProfessionalCounseling = () => {
         return normalized;
       };
 
-      const allModes = services.flatMap((s: any) => s.session_mode || []);
+      const allModes = services.flatMap((s: any) => s.session_mode?.map((m: string) => m.toLowerCase()) || []);
       const uniqueModesSet = Array.from(new Set(allModes.map((mode: string) => mapMode(mode))));
       const modeOrder = ["text", "voice", "video", "offline"];
       const uniqueModes = uniqueModesSet.sort((a: any, b: any) => modeOrder.indexOf(a) - modeOrder.indexOf(b));
@@ -119,7 +119,7 @@ const ProfessionalCounseling = () => {
         type: "practitioner" as const,
         id: practitioner.id,
         name: practitioner.name,
-        bureauName: "Independent",
+        bureauName: practitioner.practitioner_institutions?.[0]?.institution?.name || "Independent",
         image: practitioner.image,
         professionTypes: practitioner.profession_type || [],
         specializations: practitioner.specialization || [],
