@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock, Building2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getProfessionLabel, getInstitutionTypeLabel } from "@/utils/labels";
 
 interface BureauCardProps {
   bureau: Bureau;
@@ -12,20 +13,6 @@ interface BureauCardProps {
 
 export const BureauCard = ({ bureau }: BureauCardProps) => {
   const { t } = useLanguage();
-  const getBureauTypeLabel = (type: string) => {
-    switch (type) {
-      case "independent":
-        return "Independent Bureau";
-      case "clinic":
-        return "Clinic";
-      case "faskes1":
-        return "Faskes 1";
-      case "faskes2":
-        return "Faskes 2";
-      default:
-        return type;
-    }
-  };
 
   return (
     <Link to={`/bureau/${bureau.id}`}>
@@ -45,7 +32,7 @@ export const BureauCard = ({ bureau }: BureauCardProps) => {
                 <div className="flex flex-wrap gap-1 mb-2">
                   {bureau.professionTypes.slice(0, 3).map((type) => (
                     <Badge key={type} variant="outline" className="text-xs">
-                      {type}
+                      {getProfessionLabel(t, type)}
                     </Badge>
                   ))}
                   {bureau.professionTypes.length > 3 && (
@@ -60,7 +47,7 @@ export const BureauCard = ({ bureau }: BureauCardProps) => {
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Building2 className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{getBureauTypeLabel(bureau.bureauType)}</span>
+                <span className="truncate">{getInstitutionTypeLabel(t, bureau.bureauType)}</span>
               </div>
               
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
