@@ -1,28 +1,42 @@
-## Goal
-Replace the icon-only session mode row on resource cards with the rounded pill style used in the details page filter popover.
+## SEO improvements (Indonesian-first)
 
-## Change
-In `src/components/UnifiedCard.tsx` (lines ~241-249), replace the `<ModeIcon />` loop with rounded pill chips matching the details page style:
+The project already ships per-route `<Helmet>` with bilingual `seo.*` keys, a generator-driven `sitemap.xml`, `robots.txt`, and `WebSite`/`Organization` JSON-LD. The remaining gaps below would meaningfully lift Indonesian-language search performance.
 
-```tsx
-{data.modes && data.modes.length > 0 && (
-  <div className="flex flex-wrap gap-2">
-    {data.modes.slice(0, 4).map((mode) => (
-      <span
-        key={mode}
-        className="px-3 py-1 rounded-full border border-border bg-background text-xs text-foreground whitespace-nowrap"
-      >
-        {getModeLabel(t, mode)}
-      </span>
-    ))}
-  </div>
-)}
-```
+### 1. Default the static head to Indonesian (high impact)
+`index.html` ships `<html lang="en">`, English-first title, English-first description, and `og:locale=en_US`. Social crawlers (LinkedIn/Slack/FB) don't run JS, so this static head is what they cache. Switch the static defaults to Indonesian:
+- `<html lang="id">`
+- Title: `Direktori Kesehatan Mental Indonesia — Psikolog, Psikiater & Konseling`
+- Description: Indonesian-first sentence, with a short English clause after.
+- `og:locale` = `id_ID`, `og:locale:alternate` = `en_US`.
+- `JSON-LD inLanguage`: `["id-ID", "en"]` (id first).
 
-- Drop the `ModeIcon` import (if no longer used elsewhere in the file).
-- Use the existing label helper from `src/utils/labels.ts` (or add a small local `getModeLabel` mirroring `PractitionerDetail.getModeLabel`) so chips show "Online", "In-Person", "Phone", "Chat" instead of the raw enum.
-- Use semantic tokens (`border-border`, `bg-background`, `text-foreground`) — no hardcoded purple, since cards appear across many sections.
+### 2. Add `<PageSEO>` to the home page
+`src/pages/Index.tsx` is the only main route without `<PageSEO>`. Add `<PageSEO pageKey="home" path="/" />` and create `seo.home.title` / `seo.home.description` in the language context (Indonesian + English).
 
-## Out of scope
-- Details pages stay as-is.
-- No changes to filter logic or data shape.
+### 3. Add hreflang alternates
+In `PageSEO.tsx` emit:
+- `<link rel="alternate" hreflang="id" href="…" />`
+- `<link rel="alternate" hreflang="en" href="…" />`
+- `<link rel="alternate" hreflang="x-default" href="…" />` (point to ID)
+
+Tells Google to surface the Indonesian version to Indonesian users.
+
+### 4. Per-detail-page SEO (practitioner/bureau/peer/org)
+Detail pages don't render `<PageSEO>`. Add it with a dynamic `title` / `description` derived from the entity name + city + type, in Indonesian. Example: `"Dr. X — Psikolog di Jakarta | Direktori Kesehatan Mental"`. Without this, every detail URL inherits the static English head.
+
+### 5. Richer JSON-LD per entity
+For practitioner detail pages emit `Person` + `MedicalBusiness` (or `Physician`) schema; for bureau/clinic pages emit `MedicalClinic` / `LocalBusiness` with address, telephone, geo if available. Helps Google's medical-vertical ranking and rich results.
+
+### 6. Sitemap polish
+`scripts/generate-sitemap.ts` is missing the home `/` entry. Add `{ path: "/", priority: "1.0", changefreq: "weekly" }`. Optional: include `<xhtml:link rel="alternate" hreflang="id|en" />` per URL to mirror the hreflang strategy in #3.
+
+### 7. Optional: og:image
+A 1200×630 og:image with the brand name in Indonesian would lift social CTR. I can generate one with the image tool if you want — say the word and I'll do it (otherwise we leave it off, as a missing image previews better than a placeholder).
+
+### Out of scope until you ask
+- Writing new Indonesian landing-copy / content marketing.
+- Switching to SSR (would be needed if accurate per-route social previews matter beyond Google).
+- Backlink/keyword research via Semrush.
+
+### Suggested order if you approve
+1, 2, 3, 4, 6 in one pass; 5 next; 7 only on request.
