@@ -539,7 +539,7 @@ export const SearchAndFilters = ({
                         : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                     }`}
                   >
-                    {specialization}
+                    {getSpecializationLabel(t, specialization)}
                   </button>
                 ))}
               </div>
