@@ -1,6 +1,8 @@
 import { Heart, MapPin, Phone, Mail, Clock } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Footer = () => {
+  const { t } = useLanguage();
   return (
     <footer className="brand-gradient text-white mt-16">
       <div className="container mx-auto px-4 py-12">
@@ -19,8 +21,7 @@ export const Footer = () => {
             />
           </div>
           <p className="text-white/90 max-w-2xl text-lg">
-            Your directory for mental health resources. Connecting you with psychologists, psychiatrists, and mental
-            health clinics across Indonesia.
+            {t('footer.description')}
           </p>
         </div>
 
@@ -95,7 +96,7 @@ export const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-white/20 pt-6 text-center">
-          <p className="text-white/70 mb-2">© 2025 Elysium Mentalcare. Made with ❤️ for mental wellness.</p>
+          <p className="text-white/70 mb-2">{t('footer.copyright')}</p>
         </div>
       </div>
     </footer>
