@@ -18,7 +18,9 @@ export const transformPractitioner = (
   services: Service[] = [], 
   contactDetails: ContactDetails = []
 ): Practitioner => {
-  const institution = dbPractitioner.institution;
+  const institution =
+    dbPractitioner.institution ??
+    dbPractitioner.practitioner_institutions?.[0]?.institution;
   
   // Combine practitioner and institution insurance
   const practitionerInsurance = dbPractitioner.insurance || [];
@@ -30,8 +32,8 @@ export const transformPractitioner = (
     type: "practitioner",
     image: dbPractitioner.image || null,
     name: dbPractitioner.name,
-    bureauName: institution?.name || "Unknown Bureau",
-    bureauId: "1", // Will be set from institution relationship
+    bureauName: institution?.name || "Independent",
+    bureauId: institution?.id ? institution.id.toString() : "",
     professionTypes: mapProfessionTypes(dbPractitioner.profession_type || []),
     licenseNumber: dbPractitioner.license_number,
     specializations: mapSpecializations(dbPractitioner.specialization || []),
