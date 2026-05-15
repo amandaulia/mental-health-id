@@ -4,7 +4,8 @@ import { FilterState } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
-import { mockActivitiesData } from "@/data/mockData";
+import { useActivities } from "@/hooks/useDatabase";
+import { sortByCompleteness } from "@/utils/completeness";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { trackSearch, trackFilter } from "@/utils/analytics";
@@ -13,6 +14,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const StressRelief = () => {
   const { t } = useLanguage();
+  const { data: dbActivities, isLoading } = useActivities();
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     locations: [],
@@ -26,16 +28,20 @@ const StressRelief = () => {
   });
 
   const filteredData = useMemo(() => {
-    return mockActivitiesData.filter((item) => {
+    if (!dbActivities) return [];
+    const filtered = (dbActivities as any[]).filter((item) => {
+      const orgName = item.activity_organizations?.[0]?.organization?.name || "";
+      const city = item.activity_locations?.[0]?.location?.city || "";
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        if (!item.name.toLowerCase().includes(searchLower) && 
-            !item.organizationName.toLowerCase().includes(searchLower) &&
-            !item.city.toLowerCase().includes(searchLower)) return false;
+        if (!item.name.toLowerCase().includes(searchLower) &&
+            !orgName.toLowerCase().includes(searchLower) &&
+            !city.toLowerCase().includes(searchLower)) return false;
       }
       return true;
     });
-  }, [filters]);
+    return sortByCompleteness(filtered);
+  }, [filters, dbActivities]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
@@ -103,16 +109,16 @@ const StressRelief = () => {
 
       {/* Activities List */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredData.map((item) => {
+        {filteredData.map((item: any) => {
           const cardData: UnifiedCardData = {
             type: "activity",
-            id: item.id,
-            image: item.image,
+            id: item.id.toString(),
+            image: item.image ?? undefined,
             name: item.name,
-            city: item.city,
-            organizationName: item.organizationName,
-            activityType: item.activityType,
-            price: typeof item.price === 'string' ? parseInt(item.price) : item.price
+            city: item.activity_locations?.[0]?.location?.city || "",
+            organizationName: item.activity_organizations?.[0]?.organization?.name || "",
+            activityType: item.activity_type?.[0] || "",
+            price: typeof item.price === 'string' ? parseInt(item.price) : (item.price ?? 0)
           };
 
           return (
@@ -123,7 +129,9 @@ const StressRelief = () => {
         })}
       </div>
 
-      {filteredData.length === 0 && (
+      {isLoading ? (
+        <div className="text-center text-muted-foreground mt-8">Loading...</div>
+      ) : filteredData.length === 0 && (
         <div className="text-center text-muted-foreground mt-8">
           {t('stressRelief.noActivities')}
         </div>
