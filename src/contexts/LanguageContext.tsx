@@ -133,7 +133,9 @@ const translations = {
     insurance: {
       private: "Private Insurance",
       bpjs: "BPJS",
-      none: "None"
+      none: "None",
+      privateInsurance: "Private Insurance",
+      noInsurance: "No Insurance"
     },
     institutionTypes: {
       clinic: "Clinic",
