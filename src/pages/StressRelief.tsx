@@ -84,7 +84,7 @@ const StressRelief = () => {
       <div className="mb-8 sm:mb-10">
         <div className="bg-card rounded-xl p-6 card-shadow">
           <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-6">
-            Find Activities
+            {t('stressRelief.findActivities')}
           </h2>
           <SearchAndFilters
             filters={filters}
@@ -125,7 +125,7 @@ const StressRelief = () => {
 
       {filteredData.length === 0 && (
         <div className="text-center text-muted-foreground mt-8">
-          No activities found matching your criteria.
+          {t('stressRelief.noActivities')}
         </div>
       )}
     </div>
