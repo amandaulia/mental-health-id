@@ -126,6 +126,50 @@ const translations = {
       private: "Private",
       bpjs: "BPJS",
       none: "None"
+    },
+    pages: {
+      professional: {
+        heroTitleA: "Professional Counseling",
+        heroTitleB: "",
+        heroLead: "Find licensed mental health professionals — psychologists, psychiatrists, and clinics ready to support you. 🌟"
+      },
+      peer: {
+        heroTitleA: "Peer & Group",
+        heroTitleB: " Counseling",
+        heroLead: "Connect with peers and find support groups for shared experiences and guidance. 🤝"
+      },
+      stressRelief: {
+        heroTitleA: "Stress Relief",
+        heroTitleB: " Activities",
+        heroLead: "Explore a variety of activities designed to help you relax and de-stress."
+      },
+      organizations: {
+        heroTitleA: "Organizations & Communities",
+        heroTitleB: " Directory",
+        heroLead: "Find local organizations and communities dedicated to mental health support. Connect with others and discover resources that can help you thrive. 🤝"
+      }
+    },
+    seo: {
+      professional: {
+        title: "Find Psychologists, Psychiatrists & Counseling Services in Indonesia",
+        description: "Browse a verified directory of licensed psychologists, psychiatrists, and mental health clinics across Indonesia. Filter by city, specialization, insurance (including BPJS) and session mode."
+      },
+      peer: {
+        title: "Peer & Group Counseling in Indonesia | Mental Health Directory",
+        description: "Connect with peer counselors and support groups across Indonesia for shared mental health experiences and community-based guidance."
+      },
+      stressRelief: {
+        title: "Stress Relief Activities in Indonesia | Mental Health Directory",
+        description: "Art therapy, music, sports, and wellness activities across Indonesia to help you relax, de-stress, and improve mental wellbeing."
+      },
+      organizations: {
+        title: "Mental Health Organizations & Communities in Indonesia",
+        description: "Discover mental health organizations, communities, and advocacy groups across Indonesia working to support and raise awareness about mental wellbeing."
+      },
+      about: {
+        title: "About Mental Health Directory Indonesia",
+        description: "Learn about the Mental Health Directory Indonesia — a free, comprehensive guide to mental health professionals, peer counseling, and wellness resources across Indonesia."
+      }
     }
   },
   id: {
@@ -198,6 +242,50 @@ const translations = {
       private: "Swasta",
       bpjs: "BPJS",
       none: "Tidak Ada"
+    },
+    pages: {
+      professional: {
+        heroTitleA: "Konseling",
+        heroTitleB: " Profesional",
+        heroLead: "Temukan psikolog, psikiater, dan klinik kesehatan mental berlisensi di Indonesia yang siap mendampingi Anda. 🌟"
+      },
+      peer: {
+        heroTitleA: "Konseling",
+        heroTitleB: " Sebaya & Kelompok",
+        heroLead: "Terhubung dengan konselor sebaya dan kelompok dukungan untuk berbagi pengalaman dan saling menguatkan. 🤝"
+      },
+      stressRelief: {
+        heroTitleA: "Aktivitas",
+        heroTitleB: " Pereda Stres",
+        heroLead: "Jelajahi berbagai aktivitas untuk membantu Anda rileks dan mengurangi stres."
+      },
+      organizations: {
+        heroTitleA: "Direktori",
+        heroTitleB: " Organisasi & Komunitas",
+        heroLead: "Temukan organisasi dan komunitas kesehatan mental di sekitar Anda. Terhubung dengan orang lain dan dapatkan dukungan untuk berkembang. 🤝"
+      }
+    },
+    seo: {
+      professional: {
+        title: "Cari Psikolog, Psikiater & Konseling Online di Indonesia",
+        description: "Direktori psikolog, psikiater, dan klinik kesehatan mental terverifikasi di Indonesia. Filter berdasarkan kota, spesialisasi, asuransi (termasuk BPJS), dan mode sesi."
+      },
+      peer: {
+        title: "Konseling Sebaya & Kelompok Dukungan di Indonesia",
+        description: "Terhubung dengan konselor sebaya dan kelompok dukungan kesehatan mental di Indonesia untuk berbagi pengalaman dan saling menguatkan."
+      },
+      stressRelief: {
+        title: "Aktivitas Pereda Stres & Kesehatan Mental di Indonesia",
+        description: "Terapi seni, musik, olahraga, dan aktivitas wellness di Indonesia untuk membantu Anda rileks, mengurangi stres, dan meningkatkan kesejahteraan mental."
+      },
+      organizations: {
+        title: "Organisasi & Komunitas Kesehatan Mental di Indonesia",
+        description: "Jelajahi organisasi, komunitas, dan kelompok advokasi kesehatan mental di Indonesia yang mendukung dan meningkatkan kesadaran akan kesehatan mental."
+      },
+      about: {
+        title: "Tentang Direktori Kesehatan Mental Indonesia",
+        description: "Pelajari tentang Direktori Kesehatan Mental Indonesia — panduan gratis dan komprehensif untuk menemukan psikolog, konseling sebaya, dan sumber daya kesehatan mental di Indonesia."
+      }
     }
   }
 };

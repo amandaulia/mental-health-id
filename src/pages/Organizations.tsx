@@ -7,8 +7,11 @@ import { mockOrganizationsData } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { trackSearch, trackFilter } from "@/utils/analytics";
+import { PageSEO } from "@/components/PageSEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Organizations = () => {
+  const { t } = useLanguage();
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     locations: [],
@@ -70,14 +73,14 @@ const Organizations = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
+      <PageSEO pageKey="organizations" path="/organizations" />
       {/* Hero Section */}
       <div className="mb-8 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
-          <span className="gradient-text">Organizations & Communities</span> Directory
+          <span className="gradient-text">{t("pages.organizations.heroTitleA")}</span>{t("pages.organizations.heroTitleB")}
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
-          Find local organizations and communities dedicated to mental health support. 
-          Connect with others and discover resources that can help you thrive. 🤝
+          {t("pages.organizations.heroLead")}
         </p>
       </div>
 

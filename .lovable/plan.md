@@ -1,42 +1,48 @@
-## Why "Unknown Bureau" appears
+## Revised plan — use the existing LanguageToggle, no surprise Indonesian copy
 
-The detail page (`/practitioner/:id`) calls `usePractitioner(id)` → `databaseService.getPractitioner(id)`, which only does:
+You already have `LanguageContext` (`en` / `id`) + `LanguageToggle` + a `t()` helper, and `<html lang>` flips with the toggle. Most landing-page copy (hero H1, intro paragraph, empty states, "Load More" button, section headings) is currently hardcoded English in the page components, so the toggle doesn't actually translate them yet.
 
-```ts
-supabase.from("practitioner").select("*").eq("id", id).single()
-```
+But there's an important SEO catch we have to design around — calling out up front:
 
-No join to `practitioner_institutions`/`institution`. `transformPractitioner` then reads `dbPractitioner.institution`, doesn't find it, and falls back to the hardcoded `"Unknown Bureau"` (and `bureauId: "1"`).
+> **Googlebot doesn't have your localStorage.** If `en` is the default and `id` only appears after the user clicks the toggle, Google will only ever see the English version. So a pure toggle, by itself, won't move your `psikolog` / `konseling online` rankings. You need at least one of: (a) a separate URL for the Indonesian version, or (b) Indonesian text rendered in the DOM (just not as the visible default).
 
-The listing page works because it uses `usePractitionersWithRelations`, which does join those tables — that's why the same fix we applied to `ProfessionalCounseling.tsx` made the cards correct.
+### What I propose to ship
 
-## Fix
+**1. Wire the toggle to actually translate landing-page copy.**
 
-1. **`src/services/database.ts` — `getPractitioner`**
-   Change the query to also fetch the linked institution:
-   ```ts
-   .select(`
-     *,
-     practitioner_institutions(
-       institution(*)
-     )
-   `)
-   ```
+Move the hardcoded English on `/professional-counseling`, `/peer-counseling`, `/stress-relief`, `/organizations`, `/about` into `t()` keys, and add the matching Indonesian strings in `LanguageContext.tsx`:
 
-2. **`src/utils/dataTransform.ts` — `transformPractitioner`**
-   Resolve the institution from the joined relation:
-   ```ts
-   const institution = dbPractitioner.institution
-     ?? dbPractitioner.practitioner_institutions?.[0]?.institution;
-   ```
-   And populate `bureauId` from it so the "Visit Bureau" link works:
-   ```ts
-   bureauId: institution?.id ? institution.id.toString() : "",
-   ```
-   Keep the `"Unknown Bureau"` fallback only for true independents (or change to `"Independent"` to match the listing — please confirm which you prefer).
+- Page H1 + subhead
+- "No results found" / "Clear Filters" / "Load More"
+- Card labels ("Verified", "Independent", "Book Now", "Learn More" etc. that aren't already through `t()`)
+- About-page body
 
-No schema or RLS changes needed. No other call sites of `transformPractitioner` are affected (the listing builds its own object and doesn't go through this path).
+The toggle then does what users expect, and we get a clean Indonesian translation layer for free.
 
-## Open question
+**2. Per-route meta with `react-helmet-async`, language-aware.**
 
-On the detail page, should solo practitioners (no `practitioner_institutions` row) show **"Independent"** (matches the listing card) or just hide the bureau line entirely? Default in this plan: show **"Independent"**.
+`<Helmet>` reads `language` from `LanguageContext` and emits the matching `<title>` / `<meta description>` / `<html lang>` / `og:locale`. So a user who has `id` saved sees Indonesian metadata when sharing the URL. Each route owns its own canonical (and we drop `<link rel="canonical">` from `index.html` to avoid duplicates).
+
+**3. Fix the static head in `index.html` for Googlebot's first paint.**
+
+Even though the toggle now works, Googlebot sees the default. So `index.html` becomes a **bilingual brand head** that names both languages without confusing English-default users:
+
+- `<title>Mental Health Directory Indonesia — Psikolog, Psikiater & Konseling</title>` (English brand + Indonesian keywords — readable to both)
+- Bilingual `<meta description>`: e.g. *"Find licensed psychologists, psychiatrists, and counseling services in Indonesia. Direktori psikolog, psikiater, dan layanan konseling profesional di Indonesia."*
+- `<html lang="en">` stays as default; Helmet flips it on toggle
+- JSON-LD `Organization` + `WebSite` with Indonesian `alternateName` and a `SearchAction`
+
+This gets Indonesian keywords into Google's index without changing the visible UI for English users.
+
+**4. Sitemap from Supabase.**
+
+`scripts/generate-sitemap.ts` (run via `predev`/`prebuild`) lists the 5 static routes plus every practitioner / bureau / peer-counseling / organization detail page. Add `Sitemap:` line to `public/robots.txt`. Detail pages give Google many indexable URLs that already contain Indonesian clinic names like `Indopsycare`, `Aditi Psycenter`, etc.
+
+### Open question — the only real choice you need to make
+
+How aggressive do you want to be about Indonesian rankings?
+
+- **A. Toggle-only (what's described above).** Minimal, no surprise copy, but Google only ranks you for Indonesian queries through metadata + clinic detail pages. Safe, modest SEO lift.
+- **B. Toggle + dedicated Indonesian URLs (`/id/...`).** Clicking the toggle navigates to `/id/professional-counseling`; both URLs index independently with `hreflang` alternates. Google ranks the Indonesian URL for `psikolog terdekat` etc. Bigger SEO lift, slightly more routing work, no surprise copy on the English URL.
+
+A is the safer, faster ship. B is the real Indonesian SEO play. Which one?

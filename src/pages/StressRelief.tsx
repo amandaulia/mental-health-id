@@ -8,8 +8,11 @@ import { mockActivitiesData } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { trackSearch, trackFilter } from "@/utils/analytics";
+import { PageSEO } from "@/components/PageSEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const StressRelief = () => {
+  const { t } = useLanguage();
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     locations: [],
@@ -66,13 +69,14 @@ const StressRelief = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
+      <PageSEO pageKey="stressRelief" path="/stress-relief" />
       {/* Hero Section */}
       <div className="mb-8 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
-          <span className="gradient-text">Stress Relief</span> Activities
+          <span className="gradient-text">{t("pages.stressRelief.heroTitleA")}</span>{t("pages.stressRelief.heroTitleB")}
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-          Explore a variety of activities designed to help you relax and de-stress.
+          {t("pages.stressRelief.heroLead")}
         </p>
       </div>
 
