@@ -1,42 +1,65 @@
-## SEO improvements (Indonesian-first)
+## Goal
 
-The project already ships per-route `<Helmet>` with bilingual `seo.*` keys, a generator-driven `sitemap.xml`, `robots.txt`, and `WebSite`/`Organization` JSON-LD. The remaining gaps below would meaningfully lift Indonesian-language search performance.
+Add richer per-entity JSON-LD structured data to practitioner and bureau detail pages so Google can render rich results (knowledge panel, business info) instead of generic blue links.
 
-### 1. Default the static head to Indonesian (high impact)
-`index.html` ships `<html lang="en">`, English-first title, English-first description, and `og:locale=en_US`. Social crawlers (LinkedIn/Slack/FB) don't run JS, so this static head is what they cache. Switch the static defaults to Indonesian:
-- `<html lang="id">`
-- Title: `Direktori Kesehatan Mental Indonesia — Psikolog, Psikiater & Konseling`
-- Description: Indonesian-first sentence, with a short English clause after.
-- `og:locale` = `id_ID`, `og:locale:alternate` = `en_US`.
-- `JSON-LD inLanguage`: `["id-ID", "en"]` (id first).
+## Approach
 
-### 2. Add `<PageSEO>` to the home page
-`src/pages/Index.tsx` is the only main route without `<PageSEO>`. Add `<PageSEO pageKey="home" path="/" />` and create `seo.home.title` / `seo.home.description` in the language context (Indonesian + English).
+Extend `PageSEO.tsx` to accept an optional `jsonLd` prop (object or array). When provided, render an extra `<script type="application/ld+json">` inside `<Helmet>`. This keeps existing per-route SEO untouched and lets each detail page pass its own schema.
 
-### 3. Add hreflang alternates
-In `PageSEO.tsx` emit:
-- `<link rel="alternate" hreflang="id" href="…" />`
-- `<link rel="alternate" hreflang="en" href="…" />`
-- `<link rel="alternate" hreflang="x-default" href="…" />` (point to ID)
+Then build the schema objects inline in each detail page from already-loaded data.
 
-Tells Google to surface the Indonesian version to Indonesian users.
+## Schema per page
 
-### 4. Per-detail-page SEO (practitioner/bureau/peer/org)
-Detail pages don't render `<PageSEO>`. Add it with a dynamic `title` / `description` derived from the entity name + city + type, in Indonesian. Example: `"Dr. X — Psikolog di Jakarta | Direktori Kesehatan Mental"`. Without this, every detail URL inherits the static English head.
+### PractitionerDetail (`/practitioner/:id`)
 
-### 5. Richer JSON-LD per entity
-For practitioner detail pages emit `Person` + `MedicalBusiness` (or `Physician`) schema; for bureau/clinic pages emit `MedicalClinic` / `LocalBusiness` with address, telephone, geo if available. Helps Google's medical-vertical ranking and rich results.
+Combine two `@graph` nodes:
 
-### 6. Sitemap polish
-`scripts/generate-sitemap.ts` is missing the home `/` entry. Add `{ path: "/", priority: "1.0", changefreq: "weekly" }`. Optional: include `<xhtml:link rel="alternate" hreflang="id|en" />` per URL to mirror the hreflang strategy in #3.
+1. **Person** — name, jobTitle (first profession), image, url, knowsAbout (specializations), alumniOf (education), worksFor (link to bureau if any).
+2. **MedicalBusiness** wrapper for the booking offering — uses practitioner's location[0] (address, city, province, country), telephone (from contactDetails type Phone/WhatsApp), priceRange, availableService (map services to `MedicalProcedure`/`Service` with `offers.price` + `priceCurrency: IDR`).
 
-### 7. Optional: og:image
-A 1200×630 og:image with the brand name in Indonesian would lift social CTR. I can generate one with the image tool if you want — say the word and I'll do it (otherwise we leave it off, as a missing image previews better than a placeholder).
+### BureauDetail (`/bureau/:id`)
 
-### Out of scope until you ask
-- Writing new Indonesian landing-copy / content marketing.
-- Switching to SSR (would be needed if accurate per-route social previews matter beyond Google).
-- Backlink/keyword research via Semrush.
+One **MedicalClinic** node (falls back to `LocalBusiness` for non-clinic bureauTypes):
 
-### Suggested order if you approve
-1, 2, 3, 4, 6 in one pass; 5 next; 7 only on request.
+- name, image, url, telephone, priceRange
+- address → `PostalAddress` (streetAddress, addressLocality=city, addressRegion=province, addressCountry=country) from location[0]
+- geo → `GeoCoordinates` if lat/lng present and non-zero
+- medicalSpecialty (specializations)
+- availableService (services with offers)
+- sameAs (Website/Instagram from contactDetails)
+- openingHours if `businessHours` present
+
+## Technical details
+
+```ts
+// PageSEO.tsx — add prop
+interface PageSEOProps {
+  ...existing,
+  jsonLd?: object | object[];
+}
+// inside <Helmet>:
+{jsonLd && (
+  <script type="application/ld+json">
+    {JSON.stringify(Array.isArray(jsonLd)
+      ? { "@context": "https://schema.org", "@graph": jsonLd }
+      : { "@context": "https://schema.org", ...jsonLd })}
+  </script>
+)}
+```
+
+Each detail page builds the object with `useMemo` from existing `practitioner` / `bureau` / `locations` / `contactDetails` state — no new data fetching.
+
+Helper: small `buildPostalAddress(location)` and `buildOffers(services)` inlined per page (no new util file unless both pages share enough — likely yes, will add `src/utils/jsonLd.ts`).
+
+## Files to change
+
+- `src/components/PageSEO.tsx` — add `jsonLd` prop + script tag.
+- `src/utils/jsonLd.ts` — **new**, small helpers (`buildPostalAddress`, `buildOffers`, `buildSameAs`, `phoneFromContacts`).
+- `src/pages/PractitionerDetail.tsx` — build Person + MedicalBusiness graph, pass to `<PageSEO jsonLd={...} />`.
+- `src/pages/BureauDetail.tsx` — build MedicalClinic/LocalBusiness, pass to `<PageSEO jsonLd={...} />`.
+
+## Out of scope
+
+- PeerCounseling and Organization detail pages (can follow same pattern later if requested).
+- og:image generation.
+- Validation against Google Rich Results Test (manual step after deploy).
