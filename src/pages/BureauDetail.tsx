@@ -19,6 +19,14 @@ import { BureauLocations } from "@/components/BureauLocations";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageSEO } from "@/components/PageSEO";
+import {
+  SITE_URL,
+  buildPostalAddress,
+  buildGeo,
+  phoneFromContacts,
+  sameAsFromContacts,
+  buildOffers,
+} from "@/utils/jsonLd";
 
 const isTelLink = (url: string) => /^tel:/i.test(url);
 const stripTel = (url: string) => url.replace(/^tel:/i, "");
@@ -266,6 +274,30 @@ const BureauDetail = () => {
         path={`/bureau/${id}`}
         title={`${bureau.name}${locations[0]?.city ? ' — ' + locations[0].city : ''} | Klinik & Konseling Kesehatan Mental`}
         description={`${bureau.name} — klinik kesehatan mental${locations[0]?.city ? ' di ' + locations[0].city : ''}. Lihat layanan, biaya, asuransi, dan praktisi yang tersedia.`}
+        jsonLd={(() => {
+          const pageUrl = `${SITE_URL}/bureau/${id}`;
+          const primary = locations[0];
+          const phone = phoneFromContacts(bureau.contactDetails);
+          const sameAs = sameAsFromContacts(bureau.contactDetails);
+          const offers = buildOffers(services);
+          const type = bureau.bureauType === "independent" ? "LocalBusiness" : "MedicalClinic";
+          return {
+            "@type": type,
+            name: bureau.name,
+            url: pageUrl,
+            ...(bureau.image && { image: bureau.image }),
+            ...(phone && { telephone: phone }),
+            ...(bureau.priceRange && { priceRange: bureau.priceRange }),
+            ...(buildPostalAddress(primary) && { address: buildPostalAddress(primary) }),
+            ...(buildGeo(primary) && { geo: buildGeo(primary) }),
+            ...(bureau.specializations?.length && { medicalSpecialty: bureau.specializations }),
+            ...(sameAs.length && { sameAs }),
+            ...(offers && { availableService: offers }),
+            ...(bureau.businessHours && bureau.businessHours !== "Not specified" && {
+              openingHours: bureau.businessHours,
+            }),
+          };
+        })()}
       />
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Breadcrumbs and Back Button */}
