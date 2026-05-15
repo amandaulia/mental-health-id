@@ -14,13 +14,15 @@ interface PageSEOProps {
   /** Optional override values (e.g. dynamic detail pages). */
   title?: string;
   description?: string;
+  /** Optional JSON-LD structured data. Object → single node; array → @graph. */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 /**
  * Per-route head that updates with the active language toggle.
  * Reads `seo.<pageKey>.title|description` from the LanguageContext.
  */
-export const PageSEO = ({ pageKey, path, title, description }: PageSEOProps) => {
+export const PageSEO = ({ pageKey, path, title, description, jsonLd }: PageSEOProps) => {
   const { language, t } = useLanguage();
   const resolvedPath = path ?? (typeof window !== "undefined" ? window.location.pathname : "/");
   const url = `${SITE_URL}${resolvedPath}`;
@@ -28,6 +30,12 @@ export const PageSEO = ({ pageKey, path, title, description }: PageSEOProps) => 
   const finalDescription = description ?? t(`seo.${pageKey}.description`);
   const ogLocale = language === "id" ? "id_ID" : "en_US";
   const altLocale = language === "id" ? "en_US" : "id_ID";
+
+  const ldPayload = jsonLd
+    ? Array.isArray(jsonLd)
+      ? { "@context": "https://schema.org", "@graph": jsonLd }
+      : { "@context": "https://schema.org", ...jsonLd }
+    : null;
 
   return (
     <Helmet>
@@ -44,6 +52,9 @@ export const PageSEO = ({ pageKey, path, title, description }: PageSEOProps) => 
       <link rel="alternate" hrefLang="id" href={url} />
       <link rel="alternate" hrefLang="en" href={url} />
       <link rel="alternate" hrefLang="x-default" href={url} />
+      {ldPayload && (
+        <script type="application/ld+json">{JSON.stringify(ldPayload)}</script>
+      )}
     </Helmet>
   );
 };
