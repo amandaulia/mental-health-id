@@ -136,7 +136,8 @@ const translations = {
       selfDevelopment: "Self Development",
       eatingDisorders: "Eating Disorders",
       grief: "Grief",
-      psychiatry: "Psychiatry"
+      psychiatry: "Psychiatry",
+      others: "Others"
     },
     sessionModes: {
       chat: "Chat",
@@ -541,7 +542,8 @@ const translations = {
       selfDevelopment: "Pengembangan Diri",
       eatingDisorders: "Gangguan Makan",
       grief: "Duka",
-      psychiatry: "Psikiatri"
+      psychiatry: "Psikiatri",
+      others: "Lainnya"
     },
     sessionModes: {
       chat: "Chat",
