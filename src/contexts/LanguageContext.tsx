@@ -357,7 +357,15 @@ const translations = {
       whatsapp: "WhatsApp",
       instagram: "Instagram",
       facebook: "Facebook",
-      telegram: "Telegram"
+      telegram: "Telegram",
+      callNow: "Hubungi Sekarang",
+      openInGoogleMaps: "Buka di Google Maps",
+      clickOpenGoogleMaps: "Klik untuk buka di Google Maps",
+      priceNotAvailable: "Harga tidak tersedia",
+      free: "Gratis",
+      viewAll: "Lihat Semua",
+      goBack: "Kembali",
+      visitWebsite: "Kunjungi Website"
     },
     professionTypes: {
       psychologist: "Psikolog",
