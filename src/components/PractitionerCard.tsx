@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, MessageCircle, Phone, Video, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getProfessionLabel } from "@/utils/labels";
 
 interface PractitionerCardProps {
   practitioner: Practitioner;
@@ -92,7 +93,7 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
                   <div className="flex flex-wrap gap-1 mb-2">
                     {practitioner.professionTypes.slice(0, 2).map((type) => (
                       <Badge key={type} variant="outline" className="text-xs">
-                        {type}
+                        {getProfessionLabel(t, type)}
                       </Badge>
                     ))}
                     {practitioner.professionTypes.length > 2 && (
@@ -113,7 +114,7 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
                   ))}
                   {getSpecializationMoreCount() > 0 && (
                     <Badge variant="outline" className="text-xs">
-                      +{getSpecializationMoreCount()} more
+                      +{getSpecializationMoreCount()} {t('common.more')}
                     </Badge>
                   )}
                 </div>
