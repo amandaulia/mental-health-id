@@ -514,6 +514,47 @@ const Index = () => {
         {/* Separator */}
         <Separator className="my-8" />
 
+        {/* Clinics & Hospitals Preview */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
+              {t('home.sectionHeading.clinics')}
+            </h2>
+            <Button variant="outline" asChild>
+              <a href="/professional-counseling">
+                {t('common.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {allBureaus.slice(0, 3).map((resource) => {
+              const cardData: UnifiedCardData = {
+                type: "institution",
+                id: resource.id,
+                image: resource.image,
+                name: resource.name,
+                city: resource.city,
+                isVerified: resource.isVerified,
+                professionTypes: resource.professionTypes,
+                specializations: resource.specializations,
+                priceRange: resource.priceRange,
+                insurance: resource.insurance,
+                modes: resource.modes
+              };
+              return (
+                <div key={`clinic-${resource.id}`} className="transform transition-all duration-200 hover:scale-[1.02]">
+                  <UnifiedCard
+                    data={cardData}
+                    linkTo={`/bureau/${resource.id}`}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <Separator className="my-8" />
+
         {/* Peer Counseling & Support Groups Preview */}
         <div>
           <div className="flex items-center justify-between mb-6">
