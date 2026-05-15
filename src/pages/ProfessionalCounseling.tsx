@@ -8,6 +8,8 @@ import { UnifiedCard } from "@/components/UnifiedCard";
 import { usePractitionersWithRelations, useInstitutionsWithRelations } from "@/hooks/useDatabase";
 import { Button } from "@/components/ui/button";
 import { trackSearch, trackFilter } from "@/utils/analytics";
+import { PageSEO } from "@/components/PageSEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -42,6 +44,7 @@ const hasInsuranceMatch = (resourceInsurance: string[] = [], selectedInsurance: 
 
 const ProfessionalCounseling = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const { t } = useLanguage();
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     locations: [],
