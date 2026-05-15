@@ -128,3 +128,17 @@ export const usePeerCounseling = () => {
     queryFn: databaseService.getPeerCounseling,
   });
 };
+
+export const useOrganizations = () => {
+  return useQuery({
+    queryKey: ['organizations'],
+    queryFn: databaseService.getOrganizations,
+  });
+};
+
+export const useActivities = () => {
+  return useQuery({
+    queryKey: ['activities'],
+    queryFn: databaseService.getActivities,
+  });
+};
