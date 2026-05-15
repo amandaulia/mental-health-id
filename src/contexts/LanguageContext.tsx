@@ -737,6 +737,116 @@ const translations = {
       sessionCost: "Biaya Sesi (IDR)",
       loadMoreCount: "Muat Lebih Banyak"
     },
+    about: {
+      hero: {
+        title1: "Tentang",
+        title2: "Mental Health Directory",
+        subtitle: "Panduan lengkap sumber daya dan dukungan kesehatan mental di Indonesia"
+      },
+      what: {
+        title: "Apa itu Mental Health Directory?",
+        p1: "Mental Health Directory adalah platform komprehensif yang dirancang untuk membantu kamu menemukan profesional, kelompok dukungan, dan sumber daya kesehatan mental di seluruh Indonesia. Kami memahami bahwa mencari dukungan kesehatan mental bisa terasa berat, dan misi kami adalah menjadikan proses ini lebih mudah dan terjangkau bagi semua orang.",
+        p2: "Platform kami menjadi jembatan antara mereka yang mencari bantuan dengan para profesional berkualifikasi, menyediakan informasi lengkap tentang psikolog, psikiater, pusat konseling, dan berbagai layanan dukungan kesehatan mental di area kamu."
+      },
+      info: {
+        title: "Informasi apa yang akan dicakup Mental Health Directory?",
+        professional: {
+          title: "Layanan Konseling Profesional",
+          desc: "Psikolog, psikiater, dan klinik kesehatan mental berlisensi dengan profil lengkap, spesialisasi, dan informasi kontak."
+        },
+        peer: {
+          title: "Konseling Sebaya & Kelompok",
+          desc: "Kelompok dukungan berbasis komunitas dan layanan konseling sebaya untuk berbagai kondisi kesehatan mental dan tantangan kehidupan."
+        },
+        stressRelief: {
+          title: "Aktivitas Penghilang Stres",
+          desc: "Terapi seni, terapi musik, olahraga, dan program lainnya yang dirancang untuk meningkatkan kesehatan mental."
+        },
+        organizations: {
+          title: "Organisasi",
+          desc: "Organisasi kesehatan mental, lembaga pendidikan, dan kelompok komunitas yang berdedikasi pada kesadaran dan dukungan kesehatan mental."
+        }
+      },
+      contribute: {
+        title: "Bagaimana cara saya berkontribusi pada proyek ini?",
+        intro: "Kami percaya pada kekuatan komunitas dan menyambut kontribusi dari para profesional kesehatan mental, organisasi, dan individu yang peduli pada advokasi kesehatan mental.",
+        professionals: {
+          title: "Profesional Kesehatan Mental",
+          desc: "Bergabunglah dengan direktori kami untuk membantu lebih banyak orang menemukan dukungan yang mereka butuhkan"
+        },
+        organizations: {
+          title: "Organisasi",
+          desc: "Bermitra dengan kami untuk memperluas sumber daya dan kesadaran kesehatan mental"
+        },
+        community: {
+          title: "Anggota Komunitas",
+          desc: "Bagikan masukan, sarankan perbaikan, atau bantu menyebarkan informasi"
+        }
+      },
+      contact: {
+        title: "Informasi Kontak",
+        email: "Email",
+        phone: "Telepon",
+        followInstagram: "Ikuti kami di Instagram",
+        instagramDesc: "Tetap terkini dengan sumber daya terbaru dan tips kesehatan mental kami"
+      }
+    },
+    peerDetail: {
+      notFound: "Informasi Tidak Ditemukan",
+      notFoundDesc: "Informasi yang kamu cari tidak ada.",
+      about: "Tentang",
+      specialization: "Spesialisasi",
+      additionalInfo: "Informasi Tambahan",
+      schedule: "Jadwal",
+      groupSize: "Ukuran Kelompok",
+      facilitator: "Fasilitator",
+      languages: "Bahasa",
+      contactInfo: "Informasi Kontak",
+      address: "Alamat",
+      phone: "Telepon",
+      email: "Email",
+      website: "Website",
+      instagram: "Instagram",
+      getSupport: "Dapatkan Dukungan",
+      followDesc: "Ikuti kami untuk pembaruan dan tips kesehatan mental"
+    },
+    organizationDetail: {
+      notFound: "Organisasi Tidak Ditemukan",
+      notFoundDesc: "Organisasi yang kamu cari tidak ada.",
+      about: "Tentang",
+      organizationType: "Tipe Organisasi",
+      contactInfo: "Informasi Kontak",
+      address: "Alamat",
+      phone: "Telepon",
+      email: "Email",
+      website: "Website",
+      instagram: "Instagram",
+      getInTouch: "Hubungi Kami",
+      followDesc: "Ikuti kami untuk pembaruan dan wawasan terbaru"
+    },
+    organizations: {
+      browse: "Telusuri Organisasi & Komunitas",
+      all: "Semua Organisasi & Komunitas"
+    },
+    peerCounseling: {
+      findPeerSupport: "Cari Dukungan Sebaya"
+    },
+    stressRelief: {
+      findActivities: "Cari Aktivitas",
+      noActivities: "Tidak ada aktivitas yang sesuai dengan kriteria kamu."
+    },
+    notFound: {
+      title: "Ups! Halaman tidak ditemukan",
+      return: "Kembali ke Beranda"
+    },
+    phoneDialog: {
+      title: "Hubungi nomor ini",
+      description: "Panggilan telepon tidak dapat dilakukan langsung dari browser desktop. Silakan hubungi nomor ini dari ponsel kamu.",
+      copy: "Salin",
+      copied: "Tersalin",
+      copiedToast: "Nomor telepon tersalin",
+      copyFailed: "Gagal menyalin"
+    },
     errors: {
       somethingWrong: "Terjadi Kesalahan",
       unexpected: "Maaf, terjadi sesuatu yang tidak terduga. Silakan coba muat ulang halaman.",
