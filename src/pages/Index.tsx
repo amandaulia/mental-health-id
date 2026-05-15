@@ -6,7 +6,7 @@ import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { Separator } from "@/components/ui/separator";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
-import { usePractitioners, useInstitutions, usePeerCounseling, useOrganizations, useActivities } from "@/hooks/useDatabase";
+import { usePractitionersWithRelations, useInstitutions, usePeerCounseling, useOrganizations, useActivities } from "@/hooks/useDatabase";
 import { transformPractitioner, transformInstitution, transformService } from "@/utils/dataTransform";
 import { databaseService } from "@/services/database";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,7 @@ const Index = () => {
   });
 
   const { toast } = useToast();
-  const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitioners();
+  const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitionersWithRelations();
   const { data: dbInstitutions, isLoading: institutionsLoading } = useInstitutions();
   const { data: dbPeerCounseling, isLoading: peerCounselingLoading } = usePeerCounseling();
   const { data: dbOrganizations, isLoading: organizationsLoading } = useOrganizations();
