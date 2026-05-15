@@ -4,7 +4,8 @@ import { FilterState } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
-import { mockPeerCounselingData } from "@/data/mockData";
+import { usePeerCounseling } from "@/hooks/useDatabase";
+import { sortByCompleteness } from "@/utils/completeness";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { trackSearch, trackFilter } from "@/utils/analytics";
@@ -13,6 +14,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const PeerCounseling = () => {
   const { t } = useLanguage();
+  const { data: dbPeerCounseling, isLoading } = usePeerCounseling();
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     locations: [],
@@ -26,15 +28,16 @@ const PeerCounseling = () => {
   });
 
   const filteredData = useMemo(() => {
-    return mockPeerCounselingData.filter((item) => {
+    if (!dbPeerCounseling) return [];
+    const filtered = (dbPeerCounseling as any[]).filter((item) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        if (!item.name.toLowerCase().includes(searchLower) && 
-            !item.city.toLowerCase().includes(searchLower)) return false;
+        if (!item.name.toLowerCase().includes(searchLower)) return false;
       }
       return true;
     });
-  }, [filters]);
+    return sortByCompleteness(filtered);
+  }, [filters, dbPeerCounseling]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
@@ -105,17 +108,17 @@ const PeerCounseling = () => {
         {/* Peer Counseling & Support Groups Preview */}
         <div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredData.map((item) => {
+            {filteredData.map((item: any) => {
               const cardData: UnifiedCardData = {
-                type: item.type === "peer-counseling" ? "peer-counseling" : "support-group",
-                id: item.id,
-                image: item.image,
+                type: "peer-counseling",
+                id: item.id.toString(),
+                image: item.image ?? undefined,
                 name: item.name,
-                city: item.city,
-                isVerified: item.isVerified,
-                specialization: item.specialization,
-                serviceType: item.serviceType,
-                price: typeof item.price === 'string' ? parseInt(item.price) : item.price
+                city: "",
+                isVerified: item.verified,
+                specialization: item.specialization?.[0] || "General",
+                serviceType: item.peer_type?.[0] || "Peer Counseling",
+                price: 0
               };
 
               return (
@@ -130,6 +133,9 @@ const PeerCounseling = () => {
           </div>
         </div>
       </div>
+      {isLoading && (
+        <div className="text-center text-muted-foreground mt-8">Loading...</div>
+      )}
     </div>
   );
 };
