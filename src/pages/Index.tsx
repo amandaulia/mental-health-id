@@ -6,10 +6,10 @@ import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { Separator } from "@/components/ui/separator";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
-import { usePractitioners, useInstitutions, usePeerCounseling } from "@/hooks/useDatabase";
+import { usePractitioners, useInstitutions, usePeerCounseling, useOrganizations, useActivities } from "@/hooks/useDatabase";
 import { transformPractitioner, transformInstitution, transformService } from "@/utils/dataTransform";
 import { databaseService } from "@/services/database";
-import { mockPeerCounselingData, mockActivitiesData, mockOrganizationsData } from "@/data/mockData";
+import { mockPeerCounselingData } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight } from "lucide-react";
@@ -44,6 +44,8 @@ const Index = () => {
   const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitioners();
   const { data: dbInstitutions, isLoading: institutionsLoading } = useInstitutions();
   const { data: dbPeerCounseling, isLoading: peerCounselingLoading } = usePeerCounseling();
+  const { data: dbOrganizations, isLoading: organizationsLoading } = useOrganizations();
+  const { data: dbActivities, isLoading: activitiesLoading } = useActivities();
 
   // Fetch services for all practitioners
   const { data: allPractitionerServices, isLoading: practitionerServicesLoading } = useQuery({
@@ -259,27 +261,32 @@ const Index = () => {
   }, [filters, dbPeerCounseling]);
 
   const filteredActivities = useMemo(() => {
-    return mockActivitiesData.filter((item) => {
+    if (!dbActivities) return [];
+    return dbActivities.filter((item: any) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        if (!item.name.toLowerCase().includes(searchLower) && 
-            !item.organizationName.toLowerCase().includes(searchLower) &&
-            !item.city.toLowerCase().includes(searchLower)) return false;
+        const orgName = item.activity_organizations?.[0]?.organization?.name || "";
+        const city = item.activity_locations?.[0]?.location?.city || "";
+        if (!item.name.toLowerCase().includes(searchLower) &&
+            !orgName.toLowerCase().includes(searchLower) &&
+            !city.toLowerCase().includes(searchLower)) return false;
       }
       return true;
     });
-  }, [filters]);
+  }, [filters, dbActivities]);
 
   const filteredOrganizations = useMemo(() => {
-    return mockOrganizationsData.filter((item) => {
+    if (!dbOrganizations) return [];
+    return dbOrganizations.filter((item: any) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        if (!item.name.toLowerCase().includes(searchLower) && 
-            !item.city.toLowerCase().includes(searchLower)) return false;
+        const city = item.organization_locations?.[0]?.location?.city || "";
+        if (!item.name.toLowerCase().includes(searchLower) &&
+            !city.toLowerCase().includes(searchLower)) return false;
       }
       return true;
     });
-  }, [filters]);
+  }, [filters, dbOrganizations]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
@@ -345,7 +352,7 @@ const Index = () => {
     };
   }, [allProfessionalResources]);
 
-  const isLoading = practitionersLoading || institutionsLoading || practitionerServicesLoading || institutionServicesLoading || practitionerLocationsLoading || institutionLocationsLoading || peerCounselingLoading;
+  const isLoading = practitionersLoading || institutionsLoading || practitionerServicesLoading || institutionServicesLoading || practitionerLocationsLoading || institutionLocationsLoading || peerCounselingLoading || organizationsLoading || activitiesLoading;
 
   useEffect(() => {
     if (filters.search) {
