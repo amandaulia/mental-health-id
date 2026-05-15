@@ -99,7 +99,7 @@ export const transformService = (dbService: any): Service => {
     if (durationText) durationText += " ";
     durationText += `${durationMinutes} minute${durationMinutes > 1 ? 's' : ''}`;
   }
-  if (!durationText) durationText = "Duration not specified";
+  if (!durationText) durationText = "__DURATION_NOT_SPECIFIED__";
 
   // Handle multiple session modes
   const sessionModes = service.session_mode || ["OFFLINE"];
