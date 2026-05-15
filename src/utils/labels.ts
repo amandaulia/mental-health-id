@@ -50,3 +50,33 @@ export function getModeLabel(t: (k: string) => string, mode: string): string {
       return mode;
   }
 }
+
+export function getSpecializationLabel(t: (k: string) => string, raw: string): string {
+  if (!raw) return raw;
+  const k = raw.trim().toLowerCase();
+  const map: Record<string, string> = {
+    "depression": "specializations.depression",
+    "anxiety": "specializations.anxiety",
+    "trauma": "specializations.trauma",
+    "relationship": "specializations.relationshipIssues",
+    "relationship issues": "specializations.relationshipIssues",
+    "adhd": "specializations.adhd",
+    "ocd": "specializations.ocd",
+    "personality disorders": "specializations.personalityDisorders",
+    "family": "specializations.familyTherapy",
+    "family therapy": "specializations.familyTherapy",
+    "career": "specializations.career",
+    "children/adolescence": "specializations.childrenAdolescence",
+    "children adolescence": "specializations.childrenAdolescence",
+    "education": "specializations.education",
+    "gender": "specializations.gender",
+    "hypnotherapy": "specializations.hypnotherapy",
+    "interpersonal": "specializations.interpersonal",
+    "mood disorders": "specializations.moodDisorders",
+    "self development": "specializations.selfDevelopment",
+    "eating disorders": "specializations.eatingDisorders",
+    "grief": "specializations.grief",
+    "psychiatry": "specializations.psychiatry",
+  };
+  return map[k] ? t(map[k]) : raw;
+}
