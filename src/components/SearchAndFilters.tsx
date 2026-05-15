@@ -60,23 +60,23 @@ export const SearchAndFilters = ({
   const maxPrice = filterOptions?.maxPrice || 0;
 
   const getModeLabel = (mode: string) => {
-    const labels: Record<string, string> = {
-      text: "Text Chat",
-      voice: "Voice Call",
-      video: "Video Call",
-      offline: "In-Person"
-    };
-    return labels[mode] || mode;
+    switch (mode) {
+      case "text": return t('sessionModes.textChat');
+      case "voice": return t('sessionModes.voiceCall');
+      case "video": return t('sessionModes.videoCall');
+      case "offline": return t('sessionModes.inPerson');
+      default: return mode;
+    }
   };
 
   const getInstitutionTypeLabel = (type: string) => {
-    const labels: Record<string, string> = {
-      independent: "Private Practice",
-      clinic: "Clinic",
-      faskes1: "Faskes 1",
-      faskes2: "Faskes 2"
-    };
-    return labels[type] || type;
+    switch (type) {
+      case "independent": return t('institutionTypes.privatePractice');
+      case "clinic": return t('institutionTypes.clinic');
+      case "faskes1": return t('institutionTypes.faskes1');
+      case "faskes2": return t('institutionTypes.faskes2');
+      default: return type;
+    }
   };
 
   const getInsuranceLabel = (insurance: string) => {
