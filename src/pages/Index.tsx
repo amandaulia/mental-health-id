@@ -465,7 +465,7 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredProfessionalResources.slice(0, 9).map((resource, index) => {
+            {filteredProfessionalResources.slice(0, 6).map((resource, index) => {
               let cardData: UnifiedCardData;
               
               if (resource.type === "practitioner") {
@@ -527,7 +527,7 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {allBureaus.slice(0, 3).map((resource) => {
+            {allBureaus.slice(0, 6).map((resource) => {
               const cardData: UnifiedCardData = {
                 type: "institution",
                 id: resource.id,
@@ -578,7 +578,7 @@ const Index = () => {
           </div>
           {filteredPeerCounseling.length > 0 && (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredPeerCounseling.slice(0, 3).map((item, index) => {
+              {filteredPeerCounseling.slice(0, 6).map((item, index) => {
                 const cardData: UnifiedCardData = {
                   type: "peer-counseling",
                   id: item.id.toString(),
@@ -618,7 +618,7 @@ const Index = () => {
               </Button>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredActivities.slice(0, 3).map((item, index) => {
+              {filteredActivities.slice(0, 6).map((item, index) => {
                 const cardData: UnifiedCardData = {
                   type: "activity",
                   id: item.id,
@@ -654,7 +654,7 @@ const Index = () => {
               </Button>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredOrganizations.slice(0, 3).map((item, index) => {
+              {filteredOrganizations.slice(0, 6).map((item, index) => {
                 const cardData: UnifiedCardData = {
                   type: item.type === "organization" ? "organization" : "community",
                   id: item.id,
