@@ -141,7 +141,7 @@ const translations = {
       }
     },
     search: {
-      placeholder: "Cari...",
+      placeholder: "Cari berdasarkan nama praktisi atau klinik...",
       filters: {
         location: "Lokasi",
         institution: "Institusi",
