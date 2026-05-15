@@ -6,6 +6,7 @@ import { Bureau } from "@/types";
 import { useState } from "react";
 import clinicPlaceholder from "@/assets/clinic-placeholder.png";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
 
 interface BureauHeaderProps {
   bureau: Bureau;
@@ -88,7 +89,7 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
                         setShowMoreProfessions,
                         (type) => (
                           <Badge variant="outline" className="text-xs">
-                            {type}
+                            {getProfessionLabel(t, type)}
                           </Badge>
                         )
                       )}
@@ -135,7 +136,7 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
                     <div className="flex flex-wrap gap-2">
                       {bureau.specializations.map((spec, index) => (
                         <Badge key={index} variant="outline" className="text-xs">
-                          {spec}
+                          {getSpecializationLabel(t, spec)}
                         </Badge>
                       ))}
                     </div>

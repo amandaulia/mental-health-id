@@ -21,6 +21,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FilterState, ProfessionType, Specialization, Mode, InsuranceType } from "@/types";
 import { trackFormInteraction } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getSpecializationLabel, getInstitutionTypeLabel as getInstTypeLabelI18n } from "@/utils/labels";
 
 interface SearchAndFiltersProps {
   filters: FilterState;
@@ -70,13 +71,7 @@ export const SearchAndFilters = ({
   };
 
   const getInstitutionTypeLabel = (type: string) => {
-    switch (type) {
-      case "independent": return t('institutionTypes.privatePractice');
-      case "clinic": return t('institutionTypes.clinic');
-      case "faskes1": return t('institutionTypes.faskes1');
-      case "faskes2": return t('institutionTypes.faskes2');
-      default: return type;
-    }
+    return getInstTypeLabelI18n(t, type);
   };
 
   const getInsuranceLabel = (insurance: string) => {
@@ -312,7 +307,7 @@ export const SearchAndFilters = ({
                             : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                         }`}
                       >
-                        {specialization}
+                        {getSpecializationLabel(t, specialization)}
                       </button>
                     ))}
                   </div>
@@ -544,7 +539,7 @@ export const SearchAndFilters = ({
                         : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                     }`}
                   >
-                    {specialization}
+                    {getSpecializationLabel(t, specialization)}
                   </button>
                 ))}
               </div>

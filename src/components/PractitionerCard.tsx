@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, MessageCircle, Phone, Video, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getProfessionLabel } from "@/utils/labels";
+import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
 
 interface PractitionerCardProps {
   practitioner: Practitioner;
@@ -109,7 +109,7 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
                 <div className="flex flex-wrap gap-1">
                   {getDisplaySpecializations().map((spec) => (
                     <Badge key={spec} variant="outline" className="text-xs">
-                      {spec}
+                      {getSpecializationLabel(t, spec)}
                     </Badge>
                   ))}
                   {getSpecializationMoreCount() > 0 && (
