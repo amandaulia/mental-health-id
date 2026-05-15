@@ -1,8 +1,10 @@
 import { Users, Heart, Palette, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { PageSEO } from "@/components/PageSEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const About = () => {
+  const { t } = useLanguage();
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
       <PageSEO pageKey="about" path="/about" />
@@ -10,10 +12,10 @@ const About = () => {
         {/* Hero Section */}
         <div className="mb-12 text-center">
           <h1 className="text-4xl sm:text-5xl font-bold mb-6">
-            <span className="gradient-text">About</span> Mental Health Directory
+            <span className="gradient-text">{t('about.hero.title1')}</span> {t('about.hero.title2')}
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Your comprehensive guide to mental health resources and support in Indonesia
+            {t('about.hero.subtitle')}
           </p>
         </div>
 
@@ -21,20 +23,11 @@ const About = () => {
         <section className="mb-12">
           <div className="bg-card rounded-xl p-8 card-shadow">
             <h2 className="text-2xl sm:text-3xl font-semibold mb-6 text-primary">
-              What is the Mental Health Directory?
+              {t('about.what.title')}
             </h2>
             <div className="prose prose-lg max-w-none text-muted-foreground">
-              <p className="mb-4">
-                The Mental Health Directory is a comprehensive platform designed to help individuals find qualified
-                mental health professionals, support groups, and wellness resources across Indonesia. We understand that
-                seeking mental health support can be overwhelming, and our mission is to make this process easier and
-                more accessible for everyone.
-              </p>
-              <p>
-                Our platform serves as a bridge between those seeking help and qualified professionals, providing
-                detailed information about psychologists, psychiatrists, counseling centers, and various mental health
-                support services available in your area.
-              </p>
+              <p className="mb-4">{t('about.what.p1')}</p>
+              <p>{t('about.what.p2')}</p>
             </div>
           </div>
         </section>
@@ -43,60 +36,48 @@ const About = () => {
         <section className="mb-12">
           <div className="bg-card rounded-xl p-8 card-shadow">
             <h2 className="text-2xl sm:text-3xl font-semibold mb-6 text-primary">
-              What information will Mental Health Directory cover?
+              {t('about.info.title')}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="p-4 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <Users className="h-5 w-5 text-primary" />
-                    <h3 className="font-semibold text-lg">Professional Counseling Services</h3>
+                    <h3 className="font-semibold text-lg">{t('about.info.professional.title')}</h3>
                   </div>
-                  <p className="text-muted-foreground">
-                    Licensed psychologists, psychiatrists, and mental health clinics with detailed profiles,
-                    specializations, and contact information.
-                  </p>
+                  <p className="text-muted-foreground">{t('about.info.professional.desc')}</p>
                 </div>
                 <div className="p-4 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <Heart className="h-5 w-5 text-primary" />
-                    <h3 className="font-semibold text-lg">Peer & Support Counseling</h3>
+                    <h3 className="font-semibold text-lg">{t('about.info.peer.title')}</h3>
                     <Badge className="bg-purple-300 text-purple-900 ml-auto flex items-center justify-center">
-                      Coming Soon
+                      {t('home.comingSoon')}
                     </Badge>
                   </div>
-                  <p className="text-muted-foreground">
-                    Community-based support groups and peer counseling services for various mental health conditions and
-                    life challenges.
-                  </p>
+                  <p className="text-muted-foreground">{t('about.info.peer.desc')}</p>
                 </div>
               </div>
               <div className="space-y-4">
                 <div className="p-4 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <Palette className="h-5 w-5 text-primary" />
-                    <h3 className="font-semibold text-lg">Stress Relief Activities</h3>
+                    <h3 className="font-semibold text-lg">{t('about.info.stressRelief.title')}</h3>
                     <Badge className="bg-purple-300 text-purple-900 ml-auto flex items-center justify-center">
-                      Coming Soon
+                      {t('home.comingSoon')}
                     </Badge>
                   </div>
-                  <p className="text-muted-foreground">
-                    Art therapy, music therapy, sports activities, and other wellness programs designed to promote
-                    mental well-being.
-                  </p>
+                  <p className="text-muted-foreground">{t('about.info.stressRelief.desc')}</p>
                 </div>
                 <div className="p-4 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <Building2 className="h-5 w-5 text-primary" />
-                    <h3 className="font-semibold text-lg">Organizations</h3>
+                    <h3 className="font-semibold text-lg">{t('about.info.organizations.title')}</h3>
                     <Badge className="bg-purple-300 text-purple-900 ml-auto flex items-center justify-center">
-                      Coming Soon
+                      {t('home.comingSoon')}
                     </Badge>
                   </div>
-                  <p className="text-muted-foreground">
-                    Mental health organizations, educational institutions, and community groups dedicated to mental
-                    health awareness and support.
-                  </p>
+                  <p className="text-muted-foreground">{t('about.info.organizations.desc')}</p>
                 </div>
               </div>
             </div>
@@ -107,28 +88,25 @@ const About = () => {
         <section className="mb-12">
           <div className="bg-card rounded-xl p-8 card-shadow">
             <h2 className="text-2xl sm:text-3xl font-semibold mb-6 text-primary">
-              How can I contribute to the project?
+              {t('about.contribute.title')}
             </h2>
             <div className="prose prose-lg max-w-none text-muted-foreground">
-              <p className="mb-6">
-                We believe in the power of community and welcome contributions from mental health professionals,
-                organizations, and individuals passionate about mental health advocacy.
-              </p>
+              <p className="mb-6">{t('about.contribute.intro')}</p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="text-center p-6 bg-primary/5 rounded-lg">
                   <div className="text-3xl mb-4">👥</div>
-                  <h3 className="font-semibold mb-2">Mental Health Professionals</h3>
-                  <p className="text-sm">Join our directory to help more people find the support they need</p>
+                  <h3 className="font-semibold mb-2">{t('about.contribute.professionals.title')}</h3>
+                  <p className="text-sm">{t('about.contribute.professionals.desc')}</p>
                 </div>
                 <div className="text-center p-6 bg-primary/5 rounded-lg">
                   <div className="text-3xl mb-4">🏢</div>
-                  <h3 className="font-semibold mb-2">Organizations</h3>
-                  <p className="text-sm">Partner with us to expand mental health resources and awareness</p>
+                  <h3 className="font-semibold mb-2">{t('about.contribute.organizations.title')}</h3>
+                  <p className="text-sm">{t('about.contribute.organizations.desc')}</p>
                 </div>
                 <div className="text-center p-6 bg-primary/5 rounded-lg">
                   <div className="text-3xl mb-4">💡</div>
-                  <h3 className="font-semibold mb-2">Community Members</h3>
-                  <p className="text-sm">Share feedback, suggest improvements, or help spread awareness</p>
+                  <h3 className="font-semibold mb-2">{t('about.contribute.community.title')}</h3>
+                  <p className="text-sm">{t('about.contribute.community.desc')}</p>
                 </div>
               </div>
             </div>
@@ -138,13 +116,13 @@ const About = () => {
         {/* Contact Details */}
         <section className="mb-12">
           <div className="bg-card rounded-xl p-8 card-shadow">
-            <h2 className="text-2xl sm:text-3xl font-semibold mb-6 text-primary">Contact Details</h2>
+            <h2 className="text-2xl sm:text-3xl font-semibold mb-6 text-primary">{t('about.contact.title')}</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <div className="flex items-center space-x-4 p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl">📧</div>
                   <div>
-                    <h3 className="font-semibold">Email</h3>
+                    <h3 className="font-semibold">{t('about.contact.email')}</h3>
                     <a href="mailto:elysium.mcare@gmail.com" className="text-primary hover:text-primary-hover">
                       elysium.mcare@gmail.com
                     </a>
@@ -153,7 +131,7 @@ const About = () => {
                 <div className="flex items-center space-x-4 p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl">📞</div>
                   <div>
-                    <h3 className="font-semibold">Phone</h3>
+                    <h3 className="font-semibold">{t('about.contact.phone')}</h3>
                     <a href="https//wa.me/6281323931225" className="text-primary hover:text-primary-hover">
                       +62-813-2393-1225
                     </a>
@@ -161,12 +139,10 @@ const About = () => {
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold mb-4">Follow us on Instagram</h3>
+                <h3 className="font-semibold mb-4">{t('about.contact.followInstagram')}</h3>
                 <div className="bg-muted/50 rounded-lg p-6 text-center">
                   <div className="text-4xl mb-4">📱</div>
-                  <p className="text-muted-foreground mb-4">
-                    Stay updated with our latest resources and mental health tips
-                  </p>
+                  <p className="text-muted-foreground mb-4">{t('about.contact.instagramDesc')}</p>
                   <a
                     href="https://instagram.com/mentalwellnessmovieclub"
                     target="_blank"
