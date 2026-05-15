@@ -1,48 +1,30 @@
-## Revised plan — use the existing LanguageToggle, no surprise Indonesian copy
+## Goal
+Wire insurance labels through the `t()` translation system so Indonesian users see translated values in BureauDetail, PractitionerDetail, FilterTags, and SearchAndFilters.
 
-You already have `LanguageContext` (`en` / `id`) + `LanguageToggle` + a `t()` helper, and `<html lang>` flips with the toggle. Most landing-page copy (hero H1, intro paragraph, empty states, "Load More" button, section headings) is currently hardcoded English in the page components, so the toggle doesn't actually translate them yet.
+## Step 1 — Extend `insurance` block in `src/contexts/LanguageContext.tsx`
 
-But there's an important SEO catch we have to design around — calling out up front:
+Add two keys to both `en` and `id`:
 
-> **Googlebot doesn't have your localStorage.** If `en` is the default and `id` only appears after the user clicks the toggle, Google will only ever see the English version. So a pure toggle, by itself, won't move your `psikolog` / `konseling online` rankings. You need at least one of: (a) a separate URL for the Indonesian version, or (b) Indonesian text rendered in the DOM (just not as the visible default).
+- `en.insurance`: add `privateInsurance: "Private Insurance"`, `noInsurance: "No Insurance"`
+- `id.insurance`: add `privateInsurance: "Asuransi Pribadi"`, `noInsurance: "Tanpa Asuransi"`
 
-### What I propose to ship
+Keep existing `private`, `bpjs`, `none` keys untouched for backward compatibility.
 
-**1. Wire the toggle to actually translate landing-page copy.**
+## Step 2 — Replace local `getInsuranceLabel()` in 4 files
 
-Move the hardcoded English on `/professional-counseling`, `/peer-counseling`, `/stress-relief`, `/organizations`, `/about` into `t()` keys, and add the matching Indonesian strings in `LanguageContext.tsx`:
+For each file: import `useLanguage`, pull `t`, route `private`/`PRIVATE` → `t('insurance.privateInsurance')` and `none` → `t('insurance.noInsurance')`. Keep `BPJS` as a string literal (proper noun).
 
-- Page H1 + subhead
-- "No results found" / "Clear Filters" / "Load More"
-- Card labels ("Verified", "Independent", "Book Now", "Learn More" etc. that aren't already through `t()`)
-- About-page body
+- **`src/components/SearchAndFilters.tsx`** — already uses `useLanguage`; replace local helper.
+- **`src/components/FilterTags.tsx`** — add `useLanguage` import + hook call, then update switch.
+- **`src/pages/BureauDetail.tsx`** — add `useLanguage` import + hook call (if not present), then update switch.
+- **`src/pages/PractitionerDetail.tsx`** — add `useLanguage` import + hook call, then update the switch (note the uppercase `PRIVATE`/`BPJS` cases that come from the DB).
 
-The toggle then does what users expect, and we get a clean Indonesian translation layer for free.
+## Verification
 
-**2. Per-route meta with `react-helmet-async`, language-aware.**
+- Switch language toggle to Indonesian on `/practitioner/3`, `/bureau/...`, and home filter chips.
+- Confirm "Asuransi Pribadi" / "Tanpa Asuransi" render where "Private Insurance" / "No Insurance" used to.
+- Confirm BPJS still displays correctly in both languages.
 
-`<Helmet>` reads `language` from `LanguageContext` and emits the matching `<title>` / `<meta description>` / `<html lang>` / `og:locale`. So a user who has `id` saved sees Indonesian metadata when sharing the URL. Each route owns its own canonical (and we drop `<link rel="canonical">` from `index.html` to avoid duplicates).
+## Out of scope
 
-**3. Fix the static head in `index.html` for Googlebot's first paint.**
-
-Even though the toggle now works, Googlebot sees the default. So `index.html` becomes a **bilingual brand head** that names both languages without confusing English-default users:
-
-- `<title>Mental Health Directory Indonesia — Psikolog, Psikiater & Konseling</title>` (English brand + Indonesian keywords — readable to both)
-- Bilingual `<meta description>`: e.g. *"Find licensed psychologists, psychiatrists, and counseling services in Indonesia. Direktori psikolog, psikiater, dan layanan konseling profesional di Indonesia."*
-- `<html lang="en">` stays as default; Helmet flips it on toggle
-- JSON-LD `Organization` + `WebSite` with Indonesian `alternateName` and a `SearchAction`
-
-This gets Indonesian keywords into Google's index without changing the visible UI for English users.
-
-**4. Sitemap from Supabase.**
-
-`scripts/generate-sitemap.ts` (run via `predev`/`prebuild`) lists the 5 static routes plus every practitioner / bureau / peer-counseling / organization detail page. Add `Sitemap:` line to `public/robots.txt`. Detail pages give Google many indexable URLs that already contain Indonesian clinic names like `Indopsycare`, `Aditi Psycenter`, etc.
-
-### Open question — the only real choice you need to make
-
-How aggressive do you want to be about Indonesian rankings?
-
-- **A. Toggle-only (what's described above).** Minimal, no surprise copy, but Google only ranks you for Indonesian queries through metadata + clinic detail pages. Safe, modest SEO lift.
-- **B. Toggle + dedicated Indonesian URLs (`/id/...`).** Clicking the toggle navigates to `/id/professional-counseling`; both URLs index independently with `hreflang` alternates. Google ranks the Indonesian URL for `psikolog terdekat` etc. Bigger SEO lift, slightly more routing work, no surprise copy on the English URL.
-
-A is the safer, faster ship. B is the real Indonesian SEO play. Which one?
+No DB changes, no changes to insurance value normalization in `dataTransform.ts`, no other enum categories.
