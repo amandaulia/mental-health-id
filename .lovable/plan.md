@@ -1,65 +1,25 @@
-## Goal
+## Why it shows "Independent"
 
-Add richer per-entity JSON-LD structured data to practitioner and bureau detail pages so Google can render rich results (knowledge panel, business info) instead of generic blue links.
+`transformPractitioner` (in `src/utils/dataTransform.ts`) reads the institution from `dbPractitioner.practitioner_institutions?.[0]?.institution`. If that field is missing, it falls back to `"Independent"`.
 
-## Approach
+On the home page (`src/pages/Index.tsx` line 45), practitioners are loaded via `usePractitioners()`, which calls `databaseService.getPractitioners()` — a plain `select("*")` on the `practitioner` table with **no embedded relations**. So `practitioner_institutions` is `undefined` for every practitioner on the home page, and the card defaults to "Independent".
 
-Extend `PageSEO.tsx` to accept an optional `jsonLd` prop (object or array). When provided, render an extra `<script type="application/ld+json">` inside `<Helmet>`. This keeps existing per-route SEO untouched and lets each detail page pass its own schema.
+The Professional Counseling page does not have this bug because it fetches the embed inline (`src/pages/ProfessionalCounseling.tsx` line 126 uses `practitioner.practitioner_institutions?.[0]?.institution?.name`).
 
-Then build the schema objects inline in each detail page from already-loaded data.
+The DB join itself is intact and the recent RLS migration did not change `practitioner_institutions` — verified by querying as the anon role and getting back the institution names correctly.
 
-## Schema per page
+## Fix
 
-### PractitionerDetail (`/practitioner/:id`)
+Switch the home page to a query that includes the institution embed.
 
-Combine two `@graph` nodes:
+### File changes
 
-1. **Person** — name, jobTitle (first profession), image, url, knowsAbout (specializations), alumniOf (education), worksFor (link to bureau if any).
-2. **MedicalBusiness** wrapper for the booking offering — uses practitioner's location[0] (address, city, province, country), telephone (from contactDetails type Phone/WhatsApp), priceRange, availableService (map services to `MedicalProcedure`/`Service` with `offers.price` + `priceCurrency: IDR`).
+- **`src/pages/Index.tsx`**
+  - Replace `usePractitioners()` with `usePractitionersWithRelations()` from `@/hooks/useDatabase` (already exists; runs one optimized query that includes `practitioner_institutions(institution(*))`, `practitioner_locations`, and `practitioner_services`).
+  - Keep the existing `transformPractitioner(...)` call as-is — it already reads the embed when present.
+  - Optional follow-up (not required for the fix): the page also fires per-practitioner `getServicesByPractitioner` / `getLocationsByPractitioner` queries; those become redundant once the relations hook is used and could be removed later to reduce request count.
 
-### BureauDetail (`/bureau/:id`)
+### Out of scope
 
-One **MedicalClinic** node (falls back to `LocalBusiness` for non-clinic bureauTypes):
-
-- name, image, url, telephone, priceRange
-- address → `PostalAddress` (streetAddress, addressLocality=city, addressRegion=province, addressCountry=country) from location[0]
-- geo → `GeoCoordinates` if lat/lng present and non-zero
-- medicalSpecialty (specializations)
-- availableService (services with offers)
-- sameAs (Website/Instagram from contactDetails)
-- openingHours if `businessHours` present
-
-## Technical details
-
-```ts
-// PageSEO.tsx — add prop
-interface PageSEOProps {
-  ...existing,
-  jsonLd?: object | object[];
-}
-// inside <Helmet>:
-{jsonLd && (
-  <script type="application/ld+json">
-    {JSON.stringify(Array.isArray(jsonLd)
-      ? { "@context": "https://schema.org", "@graph": jsonLd }
-      : { "@context": "https://schema.org", ...jsonLd })}
-  </script>
-)}
-```
-
-Each detail page builds the object with `useMemo` from existing `practitioner` / `bureau` / `locations` / `contactDetails` state — no new data fetching.
-
-Helper: small `buildPostalAddress(location)` and `buildOffers(services)` inlined per page (no new util file unless both pages share enough — likely yes, will add `src/utils/jsonLd.ts`).
-
-## Files to change
-
-- `src/components/PageSEO.tsx` — add `jsonLd` prop + script tag.
-- `src/utils/jsonLd.ts` — **new**, small helpers (`buildPostalAddress`, `buildOffers`, `buildSameAs`, `phoneFromContacts`).
-- `src/pages/PractitionerDetail.tsx` — build Person + MedicalBusiness graph, pass to `<PageSEO jsonLd={...} />`.
-- `src/pages/BureauDetail.tsx` — build MedicalClinic/LocalBusiness, pass to `<PageSEO jsonLd={...} />`.
-
-## Out of scope
-
-- PeerCounseling and Organization detail pages (can follow same pattern later if requested).
-- og:image generation.
-- Validation against Google Rich Results Test (manual step after deploy).
+- No DB / RLS changes.
+- No edits to `dataTransform.ts`, the card components, or the Professional Counseling page.
