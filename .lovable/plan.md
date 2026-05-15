@@ -1,20 +1,28 @@
-## Changes
+## Goal
+Replace the icon-only session mode row on resource cards with the rounded pill style used in the details page filter popover.
 
-**1. Re-enable feature flags** (`src/config/features.ts`)
-Set `peerCounseling`, `stressRelief`, and `organizations` all to `true`. This re-shows the Peer Counseling, Stress Relief, and Organizations links in the desktop and mobile navigation in `Header.tsx` (already wired behind these flags), and also re-enables their preview sections inside `Index.tsx`.
+## Change
+In `src/components/UnifiedCard.tsx` (lines ~241-249), replace the `<ModeIcon />` loop with rounded pill chips matching the details page style:
 
-**2. Restore the directory home page** (`src/App.tsx`)
-Replace the current redirect:
+```tsx
+{data.modes && data.modes.length > 0 && (
+  <div className="flex flex-wrap gap-2">
+    {data.modes.slice(0, 4).map((mode) => (
+      <span
+        key={mode}
+        className="px-3 py-1 rounded-full border border-border bg-background text-xs text-foreground whitespace-nowrap"
+      >
+        {getModeLabel(t, mode)}
+      </span>
+    ))}
+  </div>
+)}
 ```
-<Route path="/" element={<Navigate to="/professional-counseling" replace />} />
-```
-with:
-```
-<Route path="/" element={<Index />} />
-```
-so visiting `/` renders the full Mental Health Resource Directory landing (`src/pages/Index.tsx`), which already aggregates Professional Counseling, Peer Counseling, Stress Relief, and Organizations previews.
+
+- Drop the `ModeIcon` import (if no longer used elsewhere in the file).
+- Use the existing label helper from `src/utils/labels.ts` (or add a small local `getModeLabel` mirroring `PractitionerDetail.getModeLabel`) so chips show "Online", "In-Person", "Phone", "Chat" instead of the raw enum.
+- Use semantic tokens (`border-border`, `bg-background`, `text-foreground`) — no hardcoded purple, since cards appear across many sections.
 
 ## Out of scope
-- No content, copy, or styling changes.
-- No changes to the individual section pages or routes.
-- The "Home" link in the header already points to `/`, so it will now correctly land on the directory.
+- Details pages stay as-is.
+- No changes to filter logic or data shape.

@@ -3,10 +3,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Clock, Users, Building2, Heart, Star, CheckCircle, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ModeIcon } from "./ModeIcon";
 import { trackCardClick } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
+import { getProfessionLabel, getSpecializationLabel, getModeLabel } from "@/utils/labels";
 import clinicPlaceholder from "@/assets/clinic-placeholder.png";
 
 export interface UnifiedCardData {
@@ -239,11 +238,14 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
               )}
               
               {data.modes && data.modes.length > 0 && (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap gap-2">
                   {data.modes.slice(0, 4).map((mode) => (
-                    <div key={mode} className="text-muted-foreground">
-                      <ModeIcon mode={mode} />
-                    </div>
+                    <span
+                      key={mode}
+                      className="px-3 py-1 rounded-full border border-border bg-background text-xs text-foreground whitespace-nowrap"
+                    >
+                      {getModeLabel(t, mode)}
+                    </span>
                   ))}
                 </div>
               )}
