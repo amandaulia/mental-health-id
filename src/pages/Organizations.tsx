@@ -88,7 +88,7 @@ const Organizations = () => {
       <div className="mb-8 sm:mb-10">
         <div className="bg-card rounded-xl p-6 card-shadow">
           <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-6">
-            Browse Organizations & Communities
+            {t('organizations.browse')}
           </h2>
           <SearchAndFilters
             filters={filters}
@@ -109,11 +109,11 @@ const Organizations = () => {
       <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-            All Organizations & Communities
+            {t('organizations.all')}
           </h2>
           <Button variant="outline" asChild>
             <a href="/organizations">
-              View All <ArrowRight className="ml-2 h-4 w-4" />
+              {t('common.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
             </a>
           </Button>
         </div>

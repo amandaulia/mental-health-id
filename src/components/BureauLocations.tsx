@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, ExternalLink } from "lucide-react";
 import { AnalyticsWrapper } from "./AnalyticsWrapper";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Location {
   id: string;
@@ -18,6 +19,7 @@ interface BureauLocationsProps {
 }
 
 export const BureauLocations = ({ locations, bureauName = "Bureau" }: BureauLocationsProps) => {
+  const { t } = useLanguage();
   if (locations.length === 0) return null;
 
   return (
@@ -67,7 +69,7 @@ export const BureauLocations = ({ locations, bureauName = "Bureau" }: BureauLoca
                     }}
                   >
                     <MapPin className="h-4 w-4" />
-                    Open in Google Maps
+                    {t('common.openInGoogleMaps')}
                     <ExternalLink className="h-3 w-3" />
                   </Button>
                 </AnalyticsWrapper>
