@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Mail, Globe, Instagram } from "lucide-react";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Mock detailed data (in real app, this would come from API/database)
 const mockDetailData: { [key: string]: any } = {
@@ -49,6 +50,7 @@ const mockDetailData: { [key: string]: any } = {
 };
 
 const OrganizationDetail = () => {
+  const { t } = useLanguage();
   const { id } = useParams();
   const data = mockDetailData[id || "1"];
 
@@ -56,10 +58,10 @@ const OrganizationDetail = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Organization Not Found</h1>
-          <p className="text-muted-foreground">The organization you're looking for doesn't exist.</p>
+          <h1 className="text-2xl font-bold mb-4">{t('organizationDetail.notFound')}</h1>
+          <p className="text-muted-foreground">{t('organizationDetail.notFoundDesc')}</p>
           <Button onClick={() => window.history.back()} className="mt-4">
-            Go Back
+            {t('common.goBack')}
           </Button>
         </div>
       </div>
@@ -109,7 +111,7 @@ const OrganizationDetail = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>About</CardTitle>
+              <CardTitle>{t('organizationDetail.about')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
@@ -120,7 +122,7 @@ const OrganizationDetail = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Organization Type</CardTitle>
+              <CardTitle>{t('organizationDetail.organizationType')}</CardTitle>
             </CardHeader>
             <CardContent>
               <Badge className={`text-base px-4 py-2 ${getTypeColor(data.type)}`}>
@@ -134,13 +136,13 @@ const OrganizationDetail = () => {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Contact Information</CardTitle>
+              <CardTitle>{t('organizationDetail.contactInfo')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
                 <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
-                  <p className="font-medium text-sm">Address</p>
+                  <p className="font-medium text-sm">{t('organizationDetail.address')}</p>
                   <p className="text-sm text-muted-foreground">{data.address}</p>
                 </div>
               </div>
@@ -148,7 +150,7 @@ const OrganizationDetail = () => {
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
-                  <p className="font-medium text-sm">Phone</p>
+                  <p className="font-medium text-sm">{t('organizationDetail.phone')}</p>
                   <PhoneCallButton phone={data.phone} asLink />
                 </div>
               </div>
@@ -156,7 +158,7 @@ const OrganizationDetail = () => {
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
-                  <p className="font-medium text-sm">Email</p>
+                  <p className="font-medium text-sm">{t('organizationDetail.email')}</p>
                   <a href={`mailto:${data.email}`} className="text-sm text-primary hover:text-primary-hover">
                     {data.email}
                   </a>
@@ -166,9 +168,9 @@ const OrganizationDetail = () => {
               <div className="flex items-center gap-3">
                 <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
-                  <p className="font-medium text-sm">Website</p>
+                  <p className="font-medium text-sm">{t('organizationDetail.website')}</p>
                   <a href={data.website} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
-                    Visit Website
+                    {t('common.visitWebsite')}
                   </a>
                 </div>
               </div>
@@ -176,7 +178,7 @@ const OrganizationDetail = () => {
               <div className="flex items-center gap-3">
                 <Instagram className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
-                  <p className="font-medium text-sm">Instagram</p>
+                  <p className="font-medium text-sm">{t('organizationDetail.instagram')}</p>
                   <a href={`https://instagram.com/${data.instagram.substring(1)}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
                     {data.instagram}
                   </a>
@@ -187,29 +189,29 @@ const OrganizationDetail = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Get in Touch</CardTitle>
+              <CardTitle>{t('organizationDetail.getInTouch')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <PhoneCallButton phone={data.phone} className="w-full" />
               <Button variant="outline" className="w-full" onClick={() => window.open(`mailto:${data.email}`)}>
                 <Mail className="h-4 w-4 mr-2" />
-                Send Email
+                {t('organizationDetail.email')}
               </Button>
               <Button variant="outline" className="w-full" onClick={() => window.open(data.website, '_blank')}>
                 <Globe className="h-4 w-4 mr-2" />
-                Visit Website
+                {t('common.visitWebsite')}
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Instagram</CardTitle>
+              <CardTitle>{t('organizationDetail.instagram')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="bg-muted/50 rounded-lg p-6 text-center">
                 <Instagram className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground mb-3">Follow us for updates and insights</p>
+                <p className="text-sm text-muted-foreground mb-3">{t('organizationDetail.followDesc')}</p>
                 <a 
                   href={`https://instagram.com/${data.instagram.substring(1)}`} 
                   target="_blank" 
