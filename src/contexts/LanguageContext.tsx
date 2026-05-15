@@ -69,7 +69,7 @@ const translations = {
       }
     },
     search: {
-      placeholder: "Search...",
+      placeholder: "Search by practitioner or clinic name...",
       filters: {
         location: "Location",
         institution: "Institution", 
