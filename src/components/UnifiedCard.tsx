@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Clock, Users, Building2, Heart, Star, CheckCircle, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ModeIcon } from "./ModeIcon";
 import { trackCardClick } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getProfessionLabel, getSpecializationLabel, getModeLabel } from "@/utils/labels";
@@ -242,8 +243,9 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                   {data.modes.slice(0, 4).map((mode) => (
                     <span
                       key={mode}
-                      className="px-3 py-1 rounded-full border border-border bg-background text-xs text-foreground whitespace-nowrap"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border bg-background text-xs text-foreground whitespace-nowrap"
                     >
+                      <ModeIcon mode={mode} />
                       {getModeLabel(t, mode)}
                     </span>
                   ))}
