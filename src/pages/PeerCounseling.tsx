@@ -8,8 +8,11 @@ import { mockPeerCounselingData } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { trackSearch, trackFilter } from "@/utils/analytics";
+import { PageSEO } from "@/components/PageSEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const PeerCounseling = () => {
+  const { t } = useLanguage();
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     locations: [],
@@ -65,13 +68,14 @@ const PeerCounseling = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
+      <PageSEO pageKey="peer" path="/peer-counseling" />
       {/* Hero Section */}
       <div className="mb-8 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
-          <span className="gradient-text">Peer & Group</span> Counseling
+          <span className="gradient-text">{t("pages.peer.heroTitleA")}</span>{t("pages.peer.heroTitleB")}
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
-          Connect with peers and find support groups for shared experiences and guidance. 🤝
+          {t("pages.peer.heroLead")}
         </p>
       </div>
 
