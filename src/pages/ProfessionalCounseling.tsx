@@ -458,7 +458,7 @@ const ProfessionalCounseling = () => {
           <div className="flex items-center justify-center gap-3">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
             <span className="text-lg font-medium text-foreground">
-              Loading...
+              {t('detail.loading')}
             </span>
           </div>
         </div>
@@ -517,16 +517,16 @@ const ProfessionalCounseling = () => {
             variant="outline"
             className="min-w-[200px]"
           >
-            Load More ({paginatedResources.length} of {allResources.length})
+            {t('filters.loadMore')} ({paginatedResources.length} / {allResources.length})
           </Button>
         </div>
       )}
 
       {allResources.length === 0 && !isInitialLoading && (
         <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">No results found</p>
+          <p className="text-muted-foreground mb-4">{t('filters.noResults')}</p>
           <Button onClick={handleClearAllFilters} variant="outline">
-            Clear Filters
+            {t('filters.clearFilters')}
           </Button>
         </div>
       )}

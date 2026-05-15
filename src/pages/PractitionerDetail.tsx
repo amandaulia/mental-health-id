@@ -66,7 +66,7 @@ const PractitionerDetail = () => {
   if (practitionerLoading || servicesLoading || contactLoading || locationsLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center">Loading practitioner details...</div>
+        <div className="text-center">{t('detail.loading')}</div>
       </div>
     );
   }
@@ -75,14 +75,14 @@ const PractitionerDetail = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center text-red-500">
-          Error loading practitioner details. Please try again later.
+          {t('detail.error')}
         </div>
       </div>
     );
   }
 
   if (!practitioner) {
-    return <div className="container mx-auto px-4 py-8">Practitioner not found</div>;
+    return <div className="container mx-auto px-4 py-8">{t('detail.notFound')}</div>;
   }
 
   const formatPrice = (price: number) => {
@@ -130,12 +130,12 @@ const PractitionerDetail = () => {
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link to="/">Home</Link>
+                  <Link to="/">{t('detail.home')}</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Practitioner Details</BreadcrumbPage>
+                <BreadcrumbPage>{t('detail.practitionerDetails')}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -146,7 +146,7 @@ const PractitionerDetail = () => {
             className="flex items-center gap-2 w-fit"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back
+            {t('detail.back')}
           </Button>
         </div>
 
