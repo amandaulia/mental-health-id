@@ -151,13 +151,13 @@ const BureauDetail = () => {
   };
 
   const getModeLabel = (mode: string) => {
-    const labels: Record<string, string> = {
-      text: "Text Chat",
-      voice: "Voice Call",
-      video: "Video Call",
-      offline: "In-Person"
-    };
-    return labels[mode] || mode;
+    switch (mode) {
+      case "text": return t('sessionModes.textChat');
+      case "voice": return t('sessionModes.voiceCall');
+      case "video": return t('sessionModes.videoCall');
+      case "offline": return t('sessionModes.inPerson');
+      default: return mode;
+    }
   };
 
   const getInsuranceLabel = (ins: string) => {
@@ -475,7 +475,7 @@ const BureauDetail = () => {
                               <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground flex-wrap">
                                 <div className="flex items-center gap-1">
                                   <Clock className="h-4 w-4" />
-                                  <span>{service.duration}</span>
+                                  <span>{service.duration === '__DURATION_NOT_SPECIFIED__' ? t('common.durationNotSpecified') : service.duration}</span>
                                 </div>
                                 {service.modes && service.modes.length > 0 ? (
                                   <div className="flex items-center gap-2">

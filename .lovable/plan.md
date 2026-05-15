@@ -1,52 +1,75 @@
-## Goal
-Add all approved EN/ID translations from the spreadsheet to `LanguageContext.tsx`, then wire them into the corresponding components/pages so the language toggle controls every remaining hardcoded string.
+# Translate remaining card & detail labels
 
-## Step 1 — Add new translation blocks to `src/contexts/LanguageContext.tsx`
+Two parts: (1) wire keys that already exist, (2) add a handful of new keys for strings the table missed (`Duration not specified`, `In-Person`/`Text Chat`/`Voice Call`/`Video Call`, `Location`, `Psychologist`/`Psychiatrist`, the `+N more` suffix, `Independent Bureau`).
 
-Add these blocks (mirrored under `en` and `id`) using the spreadsheet values verbatim:
+## Part 1 — Wiring only (keys already exist)
 
-- `home`: `hero.{title1,title2,subtitle}`, `feelings.{title,cta,analyzing,recommendationsTitle}`, `toast.{shareFeelings,recommendationsReady,analysisFailed}`, `sections.{professional,peer,stressRelief,organizations}`, `comingSoon`, `fallback.{unknownCity,addressUnavailable}`
-- `about`: `hero.{title1,title2,subtitle}`, `what.{title,p1,p2}`, `info.{title,professional.{title,desc},peer.{title,desc},stressRelief.{title,desc},organizations.{title,desc}}`, `contribute.{title,intro,professionals.{title,desc},organizations.{title,desc},community.{title,desc}}`, `contact.{title,email,phone,followInstagram,instagramDesc}`
-- `peerDetail`: `notFound`, `notFoundDesc`, `about`, `specialization`, `additionalInfo`, `schedule`, `groupSize`, `facilitator`, `languages`, `contactInfo`, `address`, `phone`, `email`, `website`, `instagram`, `getSupport`, `followDesc`
-- `organizationDetail`: `notFound`, `notFoundDesc`, `about`, `organizationType`, `contactInfo`, `address`, `phone`, `email`, `website`, `instagram`, `getInTouch`, `followDesc`
-- `organizations`: `browse`, `all`
-- `peerCounseling`: `findPeerSupport`
-- `stressRelief`: `findActivities`, `noActivities`
-- `notFound`: `title`, `return`
-- `footer`: `description`, `copyright`
-- `phoneDialog`: `title`, `description`, `copy`, `copied`, `copiedToast`, `copyFailed`
-- `common`: `callNow`, `openInGoogleMaps`, `clickOpenGoogleMaps`, `priceNotAvailable`, `verified`, `free`, `viewAll`, `goBack`, `visitWebsite`
+**`src/components/UnifiedCard.tsx`**
+- L130, L165: keep `"BPJS"` literal (brand), already uses `t('insurance.privateInsurance')` ✓ — no change needed.
+- L187, L205: already uses `t('common.free')` ✓ — no change needed.
+- L94: already uses `t('common.verified')` ✓.
+- L102–117 / L142–151: profession-type badges currently render the raw string. Map through `getProfessionLabel(type)` (see new helper in Part 2).
 
-(If `common.verified` / `detail.free` already exist they will be left as-is; the new `common.*` aliases are added per the sheet.)
+**`src/components/BureauCard.tsx`**
+- L39 verified badge ✓ already wired.
+- L77 insurance ✓ already wired.
+- L15–28 `getBureauTypeLabel`: replace with `t('institutionTypes.privatePractice' | 'clinic' | 'faskes1' | 'faskes2')`. (`institutionTypes.privatePractice` already exists; covers the "Independent Bureau" case.)
+- L46 profession-type badges: pass through `getProfessionLabel(type)`.
 
-## Step 2 — Wire the new keys into components/pages
+**`src/components/PractitionerCard.tsx`**
+- L85 verified ✓; L145–147 insurance ✓.
+- L93 profession-type badges: pass through `getProfessionLabel`.
+- L116 `+N more`: replace with `t('common.more', { count })` — needs new key.
 
-For each file: import `useLanguage`, call `const { t } = useLanguage()`, and replace the hardcoded strings listed below with the matching keys. JSX containing inline `<span>` segments (hero gradient, "About Mental Health Directory") will use two `t()` calls separated by a space.
+## Part 2 — New keys + small helper
 
-- `src/pages/Index.tsx` — hero title/subtitle, feelings prompt + CTA + analyzing state + recommendations heading, three toast messages, four section headings, "Coming Soon" badges, unknown-city / address fallbacks.
-- `src/pages/About.tsx` — entire page text (hero, all section titles/cards, contribute cards, contact details labels).
-- `src/pages/PeerCounselingDetail.tsx` — not-found state, all card titles, all field labels, follow description.
-- `src/pages/OrganizationDetail.tsx` — same pattern as PeerCounselingDetail.
-- `src/pages/Organizations.tsx` — "Browse..." and "All ..." headings.
-- `src/pages/PeerCounseling.tsx` — "Find Peer Support" heading.
-- `src/pages/StressRelief.tsx` — "Find Activities" heading and "No activities found..." empty state.
-- `src/pages/NotFound.tsx` — "Oops! Page not found" + "Return to Home" (404 numeral kept).
-- `src/components/Footer.tsx` — description paragraph and copyright line.
-- `src/components/PhoneCallButton.tsx` — Dialog title/description, Copy/Copied button labels, both toast messages, default "Call Now" button label.
-- `src/components/BureauLocations.tsx` — "Open in Google Maps" button label.
-- `src/components/PractitionerLocations.tsx` — "Click to open in Google Maps" overlay label.
-- `src/components/PractitionerCard.tsx` — "Price not available" → `common.priceNotAvailable`; "Verified" → `common.verified`; insurance literals → existing `insurance.*` keys.
-- `src/components/BureauCard.tsx` — "Verified" → `common.verified`; insurance literals → existing `insurance.*` keys. (Institution-type fallbacks `"Independent Bureau"` / `"Clinic"` are not in the sheet — leave as-is.)
-- `src/components/UnifiedCard.tsx` — "Free" → `common.free` (or existing `detail.free`); insurance literals → `insurance.*`. The `"Unknown City"` comparison sentinel is kept untranslated.
+Add to **`src/contexts/LanguageContext.tsx`** under `common`:
+- `more` → EN `"more"` / ID `"lainnya"`
+- `location` → EN `"Location"` / ID `"Lokasi"`
+- `durationNotSpecified` → EN `"Duration not specified"` / ID `"Durasi tidak ditentukan"`
+
+`sessionModes` already has `chat / voiceCall / videoCall / offline`. Add explicit display variants used on cards/detail:
+- `sessionModes.textChat` → `"Text Chat"` / `"Obrolan Teks"`
+- `sessionModes.inPerson` → `"In-Person"` / `"Tatap Muka"`
+- `sessionModes.offlineSession` → `"Offline Session"` / `"Sesi Tatap Muka"`
+
+`institutionTypes` already covers `clinic/privatePractice/faskes1/faskes2`. No additions.
+
+`professionTypes` already has `psychologist/psychiatrist/...`. Add a small mapper helper inside `LanguageContext` (or a new `src/utils/labels.ts`) consumed by cards/details:
+
+```ts
+// returns translated label for an arbitrary profession string from data
+export function getProfessionLabel(t, raw: string) {
+  const k = raw.trim().toLowerCase();
+  const map = {
+    psychologist: 'professionTypes.psychologist',
+    psychiatrist: 'professionTypes.psychiatrist',
+    'art therapist': 'professionTypes.artTherapist',
+    'music therapist': 'professionTypes.musicTherapist',
+    counselor: 'professionTypes.counselor',
+    'social worker': 'professionTypes.socialWorker',
+  };
+  return map[k] ? t(map[k]) : raw;
+}
+```
+
+## Part 3 — Wire the new keys into components
+
+- **`src/utils/dataTransform.ts`** L102: this file has no `t()` access. Replace literal with a sentinel `"__DURATION_NOT_SPECIFIED__"` and translate at render sites that show `service.duration` (BureauServices / PractitionerServices). Render: `value === '__DURATION_NOT_SPECIFIED__' ? t('common.durationNotSpecified') : value`.
+- **`src/components/SearchAndFilters.tsx`** L62–70 `getModeLabel`: switch to `t('sessionModes.textChat'|'voiceCall'|'videoCall'|'inPerson')`. L72–80 `getInstitutionTypeLabel`: switch to `t('institutionTypes.*')`.
+- **`src/pages/BureauDetail.tsx`** L153–161 `getModeLabel`: same as above.
+- **`src/pages/PractitionerDetail.tsx`** L97–104 `getModeLabel`: same; `offline` → `t('sessionModes.offlineSession')`.
+- **`src/components/PractitionerCard.tsx`** L116: `+N {t('common.more')}`.
+- Anywhere a "Location" column header is rendered as a hardcoded literal, swap to `t('common.location')`.
 
 ## Out of scope
 
-- No DB / data-layer changes; insurance value normalization in `dataTransform.ts` stays as-is.
-- Brand/proper nouns not in the sheet (`BPJS`, `Elysium Mental Care` alt text, `@mentalwellnessmovieclub`, `WhatsApp`, `Instagram` social labels, `Rp`, `404`) remain untranslated.
-- `BureauCard` institution-type fallbacks (`"Independent Bureau"`, `"Clinic"`) remain English until a translation is provided.
+- Admin pages (`/admin/*`) and `AddInstitutionForm`/`AddPractitionerForm` "Verified" labels — admin UI, not user-facing.
+- `mockData.ts` / type unions / `supabase/types.ts` literals — data layer, must stay English.
+- Brand strings: `BPJS`, `Rp`, `WhatsApp`, `Instagram`, image alts.
 
 ## Verification
 
-- Toggle language on `/`, `/about`, `/professional-counseling`, a bureau detail, a practitioner detail, a peer-counseling detail, an organization detail, `/organizations`, `/peer-counseling`, `/stress-relief`, and `/anything-404`.
-- Open the desktop phone-call dialog and confirm dialog/buttons/toasts are translated.
-- Confirm both Bureau and Practitioner location cards show the translated Google Maps CTA.
+- Toggle EN/ID on `/professional-counseling`. Confirm cards show translated profession types, verified badge, insurance, institution type, "+N more".
+- Open `/bureau/:id` and `/practitioner/:id`; confirm session mode chips, "Duration not specified" fallback, "Location" header all translate.
+- Confirm filter dropdowns (mode + institution type) translate.
