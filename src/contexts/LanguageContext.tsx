@@ -498,9 +498,37 @@ const translations = {
       }
     },
     footer: {
-      description: "Direktori sumber daya kesehatan mental. Menghubungkan Anda dengan psikolog, psikiater, dan klinik kesehatan mental di seluruh Indonesia."
+      description: "Direktori informasi kesehatan mental kamu. Menghubungkan kamu dengan psikolog, psikiater, dan klinik kesehatan mental di seluruh Indonesia.",
+      copyright: "© 2025 Elysium Mentalcare. Made with ❤️ for mental wellness."
     },
     home: {
+      hero: {
+        title1: "Mental Health",
+        title2: "Resource Directory",
+        subtitle: "Teman terpercaya kamu dalam menemukan sumber daya dan dukungan kesehatan mental yang berkualitas."
+      },
+      feelings: {
+        title: "Bagaimana perasaan kamu hari ini?",
+        cta: "Dapatkan Rekomendasi Personal",
+        analyzing: "Menganalisis...",
+        recommendationsTitle: "Rekomendasi Personal untuk kamu"
+      },
+      toast: {
+        shareFeelings: "Silakan ceritakan perasaan kamu",
+        recommendationsReady: "Rekomendasi Siap",
+        analysisFailed: "Analisis Gagal"
+      },
+      sectionHeading: {
+        professional: "Konseling Profesional",
+        peer: "Konseling Sebaya & Kelompok Dukungan",
+        stressRelief: "Aktivitas Stress Relief",
+        organizations: "Organisasi & Komunitas"
+      },
+      comingSoon: "Segera Hadir",
+      fallback: {
+        unknownCity: "Kota Tidak Diketahui",
+        addressUnavailable: "Alamat tidak tersedia"
+      },
       sections: {
         professional: {
           title: "Konseling Profesional",
