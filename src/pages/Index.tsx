@@ -9,7 +9,6 @@ import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
 import { usePractitioners, useInstitutions, usePeerCounseling, useOrganizations, useActivities } from "@/hooks/useDatabase";
 import { transformPractitioner, transformInstitution, transformService } from "@/utils/dataTransform";
 import { databaseService } from "@/services/database";
-import { mockPeerCounselingData } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight } from "lucide-react";
