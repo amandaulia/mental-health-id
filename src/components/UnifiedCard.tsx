@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { ModeIcon } from "./ModeIcon";
 import { trackCardClick } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getProfessionLabel } from "@/utils/labels";
 import clinicPlaceholder from "@/assets/clinic-placeholder.png";
 
 export interface UnifiedCardData {
@@ -107,7 +108,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                     <div className="flex flex-wrap gap-1 mb-3">
                       {data.professionTypes?.slice(0, 2).map((type) => (
                         <Badge key={type} variant="outline" className="text-xs">
-                          {type}
+                          {getProfessionLabel(t, type)}
                         </Badge>
                       ))}
                       {data.professionTypes && data.professionTypes.length > 2 && (
@@ -142,7 +143,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                     <div className="flex flex-wrap gap-1 mb-3">
                       {data.professionTypes?.slice(0, 2).map((type) => (
                         <Badge key={type} variant="outline" className="text-xs">
-                          {type}
+                          {getProfessionLabel(t, type)}
                         </Badge>
                       ))}
                       {data.professionTypes && data.professionTypes.length > 2 && (
