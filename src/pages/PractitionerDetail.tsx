@@ -95,10 +95,10 @@ const PractitionerDetail = () => {
 
   const getModeLabel = (mode: string) => {
     switch (mode) {
-      case "text": return "Text Session";
-      case "voice": return "Voice Call";
-      case "video": return "Video Call";
-      case "offline": return "Offline Session";
+      case "text": return t('sessionModes.textChat');
+      case "voice": return t('sessionModes.voiceCall');
+      case "video": return t('sessionModes.videoCall');
+      case "offline": return t('sessionModes.offlineSession');
       default: return mode;
     }
   };
