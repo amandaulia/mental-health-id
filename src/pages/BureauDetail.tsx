@@ -18,6 +18,7 @@ import { Bureau, Practitioner, Service, Mode } from "@/types";
 import { BureauLocations } from "@/components/BureauLocations";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { PageSEO } from "@/components/PageSEO";
 
 const isTelLink = (url: string) => /^tel:/i.test(url);
 const stripTel = (url: string) => url.replace(/^tel:/i, "");
@@ -260,6 +261,12 @@ const BureauDetail = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <PageSEO
+        pageKey="bureau"
+        path={`/bureau/${id}`}
+        title={`${bureau.name}${locations[0]?.city ? ' — ' + locations[0].city : ''} | Klinik & Konseling Kesehatan Mental`}
+        description={`${bureau.name} — klinik kesehatan mental${locations[0]?.city ? ' di ' + locations[0].city : ''}. Lihat layanan, biaya, asuransi, dan praktisi yang tersedia.`}
+      />
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Breadcrumbs and Back Button */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
