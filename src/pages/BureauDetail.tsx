@@ -495,9 +495,9 @@ const BureauDetail = () => {
                               </div>
               <p className={`mt-2 ${service.price == null ? 'text-sm text-muted-foreground italic' : 'text-lg font-medium text-primary'}`}>
                 {service.price == null
-                  ? 'Price available upon request'
+                  ? t('detail.priceUponRequest')
                   : service.price === 0
-                    ? 'Free'
+                    ? t('detail.free')
                     : formatPrice(service.price)}
               </p>
                             </div>

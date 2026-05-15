@@ -252,7 +252,7 @@ export const SearchAndFilters = ({
                   className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
                   <MapPin className="h-3 w-3" />
-                  <span>City</span>
+                  <span>{t('filters.city')}</span>
                   {getActiveFilterCount(filters.locations) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.locations)}
@@ -262,7 +262,7 @@ export const SearchAndFilters = ({
               </PopoverTrigger>
               <PopoverContent className="w-80 p-6">
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">City</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{t('filters.city')}</h3>
                   <div className="flex flex-wrap gap-1">
                     {cities.map((location) => (
                       <button
@@ -290,7 +290,7 @@ export const SearchAndFilters = ({
                   className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
                   <Heart className="h-3 w-3" />
-                  <span>Specialization</span>
+                  <span>{t('filters.specialization')}</span>
                   {getActiveFilterCount(filters.specializations) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.specializations)}
@@ -300,7 +300,7 @@ export const SearchAndFilters = ({
               </PopoverTrigger>
               <PopoverContent className="w-80 p-6">
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">Specialization</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{t('filters.specialization')}</h3>
                   <div className="flex flex-wrap gap-1">
                     {specializations.map((specialization) => (
                       <button
@@ -328,7 +328,7 @@ export const SearchAndFilters = ({
                   className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
                   <Monitor className="h-3 w-3" />
-                  <span>Session Mode</span>
+                  <span>{t('filters.sessionMode')}</span>
                   {getActiveFilterCount(filters.modes) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.modes)}
@@ -338,7 +338,7 @@ export const SearchAndFilters = ({
               </PopoverTrigger>
               <PopoverContent className="w-80 p-6">
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">Session Mode</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{t('filters.sessionMode')}</h3>
                   <div className="flex flex-wrap gap-1">
                     {sessionModeOptions.map((mode) => (
                       <button
@@ -366,16 +366,16 @@ export const SearchAndFilters = ({
                   className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
                   <Settings className="h-3 w-3" />
-                  <span>Price Range</span>
+                  <span>{t('filters.priceRange')}</span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-80 p-6">
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">Session Cost (IDR)</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{t('filters.sessionCost')}</h3>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="text-xs text-muted-foreground mb-1 block">Minimum</label>
+                        <label className="text-xs text-muted-foreground mb-1 block">{t('search.filters.minimum')}</label>
                         <Input
                           type="number"
                           value={minPriceInput}
@@ -387,7 +387,7 @@ export const SearchAndFilters = ({
                         />
                       </div>
                       <div>
-                        <label className="text-xs text-muted-foreground mb-1 block">Maximum</label>
+                        <label className="text-xs text-muted-foreground mb-1 block">{t('search.filters.maximum')}</label>
                         <Input
                           type="number"
                           value={maxPriceInput}
@@ -423,7 +423,7 @@ export const SearchAndFilters = ({
                         htmlFor="include-null-price-mobile"
                         className="text-sm text-foreground cursor-pointer"
                       >
-                        Include price upon request
+                        {t('detail.includePriceUponRequest')}
                       </label>
                     </div>
                   </div>
@@ -439,7 +439,7 @@ export const SearchAndFilters = ({
                   className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
                   <Settings className="h-3 w-3" />
-                  <span>Insurance</span>
+                  <span>{t('filters.insurance')}</span>
                   {getActiveFilterCount(filters.insurance) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.insurance)}
@@ -449,7 +449,7 @@ export const SearchAndFilters = ({
               </PopoverTrigger>
               <PopoverContent className="w-80 p-6">
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">Insurance</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{t('filters.insurance')}</h3>
                   <div className="flex flex-wrap gap-1">
                     {insuranceOptions.map((insurance) => (
                       <button
@@ -482,7 +482,7 @@ export const SearchAndFilters = ({
               className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
             >
               <MapPin className="h-3 w-3 mr-1" />
-              City
+              {t('filters.city')}
               {getActiveFilterCount(filters.locations) > 0 && (
                 <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                   {getActiveFilterCount(filters.locations)}
@@ -493,7 +493,7 @@ export const SearchAndFilters = ({
           </PopoverTrigger>
           <PopoverContent className="w-80 p-6">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">City</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t('filters.city')}</h3>
               <div className="flex flex-wrap gap-1">
                 {cities.map((location) => (
                   <button
@@ -521,7 +521,7 @@ export const SearchAndFilters = ({
               className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
             >
               <Heart className="h-3 w-3 mr-1" />
-              Specialization
+              {t('filters.specialization')}
               {getActiveFilterCount(filters.specializations) > 0 && (
                 <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                   {getActiveFilterCount(filters.specializations)}
@@ -532,7 +532,7 @@ export const SearchAndFilters = ({
           </PopoverTrigger>
           <PopoverContent className="w-80 p-6">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">Specialization</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t('filters.specialization')}</h3>
               <div className="flex flex-wrap gap-1">
                 {specializations.map((specialization) => (
                   <button
@@ -560,7 +560,7 @@ export const SearchAndFilters = ({
               className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
             >
               <Monitor className="h-3 w-3 mr-1" />
-              Session Mode
+              {t('filters.sessionMode')}
               {getActiveFilterCount(filters.modes) > 0 && (
                 <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                   {getActiveFilterCount(filters.modes)}
@@ -571,7 +571,7 @@ export const SearchAndFilters = ({
           </PopoverTrigger>
           <PopoverContent className="w-80 p-6">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">Session Mode</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t('filters.sessionMode')}</h3>
               <div className="flex flex-wrap gap-1">
                 {sessionModeOptions.map((mode) => (
                   <button
@@ -599,17 +599,17 @@ export const SearchAndFilters = ({
               className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
             >
               <Settings className="h-3 w-3 mr-1" />
-              Price Range
+              {t('filters.priceRange')}
               <ChevronDown className="h-3 w-3 ml-1" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-80 p-6">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">Session Cost (IDR)</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t('filters.sessionCost')}</h3>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">Minimum</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">{t('search.filters.minimum')}</label>
                     <Input
                       type="number"
                       value={minPriceInput}
@@ -621,7 +621,7 @@ export const SearchAndFilters = ({
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">Maximum</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">{t('search.filters.maximum')}</label>
                     <Input
                       type="number"
                       value={maxPriceInput}
@@ -658,7 +658,7 @@ export const SearchAndFilters = ({
                     htmlFor="include-null-price"
                     className="text-sm text-foreground cursor-pointer"
                   >
-                    Include price upon request
+                    {t('detail.includePriceUponRequest')}
                   </label>
                 </div>
               </div>
@@ -674,7 +674,7 @@ export const SearchAndFilters = ({
               className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
             >
               <Settings className="h-3 w-3 mr-1" />
-              Insurance
+              {t('filters.insurance')}
               {getActiveFilterCount(filters.insurance) > 0 && (
                 <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                   {getActiveFilterCount(filters.insurance)}
@@ -685,7 +685,7 @@ export const SearchAndFilters = ({
           </PopoverTrigger>
           <PopoverContent className="w-80 p-6">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">Insurance</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t('filters.insurance')}</h3>
               <div className="flex flex-wrap gap-1">
                 {insuranceOptions.map((insurance) => (
                   <button
@@ -714,7 +714,7 @@ export const SearchAndFilters = ({
                 className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
               >
                 <Building2 className="h-3 w-3 mr-1" />
-                Institution Type
+                {t('filters.institutionType')}
                 {getActiveFilterCount(filters.institutionTypes) > 0 && (
                   <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                     {getActiveFilterCount(filters.institutionTypes)}
@@ -725,7 +725,7 @@ export const SearchAndFilters = ({
             </PopoverTrigger>
             <PopoverContent className="w-80 p-6">
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Institution Type</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t('filters.institutionType')}</h3>
                 <div className="flex flex-wrap gap-1">
                   {institutionTypeOptions.map((type) => (
                     <button
