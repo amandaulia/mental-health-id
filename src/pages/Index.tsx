@@ -625,16 +625,16 @@ const Index = () => {
               </Button>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredActivities.slice(0, 6).map((item, index) => {
+              {filteredActivities.slice(0, 6).map((item: any, index) => {
                 const cardData: UnifiedCardData = {
                   type: "activity",
-                  id: item.id,
-                  image: item.image,
+                  id: item.id.toString(),
+                  image: item.image ?? undefined,
                   name: item.name,
-                  city: item.city,
-                  organizationName: item.organizationName,
-                  activityType: item.activityType,
-                  price: typeof item.price === 'string' ? parseInt(item.price) : item.price
+                  city: item.activity_locations?.[0]?.location?.city || "",
+                  organizationName: item.activity_organizations?.[0]?.organization?.name || "",
+                  activityType: item.activity_type?.[0] || "",
+                  price: typeof item.price === 'string' ? parseInt(item.price) : (item.price ?? 0),
                 };
 
                 return (
@@ -661,14 +661,14 @@ const Index = () => {
               </Button>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredOrganizations.slice(0, 6).map((item, index) => {
+              {filteredOrganizations.slice(0, 6).map((item: any, index) => {
                 const cardData: UnifiedCardData = {
-                  type: item.type === "organization" ? "organization" : "community",
-                  id: item.id,
-                  image: item.image,
+                  type: "organization",
+                  id: item.id.toString(),
+                  image: item.image ?? undefined,
                   name: item.name,
-                  city: item.city,
-                  organizationType: item.organizationType
+                  city: item.organization_locations?.[0]?.location?.city || "",
+                  organizationType: item.specialization?.[0] || "",
                 };
 
                 return (
