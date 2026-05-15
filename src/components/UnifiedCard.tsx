@@ -127,7 +127,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                                 variant={isBpjs ? "bpjs" : isPrivate ? "private" : "outline"}
                                 className="text-xs"
                               >
-                                {isBpjs ? "BPJS" : isPrivate ? "Private Insurance" : ins}
+                                {isBpjs ? "BPJS" : isPrivate ? t('insurance.privateInsurance') : ins}
                               </Badge>
                             );
                           })}
@@ -162,7 +162,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                                 variant={isBpjs ? "bpjs" : isPrivate ? "private" : "outline"}
                                 className="text-xs"
                               >
-                                {isBpjs ? "BPJS" : isPrivate ? "Private Insurance" : ins}
+                                {isBpjs ? "BPJS" : isPrivate ? t('insurance.privateInsurance') : ins}
                               </Badge>
                             );
                           })}
@@ -184,7 +184,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                     )}
                     {data.price !== undefined && (
                       <p className="font-medium text-primary text-sm">
-                        {data.price === 0 ? "Free" : formatPrice(data.price)}
+                        {data.price === 0 ? t('common.free') : formatPrice(data.price)}
                       </p>
                     )}
                   </>
@@ -202,7 +202,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                     )}
                     {data.price !== undefined && (
                       <p className="font-medium text-primary text-sm">
-                        {data.price === 0 ? "Free" : formatPrice(data.price)}
+                        {data.price === 0 ? t('common.free') : formatPrice(data.price)}
                       </p>
                     )}
                   </>
