@@ -17,6 +17,7 @@ import { transformInstitution, transformPractitioner, transformService, transfor
 import { Bureau, Practitioner, Service, Mode } from "@/types";
 import { BureauLocations } from "@/components/BureauLocations";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const isTelLink = (url: string) => /^tel:/i.test(url);
 const stripTel = (url: string) => url.replace(/^tel:/i, "");
@@ -24,6 +25,7 @@ const stripTel = (url: string) => url.replace(/^tel:/i, "");
 const BureauDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [bureau, setBureau] = useState<Bureau | null>(null);
   const [practitioners, setPractitioners] = useState<Practitioner[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -160,8 +162,8 @@ const BureauDetail = () => {
 
   const getInsuranceLabel = (ins: string) => {
     switch (ins) {
-      case "none": return "No Insurance";
-      case "private": return "Private Insurance";
+      case "none": return t('insurance.noInsurance');
+      case "private": return t('insurance.privateInsurance');
       case "bpjs": return "BPJS";
       default: return ins;
     }

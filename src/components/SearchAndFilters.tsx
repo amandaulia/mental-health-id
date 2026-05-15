@@ -82,8 +82,8 @@ export const SearchAndFilters = ({
   const getInsuranceLabel = (insurance: string) => {
     const normalized = insurance.toLowerCase();
     if (normalized === "bpjs") return "BPJS";
-    if (normalized === "private" || normalized === "private insurance") return "Private Insurance";
-    if (normalized === "none") return "No Insurance";
+    if (normalized === "private" || normalized === "private insurance") return t('insurance.privateInsurance');
+    if (normalized === "none") return t('insurance.noInsurance');
     return insurance;
   };
 
