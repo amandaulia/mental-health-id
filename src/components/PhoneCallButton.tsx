@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PhoneCallButtonProps {
   phone: string;
@@ -36,6 +37,7 @@ export const PhoneCallButton = ({
   asLink = false,
   onClick,
 }: PhoneCallButtonProps) => {
+  const { t } = useLanguage();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -54,10 +56,10 @@ export const PhoneCallButton = ({
     try {
       await navigator.clipboard.writeText(phone);
       setCopied(true);
-      toast({ title: "Phone number copied" });
+      toast({ title: t('phoneDialog.copiedToast') });
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast({ title: "Could not copy", variant: "destructive" });
+      toast({ title: t('phoneDialog.copyFailed'), variant: "destructive" });
     }
   };
 
@@ -81,7 +83,7 @@ export const PhoneCallButton = ({
       {children ?? (
         <>
           <Phone className="h-4 w-4 mr-2" />
-          Call Now
+          {t('common.callNow')}
         </>
       )}
     </Button>
@@ -93,11 +95,8 @@ export const PhoneCallButton = ({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Call this number</DialogTitle>
-            <DialogDescription>
-              Phone calls can't be placed directly from a desktop browser.
-              Please dial this number from your phone.
-            </DialogDescription>
+            <DialogTitle>{t('phoneDialog.title')}</DialogTitle>
+            <DialogDescription>{t('phoneDialog.description')}</DialogDescription>
           </DialogHeader>
           <div className="flex items-center justify-between gap-3 rounded-md border bg-muted/40 p-4">
             <div className="flex items-center gap-3">
@@ -110,12 +109,12 @@ export const PhoneCallButton = ({
               {copied ? (
                 <>
                   <Check className="h-4 w-4 mr-2" />
-                  Copied
+                  {t('phoneDialog.copied')}
                 </>
               ) : (
                 <>
                   <Copy className="h-4 w-4 mr-2" />
-                  Copy
+                  {t('phoneDialog.copy')}
                 </>
               )}
             </Button>
