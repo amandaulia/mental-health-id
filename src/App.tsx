@@ -17,6 +17,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { featureFlags } from '@/config/features';
 
 const queryClient = new QueryClient();
 
@@ -45,13 +46,23 @@ function AppContent() {
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
           <Route path="/professional-counseling" element={<ProfessionalCounseling />} />
-          <Route path="/peer-counseling" element={<PeerCounseling />} />
-          <Route path="/stress-relief" element={<StressRelief />} />
-          <Route path="/organizations" element={<Organizations />} />
+          {featureFlags.peerCounseling && (
+            <>
+              <Route path="/peer-counseling" element={<PeerCounseling />} />
+              <Route path="/peer-counseling/:id" element={<PeerCounselingDetail />} />
+            </>
+          )}
+          {featureFlags.stressRelief && (
+            <Route path="/stress-relief" element={<StressRelief />} />
+          )}
+          {featureFlags.organizations && (
+            <>
+              <Route path="/organizations" element={<Organizations />} />
+              <Route path="/organizations/:id" element={<OrganizationDetail />} />
+            </>
+          )}
           <Route path="/practitioner/:id" element={<PractitionerDetail />} />
           <Route path="/bureau/:id" element={<BureauDetail />} />
-          <Route path="/peer-counseling/:id" element={<PeerCounselingDetail />} />
-          <Route path="/organizations/:id" element={<OrganizationDetail />} />
         </Routes>
       </main>
       <Footer />
