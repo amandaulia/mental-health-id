@@ -273,7 +273,16 @@ const translations = {
       showLess: "Show less",
       practitioners: "Practitioners",
       noInsurance: "No Insurance",
-      privateInsurance: "Private Insurance"
+      privateInsurance: "Private Insurance",
+      ourServices: "Our Services",
+      ourPractitioners: "Our Practitioners",
+      searchServices: "Search services...",
+      noServicesMatch: "No services match the selected filters.",
+      includePriceUponRequest: "Include price upon request",
+      priceUponRequest: "Price available upon request",
+      free: "Free",
+      bookNow: "Book Now",
+      activeFiltersLabel: "Active filters:"
     },
     filters: {
       activeFilters: "Active Filters",
@@ -289,7 +298,9 @@ const translations = {
       specialization: "Specialization",
       sessionMode: "Session Mode",
       priceRange: "Price Range (IDR)",
-      insurance: "Insurance"
+      insurance: "Insurance",
+      sessionCost: "Session Cost (IDR)",
+      loadMoreCount: "Load More"
     },
     errors: {
       somethingWrong: "Something went wrong",
@@ -515,7 +526,16 @@ const translations = {
       showLess: "Tampilkan lebih sedikit",
       practitioners: "Praktisi",
       noInsurance: "Tanpa Asuransi",
-      privateInsurance: "Asuransi Pribadi"
+      privateInsurance: "Asuransi Pribadi",
+      ourServices: "Layanan Kami",
+      ourPractitioners: "Praktisi Kami",
+      searchServices: "Cari layanan...",
+      noServicesMatch: "Tidak ada layanan yang sesuai dengan filter.",
+      includePriceUponRequest: "Termasuk harga sesuai permintaan",
+      priceUponRequest: "Harga tersedia sesuai permintaan",
+      free: "Gratis",
+      bookNow: "Pesan Sekarang",
+      activeFiltersLabel: "Filter aktif:"
     },
     filters: {
       activeFilters: "Filter Aktif",
@@ -531,7 +551,9 @@ const translations = {
       specialization: "Spesialisasi",
       sessionMode: "Mode Sesi",
       priceRange: "Rentang Harga (IDR)",
-      insurance: "Asuransi"
+      insurance: "Asuransi",
+      sessionCost: "Biaya Sesi (IDR)",
+      loadMoreCount: "Muat Lebih Banyak"
     },
     errors: {
       somethingWrong: "Terjadi Kesalahan",

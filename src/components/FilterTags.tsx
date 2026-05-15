@@ -49,10 +49,10 @@ export const FilterTags = ({ filters, onRemoveFilter, onClearAll }: FilterTagsPr
 
   const getModeLabel = (mode: string) => {
     switch (mode) {
-      case "text": return "Chat";
-      case "voice": return "Voice Call";
-      case "video": return "Video Call";
-      case "offline": return "Offline";
+      case "text": return t('sessionModes.chat');
+      case "voice": return t('sessionModes.voiceCall');
+      case "video": return t('sessionModes.videoCall');
+      case "offline": return t('sessionModes.offline');
       default: return mode;
     }
   };
@@ -78,7 +78,7 @@ export const FilterTags = ({ filters, onRemoveFilter, onClearAll }: FilterTagsPr
 
   return (
     <div className="flex flex-wrap items-center gap-2 mb-4">
-      <span className="text-sm text-muted-foreground">Active filters:</span>
+      <span className="text-sm text-muted-foreground">{t('detail.activeFiltersLabel')}</span>
       {activeTags.map((tag, index) => (
         <Badge 
           key={`${tag.type}-${tag.value}-${index}`}
@@ -100,7 +100,7 @@ export const FilterTags = ({ filters, onRemoveFilter, onClearAll }: FilterTagsPr
         onClick={onClearAll}
         className="text-xs text-muted-foreground hover:text-foreground underline"
       >
-        Clear all
+        {t('filters.clearAll')}
       </button>
     </div>
   );

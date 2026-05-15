@@ -125,7 +125,7 @@ const BureauDetail = () => {
   if (institutionLoading || practitionersLoading || servicesLoading || contactLoading || locationsLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center">Loading bureau details...</div>
+        <div className="text-center">{t('detail.loading')}</div>
       </div>
     );
   }
@@ -133,13 +133,13 @@ const BureauDetail = () => {
   if (institutionError) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-500">Error loading bureau details</div>
+        <div className="text-center text-red-500">{t('detail.error')}</div>
       </div>
     );
   }
 
   if (!bureau) {
-    return <div className="container mx-auto px-4 py-8">Bureau not found</div>;
+    return <div className="container mx-auto px-4 py-8">{t('detail.notFound')}</div>;
   }
 
   const formatPrice = (price: number) => {
@@ -267,7 +267,7 @@ const BureauDetail = () => {
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link to="/">Home</Link>
+                  <Link to="/">{t('detail.home')}</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
@@ -283,7 +283,7 @@ const BureauDetail = () => {
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back
+            {t('detail.back')}
           </Button>
         </div>
 
@@ -300,7 +300,7 @@ const BureauDetail = () => {
             {services.length > 0 && (
               <Card>
                 <CardHeader className="space-y-6">
-                  <CardTitle>Our Services ({filteredServices.length})</CardTitle>
+                  <CardTitle>{t('detail.ourServices')} ({filteredServices.length})</CardTitle>
                   
                   {/* Filters and Search in one line */}
                   <div className="flex flex-col sm:flex-row gap-3">
@@ -309,7 +309,7 @@ const BureauDetail = () => {
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                       <Input
                         type="text"
-                        placeholder="Search services..."
+                        placeholder={t('detail.searchServices')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-10 rounded-full border-gray-200"
@@ -324,7 +324,7 @@ const BureauDetail = () => {
                           className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium justify-center flex items-center gap-2"
                         >
                           <Monitor className="h-4 w-4" />
-                          <span>Session Mode</span>
+                          <span>{t('filters.sessionMode')}</span>
                           {selectedModes.length > 0 && (
                             <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">
                               {selectedModes.length}
@@ -334,7 +334,7 @@ const BureauDetail = () => {
                       </PopoverTrigger>
                       <PopoverContent className="w-80 p-6">
                         <div className="space-y-4">
-                          <h3 className="text-lg font-semibold text-foreground">Session Mode</h3>
+                          <h3 className="text-lg font-semibold text-foreground">{t('filters.sessionMode')}</h3>
                           <div className="flex flex-wrap gap-2">
                             {allModes.map(mode => (
                               <button
@@ -362,16 +362,16 @@ const BureauDetail = () => {
                           className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium justify-center flex items-center gap-2"
                         >
                           <Settings className="h-4 w-4" />
-                          <span>Price Range</span>
+                          <span>{t('filters.priceRange')}</span>
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-80 p-6">
                         <div className="space-y-4">
-                          <h3 className="text-lg font-semibold text-foreground">Session Cost (IDR)</h3>
+                          <h3 className="text-lg font-semibold text-foreground">{t('filters.sessionCost')}</h3>
                           <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-2">
                               <div>
-                                <label className="text-xs text-muted-foreground mb-1 block">Minimum</label>
+                                <label className="text-xs text-muted-foreground mb-1 block">{t('search.filters.minimum')}</label>
                                 <Input
                                   type="number"
                                   value={minPriceInput}
@@ -382,7 +382,7 @@ const BureauDetail = () => {
                                 />
                               </div>
                               <div>
-                                <label className="text-xs text-muted-foreground mb-1 block">Maximum</label>
+                                <label className="text-xs text-muted-foreground mb-1 block">{t('search.filters.maximum')}</label>
                                 <Input
                                   type="number"
                                   value={maxPriceInput}
@@ -418,7 +418,7 @@ const BureauDetail = () => {
                   {/* Active Filters */}
                   {hasActiveFilters && (
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm text-muted-foreground">Active filters:</span>
+                      <span className="text-sm text-muted-foreground">{t('detail.activeFiltersLabel')}</span>
                       {selectedModes.map(mode => (
                         <Badge 
                           key={mode}
@@ -456,7 +456,7 @@ const BureauDetail = () => {
                         onClick={clearAllFilters}
                         className="h-6 text-xs"
                       >
-                        Clear all
+                        {t('filters.clearAll')}
                       </Button>
                     </div>
                   )}
@@ -495,9 +495,9 @@ const BureauDetail = () => {
                               </div>
               <p className={`mt-2 ${service.price == null ? 'text-sm text-muted-foreground italic' : 'text-lg font-medium text-primary'}`}>
                 {service.price == null
-                  ? 'Price available upon request'
+                  ? t('detail.priceUponRequest')
                   : service.price === 0
-                    ? 'Free'
+                    ? t('detail.free')
                     : formatPrice(service.price)}
               </p>
                             </div>
@@ -505,12 +505,12 @@ const BureauDetail = () => {
                               {service.bookingUrl && (
                                 isTelLink(service.bookingUrl) ? (
                                   <PhoneCallButton phone={stripTel(service.bookingUrl)} size="sm">
-                                    Book Now
+                                    {t('detail.bookNow')}
                                   </PhoneCallButton>
                                 ) : (
                                   <Button size="sm" asChild>
                                     <a href={service.bookingUrl} target="_blank" rel="noopener noreferrer">
-                                      Book Now
+                                      {t('detail.bookNow')}
                                     </a>
                                   </Button>
                                 )
@@ -518,12 +518,12 @@ const BureauDetail = () => {
                               {service.learnMoreUrl && (
                                 isTelLink(service.learnMoreUrl) ? (
                                   <PhoneCallButton phone={stripTel(service.learnMoreUrl)} variant="outline" size="sm">
-                                    Learn More
+                                    {t('detail.learnMore')}
                                   </PhoneCallButton>
                                 ) : (
                                   <Button variant="outline" size="sm" asChild>
                                     <a href={service.learnMoreUrl} target="_blank" rel="noopener noreferrer">
-                                      Learn More
+                                      {t('detail.learnMore')}
                                     </a>
                                   </Button>
                                 )
@@ -535,7 +535,7 @@ const BureauDetail = () => {
                     ))}
                     {filteredServices.length === 0 && (
                       <div className="text-center py-8 text-muted-foreground">
-                        No services match the selected filters.
+                        {t('detail.noServicesMatch')}
                       </div>
                     )}
                   </div>
@@ -547,7 +547,7 @@ const BureauDetail = () => {
             {practitioners.length > 0 && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Our Practitioners ({practitioners.length})</CardTitle>
+                  <CardTitle>{t('detail.ourPractitioners')} ({practitioners.length})</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">

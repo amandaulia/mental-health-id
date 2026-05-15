@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ModeIcon } from "./ModeIcon";
 import { Practitioner } from "@/types";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PractitionerHeaderProps {
   practitioner: Practitioner;
@@ -21,6 +22,7 @@ export const PractitionerHeader = ({
   getModeLabel, 
   getInsuranceLabel 
 }: PractitionerHeaderProps) => {
+  const { t } = useLanguage();
   const [showAllSpecializations, setShowAllSpecializations] = useState(false);
   const [showAllModes, setShowAllModes] = useState(false);
 
@@ -50,7 +52,7 @@ export const PractitionerHeader = ({
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-2">
                   <h1 className="text-2xl sm:text-3xl font-bold">{practitioner.name}</h1>
                   {practitioner.isVerified && (
-                    <Badge className="bg-green-100 text-green-700 w-fit">Verified</Badge>
+                    <Badge className="bg-green-100 text-green-700 w-fit">{t('common.verified')}</Badge>
                   )}
                 </div>
                 <button
@@ -63,24 +65,24 @@ export const PractitionerHeader = ({
                 {/* Experience & Education moved here */}
                 <div className="space-y-2 text-sm mt-3">
                   {practitioner.experience && practitioner.experience !== "Not specified" && (
-                    <div><span className="font-medium">Experience:</span> {practitioner.experience}</div>
+                    <div><span className="font-medium">{t('detail.experience')}:</span> {practitioner.experience}</div>
                   )}
                   {practitioner.education && practitioner.education !== "Not specified" && (
-                    <div><span className="font-medium">Education:</span> {practitioner.education}</div>
+                    <div><span className="font-medium">{t('detail.education')}:</span> {practitioner.education}</div>
                   )}
                 </div>
               </div>
               
               {practitioner.licenseNumber && practitioner.licenseNumber !== "N/A" && (
                 <div className="text-sm text-muted-foreground">
-                  <span className="font-medium">License Number:</span> {practitioner.licenseNumber}
+                  <span className="font-medium">{t('detail.licenseNumber')}:</span> {practitioner.licenseNumber}
                 </div>
               )}
             </div>
           </div>
           
           <div className="text-sm text-muted-foreground flex-shrink-0">
-            Last updated: {new Date(practitioner.lastUpdated).toLocaleDateString()}
+            {t('detail.lastUpdated')}: {new Date(practitioner.lastUpdated).toLocaleDateString()}
           </div>
         </div>
 
@@ -91,7 +93,7 @@ export const PractitionerHeader = ({
             {/* Profession Types */}
             {practitioner.professionTypes.length > 0 && (
               <div>
-                <h4 className="font-medium mb-2">Profession Types</h4>
+                <h4 className="font-medium mb-2">{t('detail.professionTypes')}</h4>
                 <div className="flex flex-wrap gap-2">
                   {practitioner.professionTypes.map((type) => (
                     <Badge 
@@ -110,7 +112,7 @@ export const PractitionerHeader = ({
             {/* Specializations */}
             {practitioner.specializations.length > 0 && (
               <div>
-                <h4 className="font-medium mb-2">Specializations</h4>
+                <h4 className="font-medium mb-2">{t('detail.specializations')}</h4>
                 <div className="flex flex-wrap gap-2">
                   {visibleSpecializations.map((spec) => (
                     <Badge 
@@ -129,7 +131,7 @@ export const PractitionerHeader = ({
                       onClick={() => setShowAllSpecializations(!showAllSpecializations)}
                       className="h-6 px-2 text-xs"
                     >
-                      {showAllSpecializations ? 'See less' : `+${practitioner.specializations.length - maxItemsToShow} more`}
+                      {showAllSpecializations ? t('detail.showLess') : `+${practitioner.specializations.length - maxItemsToShow}`}
                     </Button>
                   )}
                 </div>
@@ -142,7 +144,7 @@ export const PractitionerHeader = ({
             {/* Available Session Modes */}
             {practitioner.modes.length > 0 && (
               <div>
-                <h4 className="font-medium mb-2">Available Session Modes</h4>
+                <h4 className="font-medium mb-2">{t('detail.sessionModes')}</h4>
                 <div className="flex flex-wrap gap-2">
                   {visibleModes.map((mode) => (
                     <Badge 
@@ -162,7 +164,7 @@ export const PractitionerHeader = ({
                       onClick={() => setShowAllModes(!showAllModes)}
                       className="h-6 px-2 text-xs"
                     >
-                      {showAllModes ? 'See less' : `+${practitioner.modes.length - maxItemsToShow} more`}
+                      {showAllModes ? t('detail.showLess') : `+${practitioner.modes.length - maxItemsToShow}`}
                     </Button>
                   )}
                 </div>
@@ -172,7 +174,7 @@ export const PractitionerHeader = ({
             {/* Insurance Accepted */}
             {practitioner.insurance.length > 0 && (
               <div>
-                <h4 className="font-medium mb-2">Insurance Accepted</h4>
+                <h4 className="font-medium mb-2">{t('detail.insurance')}</h4>
                 <div className="flex flex-wrap gap-2">
                   {practitioner.insurance.map((ins) => (
                     <Badge 
