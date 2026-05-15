@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { trackSearch, trackFilter } from "@/utils/analytics";
 import { PageSEO } from "@/components/PageSEO";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { sortByCompleteness } from "@/utils/completeness";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -337,7 +338,7 @@ const ProfessionalCounseling = () => {
   }, [filters, allBureaus]);
 
   const allResources = useMemo(() => {
-    return [...filteredPractitioners, ...filteredBureaus];
+    return sortByCompleteness([...filteredPractitioners, ...filteredBureaus]);
   }, [filteredPractitioners, filteredBureaus]);
 
   const institutionNames = useMemo(() => {
