@@ -108,7 +108,7 @@ export const transformService = (dbService: any): Service => {
     name: service.name || "Unnamed Service",
     institutionName: service.institution?.name,
     duration: durationText,
-    price: service.price ?? 0,
+    price: service.price ?? null,
     mode: mappedModes[0], // Keep first mode for backward compatibility
     modes: mappedModes, // All modes for display
     bookingUrl: service.book_cta ? service.book_cta.toString() : undefined,
