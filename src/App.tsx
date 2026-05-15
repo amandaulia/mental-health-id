@@ -1,6 +1,6 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Index from '@/pages/Index';
 import ProfessionalCounseling from '@/pages/ProfessionalCounseling';
 import PeerCounseling from '@/pages/PeerCounseling';
@@ -42,7 +42,7 @@ function AppContent() {
       <Header />
       <main className="flex-1">
         <Routes>
-          <Route path="/" element={<Navigate to="/professional-counseling" replace />} />
+          <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
           <Route path="/professional-counseling" element={<ProfessionalCounseling />} />
           <Route path="/peer-counseling" element={<PeerCounseling />} />
