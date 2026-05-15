@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Mail, Globe, Instagram, DollarSign, Clock, Users } from "lucide-react";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { PageSEO } from "@/components/PageSEO";
 
 // Mock detailed data (in real app, this would come from API/database)
 const mockDetailData: { [key: string]: any } = {
@@ -71,6 +72,12 @@ const PeerCounselingDetail = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <PageSEO
+        pageKey="peer"
+        path={`/peer-counseling/${id}`}
+        title={`${data.name}${data.city ? ' — ' + data.city : ''} | Konseling Sebaya & Kelompok Dukungan`}
+        description={`${data.name}${data.specialization ? ' — ' + data.specialization : ''}. Konseling sebaya dan kelompok dukungan kesehatan mental${data.city ? ' di ' + data.city : ''}.`}
+      />
       {/* Header Image */}
       <div className="mb-8">
         <div className="aspect-[21/9] overflow-hidden rounded-xl">
