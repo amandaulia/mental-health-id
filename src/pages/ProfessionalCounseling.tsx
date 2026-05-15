@@ -421,13 +421,15 @@ const ProfessionalCounseling = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
+      <PageSEO pageKey="professional" path="/professional-counseling" />
       {/* Hero Section */}
       <div className="mb-8 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
-          <span className="gradient-text">Professional Counseling</span>
+          <span className="gradient-text">{t("pages.professional.heroTitleA")}</span>
+          {t("pages.professional.heroTitleB")}
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
-          Find licensed mental health professionals - psychologists, psychiatrists, and clinics ready to support you. 🌟
+          {t("pages.professional.heroLead")}
         </p>
       </div>
 

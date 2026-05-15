@@ -1,9 +1,11 @@
 import { Users, Heart, Palette, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { PageSEO } from "@/components/PageSEO";
 
 const About = () => {
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
+      <PageSEO pageKey="about" path="/about" />
       <div className="max-w-4xl mx-auto">
         {/* Hero Section */}
         <div className="mb-12 text-center">
