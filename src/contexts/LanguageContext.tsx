@@ -110,22 +110,46 @@ const translations = {
       depression: "Depression",
       anxiety: "Anxiety",
       trauma: "Trauma",
-      relationshipIssues: "Relationship Issues",
+      relationshipIssues: "Relationship",
       adhd: "ADHD",
       ocd: "OCD",
       personalityDisorders: "Personality Disorders",
-      familyTherapy: "Family Therapy"
+      familyTherapy: "Family",
+      career: "Career",
+      childrenAdolescence: "Children/Adolescence",
+      education: "Education",
+      gender: "Gender",
+      hypnotherapy: "Hypnotherapy",
+      interpersonal: "Interpersonal",
+      moodDisorders: "Mood Disorders",
+      selfDevelopment: "Self Development"
     },
     sessionModes: {
-      textChat: "Text Chat",
+      chat: "Chat",
       voiceCall: "Voice Call", 
       videoCall: "Video Call",
-      inPerson: "In-Person"
+      offline: "Offline"
     },
     insurance: {
-      private: "Private",
+      private: "Private Insurance",
       bpjs: "BPJS",
       none: "None"
+    },
+    institutionTypes: {
+      clinic: "Clinic",
+      faskes1: "Faskes 1",
+      faskes2: "Faskes 2",
+      faskes3: "Faskes 3",
+      privateHospital: "Private Hospital",
+      privatePractice: "Private Practice"
+    },
+    contactTypes: {
+      application: "Application",
+      email: "Email",
+      instagram: "Instagram",
+      phone: "Phone",
+      website: "Website",
+      whatsapp: "WhatsApp"
     },
     pages: {
       professional: {
@@ -224,24 +248,48 @@ const translations = {
     },
     specializations: {
       depression: "Depresi",
-      anxiety: "Kecemasan",
+      anxiety: "Gangguan Kecemasan",
       trauma: "Trauma",
-      relationshipIssues: "Masalah Hubungan",
-      adhd: "ADHD", 
+      relationshipIssues: "Hubungan",
+      adhd: "ADHD",
       ocd: "OCD",
       personalityDisorders: "Gangguan Kepribadian",
-      familyTherapy: "Terapi Keluarga"
+      familyTherapy: "Keluarga",
+      career: "Karir",
+      childrenAdolescence: "Anak/Remaja",
+      education: "Pendidikan",
+      gender: "Gender",
+      hypnotherapy: "Hipnoterapi",
+      interpersonal: "Interpersonal",
+      moodDisorders: "Gangguan Mood",
+      selfDevelopment: "Pengembangan Diri"
     },
     sessionModes: {
-      textChat: "Chat Teks",
-      voiceCall: "Panggilan Suara",
-      videoCall: "Panggilan Video", 
-      inPerson: "Tatap Muka"
+      chat: "Chat",
+      voiceCall: "Voice Call",
+      videoCall: "Video Call", 
+      offline: "Tatap Muka"
     },
     insurance: {
-      private: "Swasta",
+      private: "Asuransi Pribadi",
       bpjs: "BPJS",
       none: "Tidak Ada"
+    },
+    institutionTypes: {
+      clinic: "Klinik",
+      faskes1: "Faskes 1",
+      faskes2: "Faskes 2",
+      faskes3: "Faskes 3",
+      privateHospital: "Rumah Sakit Swasta",
+      privatePractice: "Praktik Mandiri"
+    },
+    contactTypes: {
+      application: "Aplikasi",
+      email: "Email",
+      instagram: "Instagram",
+      phone: "Telepon",
+      website: "Website",
+      whatsapp: "WhatsApp"
     },
     pages: {
       professional: {
