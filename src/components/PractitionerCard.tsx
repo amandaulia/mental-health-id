@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, MessageCircle, Phone, Video, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PractitionerCardProps {
   practitioner: Practitioner;
@@ -25,6 +26,7 @@ const ModeIcon = ({ mode }: { mode: string }) => {
 };
 
 export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
+  const { t } = useLanguage();
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -35,7 +37,7 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
 
   const getPriceRange = () => {
     const prices = practitioner.services.map(s => s.price).filter(Boolean);
-    if (prices.length === 0) return "Price not available";
+    if (prices.length === 0) return t('common.priceNotAvailable');
     if (prices.length === 1) return formatPrice(prices[0]);
     
     const minPrice = Math.min(...prices);
@@ -82,7 +84,7 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
                     <h3 className="font-semibold text-lg truncate">{practitioner.name}</h3>
                     {practitioner.isVerified && (
                       <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 flex-shrink-0">
-                        Verified
+                        {t('common.verified')}
                       </Badge>
                     )}
                   </div>
@@ -140,9 +142,9 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
                         variant={insurance === "bpjs" ? "bpjs" : insurance === "private" ? "private" : "secondary"} 
                         className="text-xs"
                       >
-                        {insurance === "private" ? "Private Insurance" : 
-                         insurance === "bpjs" ? "BPJS" : 
-                         insurance === "none" ? "No Insurance" : insurance}
+                        {insurance === "private" ? t('insurance.privateInsurance') :
+                         insurance === "bpjs" ? "BPJS" :
+                         insurance === "none" ? t('insurance.noInsurance') : insurance}
                       </Badge>
                     ))}
                   </div>
