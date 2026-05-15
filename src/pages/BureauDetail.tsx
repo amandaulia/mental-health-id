@@ -475,7 +475,7 @@ const BureauDetail = () => {
                               <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground flex-wrap">
                                 <div className="flex items-center gap-1">
                                   <Clock className="h-4 w-4" />
-                                  <span>{service.duration}</span>
+                                  <span>{service.duration === '__DURATION_NOT_SPECIFIED__' ? t('common.durationNotSpecified') : service.duration}</span>
                                 </div>
                                 {service.modes && service.modes.length > 0 ? (
                                   <div className="flex items-center gap-2">
