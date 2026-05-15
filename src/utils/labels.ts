@@ -77,6 +77,8 @@ export function getSpecializationLabel(t: (k: string) => string, raw: string): s
     "eating disorders": "specializations.eatingDisorders",
     "grief": "specializations.grief",
     "psychiatry": "specializations.psychiatry",
+    "others": "specializations.others",
+    "other": "specializations.others",
   };
   return map[k] ? t(map[k]) : raw;
 }
