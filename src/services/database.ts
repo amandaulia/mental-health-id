@@ -119,7 +119,16 @@ export const databaseService = {
 
   // Fetch single practitioner (base data only - relationships fetched separately)
   async getPractitioner(id: number) {
-    const { data, error } = await supabase.from("practitioner").select("*").eq("id", id).single();
+    const { data, error } = await supabase
+      .from("practitioner")
+      .select(`
+        *,
+        practitioner_institutions(
+          institution(*)
+        )
+      `)
+      .eq("id", id)
+      .single();
 
     if (error) {
       console.error("Error fetching practitioner:", error);
