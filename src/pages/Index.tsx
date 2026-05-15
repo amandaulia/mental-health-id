@@ -567,6 +567,7 @@ const Index = () => {
         <Separator className="my-8" />
 
         {/* Peer Counseling & Support Groups Preview */}
+        {featureFlags.peerCounseling && (
         <div>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -614,6 +615,7 @@ const Index = () => {
             </div>
           )}
         </div>
+        )}
 
         {/* Stress Relief Activities Preview */}
         {featureFlags.stressRelief && (
