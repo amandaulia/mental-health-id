@@ -543,6 +543,26 @@ export const databaseService = {
     return data || [];
   },
 
+  // Fetch a single peer counseling with locations and contacts
+  async getPeerCounselingById(id: number) {
+    const { data, error } = await supabase
+      .from("peer_counseling")
+      .select(`
+        *,
+        peer_counseling_locations(location:location(*)),
+        peer_counseling_contacts(contact_details:contact_id(*))
+      `)
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error fetching peer counseling:", error);
+      throw error;
+    }
+
+    return data;
+  },
+
   // Fetch all organizations with their locations
   async getOrganizations() {
     const { data, error } = await supabase
@@ -558,6 +578,26 @@ export const databaseService = {
     }
 
     return data || [];
+  },
+
+  // Fetch a single organization with locations and contacts
+  async getOrganizationById(id: number) {
+    const { data, error } = await supabase
+      .from("organization")
+      .select(`
+        *,
+        organization_locations(location:location(*)),
+        organization_contacts(contact_details:contact_id(*))
+      `)
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error fetching organization:", error);
+      throw error;
+    }
+
+    return data;
   },
 
   // Fetch all activities with their locations and organizations
