@@ -151,13 +151,13 @@ const BureauDetail = () => {
   };
 
   const getModeLabel = (mode: string) => {
-    const labels: Record<string, string> = {
-      text: "Text Chat",
-      voice: "Voice Call",
-      video: "Video Call",
-      offline: "In-Person"
-    };
-    return labels[mode] || mode;
+    switch (mode) {
+      case "text": return t('sessionModes.textChat');
+      case "voice": return t('sessionModes.voiceCall');
+      case "video": return t('sessionModes.videoCall');
+      case "offline": return t('sessionModes.inPerson');
+      default: return mode;
+    }
   };
 
   const getInsuranceLabel = (ins: string) => {
