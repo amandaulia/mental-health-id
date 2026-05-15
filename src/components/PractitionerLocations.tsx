@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, ExternalLink } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Location {
   id: string;
@@ -15,6 +16,7 @@ interface PractitionerLocationsProps {
 }
 
 export const PractitionerLocations = ({ locations }: PractitionerLocationsProps) => {
+  const { t } = useLanguage();
   if (locations.length === 0) return null;
 
   return (
@@ -59,7 +61,7 @@ export const PractitionerLocations = ({ locations }: PractitionerLocationsProps)
                   <div className="h-full flex flex-col items-center justify-center">
                     <MapPin className="h-8 w-8 text-muted-foreground mb-2 group-hover:text-foreground transition-colors" />
                     <p className="text-muted-foreground text-sm group-hover:text-foreground transition-colors flex items-center gap-1">
-                      Click to open in Google Maps
+                      {t('common.clickOpenGoogleMaps')}
                       <ExternalLink className="h-3 w-3" />
                     </p>
                   </div>
