@@ -209,9 +209,37 @@ const translations = {
       }
     },
     footer: {
-      description: "Your directory for mental health resources. Connecting you with psychologists, psychiatrists, and mental health clinics across Indonesia."
+      description: "Your directory for mental health resources. Connecting you with psychologists, psychiatrists, and mental health clinics across Indonesia.",
+      copyright: "© 2025 Elysium Mentalcare. Made with ❤️ for mental wellness."
     },
     home: {
+      hero: {
+        title1: "Mental Health",
+        title2: "Resource Directory",
+        subtitle: "Your trusted companion in finding qualified mental health resources and support."
+      },
+      feelings: {
+        title: "How are you feeling today?",
+        cta: "Get Personalized Recommendations",
+        analyzing: "Analyzing...",
+        recommendationsTitle: "Personalized Recommendations for You"
+      },
+      toast: {
+        shareFeelings: "Please share your feelings",
+        recommendationsReady: "Recommendations Ready",
+        analysisFailed: "Analysis Failed"
+      },
+      sectionHeading: {
+        professional: "Professional Counseling",
+        peer: "Peer Counseling & Support Groups",
+        stressRelief: "Stress Relief Activities",
+        organizations: "Organizations & Communities"
+      },
+      comingSoon: "Coming Soon",
+      fallback: {
+        unknownCity: "Unknown City",
+        addressUnavailable: "Address not available"
+      },
       sections: {
         professional: {
           title: "Professional Counseling",
