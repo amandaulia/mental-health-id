@@ -1,267 +1,228 @@
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Mail, Globe, Instagram, DollarSign, Clock, Users } from "lucide-react";
+import { MapPin, Phone, Mail, Globe, Instagram, MessageCircle } from "lucide-react";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageSEO } from "@/components/PageSEO";
-
-// Mock detailed data (in real app, this would come from API/database)
-const mockDetailData: { [key: string]: any } = {
-  "1": {
-    id: 1,
-    name: "Jakarta Anxiety Support Circle",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=400&fit=crop",
-    specialization: "Anxiety & Panic Disorders",
-    type: "Support Group",
-    city: "Jakarta",
-    price: "Free",
-    description: "Jakarta Anxiety Support Circle is a safe and welcoming community for individuals dealing with anxiety and panic disorders. Our support group meets weekly to provide peer support, share coping strategies, and create connections with others who understand the challenges of living with anxiety.",
-    address: "Jl. Sudirman No. 123, Jakarta Pusat",
-    phone: "+62-21-1234-5678",
-    email: "info@jakartaanxiety.org",
-    website: "https://jakartaanxiety.org",
-    instagram: "@jakartaanxietysupport",
-    schedule: "Every Tuesday 7:00 PM - 9:00 PM",
-    groupSize: "8-12 participants",
-    facilitator: "Dr. Sarah Indira, M.Psi",
-    established: "2019",
-    languages: "Indonesian, English"
-  },
-  "2": {
-    id: 2,
-    name: "Peer Counseling Indonesia",
-    image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=400&fit=crop",
-    specialization: "Depression & Mood Disorders",
-    type: "Peer Counseling",
-    city: "Bandung",
-    price: "50,000",
-    description: "Peer Counseling Indonesia offers trained peer counselors who have lived experience with depression and mood disorders. Our counselors provide emotional support, practical guidance, and hope to individuals navigating similar challenges.",
-    address: "Jl. Dago No. 45, Bandung",
-    phone: "+62-22-9876-5432",
-    email: "help@peercounselingid.org",
-    website: "https://peercounselingid.org",
-    instagram: "@peercounselingid",
-    schedule: "Monday-Friday 9:00 AM - 5:00 PM",
-    groupSize: "Individual sessions",
-    facilitator: "Trained Peer Counselors",
-    established: "2020",
-    languages: "Indonesian, Sundanese"
-  }
-};
+import { databaseService } from "@/services/database";
 
 const PeerCounselingDetail = () => {
   const { t } = useLanguage();
   const { id } = useParams();
-  const data = mockDetailData[id || "1"];
+  const numericId = id ? Number(id) : NaN;
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["peer-counseling", numericId],
+    queryFn: () => databaseService.getPeerCounselingById(numericId),
+    enabled: !isNaN(numericId),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center text-muted-foreground">
+        {t("common.loading") || "Loading..."}
+      </div>
+    );
+  }
 
   if (!data) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t('peerDetail.notFound')}</h1>
-          <p className="text-muted-foreground">{t('peerDetail.notFoundDesc')}</p>
+          <h1 className="text-2xl font-bold mb-4">{t("peerDetail.notFound")}</h1>
+          <p className="text-muted-foreground">{t("peerDetail.notFoundDesc")}</p>
           <Button onClick={() => window.history.back()} className="mt-4">
-            {t('common.goBack')}
+            {t("common.goBack")}
           </Button>
         </div>
       </div>
     );
   }
 
+  const locations = (data.peer_counseling_locations || [])
+    .map((rel: any) => rel.location)
+    .filter(Boolean);
+  const primaryLocation = locations[0];
+  const city = primaryLocation?.city || "";
+  const address = primaryLocation?.address || "";
+
+  const contacts = (data.peer_counseling_contacts || [])
+    .map((rel: any) => rel.contact_details)
+    .filter(Boolean);
+  const findContact = (type: string) =>
+    contacts.find((c: any) => c.contact_type?.toLowerCase() === type.toLowerCase());
+
+  const phone = findContact("Phone") || findContact("WhatsApp");
+  const email = findContact("Email");
+  const website = findContact("Website");
+  const instagram = findContact("Instagram");
+
+  const peerType = data.peer_type?.[0] || "Peer Counseling";
+  const specialization = data.specialization?.[0] || "";
+  const fallbackImage =
+    "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=400&fit=crop";
+
   return (
     <div className="container mx-auto px-4 py-8">
       <PageSEO
         pageKey="peer"
         path={`/peer-counseling/${id}`}
-        title={`${data.name}${data.city ? ' — ' + data.city : ''} | Konseling Sebaya & Kelompok Dukungan`}
-        description={`${data.name}${data.specialization ? ' — ' + data.specialization : ''}. Konseling sebaya dan kelompok dukungan kesehatan mental${data.city ? ' di ' + data.city : ''}.`}
+        title={`${data.name}${city ? " — " + city : ""} | Konseling Sebaya & Kelompok Dukungan`}
+        description={`${data.name}${specialization ? " — " + specialization : ""}. Konseling sebaya dan kelompok dukungan kesehatan mental${city ? " di " + city : ""}.`}
       />
-      {/* Header Image */}
+
       <div className="mb-8">
         <div className="aspect-[21/9] overflow-hidden rounded-xl">
-          <img 
-            src={data.image} 
+          <img
+            src={data.image || fallbackImage}
             alt={data.name}
             className="w-full h-full object-cover"
           />
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column - Main Info */}
         <div className="lg:col-span-2 space-y-6">
           <div>
             <div className="flex items-start justify-between gap-4 mb-4">
-              <h1 className="text-3xl sm:text-4xl font-bold text-foreground">
-                {data.name}
-              </h1>
-              <Badge variant={data.type === "Peer Counseling" ? "default" : "secondary"} className="shrink-0">
-                {data.type}
+              <h1 className="text-3xl sm:text-4xl font-bold text-foreground">{data.name}</h1>
+              <Badge variant={peerType === "Peer Counseling" ? "default" : "secondary"} className="shrink-0">
+                {peerType}
               </Badge>
             </div>
-            <div className="flex items-center gap-4 text-muted-foreground mb-6">
-              <div className="flex items-center gap-1">
-                <MapPin className="h-4 w-4" />
-                <span>{data.city}</span>
+            {(city || specialization) && (
+              <div className="flex items-center gap-4 text-muted-foreground mb-6">
+                {city && (
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>{city}</span>
+                  </div>
+                )}
               </div>
-              <div className="flex items-center gap-1">
-                <DollarSign className="h-4 w-4" />
-                <span>{data.price === "Free" ? "Free" : `Rp ${data.price}`}</span>
-              </div>
-            </div>
+            )}
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('peerDetail.about')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground leading-relaxed">
-                {data.description}
-              </p>
-            </CardContent>
-          </Card>
+          {specialization && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("peerDetail.specialization")}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {(data.specialization || []).map((s: string) => (
+                    <Badge key={s} variant="outline" className="text-base px-4 py-2">
+                      {s}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('peerDetail.specialization')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Badge variant="outline" className="text-base px-4 py-2">
-                {data.specialization}
-              </Badge>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('peerDetail.additionalInfo')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium text-sm">{t('peerDetail.schedule')}</p>
-                    <p className="text-sm text-muted-foreground">{data.schedule}</p>
-                  </div>
+          {data.tags && data.tags.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Tags</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {data.tags.map((tag: string) => (
+                    <Badge key={tag} variant="secondary">{tag}</Badge>
+                  ))}
                 </div>
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium text-sm">{t('peerDetail.groupSize')}</p>
-                    <p className="text-sm text-muted-foreground">{data.groupSize}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <p className="font-medium text-sm mb-1">{t('peerDetail.facilitator')}</p>
-                  <p className="text-sm text-muted-foreground">{data.facilitator}</p>
-                </div>
-                <div>
-                  <p className="font-medium text-sm mb-1">{t('peerDetail.languages')}</p>
-                  <p className="text-sm text-muted-foreground">{data.languages}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
-        {/* Right Column - Contact & Location */}
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t('peerDetail.contactInfo')}</CardTitle>
+              <CardTitle>{t("peerDetail.contactInfo")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-3">
-                <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="font-medium text-sm">{t('peerDetail.address')}</p>
-                  <p className="text-sm text-muted-foreground">{data.address}</p>
+              {address && (
+                <div className="flex items-center gap-3">
+                  <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">{t("peerDetail.address")}</p>
+                    <p className="text-sm text-muted-foreground">{address}</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="font-medium text-sm">{t('peerDetail.phone')}</p>
-                  <PhoneCallButton phone={data.phone} asLink />
+              )}
+              {phone && (
+                <div className="flex items-center gap-3">
+                  <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">{t("peerDetail.phone")}</p>
+                    <PhoneCallButton phone={phone.value} asLink />
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="font-medium text-sm">{t('peerDetail.email')}</p>
-                  <a href={`mailto:${data.email}`} className="text-sm text-primary hover:text-primary-hover">
-                    {data.email}
-                  </a>
+              )}
+              {email && (
+                <div className="flex items-center gap-3">
+                  <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">{t("peerDetail.email")}</p>
+                    <a href={`mailto:${email.value}`} className="text-sm text-primary hover:text-primary-hover">
+                      {email.value}
+                    </a>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="font-medium text-sm">{t('peerDetail.website')}</p>
-                  <a href={data.website} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
-                    {t('common.visitWebsite')}
-                  </a>
+              )}
+              {website && (
+                <div className="flex items-center gap-3">
+                  <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">{t("peerDetail.website")}</p>
+                    <a href={website.link || website.value} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
+                      {t("common.visitWebsite")}
+                    </a>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Instagram className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="font-medium text-sm">{t('peerDetail.instagram')}</p>
-                  <a href={`https://instagram.com/${data.instagram.substring(1)}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
-                    {data.instagram}
-                  </a>
+              )}
+              {instagram && (
+                <div className="flex items-center gap-3">
+                  <Instagram className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">{t("peerDetail.instagram")}</p>
+                    <a href={instagram.link || `https://instagram.com/${instagram.value.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
+                      {instagram.value}
+                    </a>
+                  </div>
                 </div>
-              </div>
+              )}
+              {!phone && !email && !website && !instagram && !address && (
+                <p className="text-sm text-muted-foreground">No contact information available.</p>
+              )}
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('peerDetail.getSupport')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <PhoneCallButton phone={data.phone} className="w-full" />
-              <Button variant="outline" className="w-full" onClick={() => window.open(`mailto:${data.email}`)}>
-                <Mail className="h-4 w-4 mr-2" />
-                {t('peerDetail.email')}
-              </Button>
-              <Button variant="outline" className="w-full" onClick={() => window.open(data.website, '_blank')}>
-                <Globe className="h-4 w-4 mr-2" />
-                {t('common.visitWebsite')}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('peerDetail.instagram')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-muted/50 rounded-lg p-6 text-center">
-                <Instagram className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground mb-3">{t('peerDetail.followDesc')}</p>
-                <a 
-                  href={`https://instagram.com/${data.instagram.substring(1)}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-primary hover:text-primary-hover font-medium"
-                >
-                  {data.instagram}
-                </a>
-              </div>
-            </CardContent>
-          </Card>
+          {(phone || email || website) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("peerDetail.getSupport")}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {phone && <PhoneCallButton phone={phone.value} className="w-full" />}
+                {email && (
+                  <Button variant="outline" className="w-full" onClick={() => window.open(`mailto:${email.value}`)}>
+                    <Mail className="h-4 w-4 mr-2" />
+                    {t("peerDetail.email")}
+                  </Button>
+                )}
+                {website && (
+                  <Button variant="outline" className="w-full" onClick={() => window.open(website.link || website.value, "_blank", "noopener,noreferrer")}>
+                    <Globe className="h-4 w-4 mr-2" />
+                    {t("common.visitWebsite")}
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>
