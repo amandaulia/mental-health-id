@@ -18,8 +18,10 @@ import { useToast } from "@/hooks/use-toast";
 import { trackFeelingsAnalysis, trackSearch, trackFilter } from "@/utils/analytics";
 import { Badge } from "@/components/ui/badge";
 import { featureFlags } from "@/config/features";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
+  const { t } = useLanguage();
   // Feature flags
   const isFeelingsAnalysisEnabled = false; // Set to false to hide the feature
   
@@ -141,15 +143,15 @@ const Index = () => {
 
       return {
         ...transformPractitioner(dbPractitioner, services, []),
-        city: primaryLocation?.city || "Unknown City",
+        city: primaryLocation?.city || t('home.fallback.unknownCity'),
         location: {
-          address: primaryLocation?.address || "Address not available",
+          address: primaryLocation?.address || t('home.fallback.addressUnavailable'),
           lat: 0,
           lng: 0,
         }
       };
     });
-  }, [dbPractitioners, allPractitionerServices, practitionerLocations]);
+  }, [dbPractitioners, allPractitionerServices, practitionerLocations, t]);
 
   const allBureaus = useMemo<Bureau[]>(() => {
     if (!dbInstitutions || !allInstitutionServices || !institutionLocations) return [];
@@ -161,15 +163,15 @@ const Index = () => {
 
       return {
         ...transformInstitution(dbInstitution, services, []),
-        city: primaryLocation?.city || "Unknown City",
+        city: primaryLocation?.city || t('home.fallback.unknownCity'),
         location: {
-          address: primaryLocation?.address || "Address not available",
+          address: primaryLocation?.address || t('home.fallback.addressUnavailable'),
           lat: 0,
           lng: 0,
         }
       };
     });
-  }, [dbInstitutions, allInstitutionServices, institutionLocations]);
+  }, [dbInstitutions, allInstitutionServices, institutionLocations, t]);
 
   const allProfessionalResources = useMemo(() => {
     return [...allPractitioners, ...allBureaus];
@@ -178,7 +180,7 @@ const Index = () => {
   const handleFeelingsAnalysis = async () => {
     if (!feelings.trim()) {
       toast({
-        title: "Please share your feelings",
+        title: t('home.toast.shareFeelings'),
         description: "Tell us what you're feeling today to get personalized recommendations.",
         variant: "destructive"
       });
@@ -207,13 +209,13 @@ const Index = () => {
       trackFeelingsAnalysis(feelings.trim().length, recommendedCards.length);
       
       toast({
-        title: "Recommendations Ready",
+        title: t('home.toast.recommendationsReady'),
         description: `Found ${recommendedCards.length} personalized recommendations for you.`
       });
     } catch (error) {
       console.error('Error analyzing feelings:', error);
       toast({
-        title: "Analysis Failed",
+        title: t('home.toast.analysisFailed'),
         description: "We couldn't analyze your feelings right now. Please try again later.",
         variant: "destructive"
       });
@@ -373,11 +375,10 @@ const Index = () => {
       {/* Hero Section */}
       <div className="mb-8 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
-          <span className="gradient-text">Mental Health</span> Resource Directory
+          <span className="gradient-text">{t('home.hero.title1')}</span> {t('home.hero.title2')}
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
-          Your trusted companion in finding qualified mental health resources and support. 
-          Taking care of your mental health is a brave and important step. 🌟
+          {t('home.hero.subtitle')}
         </p>
       </div>
 
@@ -387,7 +388,7 @@ const Index = () => {
           <div className="bg-card rounded-xl p-6 card-shadow max-w-4xl mx-auto">
             <div className="flex items-center gap-3 mb-4">
               <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-                How are you feeling today?
+                {t('home.feelings.title')}
               </h2>
               <Badge variant="secondary" className="text-xs">
                 Beta
@@ -407,7 +408,7 @@ const Index = () => {
               disabled={isAnalyzing}
               className="w-full sm:w-auto"
             >
-              {isAnalyzing ? "Analyzing..." : "Get Personalized Recommendations"}
+              {isAnalyzing ? t('home.feelings.analyzing') : t('home.feelings.cta')}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -418,7 +419,7 @@ const Index = () => {
       {recommendations.length > 0 && (
         <div className="mb-8 sm:mb-12">
           <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-6">
-            Personalized Recommendations for You
+            {t('home.feelings.recommendationsTitle')}
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {recommendations.map((recommendation) => (
@@ -455,11 +456,11 @@ const Index = () => {
         <div>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-              Professional Counseling
+              {t('home.sectionHeading.professional')}
             </h2>
             <Button variant="outline" asChild>
               <a href="/professional-counseling">
-                View All <ArrowRight className="ml-2 h-4 w-4" />
+                {t('common.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
               </a>
             </Button>
           </div>
@@ -518,18 +519,18 @@ const Index = () => {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-                Peer Counseling & Support Groups
+                {t('home.sectionHeading.peer')}
               </h2>
               {filteredPeerCounseling.length === 0 && (
                 <Badge variant="secondary" className="text-xs bg-purple-200 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-700">
-                  Coming Soon
+                  {t('home.comingSoon')}
                 </Badge>
               )}
             </div>
             {filteredPeerCounseling.length > 0 && (
               <Button variant="outline" asChild>
                 <a href="/peer-counseling">
-                  View All <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('common.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
             )}
@@ -567,11 +568,11 @@ const Index = () => {
           <div>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-                Stress Relief Activities
+                {t('home.sectionHeading.stressRelief')}
               </h2>
               <Button variant="outline" asChild>
                 <a href="/stress-relief">
-                  View All <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('common.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
             </div>
@@ -603,11 +604,11 @@ const Index = () => {
           <div>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-                Organizations & Communities
+                {t('home.sectionHeading.organizations')}
               </h2>
               <Button variant="outline" asChild>
                 <a href="/organizations">
-                  View All <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('common.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
             </div>
