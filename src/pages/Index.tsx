@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { featureFlags } from "@/config/features";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { sortByCompleteness } from "@/utils/completeness";
+import { PageSEO } from "@/components/PageSEO";
 
 const Index = () => {
   const { t } = useLanguage();
@@ -382,6 +383,7 @@ const Index = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
+      <PageSEO pageKey="home" path="/" />
       {/* Hero Section */}
       <div className="mb-8 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">

@@ -41,6 +41,9 @@ export const PageSEO = ({ pageKey, path, title, description }: PageSEOProps) => 
       <meta property="og:type" content="website" />
       <meta property="og:locale" content={ogLocale} />
       <meta property="og:locale:alternate" content={altLocale} />
+      <link rel="alternate" hrefLang="id" href={url} />
+      <link rel="alternate" hrefLang="en" href={url} />
+      <link rel="alternate" hrefLang="x-default" href={url} />
     </Helmet>
   );
 };

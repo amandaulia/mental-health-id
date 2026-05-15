@@ -194,6 +194,10 @@ const translations = {
       }
     },
     seo: {
+      home: {
+        title: "Find Psychologists, Psychiatrists & Mental Health Resources in Indonesia",
+        description: "A free directory of verified psychologists, psychiatrists, peer counselors, support groups and wellness activities across Indonesia."
+      },
       professional: {
         title: "Find Psychologists, Psychiatrists & Counseling Services in Indonesia",
         description: "Browse a verified directory of licensed psychologists, psychiatrists, and mental health clinics across Indonesia. Filter by city, specialization, insurance (including BPJS) and session mode."
@@ -601,6 +605,10 @@ const translations = {
       }
     },
     seo: {
+      home: {
+        title: "Direktori Kesehatan Mental Indonesia — Psikolog, Psikiater & Konseling",
+        description: "Direktori gratis psikolog, psikiater, konselor sebaya, kelompok dukungan, dan aktivitas wellness terverifikasi di seluruh Indonesia."
+      },
       professional: {
         title: "Cari Psikolog, Psikiater & Konseling Online di Indonesia",
         description: "Direktori psikolog, psikiater, dan klinik kesehatan mental terverifikasi di Indonesia. Filter berdasarkan kota, spesialisasi, asuransi (termasuk BPJS), dan mode sesi."
