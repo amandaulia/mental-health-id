@@ -69,7 +69,7 @@ const translations = {
       }
     },
     search: {
-      placeholder: "Search...",
+      placeholder: "Search by practitioner or clinic name...",
       filters: {
         location: "Location",
         institution: "Institution", 
@@ -141,7 +141,7 @@ const translations = {
       }
     },
     search: {
-      placeholder: "Cari...",
+      placeholder: "Cari berdasarkan nama praktisi atau klinik...",
       filters: {
         location: "Lokasi",
         institution: "Institusi",
