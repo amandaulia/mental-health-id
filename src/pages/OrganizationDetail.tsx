@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,71 +7,64 @@ import { MapPin, Phone, Mail, Globe, Instagram } from "lucide-react";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageSEO } from "@/components/PageSEO";
-
-// Mock detailed data (in real app, this would come from API/database)
-const mockDetailData: { [key: string]: any } = {
-  "1": {
-    id: 1,
-    name: "Indonesian Mental Health Association",
-    image: "https://images.unsplash.com/photo-1486312338219-ce68e2c77734?w=800&h=400&fit=crop",
-    type: "Education",
-    city: "Jakarta",
-    description: "The Indonesian Mental Health Association (IMHA) is a leading educational organization dedicated to promoting mental health awareness, research, and education throughout Indonesia. We work with healthcare professionals, students, and communities to advance understanding of mental health issues and improve access to quality care. Our programs include professional development workshops, public awareness campaigns, research initiatives, and community outreach programs. Since our establishment in 2015, we have trained over 1,000 mental health professionals and reached more than 50,000 individuals through our educational programs.",
-    address: "Jl. Thamrin No. 15, Jakarta Pusat, DKI Jakarta 10340",
-    phone: "+62-21-3456-7890",
-    email: "info@imha.org.id",
-    website: "https://imha.org.id",
-    instagram: "@imha_indonesia"
-  },
-  "2": {
-    id: 2,
-    name: "Youth Mental Wellness Community",
-    image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&h=400&fit=crop",
-    type: "Community",
-    city: "Bandung",
-    description: "Youth Mental Wellness Community is a vibrant community-based organization focused on supporting young adults aged 18-30 with their mental health journey. We create safe spaces for young people to share their experiences, learn coping strategies, and build meaningful connections. Our community organizes regular meetups, workshops, peer support groups, and mental health awareness events. We believe that young people supporting young people creates powerful healing and growth opportunities. Our programs are designed by youth, for youth, ensuring relevance and relatability in our approach to mental wellness.",
-    address: "Jl. Braga No. 88, Bandung, Jawa Barat 40111",
-    phone: "+62-22-2345-6789",
-    email: "hello@ymwc.id",
-    website: "https://ymwc.id",
-    instagram: "@ymwc_bandung"
-  },
-  "3": {
-    id: 3,
-    name: "Mindfulness Experience Center",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop",
-    type: "Experience",
-    city: "Yogyakarta",
-    description: "Mindfulness Experience Center offers transformative experiential programs designed to help individuals discover inner peace and develop mindfulness skills. Our center provides immersive experiences including meditation retreats, mindfulness workshops, nature therapy sessions, and contemplative practices. We combine traditional Eastern wisdom with modern psychological approaches to create powerful transformational experiences. Our beautiful retreat center in Yogyakarta provides the perfect setting for deep introspection and healing. Whether you're new to mindfulness or looking to deepen your practice, our experienced facilitators guide you through personalized journeys of self-discovery and wellness.",
-    address: "Jl. Malioboro No. 156, Yogyakarta 55213",
-    phone: "+62-274-567-8901",
-    email: "retreat@mindfulnessyogya.com",
-    website: "https://mindfulnessyogya.com",
-    instagram: "@mindfulness_yogya"
-  }
-};
+import { databaseService } from "@/services/database";
 
 const OrganizationDetail = () => {
   const { t } = useLanguage();
   const { id } = useParams();
-  const data = mockDetailData[id || "1"];
+  const numericId = id ? Number(id) : NaN;
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["organization", numericId],
+    queryFn: () => databaseService.getOrganizationById(numericId),
+    enabled: !isNaN(numericId),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center text-muted-foreground">
+        {t("common.loading") || "Loading..."}
+      </div>
+    );
+  }
 
   if (!data) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t('organizationDetail.notFound')}</h1>
-          <p className="text-muted-foreground">{t('organizationDetail.notFoundDesc')}</p>
+          <h1 className="text-2xl font-bold mb-4">{t("organizationDetail.notFound")}</h1>
+          <p className="text-muted-foreground">{t("organizationDetail.notFoundDesc")}</p>
           <Button onClick={() => window.history.back()} className="mt-4">
-            {t('common.goBack')}
+            {t("common.goBack")}
           </Button>
         </div>
       </div>
     );
   }
 
+  const locations = (data.organization_locations || [])
+    .map((rel: any) => rel.location)
+    .filter(Boolean);
+  const primaryLocation = locations[0];
+  const city = primaryLocation?.city || "";
+  const address = primaryLocation?.address || "";
+
+  const contacts = (data.organization_contacts || [])
+    .map((rel: any) => rel.contact_details)
+    .filter(Boolean);
+  const findContact = (type: string) =>
+    contacts.find((c: any) => c.contact_type?.toLowerCase() === type.toLowerCase());
+  const phone = findContact("Phone") || findContact("WhatsApp");
+  const email = findContact("Email");
+  const website = findContact("Website");
+  const instagram = findContact("Instagram");
+
+  const orgType = data.specialization?.[0] || "";
+  const fallbackImage =
+    "https://images.unsplash.com/photo-1486312338219-ce68e2c77734?w=800&h=400&fit=crop";
+
   const getTypeColor = (type: string) => {
-    switch (type.toLowerCase()) {
+    switch ((type || "").toLowerCase()) {
       case "education": return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
       case "experience": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
       case "community": return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
@@ -83,153 +77,137 @@ const OrganizationDetail = () => {
       <PageSEO
         pageKey="organizations"
         path={`/organizations/${id}`}
-        title={`${data.name}${data.city ? ' — ' + data.city : ''} | Organisasi & Komunitas Kesehatan Mental`}
-        description={`${data.name} — organisasi/komunitas kesehatan mental${data.city ? ' di ' + data.city : ''}${data.type ? ' (' + data.type + ')' : ''}.`}
+        title={`${data.name}${city ? " — " + city : ""} | Organisasi & Komunitas Kesehatan Mental`}
+        description={`${data.name} — organisasi/komunitas kesehatan mental${city ? " di " + city : ""}${orgType ? " (" + orgType + ")" : ""}.`}
       />
-      {/* Header Image */}
+
       <div className="mb-8">
         <div className="aspect-[21/9] overflow-hidden rounded-xl">
-          <img 
-            src={data.image} 
-            alt={data.name}
-            className="w-full h-full object-cover"
-          />
+          <img src={data.image || fallbackImage} alt={data.name} className="w-full h-full object-cover" />
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column - Main Info */}
         <div className="lg:col-span-2 space-y-6">
           <div>
             <div className="flex items-start justify-between gap-4 mb-4">
-              <h1 className="text-3xl sm:text-4xl font-bold text-foreground">
-                {data.name}
-              </h1>
-              <Badge className={getTypeColor(data.type)}>
-                {data.type}
-              </Badge>
+              <h1 className="text-3xl sm:text-4xl font-bold text-foreground">{data.name}</h1>
+              {orgType && <Badge className={getTypeColor(orgType)}>{orgType}</Badge>}
             </div>
-            <div className="flex items-center gap-1 text-muted-foreground mb-6">
-              <MapPin className="h-4 w-4" />
-              <span>{data.city}</span>
-            </div>
+            {city && (
+              <div className="flex items-center gap-1 text-muted-foreground mb-6">
+                <MapPin className="h-4 w-4" />
+                <span>{city}</span>
+              </div>
+            )}
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('organizationDetail.about')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground leading-relaxed">
-                {data.description}
-              </p>
-            </CardContent>
-          </Card>
+          {data.description && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("organizationDetail.about")}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground leading-relaxed">{data.description}</p>
+              </CardContent>
+            </Card>
+          )}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('organizationDetail.organizationType')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Badge className={`text-base px-4 py-2 ${getTypeColor(data.type)}`}>
-                {data.type}
-              </Badge>
-            </CardContent>
-          </Card>
+          {data.specialization && data.specialization.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("organizationDetail.organizationType")}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {data.specialization.map((s: string) => (
+                    <Badge key={s} className={`text-base px-4 py-2 ${getTypeColor(s)}`}>{s}</Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
-        {/* Right Column - Contact & Location */}
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t('organizationDetail.contactInfo')}</CardTitle>
+              <CardTitle>{t("organizationDetail.contactInfo")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-3">
-                <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="font-medium text-sm">{t('organizationDetail.address')}</p>
-                  <p className="text-sm text-muted-foreground">{data.address}</p>
+              {address && (
+                <div className="flex items-center gap-3">
+                  <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">{t("organizationDetail.address")}</p>
+                    <p className="text-sm text-muted-foreground">{address}</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="font-medium text-sm">{t('organizationDetail.phone')}</p>
-                  <PhoneCallButton phone={data.phone} asLink />
+              )}
+              {phone && (
+                <div className="flex items-center gap-3">
+                  <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">{t("organizationDetail.phone")}</p>
+                    <PhoneCallButton phone={phone.value} asLink />
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="font-medium text-sm">{t('organizationDetail.email')}</p>
-                  <a href={`mailto:${data.email}`} className="text-sm text-primary hover:text-primary-hover">
-                    {data.email}
-                  </a>
+              )}
+              {email && (
+                <div className="flex items-center gap-3">
+                  <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">{t("organizationDetail.email")}</p>
+                    <a href={`mailto:${email.value}`} className="text-sm text-primary hover:text-primary-hover">{email.value}</a>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="font-medium text-sm">{t('organizationDetail.website')}</p>
-                  <a href={data.website} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
-                    {t('common.visitWebsite')}
-                  </a>
+              )}
+              {website && (
+                <div className="flex items-center gap-3">
+                  <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">{t("organizationDetail.website")}</p>
+                    <a href={website.link || website.value} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">{t("common.visitWebsite")}</a>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Instagram className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="font-medium text-sm">{t('organizationDetail.instagram')}</p>
-                  <a href={`https://instagram.com/${data.instagram.substring(1)}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
-                    {data.instagram}
-                  </a>
+              )}
+              {instagram && (
+                <div className="flex items-center gap-3">
+                  <Instagram className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">{t("organizationDetail.instagram")}</p>
+                    <a href={instagram.link || `https://instagram.com/${instagram.value.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">{instagram.value}</a>
+                  </div>
                 </div>
-              </div>
+              )}
+              {!address && !phone && !email && !website && !instagram && (
+                <p className="text-sm text-muted-foreground">No contact information available.</p>
+              )}
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('organizationDetail.getInTouch')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <PhoneCallButton phone={data.phone} className="w-full" />
-              <Button variant="outline" className="w-full" onClick={() => window.open(`mailto:${data.email}`)}>
-                <Mail className="h-4 w-4 mr-2" />
-                {t('organizationDetail.email')}
-              </Button>
-              <Button variant="outline" className="w-full" onClick={() => window.open(data.website, '_blank')}>
-                <Globe className="h-4 w-4 mr-2" />
-                {t('common.visitWebsite')}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('organizationDetail.instagram')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-muted/50 rounded-lg p-6 text-center">
-                <Instagram className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground mb-3">{t('organizationDetail.followDesc')}</p>
-                <a 
-                  href={`https://instagram.com/${data.instagram.substring(1)}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-primary hover:text-primary-hover font-medium"
-                >
-                  {data.instagram}
-                </a>
-              </div>
-            </CardContent>
-          </Card>
+          {(phone || email || website) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("organizationDetail.getInTouch")}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {phone && <PhoneCallButton phone={phone.value} className="w-full" />}
+                {email && (
+                  <Button variant="outline" className="w-full" onClick={() => window.open(`mailto:${email.value}`)}>
+                    <Mail className="h-4 w-4 mr-2" />
+                    {t("organizationDetail.email")}
+                  </Button>
+                )}
+                {website && (
+                  <Button variant="outline" className="w-full" onClick={() => window.open(website.link || website.value, "_blank", "noopener,noreferrer")}>
+                    <Globe className="h-4 w-4 mr-2" />
+                    {t("common.visitWebsite")}
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>
