@@ -23,7 +23,7 @@ export const PractitionerLocations = ({ locations }: PractitionerLocationsProps)
     <Card>
       <CardHeader>
         <CardTitle>
-          Location{locations.length > 1 ? "s" : ""} ({locations.length})
+          {t('detail.locations')} ({locations.length})
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
