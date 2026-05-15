@@ -542,6 +542,41 @@ export const databaseService = {
 
     return data || [];
   },
+
+  // Fetch all organizations with their locations
+  async getOrganizations() {
+    const { data, error } = await supabase
+      .from("organization")
+      .select(`
+        *,
+        organization_locations(location:location(*))
+      `);
+
+    if (error) {
+      console.error("Error fetching organizations:", error);
+      throw error;
+    }
+
+    return data || [];
+  },
+
+  // Fetch all activities with their locations and organizations
+  async getActivities() {
+    const { data, error } = await supabase
+      .from("activity")
+      .select(`
+        *,
+        activity_locations(location:location(*)),
+        activity_organizations(organization:organization(*))
+      `);
+
+    if (error) {
+      console.error("Error fetching activities:", error);
+      throw error;
+    }
+
+    return data || [];
+  },
 };
 
 /**
