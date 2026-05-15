@@ -275,7 +275,9 @@ const translations = {
     insurance: {
       private: "Asuransi Pribadi",
       bpjs: "BPJS",
-      none: "Tidak Ada"
+      none: "Tidak Ada",
+      privateInsurance: "Asuransi Pribadi",
+      noInsurance: "Tanpa Asuransi"
     },
     institutionTypes: {
       clinic: "Klinik",
