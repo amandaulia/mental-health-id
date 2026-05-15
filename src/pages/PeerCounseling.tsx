@@ -83,7 +83,7 @@ const PeerCounseling = () => {
       <div className="mb-8 sm:mb-10">
         <div className="bg-card rounded-xl p-6 card-shadow">
           <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-6">
-            Find Peer Support
+            {t('peerCounseling.findPeerSupport')}
           </h2>
           <SearchAndFilters
             filters={filters}
