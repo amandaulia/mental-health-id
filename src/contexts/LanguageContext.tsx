@@ -338,6 +338,116 @@ const translations = {
       sessionCost: "Session Cost (IDR)",
       loadMoreCount: "Load More"
     },
+    about: {
+      hero: {
+        title1: "About",
+        title2: "Mental Health Directory",
+        subtitle: "Your comprehensive guide to mental health resources and support in Indonesia"
+      },
+      what: {
+        title: "What is the Mental Health Directory?",
+        p1: "The Mental Health Directory is a comprehensive platform designed to help individuals find qualified mental health professionals, support groups, and wellness resources across Indonesia. We understand that seeking mental health support can be overwhelming, and our mission is to make this process easier and more accessible for everyone.",
+        p2: "Our platform serves as a bridge between those seeking help and qualified professionals, providing detailed information about psychologists, psychiatrists, counseling centers, and various mental health support services available in your area."
+      },
+      info: {
+        title: "What information will Mental Health Directory cover?",
+        professional: {
+          title: "Professional Counseling Services",
+          desc: "Licensed psychologists, psychiatrists, and mental health clinics with detailed profiles, specializations, and contact information."
+        },
+        peer: {
+          title: "Peer & Group Counseling",
+          desc: "Community-based support groups and peer counseling services for various mental health conditions and life challenges."
+        },
+        stressRelief: {
+          title: "Stress Relief Activities",
+          desc: "Art therapy, music therapy, sports activities, and other wellness programs designed to promote mental well-being."
+        },
+        organizations: {
+          title: "Organizations",
+          desc: "Mental health organizations, educational institutions, and community groups dedicated to mental health awareness and support."
+        }
+      },
+      contribute: {
+        title: "How can I contribute to the project?",
+        intro: "We believe in the power of community and welcome contributions from mental health professionals, organizations, and individuals passionate about mental health advocacy.",
+        professionals: {
+          title: "Mental Health Professionals",
+          desc: "Join our directory to help more people find the support they need"
+        },
+        organizations: {
+          title: "Organizations",
+          desc: "Partner with us to expand mental health resources and awareness"
+        },
+        community: {
+          title: "Community Members",
+          desc: "Share feedback, suggest improvements, or help spread awareness"
+        }
+      },
+      contact: {
+        title: "Contact Details",
+        email: "Email",
+        phone: "Phone",
+        followInstagram: "Follow us on Instagram",
+        instagramDesc: "Stay updated with our latest resources and mental health tips"
+      }
+    },
+    peerDetail: {
+      notFound: "Resource Not Found",
+      notFoundDesc: "The resource you're looking for doesn't exist.",
+      about: "About",
+      specialization: "Specialization",
+      additionalInfo: "Additional Information",
+      schedule: "Schedule",
+      groupSize: "Group Size",
+      facilitator: "Facilitator",
+      languages: "Languages",
+      contactInfo: "Contact Information",
+      address: "Address",
+      phone: "Phone",
+      email: "Email",
+      website: "Website",
+      instagram: "Instagram",
+      getSupport: "Get Support",
+      followDesc: "Follow us for updates and mental health tips"
+    },
+    organizationDetail: {
+      notFound: "Organization Not Found",
+      notFoundDesc: "The organization you're looking for doesn't exist.",
+      about: "About",
+      organizationType: "Organization Type",
+      contactInfo: "Contact Information",
+      address: "Address",
+      phone: "Phone",
+      email: "Email",
+      website: "Website",
+      instagram: "Instagram",
+      getInTouch: "Get in Touch",
+      followDesc: "Follow us for updates and insights"
+    },
+    organizations: {
+      browse: "Browse Organizations & Communities",
+      all: "All Organizations & Communities"
+    },
+    peerCounseling: {
+      findPeerSupport: "Find Peer Support"
+    },
+    stressRelief: {
+      findActivities: "Find Activities",
+      noActivities: "No activities found matching your criteria."
+    },
+    notFound: {
+      title: "Oops! Page not found",
+      return: "Return to Home"
+    },
+    phoneDialog: {
+      title: "Call this number",
+      description: "Phone calls can't be placed directly from a desktop browser. Please dial this number from your phone.",
+      copy: "Copy",
+      copied: "Copied",
+      copiedToast: "Phone number copied",
+      copyFailed: "Could not copy"
+    },
     errors: {
       somethingWrong: "Something went wrong",
       unexpected: "We're sorry, something unexpected happened. Please try refreshing the page.",
