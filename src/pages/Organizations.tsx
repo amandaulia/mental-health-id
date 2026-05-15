@@ -3,7 +3,7 @@ import { FilterState } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
-import { mockOrganizationsData } from "@/data/mockData";
+import { useOrganizations } from "@/hooks/useDatabase";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { trackSearch, trackFilter } from "@/utils/analytics";
@@ -13,6 +13,7 @@ import { sortByCompleteness } from "@/utils/completeness";
 
 const Organizations = () => {
   const { t } = useLanguage();
+  const { data: dbOrganizations, isLoading } = useOrganizations();
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     locations: [],
@@ -26,22 +27,24 @@ const Organizations = () => {
   });
 
   const filteredData = useMemo(() => {
-    const filtered = mockOrganizationsData.filter((item) => {
+    if (!dbOrganizations) return [];
+    const filtered = (dbOrganizations as any[]).filter((item) => {
+      const city = item.organization_locations?.[0]?.location?.city || "";
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        if (!item.name.toLowerCase().includes(searchLower) && 
-            !item.city.toLowerCase().includes(searchLower)) return false;
+        if (!item.name.toLowerCase().includes(searchLower) &&
+            !city.toLowerCase().includes(searchLower)) return false;
       }
 
       if (filters.locations.length > 0) {
-        const cityCountry = `${item.city}, Indonesia`;
+        const cityCountry = `${city}, Indonesia`;
         if (!filters.locations.some(loc => cityCountry.includes(loc.split(',')[0]))) return false;
       }
 
       return true;
     });
     return sortByCompleteness(filtered);
-  }, [filters]);
+  }, [filters, dbOrganizations]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
@@ -120,14 +123,14 @@ const Organizations = () => {
           </Button>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredData.map((item) => {
+          {filteredData.map((item: any) => {
             const cardData: UnifiedCardData = {
-              type: item.type === "organization" ? "organization" : "community",
-              id: item.id,
-              image: item.image,
+              type: "organization",
+              id: item.id.toString(),
+              image: item.image ?? undefined,
               name: item.name,
-              city: item.city,
-              organizationType: item.organizationType
+              city: item.organization_locations?.[0]?.location?.city || "",
+              organizationType: item.specialization?.[0] || ""
             };
 
             return (
@@ -140,6 +143,9 @@ const Organizations = () => {
             );
           })}
         </div>
+        {isLoading && (
+          <div className="text-center text-muted-foreground mt-8">Loading...</div>
+        )}
       </div>
     </div>
   );

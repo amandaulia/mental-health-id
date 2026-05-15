@@ -2,8 +2,8 @@
  * Feature flags for enabling/disabling application features
  */
 export const featureFlags = {
-  stressRelief: true,
+  stressRelief: false,
   organizations: true,
-  peerCounseling: true,
+  peerCounseling: false,
   languageOptions: true,
 } as const;
