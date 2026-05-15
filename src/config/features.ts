@@ -5,5 +5,5 @@ export const featureFlags = {
   stressRelief: false,
   organizations: false,
   peerCounseling: false,
-  languageOptions: false,
+  languageOptions: true,
 } as const;

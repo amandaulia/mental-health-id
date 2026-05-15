@@ -41,7 +41,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       value = value?.[k];
     }
     
-    return value || key;
+    return value ?? key;
   };
 
   useEffect(() => {
