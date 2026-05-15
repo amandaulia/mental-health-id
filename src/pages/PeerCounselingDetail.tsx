@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Mail, Globe, Instagram, DollarSign, Clock, Users } from "lucide-react";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Mock detailed data (in real app, this would come from API/database)
 const mockDetailData: { [key: string]: any } = {
@@ -50,6 +51,7 @@ const mockDetailData: { [key: string]: any } = {
 };
 
 const PeerCounselingDetail = () => {
+  const { t } = useLanguage();
   const { id } = useParams();
   const data = mockDetailData[id || "1"];
 
@@ -57,10 +59,10 @@ const PeerCounselingDetail = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Resource Not Found</h1>
-          <p className="text-muted-foreground">The resource you're looking for doesn't exist.</p>
+          <h1 className="text-2xl font-bold mb-4">{t('peerDetail.notFound')}</h1>
+          <p className="text-muted-foreground">{t('peerDetail.notFoundDesc')}</p>
           <Button onClick={() => window.history.back()} className="mt-4">
-            Go Back
+            {t('common.goBack')}
           </Button>
         </div>
       </div>
@@ -107,7 +109,7 @@ const PeerCounselingDetail = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>About</CardTitle>
+              <CardTitle>{t('peerDetail.about')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
@@ -118,7 +120,7 @@ const PeerCounselingDetail = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Specialization</CardTitle>
+              <CardTitle>{t('peerDetail.specialization')}</CardTitle>
             </CardHeader>
             <CardContent>
               <Badge variant="outline" className="text-base px-4 py-2">
@@ -129,32 +131,32 @@ const PeerCounselingDetail = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Additional Information</CardTitle>
+              <CardTitle>{t('peerDetail.additionalInfo')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="font-medium text-sm">Schedule</p>
+                    <p className="font-medium text-sm">{t('peerDetail.schedule')}</p>
                     <p className="text-sm text-muted-foreground">{data.schedule}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="font-medium text-sm">Group Size</p>
+                    <p className="font-medium text-sm">{t('peerDetail.groupSize')}</p>
                     <p className="text-sm text-muted-foreground">{data.groupSize}</p>
                   </div>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <p className="font-medium text-sm mb-1">Facilitator</p>
+                  <p className="font-medium text-sm mb-1">{t('peerDetail.facilitator')}</p>
                   <p className="text-sm text-muted-foreground">{data.facilitator}</p>
                 </div>
                 <div>
-                  <p className="font-medium text-sm mb-1">Languages</p>
+                  <p className="font-medium text-sm mb-1">{t('peerDetail.languages')}</p>
                   <p className="text-sm text-muted-foreground">{data.languages}</p>
                 </div>
               </div>
@@ -166,13 +168,13 @@ const PeerCounselingDetail = () => {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Contact Information</CardTitle>
+              <CardTitle>{t('peerDetail.contactInfo')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
                 <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
-                  <p className="font-medium text-sm">Address</p>
+                  <p className="font-medium text-sm">{t('peerDetail.address')}</p>
                   <p className="text-sm text-muted-foreground">{data.address}</p>
                 </div>
               </div>
@@ -180,7 +182,7 @@ const PeerCounselingDetail = () => {
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
-                  <p className="font-medium text-sm">Phone</p>
+                  <p className="font-medium text-sm">{t('peerDetail.phone')}</p>
                   <PhoneCallButton phone={data.phone} asLink />
                 </div>
               </div>
@@ -188,7 +190,7 @@ const PeerCounselingDetail = () => {
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
-                  <p className="font-medium text-sm">Email</p>
+                  <p className="font-medium text-sm">{t('peerDetail.email')}</p>
                   <a href={`mailto:${data.email}`} className="text-sm text-primary hover:text-primary-hover">
                     {data.email}
                   </a>
@@ -198,9 +200,9 @@ const PeerCounselingDetail = () => {
               <div className="flex items-center gap-3">
                 <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
-                  <p className="font-medium text-sm">Website</p>
+                  <p className="font-medium text-sm">{t('peerDetail.website')}</p>
                   <a href={data.website} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
-                    Visit Website
+                    {t('common.visitWebsite')}
                   </a>
                 </div>
               </div>
@@ -208,7 +210,7 @@ const PeerCounselingDetail = () => {
               <div className="flex items-center gap-3">
                 <Instagram className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
-                  <p className="font-medium text-sm">Instagram</p>
+                  <p className="font-medium text-sm">{t('peerDetail.instagram')}</p>
                   <a href={`https://instagram.com/${data.instagram.substring(1)}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
                     {data.instagram}
                   </a>
@@ -219,29 +221,29 @@ const PeerCounselingDetail = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Get Support</CardTitle>
+              <CardTitle>{t('peerDetail.getSupport')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <PhoneCallButton phone={data.phone} className="w-full" />
               <Button variant="outline" className="w-full" onClick={() => window.open(`mailto:${data.email}`)}>
                 <Mail className="h-4 w-4 mr-2" />
-                Send Email
+                {t('peerDetail.email')}
               </Button>
               <Button variant="outline" className="w-full" onClick={() => window.open(data.website, '_blank')}>
                 <Globe className="h-4 w-4 mr-2" />
-                Visit Website
+                {t('common.visitWebsite')}
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Instagram</CardTitle>
+              <CardTitle>{t('peerDetail.instagram')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="bg-muted/50 rounded-lg p-6 text-center">
                 <Instagram className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground mb-3">Follow us for updates and mental health tips</p>
+                <p className="text-sm text-muted-foreground mb-3">{t('peerDetail.followDesc')}</p>
                 <a 
                   href={`https://instagram.com/${data.instagram.substring(1)}`} 
                   target="_blank" 
