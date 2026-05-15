@@ -104,7 +104,10 @@ const translations = {
       free: "Free",
       viewAll: "View All",
       goBack: "Go Back",
-      visitWebsite: "Visit Website"
+      visitWebsite: "Visit Website",
+      more: "more",
+      location: "Location",
+      durationNotSpecified: "Duration not specified"
     },
     professionTypes: {
       psychologist: "Psychologist",
@@ -139,7 +142,10 @@ const translations = {
       chat: "Chat",
       voiceCall: "Voice Call", 
       videoCall: "Video Call",
-      offline: "Offline"
+      offline: "Offline",
+      textChat: "Text Chat",
+      inPerson: "In-Person",
+      offlineSession: "Offline Session"
     },
     insurance: {
       private: "Private Insurance",
@@ -503,7 +509,10 @@ const translations = {
       free: "Gratis",
       viewAll: "Lihat Semua",
       goBack: "Kembali",
-      visitWebsite: "Kunjungi Website"
+      visitWebsite: "Kunjungi Website",
+      more: "lainnya",
+      location: "Lokasi",
+      durationNotSpecified: "Durasi tidak ditentukan"
     },
     professionTypes: {
       psychologist: "Psikolog",
@@ -538,7 +547,10 @@ const translations = {
       chat: "Chat",
       voiceCall: "Voice Call",
       videoCall: "Video Call", 
-      offline: "Tatap Muka"
+      offline: "Tatap Muka",
+      textChat: "Obrolan Teks",
+      inPerson: "Tatap Muka",
+      offlineSession: "Sesi Tatap Muka"
     },
     insurance: {
       private: "Asuransi Pribadi",
