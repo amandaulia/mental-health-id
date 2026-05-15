@@ -122,7 +122,10 @@ const translations = {
       hypnotherapy: "Hypnotherapy",
       interpersonal: "Interpersonal",
       moodDisorders: "Mood Disorders",
-      selfDevelopment: "Self Development"
+      selfDevelopment: "Self Development",
+      eatingDisorders: "Eating Disorders",
+      grief: "Grief",
+      psychiatry: "Psychiatry"
     },
     sessionModes: {
       chat: "Chat",
@@ -196,6 +199,103 @@ const translations = {
         title: "About Mental Health Directory Indonesia",
         description: "Learn about the Mental Health Directory Indonesia — a free, comprehensive guide to mental health professionals, peer counseling, and wellness resources across Indonesia."
       }
+    },
+    footer: {
+      description: "Your directory for mental health resources. Connecting you with psychologists, psychiatrists, and mental health clinics across Indonesia."
+    },
+    home: {
+      sections: {
+        professional: {
+          title: "Professional Counseling",
+          description: "Find licensed mental health professionals — psychologists, psychiatrists, and clinics ready to support you.",
+          cta: "Search & Filter"
+        },
+        peer: {
+          title: "Peer Counseling",
+          description: "Connect with peer counselors and support groups who care.",
+          cta: "Find Peer Support"
+        },
+        stressRelief: {
+          title: "Stress Relief",
+          description: "Discover self-help and wellness programs that support your mental health.",
+          cta: "Find Activities"
+        },
+        organizations: {
+          title: "Organizations",
+          description: "Connect with communities and discover resources that help you grow.",
+          ctaRecent: "Recent Organizations & Communities",
+          ctaAll: "All Organizations & Communities"
+        },
+        about: {
+          title: "About Mental Health Directory",
+          subtitle: "Your comprehensive guide to mental health resources and support in Indonesia.",
+          q1: "What is the Mental Health Directory?",
+          q2: "What information will Mental Health Directory provide?",
+          a1: "The Mental Health Directory is a comprehensive platform designed to help individuals find qualified mental health professionals, support groups, and wellness resources across Indonesia. We understand our platform serves as a bridge between those seeking help and qualified professionals, providing detailed information about specializations, accommodations, counseling centers, and various Professional Counseling Services.",
+          professionalTitle: "Professional Counseling Services",
+          professionalDesc: "Licensed psychologists, psychiatrists, and mental health clinics with detailed profiles, specializations, and contact information.",
+          peerTitle: "Peer & Support Counseling",
+          peerBadge: "Coming Soon",
+          peerDesc: "Community-based support groups and peer counseling services for various mental health conditions and life challenges.",
+          stressReliefTitle: "Stress Relief Activities",
+          stressReliefBadge: "Coming Soon",
+          stressReliefDesc: "Art therapy, music therapy, sports activities, and other wellness programs designed to promote mental well-being.",
+          organizationsTitle: "Organizations",
+          organizationsBadge: "Coming Soon",
+          organizationsDesc: "Mental health organizations, educational institutions, and community groups dedicated to mental health awareness and support."
+        }
+      }
+    },
+    detail: {
+      back: "Back",
+      home: "Home",
+      practitionerDetails: "Practitioner Details",
+      bureauDetails: "Bureau Details",
+      loading: "Loading...",
+      notFound: "Not found",
+      error: "An error occurred. Please try again.",
+      experience: "Experience",
+      education: "Education",
+      licenseNumber: "License Number",
+      lastUpdated: "Last updated",
+      professionTypes: "Profession Types",
+      specializations: "Specializations",
+      sessionModes: "Session Modes",
+      insurance: "Insurance",
+      services: "Services",
+      contactInfo: "Contact Information",
+      locations: "Locations",
+      noContactInfo: "No contact information available",
+      noServices: "No services available",
+      book: "Book",
+      learnMore: "Learn More",
+      showAll: "Show all",
+      showLess: "Show less",
+      practitioners: "Practitioners",
+      noInsurance: "No Insurance",
+      privateInsurance: "Private Insurance"
+    },
+    filters: {
+      activeFilters: "Active Filters",
+      clearAll: "Clear all",
+      clearFilters: "Clear Filters",
+      noResults: "No results found",
+      noActivities: "No activities found matching your criteria.",
+      loadMore: "Load More",
+      city: "City",
+      institution: "Institution",
+      institutionType: "Institution Type",
+      profession: "Profession",
+      specialization: "Specialization",
+      sessionMode: "Session Mode",
+      priceRange: "Price Range (IDR)",
+      insurance: "Insurance"
+    },
+    errors: {
+      somethingWrong: "Something went wrong",
+      unexpected: "We're sorry, something unexpected happened. Please try refreshing the page.",
+      tryAgain: "Try Again",
+      refresh: "Refresh Page"
     }
   },
   id: {
@@ -264,7 +364,10 @@ const translations = {
       hypnotherapy: "Hipnoterapi",
       interpersonal: "Interpersonal",
       moodDisorders: "Gangguan Mood",
-      selfDevelopment: "Pengembangan Diri"
+      selfDevelopment: "Pengembangan Diri",
+      eatingDisorders: "Gangguan Makan",
+      grief: "Duka",
+      psychiatry: "Psikiatri"
     },
     sessionModes: {
       chat: "Chat",
@@ -338,6 +441,103 @@ const translations = {
         title: "Tentang Direktori Kesehatan Mental Indonesia",
         description: "Pelajari tentang Direktori Kesehatan Mental Indonesia — panduan gratis dan komprehensif untuk menemukan psikolog, konseling sebaya, dan sumber daya kesehatan mental di Indonesia."
       }
+    },
+    footer: {
+      description: "Direktori sumber daya kesehatan mental. Menghubungkan Anda dengan psikolog, psikiater, dan klinik kesehatan mental di seluruh Indonesia."
+    },
+    home: {
+      sections: {
+        professional: {
+          title: "Konseling Profesional",
+          description: "Temukan profesional kesehatan mental berlisensi — psikolog, psikiater, dan klinik yang siap mendampingi Anda.",
+          cta: "Cari & Filter"
+        },
+        peer: {
+          title: "Konseling Sebaya",
+          description: "Terhubung dengan konselor sebaya dan kelompok dukungan yang peduli.",
+          cta: "Cari Dukungan Sebaya"
+        },
+        stressRelief: {
+          title: "Pereda Stres",
+          description: "Temukan program bantuan diri dan kesejahteraan yang mendukung kesehatan mental Anda.",
+          cta: "Cari Aktivitas"
+        },
+        organizations: {
+          title: "Organisasi",
+          description: "Terhubung dengan komunitas dan temukan sumber daya yang membantu pertumbuhan Anda.",
+          ctaRecent: "Organisasi & Komunitas Terbaru",
+          ctaAll: "Semua Organisasi & Komunitas"
+        },
+        about: {
+          title: "Tentang Mental Health Directory",
+          subtitle: "Panduan komprehensif untuk sumber daya dan dukungan kesehatan mental di Indonesia.",
+          q1: "Apa itu Mental Health Directory?",
+          q2: "Informasi apa yang akan disediakan Mental Health Directory?",
+          a1: "Mental Health Directory adalah platform komprehensif yang dirancang untuk membantu individu menemukan profesional kesehatan mental, kelompok dukungan, dan sumber daya kesejahteraan yang berkualitas di seluruh Indonesia. Kami menjadi jembatan antara mereka yang mencari bantuan dan profesional yang berkualitas, dengan menyediakan informasi rinci tentang spesialisasi, akomodasi, pusat konseling, dan berbagai Layanan Konseling Profesional.",
+          professionalTitle: "Layanan Konseling Profesional",
+          professionalDesc: "Psikolog, psikiater, dan klinik kesehatan mental berlisensi dengan profil terperinci, spesialisasi, dan informasi kontak.",
+          peerTitle: "Konseling Sebaya & Kelompok",
+          peerBadge: "Segera Hadir",
+          peerDesc: "Kelompok dukungan berbasis komunitas dan layanan konseling sebaya untuk berbagai kondisi kesehatan mental dan tantangan kehidupan.",
+          stressReliefTitle: "Aktivitas Pereda Stres",
+          stressReliefBadge: "Segera Hadir",
+          stressReliefDesc: "Terapi seni, terapi musik, aktivitas olahraga, dan program kesejahteraan lainnya yang dirancang untuk meningkatkan kesehatan mental.",
+          organizationsTitle: "Organisasi",
+          organizationsBadge: "Segera Hadir",
+          organizationsDesc: "Organisasi kesehatan mental, lembaga pendidikan, dan kelompok komunitas yang berdedikasi pada kesadaran dan dukungan kesehatan mental."
+        }
+      }
+    },
+    detail: {
+      back: "Kembali",
+      home: "Beranda",
+      practitionerDetails: "Detail Praktisi",
+      bureauDetails: "Detail Institusi",
+      loading: "Memuat...",
+      notFound: "Tidak ditemukan",
+      error: "Terjadi kesalahan. Silakan coba lagi.",
+      experience: "Pengalaman",
+      education: "Pendidikan",
+      licenseNumber: "Nomor Lisensi",
+      lastUpdated: "Terakhir diperbarui",
+      professionTypes: "Tipe Profesi",
+      specializations: "Spesialisasi",
+      sessionModes: "Mode Sesi",
+      insurance: "Asuransi",
+      services: "Layanan",
+      contactInfo: "Informasi Kontak",
+      locations: "Lokasi",
+      noContactInfo: "Tidak ada informasi kontak",
+      noServices: "Tidak ada layanan tersedia",
+      book: "Pesan",
+      learnMore: "Pelajari Lebih Lanjut",
+      showAll: "Tampilkan semua",
+      showLess: "Tampilkan lebih sedikit",
+      practitioners: "Praktisi",
+      noInsurance: "Tanpa Asuransi",
+      privateInsurance: "Asuransi Pribadi"
+    },
+    filters: {
+      activeFilters: "Filter Aktif",
+      clearAll: "Hapus semua",
+      clearFilters: "Hapus Filter",
+      noResults: "Tidak ada hasil ditemukan",
+      noActivities: "Tidak ada aktivitas yang sesuai dengan kriteria Anda.",
+      loadMore: "Muat Lebih Banyak",
+      city: "Kota",
+      institution: "Institusi",
+      institutionType: "Tipe Institusi",
+      profession: "Profesi",
+      specialization: "Spesialisasi",
+      sessionMode: "Mode Sesi",
+      priceRange: "Rentang Harga (IDR)",
+      insurance: "Asuransi"
+    },
+    errors: {
+      somethingWrong: "Terjadi Kesalahan",
+      unexpected: "Maaf, terjadi sesuatu yang tidak terduga. Silakan coba muat ulang halaman.",
+      tryAgain: "Coba Lagi",
+      refresh: "Muat Ulang Halaman"
     }
   }
 };
