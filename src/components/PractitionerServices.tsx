@@ -21,8 +21,8 @@ export const PractitionerServices = ({
   formatPrice, 
   getModeLabel 
 }: PractitionerServicesProps) => {
-  const handleBookingClick = (serviceName: string, price?: number) => {
-    trackBookingClick(serviceName, practitioner.name, price);
+  const handleBookingClick = (serviceName: string, price?: number | null) => {
+    trackBookingClick(serviceName, practitioner.name, price ?? undefined);
   };
 
   const handleLearnMoreClick = (serviceName: string) => {
