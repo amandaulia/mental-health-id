@@ -9,6 +9,7 @@ import { ArrowRight } from "lucide-react";
 import { trackSearch, trackFilter } from "@/utils/analytics";
 import { PageSEO } from "@/components/PageSEO";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { sortByCompleteness } from "@/utils/completeness";
 
 const Organizations = () => {
   const { t } = useLanguage();
@@ -25,7 +26,7 @@ const Organizations = () => {
   });
 
   const filteredData = useMemo(() => {
-    return mockOrganizationsData.filter((item) => {
+    const filtered = mockOrganizationsData.filter((item) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         if (!item.name.toLowerCase().includes(searchLower) && 
@@ -39,6 +40,7 @@ const Organizations = () => {
 
       return true;
     });
+    return sortByCompleteness(filtered);
   }, [filters]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
