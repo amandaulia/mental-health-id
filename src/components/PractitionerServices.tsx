@@ -6,6 +6,7 @@ import { Clock } from "lucide-react";
 import { Practitioner } from "@/types";
 import { trackBookingClick } from "@/utils/analytics";
 import { PhoneCallButton } from "./PhoneCallButton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const isTelLink = (url: string) => /^tel:/i.test(url);
 const stripTel = (url: string) => url.replace(/^tel:/i, "");
@@ -21,6 +22,7 @@ export const PractitionerServices = ({
   formatPrice, 
   getModeLabel 
 }: PractitionerServicesProps) => {
+  const { t } = useLanguage();
   const handleBookingClick = (serviceName: string, price?: number | null) => {
     trackBookingClick(serviceName, practitioner.name, price ?? undefined);
   };
@@ -32,7 +34,7 @@ export const PractitionerServices = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Services</CardTitle>
+        <CardTitle>{t('detail.services')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {practitioner.services.map((service, index) => (
@@ -62,9 +64,9 @@ export const PractitionerServices = ({
                     }`}
                   >
                     {service.price == null
-                      ? "Price available upon request"
+                      ? t('detail.priceUponRequest')
                       : service.price === 0
-                      ? "Free"
+                      ? t('detail.free')
                       : formatPrice(service.price)}
                   </p>
                 </div>
@@ -76,7 +78,7 @@ export const PractitionerServices = ({
                         size="sm"
                         onClick={() => handleBookingClick(service.name, service.price)}
                       >
-                        Book Now
+                        {t('detail.bookNow')}
                       </PhoneCallButton>
                     ) : (
                       <Button
@@ -85,7 +87,7 @@ export const PractitionerServices = ({
                         onClick={() => handleBookingClick(service.name, service.price)}
                       >
                         <a href={service.bookingUrl} target="_blank" rel="noopener noreferrer">
-                          Book Now
+                          {t('detail.bookNow')}
                         </a>
                       </Button>
                     )
@@ -98,7 +100,7 @@ export const PractitionerServices = ({
                         size="sm"
                         onClick={() => handleLearnMoreClick(service.name)}
                       >
-                        Learn More
+                        {t('detail.learnMore')}
                       </PhoneCallButton>
                     ) : (
                       <Button
@@ -108,7 +110,7 @@ export const PractitionerServices = ({
                         onClick={() => handleLearnMoreClick(service.name)}
                       >
                         <a href={service.learnMoreUrl} target="_blank" rel="noopener noreferrer">
-                          Learn More
+                          {t('detail.learnMore')}
                         </a>
                       </Button>
                     )

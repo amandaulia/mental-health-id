@@ -4,6 +4,7 @@ import { MessageCircle, Globe, Instagram, Phone, Mail, ExternalLink } from "luci
 import { Practitioner } from "@/types";
 import { AnalyticsWrapper } from "./AnalyticsWrapper";
 import { PhoneCallButton } from "./PhoneCallButton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PractitionerContactProps {
   practitioner: Practitioner;
@@ -29,10 +30,11 @@ const getContactIcon = (type: string) => {
 };
 
 export const PractitionerContact = ({ practitioner }: PractitionerContactProps) => {
+  const { t } = useLanguage();
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Contact Information</CardTitle>
+        <CardTitle>{t('detail.contactInfo')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {practitioner.contactDetails && practitioner.contactDetails.length > 0 ? (
@@ -75,7 +77,7 @@ export const PractitionerContact = ({ practitioner }: PractitionerContactProps) 
             );
           })
         ) : (
-          <p className="text-muted-foreground text-sm">No contact information available</p>
+          <p className="text-muted-foreground text-sm">{t('detail.noContactInfo')}</p>
         )}
       </CardContent>
     </Card>

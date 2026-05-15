@@ -5,6 +5,7 @@ import { ModeIcon } from "./ModeIcon";
 import { Bureau } from "@/types";
 import { useState } from "react";
 import clinicPlaceholder from "@/assets/clinic-placeholder.png";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BureauHeaderProps {
   bureau: Bureau;
@@ -13,6 +14,7 @@ interface BureauHeaderProps {
 }
 
 export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: BureauHeaderProps) => {
+  const { t } = useLanguage();
   const [showMoreProfessions, setShowMoreProfessions] = useState(false);
   const [showMoreSpecializations, setShowMoreSpecializations] = useState(false);
   const [showMoreModes, setShowMoreModes] = useState(false);
@@ -38,7 +40,7 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
             onClick={() => setShowMore(!showMore)}
             className="text-sm text-blue-600 hover:text-blue-800 font-medium"
           >
-            {showMore ? "See less" : `+${items.length - maxItems} more`}
+            {showMore ? t('detail.showLess') : `+${items.length - maxItems} ${t('detail.showAll').toLowerCase()}`}
           </button>
         )}
       </div>
@@ -69,7 +71,7 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
                   <div className="flex items-center gap-3 flex-wrap">
                     <h1 className="text-2xl font-bold">{bureau.name}</h1>
                     {bureau.isVerified && (
-                      <Badge className="bg-green-100 text-green-700">Verified</Badge>
+                      <Badge className="bg-green-100 text-green-700">{t('common.verified')}</Badge>
                     )}
                   </div>
                 </div>
@@ -79,7 +81,7 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
                   {/* Profession Types */}
                   {bureau.professionTypes.length > 0 && (
                     <div className="space-y-2">
-                      <p className="font-medium text-sm">Profession Types</p>
+                      <p className="font-medium text-sm">{t('detail.professionTypes')}</p>
                       {renderToggleableTags(
                         bureau.professionTypes,
                         showMoreProfessions,
@@ -96,7 +98,7 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
                   {/* Available Modes */}
                   {bureau.modes.length > 0 && (
                     <div className="space-y-2 md:col-span-2">
-                      <p className="font-medium text-sm">Available Modes</p>
+                      <p className="font-medium text-sm">{t('detail.sessionModes')}</p>
                       <div className="flex flex-wrap gap-2 items-center">
                         {bureau.modes.map((mode, index) => (
                           <Badge key={index} variant="outline" className="flex items-center gap-1 text-xs">
@@ -111,7 +113,7 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
                   {/* Accepted Insurance */}
                   {bureau.insurance.length > 0 && (
                     <div className="space-y-2">
-                      <p className="font-medium text-sm">Accepted Insurance</p>
+                      <p className="font-medium text-sm">{t('detail.insurance')}</p>
                       {renderToggleableTags(
                         bureau.insurance,
                         showMoreInsurance,
@@ -129,7 +131,7 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
                 {/* Specializations - moved below the grid */}
                 {bureau.specializations.length > 0 && (
                   <div className="space-y-2">
-                    <p className="font-medium text-sm">Specializations</p>
+                    <p className="font-medium text-sm">{t('detail.specializations')}</p>
                     <div className="flex flex-wrap gap-2">
                       {bureau.specializations.map((spec, index) => (
                         <Badge key={index} variant="outline" className="text-xs">
@@ -145,7 +147,7 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
           
           {/* Last Updated - moved to top right */}
           <div className="text-sm text-muted-foreground flex-shrink-0">
-            Last updated: {new Date(bureau.lastUpdated).toLocaleDateString()}
+            {t('detail.lastUpdated')}: {new Date(bureau.lastUpdated).toLocaleDateString()}
           </div>
         </div>
       </CardContent>

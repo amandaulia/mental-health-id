@@ -3,6 +3,28 @@ import React from 'react';
 import { trackError } from '@/utils/analytics';
 import { AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+const ErrorFallbackUI: React.FC<{ resetError: () => void }> = ({ resetError }) => {
+  const { t } = useLanguage();
+  return (
+    <div className="min-h-[400px] flex items-center justify-center p-8">
+      <div className="text-center space-y-4 max-w-md">
+        <AlertCircle className="h-12 w-12 text-destructive mx-auto" />
+        <h2 className="text-xl font-semibold">{t('errors.somethingWrong')}</h2>
+        <p className="text-muted-foreground">{t('errors.unexpected')}</p>
+        <div className="space-x-2">
+          <Button onClick={resetError} variant="outline">
+            {t('errors.tryAgain')}
+          </Button>
+          <Button onClick={() => window.location.reload()}>
+            {t('errors.refresh')}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -47,23 +69,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       }
 
       return (
-        <div className="min-h-[400px] flex items-center justify-center p-8">
-          <div className="text-center space-y-4 max-w-md">
-            <AlertCircle className="h-12 w-12 text-destructive mx-auto" />
-            <h2 className="text-xl font-semibold">Something went wrong</h2>
-            <p className="text-muted-foreground">
-              We're sorry, but something unexpected happened. Please try refreshing the page.
-            </p>
-            <div className="space-x-2">
-              <Button onClick={this.resetError} variant="outline">
-                Try Again
-              </Button>
-              <Button onClick={() => window.location.reload()}>
-                Refresh Page
-              </Button>
-            </div>
-          </div>
-        </div>
+        <ErrorFallbackUI resetError={this.resetError} />
       );
     }
 
