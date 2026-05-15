@@ -14,6 +14,14 @@ import { Practitioner } from "@/types";
 import { trackError } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageSEO } from "@/components/PageSEO";
+import {
+  SITE_URL,
+  buildPostalAddress,
+  buildGeo,
+  phoneFromContacts,
+  sameAsFromContacts,
+  buildOffers,
+} from "@/utils/jsonLd";
 
 const PractitionerDetail = () => {
   const { id } = useParams();
@@ -123,6 +131,45 @@ const PractitionerDetail = () => {
     navigate(`/bureau/${practitioner.bureauId}`);
   };
 
+  const pageUrl = `${SITE_URL}/practitioner/${practitionerId}`;
+  const primaryLocation = locations[0];
+  const personNode: Record<string, unknown> = {
+    "@type": "Person",
+    "@id": `${pageUrl}#person`,
+    name: practitioner.name,
+    url: pageUrl,
+    ...(practitioner.image && { image: practitioner.image }),
+    ...(practitioner.professionTypes?.[0] && { jobTitle: practitioner.professionTypes[0] }),
+    ...(practitioner.specializations?.length && { knowsAbout: practitioner.specializations }),
+    ...(practitioner.education && { alumniOf: practitioner.education }),
+    ...(practitioner.bureauName &&
+      practitioner.bureauName !== "Independent" && {
+        worksFor: {
+          "@type": "Organization",
+          name: practitioner.bureauName,
+          ...(practitioner.bureauId && { url: `${SITE_URL}/bureau/${practitioner.bureauId}` }),
+        },
+      }),
+  };
+  const phone = phoneFromContacts(practitioner.contactDetails);
+  const sameAs = sameAsFromContacts(practitioner.contactDetails);
+  const offers = buildOffers(practitioner.services);
+  const businessNode: Record<string, unknown> = {
+    "@type": "MedicalBusiness",
+    "@id": `${pageUrl}#business`,
+    name: practitioner.name,
+    url: pageUrl,
+    ...(practitioner.image && { image: practitioner.image }),
+    ...(phone && { telephone: phone }),
+    ...(practitioner.priceRange && { priceRange: practitioner.priceRange }),
+    ...(buildPostalAddress(primaryLocation) && { address: buildPostalAddress(primaryLocation) }),
+    ...(buildGeo(primaryLocation) && { geo: buildGeo(primaryLocation) }),
+    ...(sameAs.length && { sameAs }),
+    ...(offers && { availableService: offers }),
+    provider: { "@id": `${pageUrl}#person` },
+  };
+  const jsonLd = [personNode, businessNode];
+
   return (
     <div className="container mx-auto px-4 py-4 sm:py-8">
       <PageSEO
@@ -130,6 +177,7 @@ const PractitionerDetail = () => {
         path={`/practitioner/${practitionerId}`}
         title={`${practitioner.name} — ${practitioner.professionTypes?.[0] || t('detail.practitionerDetails')}${locations[0]?.city ? ' di ' + locations[0].city : ''} | Direktori Kesehatan Mental Indonesia`}
         description={`Profil ${practitioner.name}${practitioner.professionTypes?.[0] ? ', ' + practitioner.professionTypes[0] : ''}${locations[0]?.city ? ' di ' + locations[0].city : ''}. Lihat layanan, biaya, asuransi, dan kontak konseling.`}
+        jsonLd={jsonLd}
       />
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
