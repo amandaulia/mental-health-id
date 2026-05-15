@@ -4,12 +4,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock, Building2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BureauCardProps {
   bureau: Bureau;
 }
 
 export const BureauCard = ({ bureau }: BureauCardProps) => {
+  const { t } = useLanguage();
   const getBureauTypeLabel = (type: string) => {
     switch (type) {
       case "independent":
@@ -36,7 +38,7 @@ export const BureauCard = ({ bureau }: BureauCardProps) => {
                   <h3 className="font-semibold text-lg truncate">{bureau.name}</h3>
                   {bureau.isVerified && (
                     <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 flex-shrink-0">
-                      Verified
+                      {t('common.verified')}
                     </Badge>
                   )}
                 </div>
@@ -74,7 +76,7 @@ export const BureauCard = ({ bureau }: BureauCardProps) => {
               <div className="flex flex-wrap gap-1">
                 {bureau.insurance.map((ins) => (
                   <Badge key={ins} variant="outline" className="text-xs">
-                    {ins === "bpjs" ? "BPJS" : ins === "private" ? "Private Insurance" : "No Insurance"}
+                    {ins === "bpjs" ? "BPJS" : ins === "private" ? t('insurance.privateInsurance') : t('insurance.noInsurance')}
                   </Badge>
                 ))}
               </div>
