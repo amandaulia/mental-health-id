@@ -3,6 +3,7 @@ import { FilterState, FilterTag } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface FilterTagsProps {
   filters: FilterState;
@@ -12,6 +13,7 @@ interface FilterTagsProps {
 
 export const FilterTags = ({ filters, onRemoveFilter, onClearAll }: FilterTagsProps) => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   
   const getActiveTags = (): FilterTag[] => {
     const tags: FilterTag[] = [];
@@ -57,8 +59,8 @@ export const FilterTags = ({ filters, onRemoveFilter, onClearAll }: FilterTagsPr
 
   const getInsuranceLabel = (type: string) => {
     switch (type) {
-      case "none": return "No Insurance";
-      case "private": return "Private Insurance";
+      case "none": return t('insurance.noInsurance');
+      case "private": return t('insurance.privateInsurance');
       case "bpjs": return "BPJS";
       default: return type;
     }
