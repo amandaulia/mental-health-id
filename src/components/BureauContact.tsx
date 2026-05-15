@@ -4,6 +4,7 @@ import { MessageCircle, Globe, Instagram, Phone, Mail, ExternalLink } from "luci
 import { Bureau } from "@/types";
 import { AnalyticsWrapper } from "./AnalyticsWrapper";
 import { PhoneCallButton } from "./PhoneCallButton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BureauContactProps {
   bureau: Bureau;
@@ -29,6 +30,7 @@ const getContactIcon = (type: string) => {
 };
 
 export const BureauContact = ({ bureau }: BureauContactProps) => {
+  const { t } = useLanguage();
   // Group contacts by location for Phone and WhatsApp
   const groupedContacts: { [key: string]: typeof bureau.contactDetails } = {};
   const otherContacts: typeof bureau.contactDetails = [];
@@ -48,7 +50,7 @@ export const BureauContact = ({ bureau }: BureauContactProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Contact Information</CardTitle>
+        <CardTitle>{t('detail.contactInfo')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {bureau.contactDetails && bureau.contactDetails.length > 0 ? (
@@ -141,7 +143,7 @@ export const BureauContact = ({ bureau }: BureauContactProps) => {
             ))}
           </>
         ) : (
-          <p className="text-muted-foreground text-sm">No contact information available</p>
+          <p className="text-muted-foreground text-sm">{t('detail.noContactInfo')}</p>
         )}
       </CardContent>
     </Card>
