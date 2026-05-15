@@ -6,6 +6,7 @@ import { ModeIcon } from "./ModeIcon";
 import { Practitioner } from "@/types";
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
 
 interface PractitionerHeaderProps {
   practitioner: Practitioner;
@@ -102,7 +103,7 @@ export const PractitionerHeader = ({
                       className="cursor-pointer hover:bg-secondary/80"
                       onClick={() => onTagClick('professionTypes', type)}
                     >
-                      {type}
+                      {getProfessionLabel(t, type)}
                     </Badge>
                   ))}
                 </div>
@@ -121,7 +122,7 @@ export const PractitionerHeader = ({
                       className="cursor-pointer hover:bg-secondary/80"
                       onClick={() => onTagClick('specializations', spec)}
                     >
-                      {spec}
+                      {getSpecializationLabel(t, spec)}
                     </Badge>
                   ))}
                   {practitioner.specializations.length > maxItemsToShow && (
