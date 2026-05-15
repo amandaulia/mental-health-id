@@ -96,7 +96,15 @@ const translations = {
       whatsapp: "WhatsApp",
       instagram: "Instagram",
       facebook: "Facebook",
-      telegram: "Telegram"
+      telegram: "Telegram",
+      callNow: "Call Now",
+      openInGoogleMaps: "Open in Google Maps",
+      clickOpenGoogleMaps: "Click to open in Google Maps",
+      priceNotAvailable: "Price not available",
+      free: "Free",
+      viewAll: "View All",
+      goBack: "Go Back",
+      visitWebsite: "Visit Website"
     },
     professionTypes: {
       psychologist: "Psychologist",
