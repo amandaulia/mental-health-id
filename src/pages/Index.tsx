@@ -19,6 +19,7 @@ import { trackFeelingsAnalysis, trackSearch, trackFilter } from "@/utils/analyti
 import { Badge } from "@/components/ui/badge";
 import { featureFlags } from "@/config/features";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { sortByCompleteness } from "@/utils/completeness";
 
 const Index = () => {
   const { t } = useLanguage();
@@ -227,7 +228,7 @@ const Index = () => {
   };
 
   const filteredProfessionalResources = useMemo(() => {
-    return allProfessionalResources.filter((resource) => {
+    const filtered = allProfessionalResources.filter((resource) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         const matchName = resource.name.toLowerCase().includes(searchLower);
@@ -246,23 +247,24 @@ const Index = () => {
 
       return true;
     });
+    return sortByCompleteness(filtered);
   }, [filters, allProfessionalResources]);
 
   const filteredPeerCounseling = useMemo(() => {
     if (!dbPeerCounseling) return [];
-    
-    return dbPeerCounseling.filter((item) => {
+    const filtered = dbPeerCounseling.filter((item) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         if (!item.name.toLowerCase().includes(searchLower)) return false;
       }
       return true;
     });
+    return sortByCompleteness(filtered);
   }, [filters, dbPeerCounseling]);
 
   const filteredActivities = useMemo(() => {
     if (!dbActivities) return [];
-    return dbActivities.filter((item: any) => {
+    const filtered = dbActivities.filter((item: any) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         const orgName = item.activity_organizations?.[0]?.organization?.name || "";
@@ -273,11 +275,12 @@ const Index = () => {
       }
       return true;
     });
+    return sortByCompleteness(filtered);
   }, [filters, dbActivities]);
 
   const filteredOrganizations = useMemo(() => {
     if (!dbOrganizations) return [];
-    return dbOrganizations.filter((item: any) => {
+    const filtered = dbOrganizations.filter((item: any) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         const city = item.organization_locations?.[0]?.location?.city || "";
@@ -286,6 +289,7 @@ const Index = () => {
       }
       return true;
     });
+    return sortByCompleteness(filtered);
   }, [filters, dbOrganizations]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
@@ -534,7 +538,7 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {allBureaus.slice(0, 6).map((resource) => {
+            {sortByCompleteness(allBureaus).slice(0, 6).map((resource) => {
               const cardData: UnifiedCardData = {
                 type: "institution",
                 id: resource.id,
