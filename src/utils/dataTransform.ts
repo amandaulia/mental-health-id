@@ -21,10 +21,13 @@ export const transformPractitioner = (
   const institution =
     dbPractitioner.institution ??
     dbPractitioner.practitioner_institutions?.[0]?.institution;
-  
-  // Combine practitioner and institution insurance
+
+  // Combine practitioner insurance with insurance from ALL linked institutions
   const practitionerInsurance = dbPractitioner.insurance || [];
-  const institutionInsurance = institution?.insurance || [];
+  const linkedInstitutions: any[] = dbPractitioner.practitioner_institutions
+    ? dbPractitioner.practitioner_institutions.map((pi: any) => pi.institution).filter(Boolean)
+    : (institution ? [institution] : []);
+  const institutionInsurance = linkedInstitutions.flatMap((inst: any) => inst?.insurance || []);
   const combinedInsurance = [...new Set([...practitionerInsurance, ...institutionInsurance])];
 
   return {
