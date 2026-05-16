@@ -298,121 +298,122 @@ const PractitionerDetail = () => {
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <div className="xl:col-span-2">
-            {services.length > 0 && (
-              <div className="mb-4 flex flex-col sm:flex-row gap-3">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                  <Input
-                    type="text"
-                    placeholder={t('detail.searchServices')}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 rounded-full border-gray-200"
-                  />
-                </div>
-                {allModes.length > 0 && (
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium flex items-center gap-2">
-                        <Monitor className="h-4 w-4" />
-                        <span>{t('filters.sessionMode')}</span>
-                        {selectedModes.length > 0 && (
-                          <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">{selectedModes.length}</Badge>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80 p-6">
-                      <div className="space-y-4">
-                        <h3 className="text-lg font-semibold">{t('filters.sessionMode')}</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {allModes.map(mode => (
-                            <button
-                              key={mode}
-                              onClick={() => toggleMode(mode)}
-                              className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${selectedModes.includes(mode) ? 'bg-purple-100 border-purple-300 text-purple-700' : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'}`}
-                            >
-                              {getModeLabel(mode)}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                )}
-                {allDurations.length > 0 && (
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        <span>Duration</span>
-                        {selectedDurations.length > 0 && (
-                          <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">{selectedDurations.length}</Badge>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80 p-6">
-                      <div className="space-y-4">
-                        <h3 className="text-lg font-semibold">Duration</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {allDurations.map(d => (
-                            <button
-                              key={d}
-                              onClick={() => toggleDuration(d)}
-                              className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${selectedDurations.includes(d) ? 'bg-purple-100 border-purple-300 text-purple-700' : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'}`}
-                            >
-                              {formatDuration(d)}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                )}
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium flex items-center gap-2">
-                      <Settings className="h-4 w-4" />
-                      <span>{t('filters.priceRange')}</span>
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80 p-6">
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">{t('filters.sessionCost')}</h3>
-                      <Slider
-                        value={effectivePriceRange}
-                        min={minPrice}
-                        max={Math.max(maxPrice, minPrice + 1)}
-                        step={25000}
-                        onValueChange={(v) => setPriceRange(v as [number, number])}
-                      />
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Rp {effectivePriceRange[0].toLocaleString()}</span>
-                        <span>Rp {effectivePriceRange[1].toLocaleString()}</span>
-                      </div>
-                      <div className="flex items-center space-x-2 pt-2 border-t">
-                        <Checkbox
-                          id="include-null-price-prac-services"
-                          checked={includeNullPrice}
-                          onCheckedChange={(c) => setIncludeNullPrice(c === true)}
-                        />
-                        <label htmlFor="include-null-price-prac-services" className="text-sm cursor-pointer">
-                          {t('detail.includePriceUponRequest')}
-                        </label>
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                {hasActiveFilters && (
-                  <Button variant="ghost" size="sm" onClick={clearAllFilters} className="h-auto text-xs">
-                    {t('filters.clearAll')}
-                  </Button>
-                )}
-              </div>
-            )}
             <PractitionerServices
               practitioner={filteredPractitioner}
               formatPrice={formatPrice}
               getModeLabel={getModeLabel}
+              titleCount={services.length > 0 ? filteredServices.length : undefined}
+              filtersSlot={services.length > 0 ? (
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <Input
+                      type="text"
+                      placeholder={t('detail.searchServices')}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10 rounded-full border-gray-200"
+                    />
+                  </div>
+                  {allModes.length > 0 && (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium flex items-center gap-2">
+                          <Monitor className="h-4 w-4" />
+                          <span>{t('filters.sessionMode')}</span>
+                          {selectedModes.length > 0 && (
+                            <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">{selectedModes.length}</Badge>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80 p-6">
+                        <div className="space-y-4">
+                          <h3 className="text-lg font-semibold">{t('filters.sessionMode')}</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {allModes.map(mode => (
+                              <button
+                                key={mode}
+                                onClick={() => toggleMode(mode)}
+                                className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${selectedModes.includes(mode) ? 'bg-purple-100 border-purple-300 text-purple-700' : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'}`}
+                              >
+                                {getModeLabel(mode)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                  {allDurations.length > 0 && (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          <span>Duration</span>
+                          {selectedDurations.length > 0 && (
+                            <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">{selectedDurations.length}</Badge>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80 p-6">
+                        <div className="space-y-4">
+                          <h3 className="text-lg font-semibold">Duration</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {allDurations.map(d => (
+                              <button
+                                key={d}
+                                onClick={() => toggleDuration(d)}
+                                className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${selectedDurations.includes(d) ? 'bg-purple-100 border-purple-300 text-purple-700' : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'}`}
+                              >
+                                {formatDuration(d)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium flex items-center gap-2">
+                        <Settings className="h-4 w-4" />
+                        <span>{t('filters.priceRange')}</span>
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-6">
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">{t('filters.sessionCost')}</h3>
+                        <Slider
+                          value={effectivePriceRange}
+                          min={minPrice}
+                          max={Math.max(maxPrice, minPrice + 1)}
+                          step={25000}
+                          onValueChange={(v) => setPriceRange(v as [number, number])}
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>Rp {effectivePriceRange[0].toLocaleString()}</span>
+                          <span>Rp {effectivePriceRange[1].toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center space-x-2 pt-2 border-t">
+                          <Checkbox
+                            id="include-null-price-prac-services"
+                            checked={includeNullPrice}
+                            onCheckedChange={(c) => setIncludeNullPrice(c === true)}
+                          />
+                          <label htmlFor="include-null-price-prac-services" className="text-sm cursor-pointer">
+                            {t('detail.includePriceUponRequest')}
+                          </label>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  {hasActiveFilters && (
+                    <Button variant="ghost" size="sm" onClick={clearAllFilters} className="h-auto text-xs">
+                      {t('filters.clearAll')}
+                    </Button>
+                  )}
+                </div>
+              ) : undefined}
             />
           </div>
 
