@@ -30,6 +30,15 @@ const ModeIcon = ({ mode }: { mode: string }) => {
 
 export const PractitionerCard = ({ practitioner, hideInstitutionName = false, hideInsurance = false }: PractitionerCardProps) => {
   const { t } = useLanguage();
+  const getModeLabel = (mode: string) => {
+    switch (mode) {
+      case "text": return t('sessionModes.textChat');
+      case "voice": return t('sessionModes.voiceCall');
+      case "video": return t('sessionModes.videoCall');
+      case "offline": return t('sessionModes.inPerson');
+      default: return mode;
+    }
+  };
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -130,12 +139,18 @@ export const PractitionerCard = ({ practitioner, hideInstitutionName = false, hi
                       <span className="truncate">{practitioner.city}</span>
                     </div>
                   ) : <div />}
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    {getUniqueModes().slice(0, 4).map((mode) => (
-                      <ModeIcon key={mode} mode={mode} />
+                </div>
+
+                {getUniqueModes().length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {getUniqueModes().map((mode) => (
+                      <Badge key={mode} variant="outline" className="text-xs flex items-center gap-1">
+                        <ModeIcon mode={mode} />
+                        <span>{getModeLabel(mode)}</span>
+                      </Badge>
                     ))}
                   </div>
-                </div>
+                )}
                 
                 <div className="text-sm font-medium text-primary">
                   {getPriceRange()}
