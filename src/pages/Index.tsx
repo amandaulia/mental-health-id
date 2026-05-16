@@ -548,6 +548,9 @@ const Index = () => {
                 );
               })}
             </div>
+            {filteredActivities.length === 0 && (
+              <p className="text-sm text-muted-foreground">{t('common.noResults') || 'No results match your filters.'}</p>
+            )}
           </div>
         )}
 
@@ -581,6 +584,9 @@ const Index = () => {
                 );
               })}
             </div>
+            {filteredOrganizations.length === 0 && (
+              <p className="text-sm text-muted-foreground">{t('common.noResults') || 'No results match your filters.'}</p>
+            )}
           </div>
         )}
       </div>
