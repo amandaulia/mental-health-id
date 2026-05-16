@@ -9,6 +9,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { featureFlags } from '@/config/features';
+import { ScrollToTop } from '@/components/ScrollToTop';
 
 const Index = lazy(() => import('@/pages/Index'));
 const ProfessionalCounseling = lazy(() => import('@/pages/ProfessionalCounseling'));
@@ -38,6 +39,7 @@ function App() {
       <LanguageProvider>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
+            <ScrollToTop />
             <AppContent />
           </BrowserRouter>
         </QueryClientProvider>
