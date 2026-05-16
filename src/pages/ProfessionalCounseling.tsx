@@ -5,6 +5,7 @@ import { FilterState, UnifiedCardData } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { UnifiedCard } from "@/components/UnifiedCard";
+import { InfiniteCardGrid } from "@/components/InfiniteCardGrid";
 import { usePractitionersWithRelations, useInstitutionsWithRelations } from "@/hooks/useDatabase";
 import { Button } from "@/components/ui/button";
 import { trackSearch, trackFilter } from "@/utils/analytics";
@@ -12,7 +13,7 @@ import { PageSEO } from "@/components/PageSEO";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { sortByCompleteness } from "@/utils/completeness";
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 10;
 
 const canonicalizeInsurance = (insurance: string) => {
   const normalized = insurance?.trim().toLowerCase();
@@ -44,7 +45,6 @@ const hasInsuranceMatch = (resourceInsurance: string[] = [], selectedInsurance: 
 };
 
 const ProfessionalCounseling = () => {
-  const [currentPage, setCurrentPage] = useState(1);
   const { t } = useLanguage();
   const [filters, setFilters] = useState<FilterState>({
     search: "",
@@ -398,25 +398,6 @@ const ProfessionalCounseling = () => {
 
   const isInitialLoading = practitionersLoading || institutionsLoading;
 
-  // Pagination
-  const totalPages = Math.ceil(allResources.length / ITEMS_PER_PAGE);
-  const paginatedResources = useMemo(() => {
-    const startIndex = 0;
-    const endIndex = currentPage * ITEMS_PER_PAGE;
-    return allResources.slice(startIndex, endIndex);
-  }, [allResources, currentPage]);
-
-  const hasMore = currentPage < totalPages;
-
-  const handleLoadMore = () => {
-    setCurrentPage(prev => prev + 1);
-  };
-
-  // Reset to page 1 when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters]);
-
   useEffect(() => {
     if (filters.search) {
       // Track search
@@ -468,63 +449,43 @@ const ProfessionalCounseling = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {paginatedResources.map((resource: any, index: number) => {
-            let cardData: UnifiedCardData;
-
-            if (resource.type === "practitioner") {
-              cardData = {
-                type: "practitioner",
-                id: resource.id.toString(),
-                name: resource.name,
-                institutionName: resource.bureauName,
-                professionTypes: resource.professionTypes,
-                specializations: resource.specializations,
-                insurance: resource.insurance,
-                city: resource.city,
-                modes: resource.modes,
-                priceRange: resource.priceRange,
-                isVerified: resource.verified,
-                image: resource.image,
-              };
-            } else {
-              cardData = {
-                type: "institution",
-                id: resource.id.toString(),
-                name: resource.name,
-                professionTypes: resource.professionTypes,
-                specializations: resource.specializations,
-                insurance: resource.insurance,
-                city: resource.city,
-                modes: resource.modes,
-                priceRange: resource.priceRange,
-                isVerified: resource.verified,
-                image: resource.image,
-              };
-            }
-
-            const linkTo =
-              resource.type === "practitioner"
-                ? `/practitioner/${resource.id}`
-                : `/bureau/${resource.id}`;
-
-            return <UnifiedCard key={`${resource.type}-${resource.id}`} data={cardData} linkTo={linkTo} />;
-          })}
-      </div>
-
-      {/* Load More Button */}
-      {hasMore && !isInitialLoading && (
-        <div className="mt-8 flex justify-center">
-          <Button
-            onClick={handleLoadMore}
-            size="lg"
-            variant="outline"
-            className="min-w-[200px]"
-          >
-            {t('filters.loadMore')} ({paginatedResources.length} / {allResources.length})
-          </Button>
-        </div>
-      )}
+      <InfiniteCardGrid
+        items={allResources}
+        pageSize={ITEMS_PER_PAGE}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        renderItem={(resource: any) => {
+          const cardData: UnifiedCardData = resource.type === "practitioner" ? {
+            type: "practitioner",
+            id: resource.id.toString(),
+            name: resource.name,
+            institutionName: resource.bureauName,
+            professionTypes: resource.professionTypes,
+            specializations: resource.specializations,
+            insurance: resource.insurance,
+            city: resource.city,
+            modes: resource.modes,
+            priceRange: resource.priceRange,
+            isVerified: resource.verified,
+            image: resource.image,
+          } : {
+            type: "institution",
+            id: resource.id.toString(),
+            name: resource.name,
+            professionTypes: resource.professionTypes,
+            specializations: resource.specializations,
+            insurance: resource.insurance,
+            city: resource.city,
+            modes: resource.modes,
+            priceRange: resource.priceRange,
+            isVerified: resource.verified,
+            image: resource.image,
+          };
+          const linkTo = resource.type === "practitioner"
+            ? `/practitioner/${resource.id}`
+            : `/bureau/${resource.id}`;
+          return <UnifiedCard key={`${resource.type}-${resource.id}`} data={cardData} linkTo={linkTo} />;
+        }}
+      />
 
       {allResources.length === 0 && !isInitialLoading && (
         <div className="text-center py-12">
