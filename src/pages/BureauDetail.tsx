@@ -6,6 +6,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft, Clock, Search, Monitor, Settings, X } from "lucide-react";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { BureauHeader } from "@/components/BureauHeader";
@@ -534,6 +535,16 @@ const BureauDetail = () => {
                             <div className="flex justify-between text-xs text-muted-foreground">
                               <span>Rp {priceRange[0].toLocaleString()}</span>
                               <span>Rp {priceRange[1].toLocaleString()}</span>
+                            </div>
+                            <div className="flex items-center space-x-2 pt-2 border-t">
+                              <Checkbox
+                                id="include-null-price-services"
+                                checked={includeNullPrice}
+                                onCheckedChange={(checked) => setIncludeNullPrice(checked === true)}
+                              />
+                              <label htmlFor="include-null-price-services" className="text-sm text-foreground cursor-pointer">
+                                {t('detail.includePriceUponRequest')}
+                              </label>
                             </div>
                           </div>
                         </div>
