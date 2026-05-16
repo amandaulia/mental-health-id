@@ -27,10 +27,13 @@ export function ScrollToTopButton() {
       aria-label="Scroll to top"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       className={cn(
-        "fixed bottom-6 right-4 z-50 h-11 w-11 rounded-full bg-primary text-primary-foreground",
-        "shadow-[0_8px_24px_-6px_hsl(15_50%_30%/0.45)] flex items-center justify-center",
+        "fixed bottom-6 z-50 h-11 w-11 rounded-full bg-primary text-primary-foreground",
+        "shadow-[0_8px_24px_-6px_hsl(15_50%_30%/0.45)] items-center justify-center",
         "transition-transform duration-200 hover:scale-105 active:scale-95",
-        showOnDesktop ? "flex" : "flex md:hidden"
+        // Mobile: bottom-right. Desktop (only on infinite-scroll routes): bottom-center.
+        showOnDesktop
+          ? "right-4 flex md:right-1/2 md:translate-x-1/2"
+          : "right-4 flex md:hidden"
       )}
     >
       <ArrowUp className="h-5 w-5" />
