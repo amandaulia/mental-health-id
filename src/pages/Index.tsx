@@ -357,6 +357,7 @@ const Index = () => {
             onFiltersChange={setFilters}
             institutionNames={institutionNames}
             filterOptions={filterOptions}
+            searchPlaceholder={t('search.placeholderAll')}
           />
         </div>
         <div className="mt-4">
