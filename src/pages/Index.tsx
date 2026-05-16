@@ -166,6 +166,10 @@ const Index = () => {
         if (!filters.locations.some(loc => cityCountry.includes(loc.split(',')[0]))) return false;
       }
 
+      if (filters.professionTypes.length > 0) {
+        if (!resource.professionTypes?.some((pt: any) => filters.professionTypes.includes(pt))) return false;
+      }
+
       return true;
     });
     return sortByCompleteness(filtered);
