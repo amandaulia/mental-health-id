@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { ModeIcon } from "./ModeIcon";
 import { Bureau } from "@/types";
 import { useState } from "react";
-import clinicPlaceholder from "@/assets/clinic-placeholder.png";
+import { getPlaceholderImage } from "@/utils/placeholderImage";
+const clinicPlaceholder = getPlaceholderImage("institution");
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
 
