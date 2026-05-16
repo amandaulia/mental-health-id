@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Clock, Search, Monitor, Settings, X } from "lucide-react";
+import { ArrowLeft, Clock, Search, Monitor, Settings, X, User, Heart, MapPin } from "lucide-react";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { BureauHeader } from "@/components/BureauHeader";
 import { BureauContact } from "@/components/BureauContact";
@@ -751,6 +751,7 @@ const BureauDetail = () => {
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="outline" className={filterBtnClass}>
+                              <User className="h-4 w-4" />
                               <span>{t('filters.profession')}</span>
                               {pracProfessions.length > 0 && <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">{pracProfessions.length}</Badge>}
                             </Button>
@@ -771,6 +772,7 @@ const BureauDetail = () => {
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="outline" className={filterBtnClass}>
+                              <Heart className="h-4 w-4" />
                               <span>{t('filters.specialization')}</span>
                               {pracSpecializations.length > 0 && <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">{pracSpecializations.length}</Badge>}
                             </Button>
@@ -812,6 +814,7 @@ const BureauDetail = () => {
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="outline" className={filterBtnClass}>
+                              <MapPin className="h-4 w-4" />
                               <span>{t('filters.city')}</span>
                               {pracCities.length > 0 && <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">{pracCities.length}</Badge>}
                             </Button>
