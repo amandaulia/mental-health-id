@@ -37,6 +37,7 @@ interface SearchAndFiltersProps {
     maxPrice: number;
   };
   hiddenFilters?: Array<"sessionMode" | "priceRange" | "insurance">;
+  searchPlaceholder?: string;
 }
 
 export const SearchAndFilters = ({
@@ -44,7 +45,8 @@ export const SearchAndFilters = ({
   onFiltersChange,
   institutionNames,
   filterOptions,
-  hiddenFilters = []
+  hiddenFilters = [],
+  searchPlaceholder,
 }: SearchAndFiltersProps) => {
   const [priceRange, setPriceRange] = useState(filters.priceRange);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
