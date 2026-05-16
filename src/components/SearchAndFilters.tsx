@@ -36,13 +36,15 @@ interface SearchAndFiltersProps {
     minPrice: number;
     maxPrice: number;
   };
+  hiddenFilters?: Array<"sessionMode" | "priceRange" | "insurance">;
 }
 
 export const SearchAndFilters = ({
   filters,
   onFiltersChange,
   institutionNames,
-  filterOptions
+  filterOptions,
+  hiddenFilters = []
 }: SearchAndFiltersProps) => {
   const [priceRange, setPriceRange] = useState(filters.priceRange);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -316,6 +318,7 @@ export const SearchAndFilters = ({
             </Popover>
 
             {/* Session Mode Filter */}
+            {!hiddenFilters.includes("sessionMode") && (
             <Popover>
               <PopoverTrigger asChild>
                 <Button 
@@ -352,8 +355,10 @@ export const SearchAndFilters = ({
                 </div>
               </PopoverContent>
             </Popover>
+            )}
 
             {/* Price Range Filter */}
+            {!hiddenFilters.includes("priceRange") && (
             <Popover>
               <PopoverTrigger asChild>
                 <Button 
@@ -425,8 +430,10 @@ export const SearchAndFilters = ({
                 </div>
               </PopoverContent>
             </Popover>
+            )}
 
             {/* Insurance Filter */}
+            {!hiddenFilters.includes("insurance") && (
             <Popover>
               <PopoverTrigger asChild>
                 <Button 
@@ -463,6 +470,7 @@ export const SearchAndFilters = ({
                 </div>
               </PopoverContent>
             </Popover>
+            )}
           </div>
         </div>
       )}
@@ -548,6 +556,7 @@ export const SearchAndFilters = ({
         </Popover>
 
         {/* Session Mode Filter */}
+        {!hiddenFilters.includes("sessionMode") && (
         <Popover>
           <PopoverTrigger asChild>
             <Button 
@@ -585,8 +594,10 @@ export const SearchAndFilters = ({
             </div>
           </PopoverContent>
         </Popover>
+        )}
 
         {/* Price Range Filter */}
+        {!hiddenFilters.includes("priceRange") && (
         <Popover>
           <PopoverTrigger asChild>
             <Button 
@@ -660,8 +671,10 @@ export const SearchAndFilters = ({
             </div>
           </PopoverContent>
         </Popover>
+        )}
 
         {/* Insurance Filter */}
+        {!hiddenFilters.includes("insurance") && (
         <Popover>
           <PopoverTrigger asChild>
             <Button 
@@ -699,6 +712,7 @@ export const SearchAndFilters = ({
             </div>
           </PopoverContent>
         </Popover>
+        )}
 
         {/* Institution Type Filter */}
         {institutionTypeOptions.length > 0 && (

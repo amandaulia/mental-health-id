@@ -99,6 +99,7 @@ const Organizations = () => {
             filters={filters}
             onFiltersChange={setFilters}
             institutionNames={[]}
+            hiddenFilters={["sessionMode", "priceRange", "insurance"]}
           />
         </div>
         <div className="mt-4">
