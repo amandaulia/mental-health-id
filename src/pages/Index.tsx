@@ -18,6 +18,7 @@ import { featureFlags } from "@/config/features";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { sortByCompleteness } from "@/utils/completeness";
 import { PageSEO } from "@/components/PageSEO";
+import { matchProfessional, matchPeer, matchActivity, matchOrganization } from "@/utils/filterResource";
 
 const Index = () => {
   const { t } = useLanguage();
@@ -149,71 +150,30 @@ const Index = () => {
   };
 
   const filteredProfessionalResources = useMemo(() => {
-    const filtered = allProfessionalResources.filter((resource) => {
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase();
-        const matchName = resource.name.toLowerCase().includes(searchLower);
-        const matchInstitution = resource.type === "practitioner" 
-          ? resource.bureauName.toLowerCase().includes(searchLower)
-          : resource.name.toLowerCase().includes(searchLower);
-        const matchCity = resource.city.toLowerCase().includes(searchLower);
-        
-        if (!matchName && !matchInstitution && !matchCity) return false;
-      }
-
-      if (filters.locations.length > 0) {
-        const cityCountry = `${resource.city}, Indonesia`;
-        if (!filters.locations.some(loc => cityCountry.includes(loc.split(',')[0]))) return false;
-      }
-
-      if (filters.professionTypes.length > 0) {
-        if (!resource.professionTypes?.some((pt: any) => filters.professionTypes.includes(pt))) return false;
-      }
-
-      return true;
-    });
+    const filtered = allProfessionalResources.filter((r) => matchProfessional(r, filters));
     return sortByCompleteness(filtered);
   }, [filters, allProfessionalResources]);
 
+  const filteredClinics = useMemo(() => {
+    const filtered = allBureaus.filter((r) => matchProfessional(r, filters));
+    return sortByCompleteness(filtered);
+  }, [filters, allBureaus]);
+
   const filteredPeerCounseling = useMemo(() => {
     if (!dbPeerCounseling) return [];
-    const filtered = dbPeerCounseling.filter((item) => {
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase();
-        if (!item.name.toLowerCase().includes(searchLower)) return false;
-      }
-      return true;
-    });
+    const filtered = (dbPeerCounseling as any[]).filter((item) => matchPeer(item, filters));
     return sortByCompleteness(filtered);
   }, [filters, dbPeerCounseling]);
 
   const filteredActivities = useMemo(() => {
     if (!dbActivities) return [];
-    const filtered = dbActivities.filter((item: any) => {
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase();
-        const orgName = item.activity_organizations?.[0]?.organization?.name || "";
-        const city = item.activity_locations?.[0]?.location?.city || "";
-        if (!item.name.toLowerCase().includes(searchLower) &&
-            !orgName.toLowerCase().includes(searchLower) &&
-            !city.toLowerCase().includes(searchLower)) return false;
-      }
-      return true;
-    });
+    const filtered = (dbActivities as any[]).filter((item) => matchActivity(item, filters));
     return sortByCompleteness(filtered);
   }, [filters, dbActivities]);
 
   const filteredOrganizations = useMemo(() => {
     if (!dbOrganizations) return [];
-    const filtered = dbOrganizations.filter((item: any) => {
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase();
-        const city = item.organization_locations?.[0]?.location?.city || "";
-        if (!item.name.toLowerCase().includes(searchLower) &&
-            !city.toLowerCase().includes(searchLower)) return false;
-      }
-      return true;
-    });
+    const filtered = (dbOrganizations as any[]).filter((item) => matchOrganization(item, filters));
     return sortByCompleteness(filtered);
   }, [filters, dbOrganizations]);
 
@@ -272,6 +232,24 @@ const Index = () => {
       resource.professionTypes?.forEach((pt: string) => professionTypes.add(pt));
     });
 
+    const addCitiesFromLocations = (rows: any[] | undefined, key: string) => {
+      (rows || []).forEach((row: any) => {
+        (row?.[key] || []).forEach((l: any) => {
+          const c = l?.location?.city;
+          if (c) cities.add(`${c.split(',')[0].trim()}, Indonesia`);
+        });
+      });
+    };
+    const addSpecs = (rows: any[] | undefined) => {
+      (rows || []).forEach((row: any) => (row?.specialization || []).forEach((s: string) => specializations.add(s)));
+    };
+    addCitiesFromLocations(dbPeerCounseling as any[], "peer_counseling_locations");
+    addCitiesFromLocations(dbOrganizations as any[], "organization_locations");
+    addCitiesFromLocations(dbActivities as any[], "activity_locations");
+    addSpecs(dbPeerCounseling as any[]);
+    addSpecs(dbOrganizations as any[]);
+    addSpecs(dbActivities as any[]);
+
     return {
       cities: Array.from(cities).sort(),
       specializations: Array.from(specializations).sort(),
@@ -282,7 +260,7 @@ const Index = () => {
       minPrice: 0,
       maxPrice: 2000000
     };
-  }, [allProfessionalResources]);
+  }, [allProfessionalResources, dbPeerCounseling, dbOrganizations, dbActivities]);
 
   const isLoading = practitionersLoading || institutionsLoading || peerCounselingLoading || organizationsLoading || activitiesLoading;
 
@@ -442,6 +420,9 @@ const Index = () => {
               );
             })}
           </div>
+          {filteredProfessionalResources.length === 0 && (
+            <p className="text-sm text-muted-foreground">{t('common.noResults') || 'No results match your filters.'}</p>
+          )}
         </div>
 
         {/* Separator */}
@@ -460,7 +441,7 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {sortByCompleteness(allBureaus).slice(0, 6).map((resource: any) => {
+            {filteredClinics.slice(0, 6).map((resource: any) => {
               const cardData: UnifiedCardData = {
                 type: "institution",
                 id: resource.id,
@@ -481,6 +462,9 @@ const Index = () => {
               );
             })}
           </div>
+          {filteredClinics.length === 0 && (
+            <p className="text-sm text-muted-foreground">{t('common.noResults') || 'No results match your filters.'}</p>
+          )}
         </div>
 
         <Separator className="my-8" />
@@ -564,6 +548,9 @@ const Index = () => {
                 );
               })}
             </div>
+            {filteredActivities.length === 0 && (
+              <p className="text-sm text-muted-foreground">{t('common.noResults') || 'No results match your filters.'}</p>
+            )}
           </div>
         )}
 
@@ -597,6 +584,9 @@ const Index = () => {
                 );
               })}
             </div>
+            {filteredOrganizations.length === 0 && (
+              <p className="text-sm text-muted-foreground">{t('common.noResults') || 'No results match your filters.'}</p>
+            )}
           </div>
         )}
       </div>
