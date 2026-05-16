@@ -10,6 +10,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { featureFlags } from '@/config/features';
 import { ScrollToTop } from '@/components/ScrollToTop';
+import { ScrollToTopButton } from '@/components/ScrollToTopButton';
 
 const Index = lazy(() => import('@/pages/Index'));
 const ProfessionalCounseling = lazy(() => import('@/pages/ProfessionalCounseling'));
@@ -82,6 +83,7 @@ function AppContent() {
       </main>
       <Footer />
       <Toaster />
+      <ScrollToTopButton />
     </div>
   );
 }
