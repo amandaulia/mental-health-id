@@ -65,6 +65,64 @@
         filter: brightness(1.05) !important;
         box-shadow: 0 8px 24px -4px hsla(15, 50%, 40%, 0.55) !important;
       }
+
+      /* Jotform popup chrome — match site aesthetic */
+      [id^="lightbox-"][class*="lightbox-wrapper"],
+      .lightbox-wrapper {
+        background: hsla(25, 30%, 15%, 0.45) !important;
+        backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
+      }
+      [id^="lightbox-"] .lightbox-container,
+      .lightbox-container {
+        border-radius: 16px !important;
+        overflow: hidden !important;
+        background: #ffffff !important;
+        box-shadow: 0 20px 60px -20px hsla(15, 50%, 30%, 0.45) !important;
+        max-width: calc(100vw - 24px) !important;
+        max-height: calc(100vh - 48px) !important;
+        animation: lovable-popup-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+      }
+      [id^="lightbox-"] iframe,
+      .lightbox-container iframe {
+        border: 0 !important;
+        border-radius: 16px !important;
+        background: #ffffff !important;
+      }
+      a.lightbox-close,
+      .lightbox-close,
+      .lightbox-close-button,
+      [class*="lightbox"] [class*="close"] {
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 9999px !important;
+        background: hsl(15, 85%, 55%) !important;
+        color: #ffffff !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 18px !important;
+        line-height: 1 !important;
+        box-shadow: 0 4px 12px -2px hsla(15, 50%, 30%, 0.4) !important;
+        transition: transform 180ms ease, filter 180ms ease !important;
+        top: 10px !important;
+        right: 10px !important;
+      }
+      a.lightbox-close:hover,
+      .lightbox-close:hover,
+      .lightbox-close-button:hover,
+      [class*="lightbox"] [class*="close"]:hover {
+        filter: brightness(1.08) !important;
+        transform: scale(1.06) !important;
+      }
+      @keyframes lovable-popup-in {
+        from { opacity: 0; transform: translate(-50%, -50%) scale(0.96); }
+        to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        [id^="lightbox-"] .lightbox-container,
+        .lightbox-container { animation: none !important; }
+      }
     </style>
   </head>
 

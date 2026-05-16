@@ -1,38 +1,41 @@
 ## Goal
-Restyle the Jotform "Feedback" button so it visually matches the Mental Health Directory design system instead of the default lavender (#ceb0dc) look.
+Make the Jotform feedback popup (the panel that opens when the button is clicked) feel like part of the Mental Health Directory, matching the same warm/rounded/soft-shadow aesthetic as the rest of the site.
 
-## Current state
-In `index.html`, the Jotform widget is initialized with:
-- `background: "#ceb0dc"` (lavender, off-brand)
-- `fontColor: "#FFFFFF"`
-- `buttonSide: "left"`, `buttonAlign: "center"`
-- Default Jotform pill button styling (font, padding, radius)
+## What we can and cannot style
+The popup is a Jotform-injected wrapper (`div` + close button) containing a cross-origin `<iframe>` served from `form.jotform.com`. Because of browser cross-origin rules:
+- We CAN style the **popup chrome** from our `index.html`: outer container, border-radius, drop shadow, backdrop/overlay, close ("×") button, entrance animation, and the iframe's outer frame (border, radius via `overflow:hidden` on the wrapper).
+- We CANNOT restyle the **form content inside the iframe** (fields, labels, submit button) from our code. Those must be changed inside Jotform's own form designer (Form Builder → Form Designer) on the Jotform account that owns form `261353904089057`.
 
-The site's brand uses a warm coral/orange primary (`--primary: 15 85% 55%`) with a primary→lavender gradient (`--gradient-primary`), rounded corners (`--radius: 0.75rem`), and a warm shadow.
+This plan covers everything we can do from the site. I'll also note the small set of in-Jotform tweaks the user can apply later for full consistency.
 
 ## Plan
 
-1. **Update Jotform init options** in `index.html`:
-   - `background: "#EE5B2B"` (matches `--primary` warm coral)
-   - `fontColor: "#FFFFFF"` (keep)
-   - Keep `buttonSide: "left"`, `buttonAlign: "center"`
+1. **Extend the `<style>` block in `index.html`** with selectors for the Jotform popup wrapper. Jotform renders the popup as a fixed container (commonly `.lightbox-wrapper`, `#lightbox-NNN`, `.lightbox-container`, with the iframe inside). I'll target these defensively with attribute/class selectors so a Jotform update is less likely to break the styling:
+   - Outer wrapper / overlay: subtle warm-tinted backdrop (`background: hsla(25, 30%, 15%, 0.45)`) with `backdrop-filter: blur(4px)`.
+   - Popup container: `border-radius: 16px`, `overflow: hidden`, `box-shadow: 0 20px 60px -20px hsla(15, 50%, 30%, 0.45)`, white card background so the iframe's edges blend in.
+   - Iframe: `border: 0`, inherit container radius.
+   - Close button (`a.lightbox-close`, `.lightbox-close-button`, `button[class*="close"]`): restyle to a circular button with the site's primary coral on hover, white "×" glyph, soft shadow; positioned just inside the top-right corner.
+   - Entrance animation: fade + small scale-up (`@keyframes lovable-popup-in`) applied to the container; respect `prefers-reduced-motion`.
 
-2. **Inject a small CSS override** in `index.html` `<head>` targeting the Jotform-injected button (`.feedback-link`, `a.btnX`, or the generated anchor) to align with the design system:
-   - Font family: inherit from site (Inter / system stack used by Tailwind)
-   - Font weight: 500, letter-spacing tightened slightly
-   - Border-radius: `0.75rem 0.75rem 0 0` on the left-side vertical tab so corners match `--radius`
-   - Background: use the brand gradient (`linear-gradient(135deg, hsl(275 45% 79%), hsl(15 85% 55%))`) instead of flat lavender, with `!important` to beat Jotform inline styles
-   - Box-shadow: `0 4px 20px -4px hsl(15 50% 70% / 0.4)` (matches `--shadow-warm`)
-   - Padding bumped to feel consistent with site buttons
-   - Hover: slight scale + shadow lift, smooth `transition`
+2. **Set a max width/height** on the popup wrapper so it sits nicely on mobile (`max-width: calc(100vw - 24px)`, `max-height: calc(100vh - 48px)`). Keep current `width: 700, height: 500` from the init call.
 
-3. **Verify** in the preview that:
-   - Button still opens the feedback iframe
-   - Colors/shape match the site's primary buttons
-   - It remains readable on the warm background and doesn't clash with the header
+3. **Verify in preview** that:
+   - Clicking the Feedback button opens the popup with rounded corners, soft shadow, warm-tinted overlay.
+   - The close button is visible, sits inside the corner, and matches the site palette.
+   - On mobile widths the popup scales down and stays readable.
+   - The button itself (already restyled last turn) still looks correct.
+
+4. **Note for the user (no code change here)** — to match the form fields/submit button inside the iframe (which we cannot reach from CSS), open the form in Jotform → Form Designer and set:
+   - Heading font: same family as our site, color `hsl(25 30% 15%)`.
+   - Submit button: background `#EE5B2B` (our `--primary`), white text, radius 12px.
+   - Page background: `#FAF8F3` (matches our `--background`).
+   - Input border radius: 8–12px.
+   I'll surface this as a short note in the final reply, not in code.
 
 ## Technical notes
-Jotform's feedback button is rendered as an `<a>` injected into `<body>` with an inline `background-color` style and a class like `feedback-link`. The CSS override must use `!important` on `background` and `border-radius` to win against those inline styles. No app-level React/Tailwind changes are needed — all edits stay in `index.html`.
+- All edits live in the existing `<style>` block in `index.html`. We use broad attribute selectors (`[id^="lightbox-"]`, `[class*="lightbox"]`) plus `!important` to beat Jotform's inline styles.
+- No JS changes; the Jotform init call stays as-is.
+- No impact on React/Tailwind code.
 
 ## Files to change
-- `index.html` — update Jotform options + add a small `<style>` block scoped to the feedback button.
+- `index.html` — extend the existing `<style>` block.
