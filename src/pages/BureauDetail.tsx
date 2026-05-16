@@ -448,7 +448,7 @@ const BureauDetail = () => {
                             className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium justify-center flex items-center gap-2"
                           >
                             <Clock className="h-4 w-4" />
-                            <span>{t('filters.duration') || 'Duration'}</span>
+                            <span>Duration</span>
                             {selectedDurations.length > 0 && (
                               <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">
                                 {selectedDurations.length}
@@ -458,7 +458,7 @@ const BureauDetail = () => {
                         </PopoverTrigger>
                         <PopoverContent className="w-80 p-6">
                           <div className="space-y-4">
-                            <h3 className="text-lg font-semibold text-foreground">{t('filters.duration') || 'Duration'}</h3>
+                            <h3 className="text-lg font-semibold text-foreground">Duration</h3>
                             <div className="flex flex-wrap gap-2">
                               {allDurations.map(d => (
                                 <button
