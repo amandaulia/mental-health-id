@@ -533,7 +533,12 @@ export const databaseService = {
 
   // Fetch all peer counseling
   async getPeerCounseling() {
-    const { data, error } = await supabase.from("peer_counseling").select("*");
+    const { data, error } = await supabase
+      .from("peer_counseling")
+      .select(`
+        *,
+        peer_counseling_locations(location:location(*))
+      `);
 
     if (error) {
       console.error("Error fetching peer counseling:", error);
