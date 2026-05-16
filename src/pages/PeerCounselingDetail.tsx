@@ -10,7 +10,8 @@ import { BureauLocations } from "@/components/BureauLocations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageSEO } from "@/components/PageSEO";
 import { databaseService } from "@/services/database";
-import clinicPlaceholder from "@/assets/clinic-placeholder.png";
+import { getPlaceholderImage } from "@/utils/placeholderImage";
+const clinicPlaceholder = getPlaceholderImage("peer-counseling");
 import { safeImageSrc } from "@/utils/imageUrl";
 
 const getContactIcon = (type: string) => {
