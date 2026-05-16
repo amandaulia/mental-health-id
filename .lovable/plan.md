@@ -1,33 +1,22 @@
-## Institution Detail Page — Practitioner Card Fixes
+## Changes to `src/pages/About.tsx` — Contact Details section
 
-### Problems
+**1. Reorganize the two-column layout**
+- **Right column** (was left): Email card + Phone card stacked on top, followed by the Instagram block below them.
+- **Left column** (new): Embedded JotForm "Contact & Inquiry Form".
 
-On `/bureau/:id`, the practitioner cards under the institution show "Independent" as the bureau name, render insurance chips, show "Price not available", and lack a real city — because `getPractitionersByInstitution` only fetches the `practitioner(*)` row without its services, locations, or linked institutions.
+**2. Embed JotForm**
+- Add a React `useEffect` that injects the JotForm embed handler script (`https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js`) once on mount, then calls `window.jotformEmbedHandler(...)`.
+- Render the iframe:
+  - `id="JotFormIFrame-261353904089057"`
+  - `title="Contact & Inquiry Form"`
+  - `src="https://form.jotform.com/261353904089057"`
+  - `allow="geolocation; microphone; camera; fullscreen; payment"`
+  - `style={{ minWidth: '100%', maxWidth: '100%', height: '539px', border: 'none' }}`
+  - `scrolling="no"`, `frameBorder="0"`, `allowTransparency`
+- Wrap in a card/container consistent with existing `bg-muted/50 rounded-lg` styling, with a small heading (e.g., "Send us a message").
 
-### Changes
+**3. No other sections changed.** Existing translations and styling tokens remain.
 
-**1. `src/services/database.ts` — enrich `getPractitionersByInstitution`**
-Extend the select to include the relations needed for cards:
-```
-practitioner(
-  *,
-  practitioner_institutions(institution(*)),
-  practitioner_services(service(*)),
-  practitioner_locations(location(*))
-)
-```
-
-**2. `src/pages/BureauDetail.tsx` — hydrate practitioners with services + city**
-In the `useEffect` that builds `transformedPractitioners`:
-- Map `practitioner_services` to `Service[]` via `transformService`.
-- Read `practitioner_locations[0].location.city` and assign it to the transformed practitioner's `city`.
-- Pass a `variant="institution"` (or `hideInstitutionName` + `hideInsurance`) prop to `<PractitionerCard>` in the institution detail listing.
-
-**3. `src/components/PractitionerCard.tsx` — context-aware card**
-Add optional props:
-- `hideInstitutionName?: boolean` — when true, do not render the `bureauName` line (no "Independent" fallback either).
-- `hideInsurance?: boolean` — when true, omit the insurance badges block.
-- Change the empty-price fallback from `t('common.priceNotAvailable')` to `t('detail.priceUponRequest')` so it matches the Services card wording everywhere (single source of truth).
-
-### Out of scope
-No DB schema changes. Other pages using `PractitionerCard` keep current behavior (props default to `false`); only BureauDetail passes the hide flags.
+### Technical notes
+- Declare `jotformEmbedHandler` on `window` via a small `declare global` to satisfy TS.
+- Guard against double-injecting the script (check by id before appending).

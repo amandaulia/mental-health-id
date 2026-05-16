@@ -1,10 +1,38 @@
+import { useEffect } from "react";
 import { Users, Heart, Palette, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { PageSEO } from "@/components/PageSEO";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+declare global {
+  interface Window {
+    jotformEmbedHandler?: (selector: string, baseUrl: string) => void;
+  }
+}
+
 const About = () => {
   const { t } = useLanguage();
+
+  useEffect(() => {
+    const scriptId = "jotform-embed-handler";
+    const init = () => {
+      window.jotformEmbedHandler?.(
+        "iframe[id='JotFormIFrame-261353904089057']",
+        "https://form.jotform.com/"
+      );
+    };
+    if (document.getElementById(scriptId)) {
+      init();
+      return;
+    }
+    const script = document.createElement("script");
+    script.id = scriptId;
+    script.src = "https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js";
+    script.async = true;
+    script.onload = init;
+    document.body.appendChild(script);
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
       <PageSEO pageKey="about" path="/about" />
@@ -112,6 +140,19 @@ const About = () => {
           <div className="bg-card rounded-xl p-8 card-shadow">
             <h2 className="text-2xl sm:text-3xl font-semibold mb-6 text-primary">{t('about.contact.title')}</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div>
+                <div className="bg-muted/50 rounded-lg p-4 h-full">
+                  <iframe
+                    id="JotFormIFrame-261353904089057"
+                    title="Contact & Inquiry Form"
+                    allow="geolocation; microphone; camera; fullscreen; payment"
+                    src="https://form.jotform.com/261353904089057"
+                    frameBorder={0}
+                    scrolling="no"
+                    style={{ minWidth: "100%", maxWidth: "100%", height: "539px", border: "none" }}
+                  />
+                </div>
+              </div>
               <div className="space-y-6">
                 <div className="flex items-center space-x-4 p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl">📧</div>
@@ -126,28 +167,28 @@ const About = () => {
                   <div className="text-2xl">📞</div>
                   <div>
                     <h3 className="font-semibold">{t('about.contact.phone')}</h3>
-                    <a href="https//wa.me/6281323931225" className="text-primary hover:text-primary-hover">
+                    <a href="https://wa.me/6281323931225" className="text-primary hover:text-primary-hover">
                       +62-813-2393-1225
                     </a>
                   </div>
                 </div>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-4">{t('about.contact.followInstagram')}</h3>
-                <div className="bg-muted/50 rounded-lg p-6 text-center">
-                  <div className="text-4xl mb-4">📱</div>
-                  <p className="text-muted-foreground mb-4">{t('about.contact.instagramDesc')}</p>
-                  <a
-                    href="https://instagram.com/mentalwellnessmovieclub"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center space-x-2 text-primary hover:text-primary-hover font-medium"
-                  >
-                    <span>@mentalwellnessmovieclub</span>
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                    </svg>
-                  </a>
+                <div>
+                  <h3 className="font-semibold mb-4">{t('about.contact.followInstagram')}</h3>
+                  <div className="bg-muted/50 rounded-lg p-6 text-center">
+                    <div className="text-4xl mb-4">📱</div>
+                    <p className="text-muted-foreground mb-4">{t('about.contact.instagramDesc')}</p>
+                    <a
+                      href="https://instagram.com/mentalwellnessmovieclub"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center space-x-2 text-primary hover:text-primary-hover font-medium"
+                    >
+                      <span>@mentalwellnessmovieclub</span>
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                      </svg>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
