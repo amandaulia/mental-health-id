@@ -37,6 +37,7 @@ interface SearchAndFiltersProps {
     maxPrice: number;
   };
   hiddenFilters?: Array<"sessionMode" | "priceRange" | "insurance">;
+  searchPlaceholder?: string;
 }
 
 export const SearchAndFilters = ({
@@ -44,7 +45,8 @@ export const SearchAndFilters = ({
   onFiltersChange,
   institutionNames,
   filterOptions,
-  hiddenFilters = []
+  hiddenFilters = [],
+  searchPlaceholder,
 }: SearchAndFiltersProps) => {
   const [priceRange, setPriceRange] = useState(filters.priceRange);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -228,7 +230,7 @@ export const SearchAndFilters = ({
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3" />
             <Input
               type="text"
-              placeholder={t('search.placeholder')}
+              placeholder={searchPlaceholder ?? t('search.placeholder')}
               value={filters.search}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-7 text-sm rounded-full border-gray-200 h-8"
@@ -763,7 +765,7 @@ export const SearchAndFilters = ({
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3" />
             <Input
               type="text"
-              placeholder={t('search.placeholder')}
+              placeholder={searchPlaceholder ?? t('search.placeholder')}
               value={filters.search}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-7 text-sm rounded-full border-gray-200 h-8"

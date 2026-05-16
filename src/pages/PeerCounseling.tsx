@@ -92,6 +92,7 @@ const PeerCounseling = () => {
             filters={filters}
             onFiltersChange={setFilters}
             institutionNames={[]}
+            searchPlaceholder={t('search.placeholderPeerCounseling')}
           />
         </div>
         <div className="mt-4">

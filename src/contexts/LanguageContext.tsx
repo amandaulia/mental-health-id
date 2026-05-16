@@ -70,6 +70,8 @@ const translations = {
     },
     search: {
       placeholder: "Search by practitioner or clinic name...",
+      placeholderOrganization: "Search based on the name of organization or community",
+      placeholderPeerCounseling: "Search based on the name of peer counselor or support group",
       filters: {
         location: "Location",
         institution: "Institution", 
@@ -482,6 +484,8 @@ const translations = {
     },
     search: {
       placeholder: "Cari berdasarkan nama praktisi atau klinik...",
+      placeholderOrganization: "Cari berdasarkan nama organisasi atau komunitas",
+      placeholderPeerCounseling: "Cari berdasarkan nama konselor sebaya atau kelompok dukungan",
       filters: {
         location: "Lokasi",
         institution: "Institusi",
