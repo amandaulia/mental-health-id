@@ -107,6 +107,7 @@ const translations = {
       more: "more",
       location: "Location",
       durationNotSpecified: "Duration not specified",
+      noResults: "No results found",
     },
     professionTypes: {
       psychologist: "Psychologist",
