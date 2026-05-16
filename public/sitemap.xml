@@ -1291,7 +1291,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://mentalhealthid.lovable.app/peer-counseling/1</loc>
+    <loc>https://mentalhealthid.lovable.app/peer-counseling/14</loc>
     <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -1327,36 +1327,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://mentalhealthid.lovable.app/peer-counseling/13</loc>
-    <lastmod>2026-05-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://mentalhealthid.lovable.app/peer-counseling/14</loc>
-    <lastmod>2026-05-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://mentalhealthid.lovable.app/peer-counseling/15</loc>
-    <lastmod>2026-05-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://mentalhealthid.lovable.app/peer-counseling/16</loc>
-    <lastmod>2026-05-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://mentalhealthid.lovable.app/peer-counseling/17</loc>
-    <lastmod>2026-05-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://mentalhealthid.lovable.app/peer-counseling/18</loc>
     <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
@@ -1375,13 +1345,43 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://mentalhealthid.lovable.app/peer-counseling/4</loc>
+    <loc>https://mentalhealthid.lovable.app/peer-counseling/11</loc>
     <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://mentalhealthid.lovable.app/peer-counseling/11</loc>
+    <loc>https://mentalhealthid.lovable.app/peer-counseling/1</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mentalhealthid.lovable.app/peer-counseling/13</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mentalhealthid.lovable.app/peer-counseling/15</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mentalhealthid.lovable.app/peer-counseling/17</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mentalhealthid.lovable.app/peer-counseling/16</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mentalhealthid.lovable.app/peer-counseling/4</loc>
     <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
