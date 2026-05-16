@@ -154,6 +154,11 @@ const Index = () => {
     return sortByCompleteness(filtered);
   }, [filters, allProfessionalResources]);
 
+  const filteredPractitioners = useMemo(() => {
+    const filtered = allPractitioners.filter((r) => matchProfessional(r, filters));
+    return sortByCompleteness(filtered);
+  }, [filters, allPractitioners]);
+
   const filteredClinics = useMemo(() => {
     const filtered = allBureaus.filter((r) => matchProfessional(r, filters));
     return sortByCompleteness(filtered);
