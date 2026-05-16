@@ -814,6 +814,8 @@ const BureauDetail = () => {
                     )}
                   </CardContent>
               </Card>
+                );
+              })()
             )}
           </div>
 
