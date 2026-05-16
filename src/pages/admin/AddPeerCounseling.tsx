@@ -341,6 +341,11 @@ export default function AddPeerCounseling() {
               value={formData.image}
               onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
             />
+            {/^https?:\/\/[^/]*(fbcdn\.net|cdninstagram\.com)/i.test(formData.image) && (
+              <p className="text-xs text-destructive mt-1">
+                Instagram/Facebook CDN URLs block hotlinking and expire — the image won't display on the site. Please upload the image elsewhere (e.g. Supabase Storage, the organization's own website) and paste that URL instead.
+              </p>
+            )}
           </div>
         </div>
 
