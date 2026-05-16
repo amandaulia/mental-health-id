@@ -94,6 +94,11 @@ const ProfessionalCounseling = () => {
       const locations = practitioner.practitioner_locations?.map((pl: any) => pl.location).filter(Boolean) || [];
       const services = practitioner.practitioner_services?.map((ps: any) => ps.service).filter(Boolean) || [];
       const institutionInsurance = practitioner.practitioner_institutions?.flatMap((pi: any) => pi.institution?.insurance || []) || [];
+      const institutionTypes = Array.from(new Set(
+        (practitioner.practitioner_institutions || [])
+          .map((pi: any) => pi.institution?.institution_type)
+          .filter(Boolean)
+      ));
 
       // Extract cities from locations
       const cities = Array.from(new Set(locations.map((loc: any) => loc.city).filter(Boolean)));
@@ -127,6 +132,7 @@ const ProfessionalCounseling = () => {
         image: practitioner.image,
         professionTypes: practitioner.profession_type || [],
         specializations: practitioner.specialization || [],
+        institutionTypes,
         insurance: normalizeInsuranceList([...institutionInsurance, ...(practitioner.insurance || [])]),
         verified: practitioner.verified || false,
         city: cityString,
@@ -228,6 +234,13 @@ const ProfessionalCounseling = () => {
       }
 
       if (filters.institutions.length > 0 && !filters.institutions.includes(practitioner.bureauName)) {
+        return false;
+      }
+
+      if (
+        filters.institutionTypes.length > 0 &&
+        !filters.institutionTypes.some((t) => practitioner.institutionTypes?.includes(t))
+      ) {
         return false;
       }
 
