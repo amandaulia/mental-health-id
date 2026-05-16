@@ -432,8 +432,8 @@ const ProfessionalCounseling = () => {
       </div>
 
       {/* Search and Browse Section */}
-      <div className="mb-6">
-        <div className="bg-card rounded-lg p-4">
+      <div className="mb-6 sticky top-16 sm:top-20 z-40 -mx-4 px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 py-2">
+        <div className="bg-card rounded-lg p-4 shadow-sm">
           <SearchAndFilters
             filters={filters}
             onFiltersChange={setFilters}
