@@ -1,40 +1,23 @@
-## Goal
-Replace the single `clinic-placeholder.png` fallback with category-specific placeholders hosted in Supabase Storage.
+## 1. Add Profession Type filter (Professional Counseling page)
 
-## 1. New helper: `src/utils/placeholderImage.ts`
-```ts
-const PLACEHOLDERS = {
-  institution: ".../Health%20Institutions.png",
-  practitioner: ".../Practitioners.png",
-  "support-group": ".../Support%20Group.png",
-  "peer-counseling": ".../Peer%20Counseling.png",
-  organization: ".../Organizations.png",
-} as const;
+The `handleProfessionSelect` handler and `filters.professionTypes` state already exist in `SearchAndFilters` — only the UI control is missing.
 
-// Priority order when an entity could resolve to multiple categories
-const PRIORITY = ["institution","practitioner","support-group","peer-counseling","organization"] as const;
+- Extend `SearchAndFiltersProps.filterOptions` with `professionTypes?: string[]`.
+- Add a Profession Type popover button (desktop + mobile) right after the Institution Type filter, conditionally rendered when `professionTypeOptions.length > 0`. Uses the same purple pill styling as other filters and shows an active count badge.
+- Each option button calls `handleProfessionSelect(type)` and displays via `getProfessionLabel(t, type)` so it picks up the relabeling from step 3.
+- In `src/pages/ProfessionalCounseling.tsx`, collect distinct `profession_type` values from `allPractitioners` + `allBureaus` into `filterOptions.professionTypes`.
+- In `src/components/FilterTags.tsx`, route the existing `professionTypes` tag label through `getProfessionLabel(t, value)` so removable chips also show "Counselor".
 
-export type PlaceholderCategory = keyof typeof PLACEHOLDERS;
-export function getPlaceholderImage(category: PlaceholderCategory | PlaceholderCategory[]): string;
-```
-- Accepts a single category or an array; if array, picks the highest-priority match.
-- Returns the Supabase URL.
-- Unknown / unsupported categories (`activity`, `community`) fall back to the existing local `clinic-placeholder.png`.
+## 2. Rename "Therapist" → "Counselor" / "Konselor" (display only)
 
-## 2. Wire it into the UI
-Replace `clinicPlaceholder` usage with `getPlaceholderImage(...)` in:
-- `src/components/UnifiedCard.tsx` — use `data.type` (already one of the categories).
-- `src/pages/OrganizationDetail.tsx` — `"organization"`.
-- `src/pages/PeerCounselingDetail.tsx` — `"peer-counseling"`.
-- `src/components/BureauHeader.tsx` — `"institution"`.
-- `src/pages/PractitionerDetail.tsx` — if it renders an image, use `"practitioner"` (will verify during implementation).
+The DB enum value `Therapist` stays unchanged; only the label shown to users is updated.
 
-Each `<img>` continues to use `safeImageSrc(data.image) || getPlaceholderImage(category)` and the same URL in the `onError` fallback.
+- `src/utils/labels.ts`: add `therapist: "professionTypes.counselor"` to the `KEY` map in `getProfessionLabel` so any raw `"Therapist"` from the DB renders the existing `professionTypes.counselor` translation (`Counselor` / `Konselor`).
+- `src/pages/admin/AddPractitioner.tsx`, `src/pages/admin/AddInstitution.tsx`, `src/components/admin/AddPractitionerForm.tsx`, `src/components/admin/AddInstitutionForm.tsx`, `src/pages/Admin.tsx`: change the option **label** shown in admin dropdowns from `Therapist` to `Counselor` while keeping the submitted value as `"Therapist"` (so existing rows and DB enum keep working). Where the list is a plain `string[]` of identical label+value, switch to `{ label, value }` pairs locally, or render the label via `getProfessionLabel` so EN/ID both pick up.
 
-## 3. Memory
-Update `mem://style/placeholders` to reflect the new per-category placeholders and priority order.
+## 3. No DB migration
 
-## Notes
-- No DB changes.
-- The Supabase `placeholders` bucket is already public.
-- `activity` / `community` card types keep the local placeholder since no asset was provided.
+DB enum stays `Psychologist | Psychiatrist | Therapist`. This is purely a UI relabel + new filter.
+
+## Out of scope
+- Other places that read `profession_type` for analytics, SEO copy, etc. remain untouched — only user-visible profession labels and the new filter change.

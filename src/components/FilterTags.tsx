@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getProfessionLabel } from "@/utils/labels";
 
 interface FilterTagsProps {
   filters: FilterState;
@@ -26,8 +27,8 @@ export const FilterTags = ({ filters, onRemoveFilter, onClearAll }: FilterTagsPr
       tags.push({ type: 'institutions', value: name, label: name })
     );
     
-    filters.professionTypes.forEach(type => 
-      tags.push({ type: 'professionTypes', value: type, label: type })
+    filters.professionTypes.forEach(type =>
+      tags.push({ type: 'professionTypes', value: type, label: getProfessionLabel(t, type) })
     );
     
     filters.specializations.forEach(spec => 

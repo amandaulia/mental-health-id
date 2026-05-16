@@ -21,7 +21,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FilterState, ProfessionType, Specialization, Mode, InsuranceType } from "@/types";
 import { trackFormInteraction } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getSpecializationLabel, getInstitutionTypeLabel as getInstTypeLabelI18n } from "@/utils/labels";
+import { getSpecializationLabel, getInstitutionTypeLabel as getInstTypeLabelI18n, getProfessionLabel } from "@/utils/labels";
 
 interface SearchAndFiltersProps {
   filters: FilterState;
@@ -33,6 +33,7 @@ interface SearchAndFiltersProps {
     sessionModes: string[];
     insuranceTypes: string[];
     institutionTypes?: string[];
+    professionTypes?: string[];
     minPrice: number;
     maxPrice: number;
   };
@@ -60,6 +61,7 @@ export const SearchAndFilters = ({
   const sessionModeOptions = filterOptions?.sessionModes || ["text", "voice", "video", "offline"];
   const insuranceOptions = filterOptions?.insuranceTypes || [];
   const institutionTypeOptions = filterOptions?.institutionTypes || [];
+  const professionTypeOptions = filterOptions?.professionTypes || [];
   // Use prices directly from database without fallbacks
   const minPrice = filterOptions?.minPrice || 0;
   const maxPrice = filterOptions?.maxPrice || 0;
@@ -749,6 +751,47 @@ export const SearchAndFilters = ({
                       }`}
                     >
                       {getInstitutionTypeLabel(type)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        )}
+
+        {/* Profession Type Filter */}
+        {professionTypeOptions.length > 0 && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
+              >
+                <User className="h-3 w-3 mr-1" />
+                {t('filters.profession')}
+                {getActiveFilterCount(filters.professionTypes) > 0 && (
+                  <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
+                    {getActiveFilterCount(filters.professionTypes)}
+                  </Badge>
+                )}
+                <ChevronDown className="h-3 w-3 ml-1" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">{t('filters.profession')}</h3>
+                <div className="flex flex-wrap gap-1">
+                  {professionTypeOptions.map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => handleProfessionSelect(type)}
+                      className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                        filters.professionTypes.includes(type as ProfessionType)
+                          ? 'bg-purple-100 border-purple-300 text-purple-700'
+                          : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                      }`}
+                    >
+                      {getProfessionLabel(t, type)}
                     </button>
                   ))}
                 </div>
