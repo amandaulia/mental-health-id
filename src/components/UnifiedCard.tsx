@@ -7,8 +7,8 @@ import { ModeIcon } from "./ModeIcon";
 import { trackCardClick } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getProfessionLabel, getSpecializationLabel, getModeLabel } from "@/utils/labels";
-import clinicPlaceholder from "@/assets/clinic-placeholder.png";
 import { safeImageSrc } from "@/utils/imageUrl";
+import { getPlaceholderImage } from "@/utils/placeholderImage";
 
 export interface UnifiedCardData {
   type: "practitioner" | "institution" | "peer-counseling" | "support-group" | "activity" | "organization" | "community";
@@ -81,14 +81,16 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-3 flex-1 min-w-0">
                 <div className="w-12 h-12 flex-shrink-0">
+                  {(() => { const ph = getPlaceholderImage(data.type); return (
                   <img 
-                    src={safeImageSrc(data.image) || clinicPlaceholder} 
+                    src={safeImageSrc(data.image) || ph} 
                     alt={`${data.name} logo`}
                     className="w-full h-full object-cover rounded-md"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = clinicPlaceholder;
+                      (e.target as HTMLImageElement).src = ph;
                     }}
                   />
+                  ); })()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
