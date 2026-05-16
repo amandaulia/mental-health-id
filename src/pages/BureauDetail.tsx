@@ -44,6 +44,7 @@ const BureauDetail = () => {
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedModes, setSelectedModes] = useState<Mode[]>([]);
+  const [selectedDurations, setSelectedDurations] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000000]);
   const [minPriceInput, setMinPriceInput] = useState("0");
   const [maxPriceInput, setMaxPriceInput] = useState("2000000");
@@ -208,6 +209,20 @@ const BureauDetail = () => {
     services.flatMap(service => service.modes || [service.mode])
   ));
 
+  // Unique durations (in minutes) from services
+  const allDurations = Array.from(new Set(
+    services.map(s => s.durationMinutes).filter((d): d is number => typeof d === 'number' && d > 0)
+  )).sort((a, b) => a - b);
+
+  const formatDuration = (mins: number) => {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    const parts: string[] = [];
+    if (h > 0) parts.push(`${h}h`);
+    if (m > 0) parts.push(`${m}m`);
+    return parts.join(' ') || `${mins}m`;
+  };
+
   // Filter services based on selected filters
   const filteredServices = services.filter(service => {
     // Filter by search
@@ -222,7 +237,12 @@ const BureauDetail = () => {
       const modeMatch = serviceModes.some(mode => selectedModes.includes(mode));
       if (!modeMatch) return false;
     }
-    
+
+    // Filter by duration
+    if (selectedDurations.length > 0) {
+      if (!service.durationMinutes || !selectedDurations.includes(service.durationMinutes)) return false;
+    }
+
     // Filter by price range — services with no price (null) always pass
     if (service.price == null) return true;
     const priceMatch = service.price >= priceRange[0] && service.price <= priceRange[1];
@@ -276,6 +296,7 @@ const BureauDetail = () => {
 
   const clearAllFilters = () => {
     setSelectedModes([]);
+    setSelectedDurations([]);
     setSearchQuery("");
     const prices = services.map(s => s.price).filter((p): p is number => p != null);
     if (prices.length > 0) {
@@ -288,7 +309,7 @@ const BureauDetail = () => {
   };
 
   const validPrices = services.map(s => s.price).filter((p): p is number => p != null);
-  const hasActiveFilters = selectedModes.length > 0 || searchQuery !== "" ||
+  const hasActiveFilters = selectedModes.length > 0 || selectedDurations.length > 0 || searchQuery !== "" ||
     (validPrices.length > 0 && (priceRange[0] !== Math.min(...validPrices) ||
     priceRange[1] !== Math.max(...validPrices)));
 
@@ -417,6 +438,46 @@ const BureauDetail = () => {
                         </div>
                       </PopoverContent>
                     </Popover>
+
+                    {/* Duration Filter */}
+                    {allDurations.length > 0 && (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium justify-center flex items-center gap-2"
+                          >
+                            <Clock className="h-4 w-4" />
+                            <span>{t('filters.duration') || 'Duration'}</span>
+                            {selectedDurations.length > 0 && (
+                              <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">
+                                {selectedDurations.length}
+                              </Badge>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80 p-6">
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-foreground">{t('filters.duration') || 'Duration'}</h3>
+                            <div className="flex flex-wrap gap-2">
+                              {allDurations.map(d => (
+                                <button
+                                  key={d}
+                                  onClick={() => setSelectedDurations(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d])}
+                                  className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                                    selectedDurations.includes(d)
+                                      ? 'bg-purple-100 border-purple-300 text-purple-700'
+                                      : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                                  }`}
+                                >
+                                  {formatDuration(d)}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    )}
 
                     {/* Price Range Filter */}
                     <Popover>
