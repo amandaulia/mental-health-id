@@ -51,9 +51,6 @@ const About = () => {
                   <div className="flex items-center gap-3 mb-2">
                     <Heart className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-lg">{t('about.info.peer.title')}</h3>
-                    <Badge className="bg-purple-300 text-purple-900 ml-auto flex items-center justify-center">
-                      {t('home.comingSoon')}
-                    </Badge>
                   </div>
                   <p className="text-muted-foreground">{t('about.info.peer.desc')}</p>
                 </div>
@@ -73,9 +70,6 @@ const About = () => {
                   <div className="flex items-center gap-3 mb-2">
                     <Building2 className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-lg">{t('about.info.organizations.title')}</h3>
-                    <Badge className="bg-purple-300 text-purple-900 ml-auto flex items-center justify-center">
-                      {t('home.comingSoon')}
-                    </Badge>
                   </div>
                   <p className="text-muted-foreground">{t('about.info.organizations.desc')}</p>
                 </div>
