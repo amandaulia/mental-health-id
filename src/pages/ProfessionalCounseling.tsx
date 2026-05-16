@@ -354,6 +354,7 @@ const ProfessionalCounseling = () => {
     const sessionModes = new Set<string>();
     const insuranceTypes = new Set<string>();
     const institutionTypes = new Set<string>();
+    const professionTypes = new Set<string>();
 
     [...allPractitioners, ...allBureaus].forEach((resource: any) => {
       if (resource.city && resource.city !== "Unknown City") {
@@ -367,6 +368,7 @@ const ProfessionalCounseling = () => {
         .map((ins: any) => canonicalizeInsurance(ins))
         .filter((ins: any) => ins && ins !== "none")
         .forEach((ins: any) => insuranceTypes.add(ins));
+      (resource.professionTypes || []).forEach((p: any) => p && professionTypes.add(p));
     });
 
     allBureaus.forEach((bureau: any) => {
@@ -379,6 +381,7 @@ const ProfessionalCounseling = () => {
       sessionModes: Array.from(sessionModes).sort(),
       insuranceTypes: Array.from(insuranceTypes).sort(),
       institutionTypes: Array.from(institutionTypes).sort(),
+      professionTypes: Array.from(professionTypes).sort(),
       minPrice: priceRange?.minPrice || 0,
       maxPrice: priceRange?.maxPrice || 0,
     };
