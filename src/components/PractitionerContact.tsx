@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PractitionerContactProps {
   practitioner: Practitioner;
+  fromInstitution?: boolean;
 }
 
 const getContactIcon = (type: string) => {
@@ -29,7 +30,7 @@ const getContactIcon = (type: string) => {
   }
 };
 
-export const PractitionerContact = ({ practitioner }: PractitionerContactProps) => {
+export const PractitionerContact = ({ practitioner, fromInstitution }: PractitionerContactProps) => {
   const { t } = useLanguage();
   return (
     <Card>
@@ -37,6 +38,9 @@ export const PractitionerContact = ({ practitioner }: PractitionerContactProps) 
         <CardTitle>{t('detail.contactInfo')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {fromInstitution && practitioner.contactDetails && practitioner.contactDetails.length > 0 && (
+          <p className="text-xs text-muted-foreground italic">{t('detail.contactViaInstitution')}</p>
+        )}
         {practitioner.contactDetails && practitioner.contactDetails.length > 0 ? (
           practitioner.contactDetails.map((contact, index) => {
             const Icon = getContactIcon(contact.type);

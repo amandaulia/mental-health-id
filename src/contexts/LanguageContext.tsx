@@ -347,6 +347,7 @@ const translations = {
       free: "Free",
       bookNow: "Book Now",
       activeFiltersLabel: "Active filters:",
+      contactViaInstitution: "Contact information shown is from the affiliated institution.",
     },
     filters: {
       activeFilters: "Active Filters",
@@ -781,6 +782,7 @@ const translations = {
       free: "Gratis",
       bookNow: "Pesan Sekarang",
       activeFiltersLabel: "Filter aktif:",
+      contactViaInstitution: "Informasi kontak berasal dari institusi terkait.",
     },
     filters: {
       activeFilters: "Filter Aktif",
