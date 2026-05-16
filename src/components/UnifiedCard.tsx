@@ -86,6 +86,8 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                     src={safeImageSrc(data.image) || ph} 
                     alt={`${data.name} logo`}
                     className="w-full h-full object-cover rounded-md"
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = ph;
                     }}
