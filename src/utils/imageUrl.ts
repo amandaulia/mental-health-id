@@ -21,6 +21,5 @@ export function isHotlinkBlocked(url?: string | null): boolean {
  */
 export function safeImageSrc(url?: string | null): string | undefined {
   if (!url) return undefined;
-  if (isHotlinkBlocked(url)) return undefined;
   return url;
 }
