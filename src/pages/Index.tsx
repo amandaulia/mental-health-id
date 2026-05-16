@@ -18,6 +18,7 @@ import { featureFlags } from "@/config/features";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { sortByCompleteness } from "@/utils/completeness";
 import { PageSEO } from "@/components/PageSEO";
+import { matchProfessional, matchPeer, matchActivity, matchOrganization } from "@/utils/filterResource";
 
 const Index = () => {
   const { t } = useLanguage();
@@ -149,71 +150,30 @@ const Index = () => {
   };
 
   const filteredProfessionalResources = useMemo(() => {
-    const filtered = allProfessionalResources.filter((resource) => {
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase();
-        const matchName = resource.name.toLowerCase().includes(searchLower);
-        const matchInstitution = resource.type === "practitioner" 
-          ? resource.bureauName.toLowerCase().includes(searchLower)
-          : resource.name.toLowerCase().includes(searchLower);
-        const matchCity = resource.city.toLowerCase().includes(searchLower);
-        
-        if (!matchName && !matchInstitution && !matchCity) return false;
-      }
-
-      if (filters.locations.length > 0) {
-        const cityCountry = `${resource.city}, Indonesia`;
-        if (!filters.locations.some(loc => cityCountry.includes(loc.split(',')[0]))) return false;
-      }
-
-      if (filters.professionTypes.length > 0) {
-        if (!resource.professionTypes?.some((pt: any) => filters.professionTypes.includes(pt))) return false;
-      }
-
-      return true;
-    });
+    const filtered = allProfessionalResources.filter((r) => matchProfessional(r, filters));
     return sortByCompleteness(filtered);
   }, [filters, allProfessionalResources]);
 
+  const filteredClinics = useMemo(() => {
+    const filtered = allBureaus.filter((r) => matchProfessional(r, filters));
+    return sortByCompleteness(filtered);
+  }, [filters, allBureaus]);
+
   const filteredPeerCounseling = useMemo(() => {
     if (!dbPeerCounseling) return [];
-    const filtered = dbPeerCounseling.filter((item) => {
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase();
-        if (!item.name.toLowerCase().includes(searchLower)) return false;
-      }
-      return true;
-    });
+    const filtered = (dbPeerCounseling as any[]).filter((item) => matchPeer(item, filters));
     return sortByCompleteness(filtered);
   }, [filters, dbPeerCounseling]);
 
   const filteredActivities = useMemo(() => {
     if (!dbActivities) return [];
-    const filtered = dbActivities.filter((item: any) => {
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase();
-        const orgName = item.activity_organizations?.[0]?.organization?.name || "";
-        const city = item.activity_locations?.[0]?.location?.city || "";
-        if (!item.name.toLowerCase().includes(searchLower) &&
-            !orgName.toLowerCase().includes(searchLower) &&
-            !city.toLowerCase().includes(searchLower)) return false;
-      }
-      return true;
-    });
+    const filtered = (dbActivities as any[]).filter((item) => matchActivity(item, filters));
     return sortByCompleteness(filtered);
   }, [filters, dbActivities]);
 
   const filteredOrganizations = useMemo(() => {
     if (!dbOrganizations) return [];
-    const filtered = dbOrganizations.filter((item: any) => {
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase();
-        const city = item.organization_locations?.[0]?.location?.city || "";
-        if (!item.name.toLowerCase().includes(searchLower) &&
-            !city.toLowerCase().includes(searchLower)) return false;
-      }
-      return true;
-    });
+    const filtered = (dbOrganizations as any[]).filter((item) => matchOrganization(item, filters));
     return sortByCompleteness(filtered);
   }, [filters, dbOrganizations]);
 
