@@ -680,6 +680,7 @@ export type Database = {
       peer_counseling: {
         Row: {
           created_at: string | null
+          description: string | null
           id: number
           image: string | null
           last_updated_at: string | null
@@ -691,6 +692,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          description?: string | null
           id?: number
           image?: string | null
           last_updated_at?: string | null
@@ -704,6 +706,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          description?: string | null
           id?: number
           image?: string | null
           last_updated_at?: string | null
