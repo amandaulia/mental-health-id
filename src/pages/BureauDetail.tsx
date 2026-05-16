@@ -14,7 +14,8 @@ import { ModeIcon } from "@/components/ModeIcon";
 import { useState, useEffect } from "react";
 import { useInstitution, usePractitionersByInstitution, useServicesByInstitution, useContactDetailsByInstitution, useLocationsByInstitution } from "@/hooks/useDatabase";
 import { transformInstitution, transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
-import { Bureau, Practitioner, Service, Mode } from "@/types";
+import { Bureau, Practitioner, Service, Mode, ProfessionType, Specialization } from "@/types";
+import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
 import { BureauLocations } from "@/components/BureauLocations";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -46,6 +47,14 @@ const BureauDetail = () => {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000000]);
   const [minPriceInput, setMinPriceInput] = useState("0");
   const [maxPriceInput, setMaxPriceInput] = useState("2000000");
+
+  // Practitioner filter states
+  const [pracSearch, setPracSearch] = useState("");
+  const [pracProfessions, setPracProfessions] = useState<ProfessionType[]>([]);
+  const [pracSpecializations, setPracSpecializations] = useState<Specialization[]>([]);
+  const [pracModes, setPracModes] = useState<Mode[]>([]);
+  const [pracCities, setPracCities] = useState<string[]>([]);
+  const [pracPriceRange, setPracPriceRange] = useState<[number, number] | null>(null);
   
   const institutionId = parseInt(id || "0");
   const { data: dbInstitution, isLoading: institutionLoading, error: institutionError } = useInstitution(institutionId);
