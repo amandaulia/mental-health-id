@@ -31,6 +31,7 @@ export interface Service {
   name: string;
   institutionName?: string;
   duration: string;
+  durationMinutes?: number;
   price: number | null;
   mode: Mode;
   modes?: Mode[]; // For services with multiple session modes
