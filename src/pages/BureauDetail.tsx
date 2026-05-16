@@ -439,6 +439,46 @@ const BureauDetail = () => {
                       </PopoverContent>
                     </Popover>
 
+                    {/* Duration Filter */}
+                    {allDurations.length > 0 && (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium justify-center flex items-center gap-2"
+                          >
+                            <Clock className="h-4 w-4" />
+                            <span>{t('filters.duration') || 'Duration'}</span>
+                            {selectedDurations.length > 0 && (
+                              <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">
+                                {selectedDurations.length}
+                              </Badge>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80 p-6">
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-foreground">{t('filters.duration') || 'Duration'}</h3>
+                            <div className="flex flex-wrap gap-2">
+                              {allDurations.map(d => (
+                                <button
+                                  key={d}
+                                  onClick={() => setSelectedDurations(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d])}
+                                  className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                                    selectedDurations.includes(d)
+                                      ? 'bg-purple-100 border-purple-300 text-purple-700'
+                                      : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                                  }`}
+                                >
+                                  {formatDuration(d)}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    )}
+
                     {/* Price Range Filter */}
                     <Popover>
                       <PopoverTrigger asChild>
