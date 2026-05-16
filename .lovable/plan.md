@@ -1,14 +1,33 @@
-## Issue
+## Institution Detail Page — Practitioner Card Fixes
 
-The "Professional Counseling" preview on the homepage currently iterates `filteredProfessionalResources`, which is `[...allPractitioners, ...allBureaus]`. That's why institutions sneak into the top 6. The Clinics & Hospitals section already covers bureaus separately via `filteredClinics`.
+### Problems
 
-## Fix
+On `/bureau/:id`, the practitioner cards under the institution show "Independent" as the bureau name, render insurance chips, show "Price not available", and lack a real city — because `getPractitionersByInstitution` only fetches the `practitioner(*)` row without its services, locations, or linked institutions.
 
-In `src/pages/Index.tsx`:
+### Changes
 
-1. Add a new memo `filteredPractitioners` that runs `matchProfessional` over `allPractitioners` only (then `sortByCompleteness`).
-2. Replace the data source of the Professional Counseling section's `.map(...)` from `filteredProfessionalResources.slice(0, 6)` to `filteredPractitioners.slice(0, 6)`. The branching inside the map (practitioner vs institution card) becomes unnecessary — collapse it to the practitioner card shape.
-3. Update the empty-state check below that section to use `filteredPractitioners.length === 0`.
-4. Update the `useEffect` that tracks search totals to use `filteredPractitioners` + `filteredClinics` + peer + activities + organizations so the analytics count reflects what's actually rendered.
+**1. `src/services/database.ts` — enrich `getPractitionersByInstitution`**
+Extend the select to include the relations needed for cards:
+```
+practitioner(
+  *,
+  practitioner_institutions(institution(*)),
+  practitioner_services(service(*)),
+  practitioner_locations(location(*))
+)
+```
 
-No changes needed to filter logic, options, or other sections.
+**2. `src/pages/BureauDetail.tsx` — hydrate practitioners with services + city**
+In the `useEffect` that builds `transformedPractitioners`:
+- Map `practitioner_services` to `Service[]` via `transformService`.
+- Read `practitioner_locations[0].location.city` and assign it to the transformed practitioner's `city`.
+- Pass a `variant="institution"` (or `hideInstitutionName` + `hideInsurance`) prop to `<PractitionerCard>` in the institution detail listing.
+
+**3. `src/components/PractitionerCard.tsx` — context-aware card**
+Add optional props:
+- `hideInstitutionName?: boolean` — when true, do not render the `bureauName` line (no "Independent" fallback either).
+- `hideInsurance?: boolean` — when true, omit the insurance badges block.
+- Change the empty-price fallback from `t('common.priceNotAvailable')` to `t('detail.priceUponRequest')` so it matches the Services card wording everywhere (single source of truth).
+
+### Out of scope
+No DB schema changes. Other pages using `PractitionerCard` keep current behavior (props default to `false`); only BureauDetail passes the hide flags.
