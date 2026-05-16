@@ -556,6 +556,7 @@ export const SearchAndFilters = ({
         </Popover>
 
         {/* Session Mode Filter */}
+        {!hiddenFilters.includes("sessionMode") && (
         <Popover>
           <PopoverTrigger asChild>
             <Button 
@@ -593,8 +594,10 @@ export const SearchAndFilters = ({
             </div>
           </PopoverContent>
         </Popover>
+        )}
 
         {/* Price Range Filter */}
+        {!hiddenFilters.includes("priceRange") && (
         <Popover>
           <PopoverTrigger asChild>
             <Button 
@@ -668,8 +671,10 @@ export const SearchAndFilters = ({
             </div>
           </PopoverContent>
         </Popover>
+        )}
 
         {/* Insurance Filter */}
+        {!hiddenFilters.includes("insurance") && (
         <Popover>
           <PopoverTrigger asChild>
             <Button 
@@ -707,6 +712,7 @@ export const SearchAndFilters = ({
             </div>
           </PopoverContent>
         </Popover>
+        )}
 
         {/* Institution Type Filter */}
         {institutionTypeOptions.length > 0 && (
