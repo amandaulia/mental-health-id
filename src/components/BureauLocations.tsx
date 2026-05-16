@@ -20,17 +20,22 @@ interface BureauLocationsProps {
 
 export const BureauLocations = ({ locations, bureauName = "Bureau" }: BureauLocationsProps) => {
   const { t } = useLanguage();
-  if (locations.length === 0) return null;
+  const hasMeaningfulDetail = (loc: Location) => {
+    const isMissing = (v?: string) => !v || v === "Address not available" || v === "Unknown Province" || v === "Unknown Country";
+    return !!loc.name || !isMissing(loc.address) || !isMissing(loc.province) || !isMissing(loc.country);
+  };
+  const visibleLocations = locations.filter(hasMeaningfulDetail);
+  if (visibleLocations.length === 0) return null;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          {t('detail.locations')} ({locations.length})
+        {t('detail.locations')} ({visibleLocations.length})
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {locations.map((location) => {
+        {visibleLocations.map((location) => {
           const locationQuery = `${location.name || ''} ${location.address}`.trim();
           const encodedQuery = encodeURIComponent(locationQuery);
           const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedQuery}`;
