@@ -1,49 +1,40 @@
-## Why the page is slow
+## Goal
 
-The home page (`src/pages/Index.tsx`) is the main bottleneck. After the initial `practitioners` + `institutions` lists load, it fires **four N+1 query loops** sequentially, one Supabase request per row:
+On the home page (`/`), each result section should initially render only **10 cards**, and load 10 more automatically as the user scrolls near the bottom of that section — instead of rendering 6 fixed previews or all results at once.
 
-- `getServicesByPractitioner` for every practitioner
-- `getServicesByInstitution` for every institution (each of these in turn fires another query against `contact_details`)
-- `getLocationsByPractitioner` for every practitioner
-- `getLocationsByInstitution` for every institution
+## Approach
 
-With ~50 practitioners + ~50 institutions, that's **200+ serial round-trips** before the page is allowed to render anything — the whole page is gated behind `if (isLoading) return <skeleton/>`. The console logs confirm dozens of `Raw services from DB` / `Fetching contact_details` round-trips firing one after another.
+### 1. Reusable `useInfiniteScroll` hook (`src/hooks/useInfiniteScroll.ts`, new)
+- Takes a `ref` (sentinel element) and a callback.
+- Uses `IntersectionObserver` to call the callback when the sentinel enters the viewport.
+- Returns nothing; just wires up observe/disconnect on mount/unmount.
 
-Meanwhile `ProfessionalCounseling.tsx` already uses the optimized `usePractitionersWithRelations` / `useInstitutionsWithRelations` hooks that fetch everything in **2 queries** via Supabase JOINs. We just need to do the same on the home page.
+### 2. Small `InfiniteCardGrid` wrapper (`src/components/InfiniteCardGrid.tsx`, new)
+- Props: `items`, `renderItem`, `pageSize = 10`.
+- Internal state: `visibleCount` (starts at `pageSize`).
+- Renders `items.slice(0, visibleCount)` in the existing 3-column grid.
+- Renders a sentinel `<div>` below the grid; when it intersects, increments `visibleCount` by `pageSize` (capped at `items.length`).
+- Resets `visibleCount` to `pageSize` whenever the `items` reference changes (so filtering starts fresh from the top).
 
-Two smaller wins:
-- `App.tsx` imports every route eagerly, so the initial JS bundle includes admin/detail pages users may never visit.
-- Card images have no `loading="lazy"` or `decoding="async"`, so off-screen logos all decode up front.
+### 3. Update `src/pages/Index.tsx`
+Replace each section's `.slice(0, 6).map(...)` with `<InfiniteCardGrid items={...} renderItem={...} />` for:
+- Professional Counseling (practitioners + bureaus)
+- Clinics & Hospitals
+- Peer Counseling & Support Groups
+- Stress Relief Activities
+- Organizations & Communities
 
-## Plan
+The "View all" button stays — it still links to the dedicated page.
 
-### 1. Rewrite `src/pages/Index.tsx` to use the optimized JOIN hooks
-- Replace `useInstitutions` + the four per-row `useQuery` loops with `usePractitionersWithRelations` and `useInstitutionsWithRelations`.
-- Build `allPractitioners` / `allBureaus` directly from the nested `practitioner_services`, `practitioner_locations`, `institution_services`, `institution_locations` arrays (mirror the transform already used in `ProfessionalCounseling.tsx`).
-- Drop the now-unused per-row imports from `databaseService`.
-- Net effect: ~200 serial requests → 2 parallel requests on first paint.
+### 4. Apply the same pattern to `src/pages/ProfessionalCounseling.tsx`
+That page currently uses a "Load more" button with a 12-per-page counter. Swap it for the same `InfiniteCardGrid` (configured at 10 per page per the user's request) so behavior is consistent across the app. Remove the manual `currentPage` state and Load more button.
 
-### 2. Don't block the whole page on secondary sections
-- Render the hero + search immediately.
-- Only the "Professional", "Peer Counseling", "Activities", "Organizations" result grids should show their own small skeleton while their respective query is still loading, instead of hiding the entire page behind one global `isLoading`.
-
-### 3. Route-level code splitting in `src/App.tsx`
-- Convert each `Route` page import to `React.lazy(() => import(...))` and wrap `<Routes>` in `<Suspense fallback={...}>`.
-- Keeps the initial bundle small; detail/admin pages load on demand.
-
-### 4. Image lazy loading in `src/components/UnifiedCard.tsx`
-- Add `loading="lazy"` and `decoding="async"` to the card `<img>`.
-- Cheap win for pages with many cards.
-
-### 5. (Optional) React Query defaults
-- In `App.tsx`, set `QueryClient` defaults: `staleTime: 5 * 60 * 1000`, `refetchOnWindowFocus: false`. Prevents redundant refetches when users switch tabs.
+Also do the same in `PeerCounseling.tsx`, `Organizations.tsx`, and `StressRelief.tsx` if they currently render full lists, so all list views share the infinite-scroll behavior.
 
 ## Out of scope
-- No DB schema changes.
-- No changes to filtering/sorting behavior or UI design.
-- Admin pages and detail pages are untouched except for being lazy-loaded.
+- No changes to data fetching (still one JOIN query per resource type — pagination is purely client-side over already-loaded data).
+- No changes to filters, search, sorting, or card visuals.
+- No virtualization (overkill for ~hundreds of items; a simple slice + observer is enough).
 
-## Expected impact
-- First meaningful paint on `/` drops from "wait for ~200 round-trips" to "wait for 2 parallel queries" — typically 5–15× faster on a populated DB.
-- Smaller initial JS bundle for first visit.
-- Smoother scroll on pages with many cards.
+## Notes
+- Memory says "12 items/page" — this plan overrides that for the home page to "10 items/page, infinite scroll" per the user's request. Will update the memory after implementation.
