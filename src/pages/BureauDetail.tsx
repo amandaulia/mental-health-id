@@ -296,6 +296,7 @@ const BureauDetail = () => {
 
   const clearAllFilters = () => {
     setSelectedModes([]);
+    setSelectedDurations([]);
     setSearchQuery("");
     const prices = services.map(s => s.price).filter((p): p is number => p != null);
     if (prices.length > 0) {
@@ -308,7 +309,7 @@ const BureauDetail = () => {
   };
 
   const validPrices = services.map(s => s.price).filter((p): p is number => p != null);
-  const hasActiveFilters = selectedModes.length > 0 || searchQuery !== "" ||
+  const hasActiveFilters = selectedModes.length > 0 || selectedDurations.length > 0 || searchQuery !== "" ||
     (validPrices.length > 0 && (priceRange[0] !== Math.min(...validPrices) ||
     priceRange[1] !== Math.max(...validPrices)));
 
