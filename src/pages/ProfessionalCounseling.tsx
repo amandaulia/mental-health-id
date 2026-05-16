@@ -449,63 +449,43 @@ const ProfessionalCounseling = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {paginatedResources.map((resource: any, index: number) => {
-            let cardData: UnifiedCardData;
-
-            if (resource.type === "practitioner") {
-              cardData = {
-                type: "practitioner",
-                id: resource.id.toString(),
-                name: resource.name,
-                institutionName: resource.bureauName,
-                professionTypes: resource.professionTypes,
-                specializations: resource.specializations,
-                insurance: resource.insurance,
-                city: resource.city,
-                modes: resource.modes,
-                priceRange: resource.priceRange,
-                isVerified: resource.verified,
-                image: resource.image,
-              };
-            } else {
-              cardData = {
-                type: "institution",
-                id: resource.id.toString(),
-                name: resource.name,
-                professionTypes: resource.professionTypes,
-                specializations: resource.specializations,
-                insurance: resource.insurance,
-                city: resource.city,
-                modes: resource.modes,
-                priceRange: resource.priceRange,
-                isVerified: resource.verified,
-                image: resource.image,
-              };
-            }
-
-            const linkTo =
-              resource.type === "practitioner"
-                ? `/practitioner/${resource.id}`
-                : `/bureau/${resource.id}`;
-
-            return <UnifiedCard key={`${resource.type}-${resource.id}`} data={cardData} linkTo={linkTo} />;
-          })}
-      </div>
-
-      {/* Load More Button */}
-      {hasMore && !isInitialLoading && (
-        <div className="mt-8 flex justify-center">
-          <Button
-            onClick={handleLoadMore}
-            size="lg"
-            variant="outline"
-            className="min-w-[200px]"
-          >
-            {t('filters.loadMore')} ({paginatedResources.length} / {allResources.length})
-          </Button>
-        </div>
-      )}
+      <InfiniteCardGrid
+        items={allResources}
+        pageSize={ITEMS_PER_PAGE}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        renderItem={(resource: any) => {
+          const cardData: UnifiedCardData = resource.type === "practitioner" ? {
+            type: "practitioner",
+            id: resource.id.toString(),
+            name: resource.name,
+            institutionName: resource.bureauName,
+            professionTypes: resource.professionTypes,
+            specializations: resource.specializations,
+            insurance: resource.insurance,
+            city: resource.city,
+            modes: resource.modes,
+            priceRange: resource.priceRange,
+            isVerified: resource.verified,
+            image: resource.image,
+          } : {
+            type: "institution",
+            id: resource.id.toString(),
+            name: resource.name,
+            professionTypes: resource.professionTypes,
+            specializations: resource.specializations,
+            insurance: resource.insurance,
+            city: resource.city,
+            modes: resource.modes,
+            priceRange: resource.priceRange,
+            isVerified: resource.verified,
+            image: resource.image,
+          };
+          const linkTo = resource.type === "practitioner"
+            ? `/practitioner/${resource.id}`
+            : `/bureau/${resource.id}`;
+          return <UnifiedCard key={`${resource.type}-${resource.id}`} data={cardData} linkTo={linkTo} />;
+        }}
+      />
 
       {allResources.length === 0 && !isInitialLoading && (
         <div className="text-center py-12">
