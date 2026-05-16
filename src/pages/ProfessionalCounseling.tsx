@@ -5,6 +5,7 @@ import { FilterState, UnifiedCardData } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { UnifiedCard } from "@/components/UnifiedCard";
+import { InfiniteCardGrid } from "@/components/InfiniteCardGrid";
 import { usePractitionersWithRelations, useInstitutionsWithRelations } from "@/hooks/useDatabase";
 import { Button } from "@/components/ui/button";
 import { trackSearch, trackFilter } from "@/utils/analytics";
@@ -12,7 +13,7 @@ import { PageSEO } from "@/components/PageSEO";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { sortByCompleteness } from "@/utils/completeness";
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 10;
 
 const canonicalizeInsurance = (insurance: string) => {
   const normalized = insurance?.trim().toLowerCase();
@@ -44,7 +45,6 @@ const hasInsuranceMatch = (resourceInsurance: string[] = [], selectedInsurance: 
 };
 
 const ProfessionalCounseling = () => {
-  const [currentPage, setCurrentPage] = useState(1);
   const { t } = useLanguage();
   const [filters, setFilters] = useState<FilterState>({
     search: "",
@@ -397,25 +397,6 @@ const ProfessionalCounseling = () => {
   }, [filterOptions.minPrice, filterOptions.maxPrice]);
 
   const isInitialLoading = practitionersLoading || institutionsLoading;
-
-  // Pagination
-  const totalPages = Math.ceil(allResources.length / ITEMS_PER_PAGE);
-  const paginatedResources = useMemo(() => {
-    const startIndex = 0;
-    const endIndex = currentPage * ITEMS_PER_PAGE;
-    return allResources.slice(startIndex, endIndex);
-  }, [allResources, currentPage]);
-
-  const hasMore = currentPage < totalPages;
-
-  const handleLoadMore = () => {
-    setCurrentPage(prev => prev + 1);
-  };
-
-  // Reset to page 1 when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters]);
 
   useEffect(() => {
     if (filters.search) {
