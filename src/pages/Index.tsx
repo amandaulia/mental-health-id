@@ -254,6 +254,7 @@ const Index = () => {
     const specializations = new Set<string>();
     const sessionModes = new Set<string>();
     const insuranceTypes = new Set<string>();
+    const professionTypes = new Set<string>();
 
     allProfessionalResources.forEach(resource => {
       if (resource.city && resource.city !== 'Unknown City') {
@@ -264,6 +265,7 @@ const Index = () => {
       resource.specializations.forEach(spec => specializations.add(spec));
       resource.modes.forEach(mode => sessionModes.add(mode));
       resource.insurance.filter(ins => ins !== "none").forEach(ins => insuranceTypes.add(ins));
+      resource.professionTypes?.forEach((pt: string) => professionTypes.add(pt));
     });
 
     return {
@@ -271,6 +273,7 @@ const Index = () => {
       specializations: Array.from(specializations).sort(),
       sessionModes: Array.from(sessionModes).sort(),
       insuranceTypes: Array.from(insuranceTypes).sort(),
+      professionTypes: Array.from(professionTypes).sort(),
       institutionTypes: [],
       minPrice: 0,
       maxPrice: 2000000
