@@ -609,17 +609,210 @@ const BureauDetail = () => {
 
             {/* Practitioners Section */}
             {practitioners.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('detail.ourPractitioners')} ({practitioners.length})</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                    {practitioners.map((practitioner) => (
-                      <PractitionerCard key={practitioner.id} practitioner={practitioner} hideInstitutionName hideInsurance />
-                    ))}
-                  </div>
-                </CardContent>
+              (() => {
+                const allPracProfessions = Array.from(new Set(practitioners.flatMap(p => p.professionTypes))) as ProfessionType[];
+                const allPracSpecs = Array.from(new Set(practitioners.flatMap(p => p.specializations))) as Specialization[];
+                const allPracModes = Array.from(new Set(practitioners.flatMap(p => p.modes))) as Mode[];
+                const allPracCities = Array.from(new Set(
+                  practitioners.map(p => p.city).filter(c => c && c !== "Unknown City")
+                )) as string[];
+                const allPracPrices = practitioners
+                  .flatMap(p => p.services.map(s => s.price))
+                  .filter((p): p is number => p != null);
+                const pracMaxPrice = allPracPrices.length ? Math.max(...allPracPrices) : 0;
+                const pracMinPrice = allPracPrices.length ? Math.min(...allPracPrices) : 0;
+                const effectivePriceRange = pracPriceRange ?? [pracMinPrice, pracMaxPrice];
+
+                const filteredPractitioners = practitioners.filter(p => {
+                  if (pracSearch && !p.name.toLowerCase().includes(pracSearch.toLowerCase())) return false;
+                  if (pracProfessions.length && !p.professionTypes.some(pt => pracProfessions.includes(pt))) return false;
+                  if (pracSpecializations.length && !p.specializations.some(s => pracSpecializations.includes(s))) return false;
+                  if (pracModes.length && !p.modes.some(m => pracModes.includes(m))) return false;
+                  if (pracCities.length && !pracCities.includes(p.city)) return false;
+                  if (pracPriceRange && allPracPrices.length) {
+                    const prices = p.services.map(s => s.price).filter((x): x is number => x != null);
+                    if (prices.length) {
+                      const inRange = prices.some(pr => pr >= pracPriceRange[0] && pr <= pracPriceRange[1]);
+                      if (!inRange) return false;
+                    }
+                  }
+                  return true;
+                });
+
+                const toggle = <T,>(arr: T[], set: (v: T[]) => void, value: T) => {
+                  set(arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value]);
+                };
+
+                const hasPracFilters = pracSearch !== "" || pracProfessions.length > 0 || pracSpecializations.length > 0 || pracModes.length > 0 || pracCities.length > 0 || pracPriceRange !== null;
+
+                const PillButton = ({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) => (
+                  <button
+                    onClick={onClick}
+                    className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                      active ? 'bg-purple-100 border-purple-300 text-purple-700' : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                    }`}
+                  >
+                    {children}
+                  </button>
+                );
+
+                const filterBtnClass = "bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-4 py-2 h-auto text-sm font-medium justify-center flex items-center gap-2";
+
+                return (
+                <Card>
+                  <CardHeader className="space-y-6">
+                    <CardTitle>{t('detail.ourPractitioners')} ({filteredPractitioners.length})</CardTitle>
+                    <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+                      <div className="relative flex-1 min-w-[200px]">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                        <Input
+                          type="text"
+                          placeholder={t('detail.searchByName') || 'Search by name'}
+                          value={pracSearch}
+                          onChange={(e) => setPracSearch(e.target.value)}
+                          className="pl-10 rounded-full border-gray-200"
+                        />
+                      </div>
+
+                      {allPracProfessions.length > 0 && (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" className={filterBtnClass}>
+                              <span>{t('filters.professionType') || 'Profession'}</span>
+                              {pracProfessions.length > 0 && <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">{pracProfessions.length}</Badge>}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80 p-6">
+                            <div className="flex flex-wrap gap-2">
+                              {allPracProfessions.map(pt => (
+                                <PillButton key={pt} active={pracProfessions.includes(pt)} onClick={() => toggle(pracProfessions, setPracProfessions, pt)}>
+                                  {getProfessionLabel(t, pt)}
+                                </PillButton>
+                              ))}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      )}
+
+                      {allPracSpecs.length > 0 && (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" className={filterBtnClass}>
+                              <span>{t('filters.specialization') || 'Specialization'}</span>
+                              {pracSpecializations.length > 0 && <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">{pracSpecializations.length}</Badge>}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80 p-6">
+                            <div className="flex flex-wrap gap-2">
+                              {allPracSpecs.map(sp => (
+                                <PillButton key={sp} active={pracSpecializations.includes(sp)} onClick={() => toggle(pracSpecializations, setPracSpecializations, sp)}>
+                                  {getSpecializationLabel(t, sp)}
+                                </PillButton>
+                              ))}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      )}
+
+                      {allPracModes.length > 0 && (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" className={filterBtnClass}>
+                              <Monitor className="h-4 w-4" />
+                              <span>{t('filters.sessionMode')}</span>
+                              {pracModes.length > 0 && <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">{pracModes.length}</Badge>}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80 p-6">
+                            <div className="flex flex-wrap gap-2">
+                              {allPracModes.map(m => (
+                                <PillButton key={m} active={pracModes.includes(m)} onClick={() => toggle(pracModes, setPracModes, m)}>
+                                  {getModeLabel(m)}
+                                </PillButton>
+                              ))}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      )}
+
+                      {allPracCities.length > 0 && (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" className={filterBtnClass}>
+                              <span>{t('filters.location') || 'Location'}</span>
+                              {pracCities.length > 0 && <Badge className="ml-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">{pracCities.length}</Badge>}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80 p-6">
+                            <div className="flex flex-wrap gap-2">
+                              {allPracCities.map(c => (
+                                <PillButton key={c} active={pracCities.includes(c)} onClick={() => toggle(pracCities, setPracCities, c)}>
+                                  {c}
+                                </PillButton>
+                              ))}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      )}
+
+                      {allPracPrices.length > 0 && (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" className={filterBtnClass}>
+                              <Settings className="h-4 w-4" />
+                              <span>{t('filters.priceRange')}</span>
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80 p-6">
+                            <div className="space-y-4">
+                              <Slider
+                                value={effectivePriceRange}
+                                min={pracMinPrice}
+                                max={pracMaxPrice}
+                                step={25000}
+                                onValueChange={(v) => setPracPriceRange(v as [number, number])}
+                              />
+                              <div className="flex justify-between text-xs text-muted-foreground">
+                                <span>Rp {effectivePriceRange[0].toLocaleString()}</span>
+                                <span>Rp {effectivePriceRange[1].toLocaleString()}</span>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      )}
+
+                      {hasPracFilters && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setPracSearch("");
+                            setPracProfessions([]);
+                            setPracSpecializations([]);
+                            setPracModes([]);
+                            setPracCities([]);
+                            setPracPriceRange(null);
+                          }}
+                          className="text-xs"
+                        >
+                          {t('filters.clearAll')}
+                        </Button>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    {filteredPractitioners.length > 0 ? (
+                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        {filteredPractitioners.map((practitioner) => (
+                          <PractitionerCard key={practitioner.id} practitioner={practitioner} hideInstitutionName hideInsurance />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-muted-foreground">
+                        {t('common.noResults')}
+                      </div>
+                    )}
+                  </CardContent>
               </Card>
             )}
           </div>
