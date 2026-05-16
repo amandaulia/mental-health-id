@@ -11,6 +11,7 @@ interface MultiSelectFieldProps {
   options: string[];
   onChange: (value: string[]) => void;
   placeholder?: string;
+  getOptionLabel?: (option: string) => string;
 }
 
 export function MultiSelectField({ 
@@ -18,7 +19,8 @@ export function MultiSelectField({
   value, 
   options, 
   onChange, 
-  placeholder = "Select options" 
+  placeholder = "Select options",
+  getOptionLabel,
 }: MultiSelectFieldProps) {
   const [selectedValue, setSelectedValue] = useState("");
 
@@ -42,7 +44,7 @@ export function MultiSelectField({
         <div className="flex flex-wrap gap-2">
           {value.map((item) => (
             <Badge key={item} variant="secondary" className="flex items-center gap-2">
-              {item}
+              {getOptionLabel ? getOptionLabel(item) : item}
               <Button
                 variant="ghost"
                 size="sm"
@@ -64,7 +66,7 @@ export function MultiSelectField({
         <SelectContent>
           {options.filter(option => !value.includes(option)).map((option) => (
             <SelectItem key={option} value={option}>
-              {option}
+              {getOptionLabel ? getOptionLabel(option) : option}
             </SelectItem>
           ))}
         </SelectContent>

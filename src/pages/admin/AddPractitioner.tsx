@@ -454,6 +454,7 @@ export default function AddPractitioner() {
             options={professionOptions}
             value={formData.profession_type}
             onChange={(value) => setFormData(prev => ({ ...prev, profession_type: value }))}
+            getOptionLabel={(v) => v === 'Therapist' ? 'Counselor' : v}
           />
         </div>
 

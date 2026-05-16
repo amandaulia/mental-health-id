@@ -98,6 +98,7 @@ export function AddInstitutionForm({ onAdd }: AddInstitutionFormProps) {
       <MultiSelectField
         label="Profession Types"
         options={professionTypes}
+        getOptionLabel={(v) => v === 'Therapist' ? 'Counselor' : v}
         value={formData.profession_type}
         onChange={(value) => setFormData(prev => ({ ...prev, profession_type: value }))}
       />

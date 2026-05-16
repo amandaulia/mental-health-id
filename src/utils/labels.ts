@@ -7,6 +7,7 @@ export function getProfessionLabel(t: (k: string) => string, raw: string): strin
     "art therapist": "professionTypes.artTherapist",
     "music therapist": "professionTypes.musicTherapist",
     counselor: "professionTypes.counselor",
+    therapist: "professionTypes.counselor",
     "social worker": "professionTypes.socialWorker",
   };
   return map[k] ? t(map[k]) : raw;
