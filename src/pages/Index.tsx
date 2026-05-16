@@ -271,13 +271,14 @@ const Index = () => {
 
   useEffect(() => {
     if (filters.search) {
-      const totalResults = filteredProfessionalResources.length + 
-                          filteredPeerCounseling.length + 
-                          filteredActivities.length + 
+      const totalResults = filteredPractitioners.length +
+                          filteredClinics.length +
+                          filteredPeerCounseling.length +
+                          filteredActivities.length +
                           filteredOrganizations.length;
       trackSearch(filters.search, totalResults, 'Home');
     }
-  }, [filters.search, filteredProfessionalResources, filteredPeerCounseling, filteredActivities, filteredOrganizations]);
+  }, [filters.search, filteredPractitioners, filteredClinics, filteredPeerCounseling, filteredActivities, filteredOrganizations]);
 
   if (isLoading) {
     return (
