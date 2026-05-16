@@ -420,6 +420,9 @@ const Index = () => {
               );
             })}
           </div>
+          {filteredProfessionalResources.length === 0 && (
+            <p className="text-sm text-muted-foreground">{t('common.noResults') || 'No results match your filters.'}</p>
+          )}
         </div>
 
         {/* Separator */}
