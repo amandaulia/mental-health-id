@@ -540,6 +540,7 @@ const translations = {
       more: "lainnya",
       location: "Lokasi",
       durationNotSpecified: "Durasi tidak ditentukan",
+      noResults: "Tidak ada hasil ditemukan",
     },
     professionTypes: {
       psychologist: "Psikolog",
