@@ -1,4 +1,4 @@
-
+import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ModeIcon } from "./ModeIcon";
@@ -15,12 +15,16 @@ interface PractitionerServicesProps {
   practitioner: Practitioner;
   formatPrice: (price: number) => string;
   getModeLabel: (mode: string) => string;
+  filtersSlot?: React.ReactNode;
+  titleCount?: number;
 }
 
 export const PractitionerServices = ({ 
   practitioner, 
   formatPrice, 
-  getModeLabel 
+  getModeLabel,
+  filtersSlot,
+  titleCount,
 }: PractitionerServicesProps) => {
   const { t } = useLanguage();
   const handleBookingClick = (serviceName: string, price?: number | null) => {
@@ -33,8 +37,11 @@ export const PractitionerServices = ({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{t('detail.services')}</CardTitle>
+      <CardHeader className="space-y-6">
+        <CardTitle>
+          {t('detail.services')}{typeof titleCount === 'number' ? ` (${titleCount})` : ''}
+        </CardTitle>
+        {filtersSlot}
       </CardHeader>
       <CardContent className="space-y-4">
         {practitioner.services.map((service, index) => (
