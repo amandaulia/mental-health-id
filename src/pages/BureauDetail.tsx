@@ -58,6 +58,7 @@ const BureauDetail = () => {
   const [pracModes, setPracModes] = useState<Mode[]>([]);
   const [pracCities, setPracCities] = useState<string[]>([]);
   const [pracPriceRange, setPracPriceRange] = useState<[number, number] | null>(null);
+  const [pracIncludeNullPrice, setPracIncludeNullPrice] = useState<boolean>(true);
   
   const institutionId = parseInt(id || "0");
   const { data: dbInstitution, isLoading: institutionLoading, error: institutionError } = useInstitution(institutionId);
@@ -704,7 +705,9 @@ const BureauDetail = () => {
                   if (pracCities.length && !pracCities.includes(p.city)) return false;
                   if (pracPriceRange && allPracPrices.length) {
                     const prices = p.services.map(s => s.price).filter((x): x is number => x != null);
-                    if (prices.length) {
+                    if (prices.length === 0) {
+                      if (!pracIncludeNullPrice) return false;
+                    } else {
                       const inRange = prices.some(pr => pr >= pracPriceRange[0] && pr <= pracPriceRange[1]);
                       if (!inRange) return false;
                     }
@@ -851,6 +854,16 @@ const BureauDetail = () => {
                               <div className="flex justify-between text-xs text-muted-foreground">
                                 <span>Rp {effectivePriceRange[0].toLocaleString()}</span>
                                 <span>Rp {effectivePriceRange[1].toLocaleString()}</span>
+                              </div>
+                              <div className="flex items-center space-x-2 pt-2 border-t">
+                                <Checkbox
+                                  id="include-null-price-practitioners"
+                                  checked={pracIncludeNullPrice}
+                                  onCheckedChange={(checked) => setPracIncludeNullPrice(checked === true)}
+                                />
+                                <label htmlFor="include-null-price-practitioners" className="text-sm text-foreground cursor-pointer">
+                                  {t('detail.includePriceUponRequest')}
+                                </label>
                               </div>
                             </div>
                           </PopoverContent>
