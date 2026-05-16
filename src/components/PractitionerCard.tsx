@@ -124,10 +124,12 @@ export const PractitionerCard = ({ practitioner, hideInstitutionName = false, hi
                 </div>
                 
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4 flex-shrink-0" />
-                    <span className="truncate">{practitioner.city}</span>
-                  </div>
+                  {practitioner.city && practitioner.city !== "Unknown City" ? (
+                    <div className="flex items-center gap-1">
+                      <MapPin className="h-4 w-4 flex-shrink-0" />
+                      <span className="truncate">{practitioner.city}</span>
+                    </div>
+                  ) : <div />}
                   <div className="flex items-center gap-1 flex-shrink-0">
                     {getUniqueModes().slice(0, 4).map((mode) => (
                       <ModeIcon key={mode} mode={mode} />
