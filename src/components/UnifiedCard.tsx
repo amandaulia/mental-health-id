@@ -8,6 +8,7 @@ import { trackCardClick } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getProfessionLabel, getSpecializationLabel, getModeLabel } from "@/utils/labels";
 import clinicPlaceholder from "@/assets/clinic-placeholder.png";
+import { safeImageSrc } from "@/utils/imageUrl";
 
 export interface UnifiedCardData {
   type: "practitioner" | "institution" | "peer-counseling" | "support-group" | "activity" | "organization" | "community";
@@ -81,7 +82,7 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
               <div className="flex items-start gap-3 flex-1 min-w-0">
                 <div className="w-12 h-12 flex-shrink-0">
                   <img 
-                    src={data.image || clinicPlaceholder} 
+                    src={safeImageSrc(data.image) || clinicPlaceholder} 
                     alt={`${data.name} logo`}
                     className="w-full h-full object-cover rounded-md"
                     onError={(e) => {
