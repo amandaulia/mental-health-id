@@ -46,6 +46,7 @@ const BureauDetail = () => {
   const [selectedModes, setSelectedModes] = useState<Mode[]>([]);
   const [selectedDurations, setSelectedDurations] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000000]);
+  const [includeNullPrice, setIncludeNullPrice] = useState<boolean>(true);
   const [minPriceInput, setMinPriceInput] = useState("0");
   const [maxPriceInput, setMaxPriceInput] = useState("2000000");
 
@@ -243,8 +244,8 @@ const BureauDetail = () => {
       if (!service.durationMinutes || !selectedDurations.includes(service.durationMinutes)) return false;
     }
 
-    // Filter by price range — services with no price (null) always pass
-    if (service.price == null) return true;
+    // Filter by price range — services with no price respect the include toggle
+    if (service.price == null) return includeNullPrice;
     const priceMatch = service.price >= priceRange[0] && service.price <= priceRange[1];
     return priceMatch;
   });
