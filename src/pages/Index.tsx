@@ -438,7 +438,7 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {sortByCompleteness(allBureaus).slice(0, 6).map((resource: any) => {
+            {filteredClinics.slice(0, 6).map((resource: any) => {
               const cardData: UnifiedCardData = {
                 type: "institution",
                 id: resource.id,
@@ -459,6 +459,9 @@ const Index = () => {
               );
             })}
           </div>
+          {filteredClinics.length === 0 && (
+            <p className="text-sm text-muted-foreground">{t('common.noResults') || 'No results match your filters.'}</p>
+          )}
         </div>
 
         <Separator className="my-8" />
