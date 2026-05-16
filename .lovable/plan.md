@@ -1,19 +1,14 @@
-## Findings — filter scope
+## Issue
 
-Re-verified `src/pages/Index.tsx`. Each section filters across the full dataset before slicing to the top 6:
+The "Professional Counseling" preview on the homepage currently iterates `filteredProfessionalResources`, which is `[...allPractitioners, ...allBureaus]`. That's why institutions sneak into the top 6. The Clinics & Hospitals section already covers bureaus separately via `filteredClinics`.
 
-- Professional: `allProfessionalResources.filter(matchProfessional) → sortByCompleteness → .slice(0, 6)`
-- Clinics: `allBureaus.filter(matchProfessional) → sortByCompleteness → .slice(0, 6)`
-- Peer Counseling: `dbPeerCounseling.filter(matchPeer) → sortByCompleteness → .slice(0, 6)`
-- Activities: `dbActivities.filter(matchActivity) → sortByCompleteness → .slice(0, 6)`
-- Organizations: `dbOrganizations.filter(matchOrganization) → sortByCompleteness → .slice(0, 6)`
+## Fix
 
-So a card that doesn't appear in the default top 6 will surface once a search/filter narrows the set — the preview stays filled with up to 6 matching results pulled from anywhere in the dataset. No code change needed here; I'll just confirm in the response.
+In `src/pages/Index.tsx`:
 
-## Change — search placeholder
+1. Add a new memo `filteredPractitioners` that runs `matchProfessional` over `allPractitioners` only (then `sortByCompleteness`).
+2. Replace the data source of the Professional Counseling section's `.map(...)` from `filteredProfessionalResources.slice(0, 6)` to `filteredPractitioners.slice(0, 6)`. The branching inside the map (practitioner vs institution card) becomes unnecessary — collapse it to the practitioner card shape.
+3. Update the empty-state check below that section to use `filteredPractitioners.length === 0`.
+4. Update the `useEffect` that tracks search totals to use `filteredPractitioners` + `filteredClinics` + peer + activities + organizations so the analytics count reflects what's actually rendered.
 
-`SearchAndFilters` already accepts an optional `searchPlaceholder` prop. `Index.tsx` doesn't pass one, so it falls back to `t('search.placeholder')`.
-
-Update `Index.tsx` to pass `searchPlaceholder={t('search.allResources') || 'Search all resources'}` and add the translation key `search.allResources` to both English ("Search all resources") and Indonesian ("Cari semua sumber") sections of `src/contexts/LanguageContext.tsx`.
-
-That's the entire change.
+No changes needed to filter logic, options, or other sections.
