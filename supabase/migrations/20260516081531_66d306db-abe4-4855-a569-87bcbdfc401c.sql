@@ -1,0 +1,1 @@
+ALTER TABLE public.peer_counseling ADD COLUMN IF NOT EXISTS description text;
