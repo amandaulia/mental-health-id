@@ -44,6 +44,7 @@ const BureauDetail = () => {
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedModes, setSelectedModes] = useState<Mode[]>([]);
+  const [selectedDurations, setSelectedDurations] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000000]);
   const [minPriceInput, setMinPriceInput] = useState("0");
   const [maxPriceInput, setMaxPriceInput] = useState("2000000");
@@ -208,6 +209,20 @@ const BureauDetail = () => {
     services.flatMap(service => service.modes || [service.mode])
   ));
 
+  // Unique durations (in minutes) from services
+  const allDurations = Array.from(new Set(
+    services.map(s => s.durationMinutes).filter((d): d is number => typeof d === 'number' && d > 0)
+  )).sort((a, b) => a - b);
+
+  const formatDuration = (mins: number) => {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    const parts: string[] = [];
+    if (h > 0) parts.push(`${h}h`);
+    if (m > 0) parts.push(`${m}m`);
+    return parts.join(' ') || `${mins}m`;
+  };
+
   // Filter services based on selected filters
   const filteredServices = services.filter(service => {
     // Filter by search
@@ -222,7 +237,12 @@ const BureauDetail = () => {
       const modeMatch = serviceModes.some(mode => selectedModes.includes(mode));
       if (!modeMatch) return false;
     }
-    
+
+    // Filter by duration
+    if (selectedDurations.length > 0) {
+      if (!service.durationMinutes || !selectedDurations.includes(service.durationMinutes)) return false;
+    }
+
     // Filter by price range — services with no price (null) always pass
     if (service.price == null) return true;
     const priceMatch = service.price >= priceRange[0] && service.price <= priceRange[1];
