@@ -6,6 +6,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft, Clock, Search, Monitor, Settings, X } from "lucide-react";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { BureauHeader } from "@/components/BureauHeader";
@@ -46,6 +47,7 @@ const BureauDetail = () => {
   const [selectedModes, setSelectedModes] = useState<Mode[]>([]);
   const [selectedDurations, setSelectedDurations] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000000]);
+  const [includeNullPrice, setIncludeNullPrice] = useState<boolean>(true);
   const [minPriceInput, setMinPriceInput] = useState("0");
   const [maxPriceInput, setMaxPriceInput] = useState("2000000");
 
@@ -243,8 +245,8 @@ const BureauDetail = () => {
       if (!service.durationMinutes || !selectedDurations.includes(service.durationMinutes)) return false;
     }
 
-    // Filter by price range — services with no price (null) always pass
-    if (service.price == null) return true;
+    // Filter by price range — services with no price respect the include toggle
+    if (service.price == null) return includeNullPrice;
     const priceMatch = service.price >= priceRange[0] && service.price <= priceRange[1];
     return priceMatch;
   });
@@ -533,6 +535,16 @@ const BureauDetail = () => {
                             <div className="flex justify-between text-xs text-muted-foreground">
                               <span>Rp {priceRange[0].toLocaleString()}</span>
                               <span>Rp {priceRange[1].toLocaleString()}</span>
+                            </div>
+                            <div className="flex items-center space-x-2 pt-2 border-t">
+                              <Checkbox
+                                id="include-null-price-services"
+                                checked={includeNullPrice}
+                                onCheckedChange={(checked) => setIncludeNullPrice(checked === true)}
+                              />
+                              <label htmlFor="include-null-price-services" className="text-sm text-foreground cursor-pointer">
+                                {t('detail.includePriceUponRequest')}
+                              </label>
                             </div>
                           </div>
                         </div>
