@@ -1,17 +1,32 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Mail, Globe, Instagram, MessageCircle } from "lucide-react";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { ArrowLeft, MapPin, Phone, Mail, Globe, Instagram, MessageCircle, ExternalLink } from "lucide-react";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
+import { BureauLocations } from "@/components/BureauLocations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageSEO } from "@/components/PageSEO";
 import { databaseService } from "@/services/database";
+import clinicPlaceholder from "@/assets/clinic-placeholder.png";
+
+const getContactIcon = (type: string) => {
+  switch (type) {
+    case "WhatsApp": return MessageCircle;
+    case "Phone": return Phone;
+    case "Website": return Globe;
+    case "Instagram": return Instagram;
+    case "Email": return Mail;
+    default: return ExternalLink;
+  }
+};
 
 const PeerCounselingDetail = () => {
   const { t } = useLanguage();
   const { id } = useParams();
+  const navigate = useNavigate();
   const numericId = id ? Number(id) : NaN;
 
   const { data, isLoading } = useQuery({
@@ -42,28 +57,27 @@ const PeerCounselingDetail = () => {
     );
   }
 
-  const locations = (data.peer_counseling_locations || [])
+  const rawLocations = (data.peer_counseling_locations || [])
     .map((rel: any) => rel.location)
     .filter(Boolean);
-  const primaryLocation = locations[0];
+  const locations = rawLocations.map((loc: any) => ({
+    id: String(loc.id),
+    name: loc.name || "",
+    address: loc.address || "",
+    city: loc.city || "",
+    province: loc.province || "",
+    country: loc.country || "",
+  }));
+  const primaryLocation = rawLocations[0];
   const city = primaryLocation?.city || "";
-  const address = primaryLocation?.address || "";
 
   const contacts = (data.peer_counseling_contacts || [])
     .map((rel: any) => rel.contact_details)
     .filter(Boolean);
-  const findContact = (type: string) =>
-    contacts.find((c: any) => c.contact_type?.toLowerCase() === type.toLowerCase());
 
-  const phone = findContact("Phone") || findContact("WhatsApp");
-  const email = findContact("Email");
-  const website = findContact("Website");
-  const instagram = findContact("Instagram");
-
-  const peerType = data.peer_type?.[0] || "Peer Counseling";
-  const specialization = data.specialization?.[0] || "";
-  const fallbackImage =
-    "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=400&fit=crop";
+  const peerTypes: string[] = data.peer_type || [];
+  const specializations: string[] = data.specialization || [];
+  const tags: string[] = data.tags || [];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -71,158 +85,146 @@ const PeerCounselingDetail = () => {
         pageKey="peer"
         path={`/peer-counseling/${id}`}
         title={`${data.name}${city ? " — " + city : ""} | Konseling Sebaya & Kelompok Dukungan`}
-        description={`${data.name}${specialization ? " — " + specialization : ""}. Konseling sebaya dan kelompok dukungan kesehatan mental${city ? " di " + city : ""}.`}
+        description={`${data.name}${specializations[0] ? " — " + specializations[0] : ""}. Konseling sebaya dan kelompok dukungan kesehatan mental${city ? " di " + city : ""}.`}
       />
 
-      <div className="mb-8">
-        <div className="aspect-[21/9] overflow-hidden rounded-xl">
-          <img
-            src={data.image || fallbackImage}
-            alt={data.name}
-            className="w-full h-full object-cover"
-          />
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Breadcrumb + Back */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild><Link to="/">{t("detail.home")}</Link></BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{data.name}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <Button variant="outline" onClick={() => navigate("/peer-counseling")} className="flex items-center gap-2 w-fit">
+            <ArrowLeft className="h-4 w-4" />
+            {t("detail.back")}
+          </Button>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <div>
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <h1 className="text-3xl sm:text-4xl font-bold text-foreground">{data.name}</h1>
-              <Badge variant={peerType === "Peer Counseling" ? "default" : "secondary"} className="shrink-0">
-                {peerType}
-              </Badge>
-            </div>
-            {(city || specialization) && (
-              <div className="flex items-center gap-4 text-muted-foreground mb-6">
-                {city && (
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    <span>{city}</span>
+        {/* Header card */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 flex-1">
+                <img
+                  src={data.image || clinicPlaceholder}
+                  alt={data.name}
+                  className="w-32 h-32 rounded-lg object-cover flex-shrink-0"
+                  onError={(e) => { (e.target as HTMLImageElement).src = clinicPlaceholder; }}
+                />
+                <div className="flex-1 space-y-4">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <h1 className="text-2xl font-bold">{data.name}</h1>
+                    {data.verified && (
+                      <Badge className="bg-green-100 text-green-700">{t("common.verified")}</Badge>
+                    )}
                   </div>
-                )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {peerTypes.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="font-medium text-sm">{t("detail.type") || "Type"}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {peerTypes.map((pt) => (
+                            <Badge key={pt} variant="outline" className="text-xs">{pt}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {city && (
+                      <div className="space-y-2">
+                        <p className="font-medium text-sm">{t("detail.location") || "Location"}</p>
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <MapPin className="h-4 w-4" />
+                          <span>{city}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  {specializations.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="font-medium text-sm">{t("detail.specializations")}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {specializations.map((s) => (
+                          <Badge key={s} variant="outline" className="text-xs">{s}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
+              {data.last_updated_at && (
+                <div className="text-sm text-muted-foreground flex-shrink-0">
+                  {t("detail.lastUpdated")}: {new Date(data.last_updated_at).toLocaleDateString()}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Body grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            {data.description && (
+              <Card>
+                <CardHeader><CardTitle>{t("peerDetail.about")}</CardTitle></CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{data.description}</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {tags.length > 0 && (
+              <Card>
+                <CardHeader><CardTitle>Tags</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <Badge key={tag} variant="secondary">{tag}</Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             )}
           </div>
 
-          {specialization && (
+          <div className="space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle>{t("peerDetail.specialization")}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {(data.specialization || []).map((s: string) => (
-                    <Badge key={s} variant="outline" className="text-base px-4 py-2">
-                      {s}
-                    </Badge>
-                  ))}
-                </div>
+              <CardHeader><CardTitle>{t("detail.contactInfo")}</CardTitle></CardHeader>
+              <CardContent className="space-y-4">
+                {contacts.length === 0 ? (
+                  <p className="text-muted-foreground text-sm">{t("detail.noContactInfo")}</p>
+                ) : contacts.map((c: any, i: number) => {
+                  const Icon = getContactIcon(c.contact_type);
+                  const isPhone = c.contact_type === "Phone";
+                  const href = c.link || (c.contact_type === "Email" ? `mailto:${c.value}` : c.contact_type === "Instagram" ? `https://instagram.com/${(c.value || "").replace(/^@/, "")}` : null);
+                  return (
+                    <div key={i} className="flex items-center gap-3">
+                      <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <div>
+                        <p className="font-medium text-sm">{c.contact_type}</p>
+                        {isPhone ? (
+                          <PhoneCallButton phone={c.value} asLink>{c.value}</PhoneCallButton>
+                        ) : href ? (
+                          <a href={href} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">{c.value}</a>
+                        ) : (
+                          <p className="text-sm">{c.value}</p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </CardContent>
             </Card>
-          )}
 
-          {data.tags && data.tags.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Tags</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {data.tags.map((tag: string) => (
-                    <Badge key={tag} variant="secondary">{tag}</Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("peerDetail.contactInfo")}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {address && (
-                <div className="flex items-center gap-3">
-                  <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <div>
-                    <p className="font-medium text-sm">{t("peerDetail.address")}</p>
-                    <p className="text-sm text-muted-foreground">{address}</p>
-                  </div>
-                </div>
-              )}
-              {phone && (
-                <div className="flex items-center gap-3">
-                  <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <div>
-                    <p className="font-medium text-sm">{t("peerDetail.phone")}</p>
-                    <PhoneCallButton phone={phone.value} asLink />
-                  </div>
-                </div>
-              )}
-              {email && (
-                <div className="flex items-center gap-3">
-                  <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <div>
-                    <p className="font-medium text-sm">{t("peerDetail.email")}</p>
-                    <a href={`mailto:${email.value}`} className="text-sm text-primary hover:text-primary-hover">
-                      {email.value}
-                    </a>
-                  </div>
-                </div>
-              )}
-              {website && (
-                <div className="flex items-center gap-3">
-                  <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <div>
-                    <p className="font-medium text-sm">{t("peerDetail.website")}</p>
-                    <a href={website.link || website.value} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
-                      {t("common.visitWebsite")}
-                    </a>
-                  </div>
-                </div>
-              )}
-              {instagram && (
-                <div className="flex items-center gap-3">
-                  <Instagram className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <div>
-                    <p className="font-medium text-sm">{t("peerDetail.instagram")}</p>
-                    <a href={instagram.link || `https://instagram.com/${instagram.value.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary-hover">
-                      {instagram.value}
-                    </a>
-                  </div>
-                </div>
-              )}
-              {!phone && !email && !website && !instagram && !address && (
-                <p className="text-sm text-muted-foreground">No contact information available.</p>
-              )}
-            </CardContent>
-          </Card>
-
-          {(phone || email || website) && (
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("peerDetail.getSupport")}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {phone && <PhoneCallButton phone={phone.value} className="w-full" />}
-                {email && (
-                  <Button variant="outline" className="w-full" onClick={() => window.open(`mailto:${email.value}`)}>
-                    <Mail className="h-4 w-4 mr-2" />
-                    {t("peerDetail.email")}
-                  </Button>
-                )}
-                {website && (
-                  <Button variant="outline" className="w-full" onClick={() => window.open(website.link || website.value, "_blank", "noopener,noreferrer")}>
-                    <Globe className="h-4 w-4 mr-2" />
-                    {t("common.visitWebsite")}
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          )}
+            <BureauLocations locations={locations} bureauName={data.name} />
+          </div>
         </div>
       </div>
     </div>
