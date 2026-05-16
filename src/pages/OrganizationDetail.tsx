@@ -11,6 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { PageSEO } from "@/components/PageSEO";
 import { databaseService } from "@/services/database";
 import clinicPlaceholder from "@/assets/clinic-placeholder.png";
+import { safeImageSrc } from "@/utils/imageUrl";
 
 const getContactIcon = (type: string) => {
   switch (type) {
@@ -122,7 +123,7 @@ const OrganizationDetail = () => {
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 <img
-                  src={data.image || clinicPlaceholder}
+                  src={safeImageSrc(data.image) || clinicPlaceholder}
                   alt={data.name}
                   className="w-32 h-32 rounded-lg object-cover flex-shrink-0"
                   onError={(e) => { (e.target as HTMLImageElement).src = clinicPlaceholder; }}
