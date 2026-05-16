@@ -389,8 +389,8 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredProfessionalResources.slice(0, 6).map((resource: any) => {
-              const cardData: UnifiedCardData = resource.type === "practitioner" ? {
+            {filteredPractitioners.slice(0, 6).map((resource: any) => {
+              const cardData: UnifiedCardData = {
                 type: "practitioner",
                 id: resource.id,
                 image: resource.image,
@@ -403,30 +403,15 @@ const Index = () => {
                 priceRange: resource.priceRange,
                 insurance: resource.insurance,
                 modes: resource.modes,
-              } : {
-                type: "institution",
-                id: resource.id,
-                image: resource.image,
-                name: resource.name,
-                city: resource.city,
-                isVerified: resource.isVerified,
-                professionTypes: resource.professionTypes,
-                specializations: resource.specializations,
-                priceRange: resource.priceRange,
-                insurance: resource.insurance,
-                modes: resource.modes,
               };
               return (
-                <div key={`${resource.type}-${resource.id}`} className="transform transition-all duration-200 hover:scale-[1.02]">
-                  <UnifiedCard
-                    data={cardData}
-                    linkTo={resource.type === "practitioner" ? `/practitioner/${resource.id}` : `/bureau/${resource.id}`}
-                  />
+                <div key={`practitioner-${resource.id}`} className="transform transition-all duration-200 hover:scale-[1.02]">
+                  <UnifiedCard data={cardData} linkTo={`/practitioner/${resource.id}`} />
                 </div>
               );
             })}
           </div>
-          {filteredProfessionalResources.length === 0 && (
+          {filteredPractitioners.length === 0 && (
             <p className="text-sm text-muted-foreground">{t('common.noResults') || 'No results match your filters.'}</p>
           )}
         </div>
