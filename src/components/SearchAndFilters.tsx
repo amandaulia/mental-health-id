@@ -21,7 +21,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FilterState, ProfessionType, Specialization, Mode, InsuranceType } from "@/types";
 import { trackFormInteraction } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getSpecializationLabel, getInstitutionTypeLabel as getInstTypeLabelI18n } from "@/utils/labels";
+import { getSpecializationLabel, getInstitutionTypeLabel as getInstTypeLabelI18n, getProfessionLabel } from "@/utils/labels";
 
 interface SearchAndFiltersProps {
   filters: FilterState;
@@ -33,6 +33,7 @@ interface SearchAndFiltersProps {
     sessionModes: string[];
     insuranceTypes: string[];
     institutionTypes?: string[];
+    professionTypes?: string[];
     minPrice: number;
     maxPrice: number;
   };
@@ -60,6 +61,7 @@ export const SearchAndFilters = ({
   const sessionModeOptions = filterOptions?.sessionModes || ["text", "voice", "video", "offline"];
   const insuranceOptions = filterOptions?.insuranceTypes || [];
   const institutionTypeOptions = filterOptions?.institutionTypes || [];
+  const professionTypeOptions = filterOptions?.professionTypes || [];
   // Use prices directly from database without fallbacks
   const minPrice = filterOptions?.minPrice || 0;
   const maxPrice = filterOptions?.maxPrice || 0;
