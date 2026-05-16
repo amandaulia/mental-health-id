@@ -172,6 +172,7 @@ const translations = {
     pages: {
       professional: {
         heroTitleA: "Professional Counseling",
+        heroTitleB: "",
         heroLead:
           "Find licensed mental health professionals — psychologists, psychiatrists, and clinics ready to support you. 🌟",
       },
@@ -601,20 +602,24 @@ const translations = {
     pages: {
       professional: {
         heroTitleA: "Konseling Profesional",
+        heroTitleB: "",
         heroLead:
           "Temukan psikolog, psikiater, dan klinik kesehatan mental berlisensi di Indonesia yang siap mendampingi Anda. 🌟",
       },
       peer: {
         heroTitleA: "Konseling Sebaya & Kelompok",
+        heroTitleB: "",
         heroLead:
           "Terhubung dengan konselor sebaya dan kelompok dukungan untuk berbagi pengalaman dan saling menguatkan. 🤝",
       },
       stressRelief: {
         heroTitleA: "Aktivitas",
+        heroTitleB: "",
         heroLead: "Jelajahi berbagai aktivitas untuk membantu Anda rileks dan mengurangi stres.",
       },
       organizations: {
         heroTitleA: "Organisasi & Komunitas",
+        heroTitleB: "",
         heroLead:
           "Temukan organisasi dan komunitas kesehatan mental di sekitar Anda. Terhubung dengan orang lain dan dapatkan dukungan untuk berkembang. 🤝",
       },
