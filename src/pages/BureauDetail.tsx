@@ -102,7 +102,23 @@ const BureauDetail = () => {
 
   useEffect(() => {
     if (dbPractitioners) {
-      const transformedPractitioners = dbPractitioners.map(p => transformPractitioner(p));
+      const transformedPractitioners = dbPractitioners.map((p: any) => {
+        const pracServices = (p.practitioner_services || [])
+          .map((ps: any) => ps.service)
+          .filter(Boolean)
+          .map((s: any) => transformService(s));
+        const transformed = transformPractitioner(p, pracServices);
+        const firstLocation = p.practitioner_locations?.find((pl: any) => pl?.location)?.location;
+        if (firstLocation?.city) {
+          transformed.city = firstLocation.city;
+          transformed.location = {
+            address: firstLocation.address || transformed.location.address,
+            lat: 0,
+            lng: 0,
+          };
+        }
+        return transformed;
+      });
       setPractitioners(transformedPractitioners);
     }
   }, [dbPractitioners]);
@@ -591,7 +607,7 @@ const BureauDetail = () => {
                 <CardContent>
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                     {practitioners.map((practitioner) => (
-                      <PractitionerCard key={practitioner.id} practitioner={practitioner} />
+                      <PractitionerCard key={practitioner.id} practitioner={practitioner} hideInstitutionName hideInsurance />
                     ))}
                   </div>
                 </CardContent>
