@@ -232,6 +232,24 @@ const Index = () => {
       resource.professionTypes?.forEach((pt: string) => professionTypes.add(pt));
     });
 
+    const addCitiesFromLocations = (rows: any[] | undefined, key: string) => {
+      (rows || []).forEach((row: any) => {
+        (row?.[key] || []).forEach((l: any) => {
+          const c = l?.location?.city;
+          if (c) cities.add(`${c.split(',')[0].trim()}, Indonesia`);
+        });
+      });
+    };
+    const addSpecs = (rows: any[] | undefined) => {
+      (rows || []).forEach((row: any) => (row?.specialization || []).forEach((s: string) => specializations.add(s)));
+    };
+    addCitiesFromLocations(dbPeerCounseling as any[], "peer_counseling_locations");
+    addCitiesFromLocations(dbOrganizations as any[], "organization_locations");
+    addCitiesFromLocations(dbActivities as any[], "activity_locations");
+    addSpecs(dbPeerCounseling as any[]);
+    addSpecs(dbOrganizations as any[]);
+    addSpecs(dbActivities as any[]);
+
     return {
       cities: Array.from(cities).sort(),
       specializations: Array.from(specializations).sort(),
@@ -242,7 +260,7 @@ const Index = () => {
       minPrice: 0,
       maxPrice: 2000000
     };
-  }, [allProfessionalResources]);
+  }, [allProfessionalResources, dbPeerCounseling, dbOrganizations, dbActivities]);
 
   const isLoading = practitionersLoading || institutionsLoading || peerCounselingLoading || organizationsLoading || activitiesLoading;
 
