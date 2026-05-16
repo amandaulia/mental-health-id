@@ -1,14 +1,12 @@
 import { useState, useMemo, useEffect } from "react";
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
 import { FilterState, Practitioner, Bureau } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { Separator } from "@/components/ui/separator";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
-import { usePractitionersWithRelations, useInstitutions, usePeerCounseling, useOrganizations, useActivities } from "@/hooks/useDatabase";
+import { usePractitionersWithRelations, useInstitutionsWithRelations, usePeerCounseling, useOrganizations, useActivities } from "@/hooks/useDatabase";
 import { transformPractitioner, transformInstitution, transformService } from "@/utils/dataTransform";
-import { databaseService } from "@/services/database";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight } from "lucide-react";
@@ -42,106 +40,24 @@ const Index = () => {
   });
 
   const { toast } = useToast();
+  // OPTIMIZED: Fetch everything via Supabase JOINs (2 queries instead of 200+)
   const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitionersWithRelations();
-  const { data: dbInstitutions, isLoading: institutionsLoading } = useInstitutions();
+  const { data: dbInstitutions, isLoading: institutionsLoading } = useInstitutionsWithRelations();
   const { data: dbPeerCounseling, isLoading: peerCounselingLoading } = usePeerCounseling();
   const { data: dbOrganizations, isLoading: organizationsLoading } = useOrganizations();
   const { data: dbActivities, isLoading: activitiesLoading } = useActivities();
 
-  // Fetch services for all practitioners
-  const { data: allPractitionerServices, isLoading: practitionerServicesLoading } = useQuery({
-    queryKey: ['all-practitioner-services', dbPractitioners?.map(p => p.id)],
-    queryFn: async () => {
-      if (!dbPractitioners) return {};
-      const servicesMap: Record<number, any[]> = {};
-      
-      for (const practitioner of dbPractitioners) {
-        try {
-          const services = await databaseService.getServicesByPractitioner(practitioner.id);
-          servicesMap[practitioner.id] = services || [];
-        } catch (error) {
-          console.error(`Error fetching services for practitioner ${practitioner.id}:`, error);
-          servicesMap[practitioner.id] = [];
-        }
-      }
-      
-      return servicesMap;
-    },
-    enabled: !!dbPractitioners && dbPractitioners.length > 0,
-  });
-
-  // Fetch services for all institutions
-  const { data: allInstitutionServices, isLoading: institutionServicesLoading } = useQuery({
-    queryKey: ['all-institution-services', dbInstitutions?.map(i => i.id)],
-    queryFn: async () => {
-      if (!dbInstitutions) return {};
-      const servicesMap: Record<number, any[]> = {};
-      
-      for (const institution of dbInstitutions) {
-        try {
-          const services = await databaseService.getServicesByInstitution(institution.id);
-          servicesMap[institution.id] = services || [];
-        } catch (error) {
-          console.error(`Error fetching services for institution ${institution.id}:`, error);
-          servicesMap[institution.id] = [];
-        }
-      }
-      
-      return servicesMap;
-    },
-    enabled: !!dbInstitutions && dbInstitutions.length > 0,
-  });
-
-  // Fetch locations for practitioners
-  const { data: practitionerLocations, isLoading: practitionerLocationsLoading } = useQuery({
-    queryKey: ['all-practitioner-locations', dbPractitioners?.map(p => p.id)],
-    queryFn: async () => {
-      if (!dbPractitioners) return {};
-      const locationsMap: Record<number, any[]> = {};
-      
-      for (const practitioner of dbPractitioners) {
-        try {
-          const locations = await databaseService.getLocationsByPractitioner(practitioner.id);
-          locationsMap[practitioner.id] = locations || [];
-        } catch (error) {
-          console.error(`Error fetching locations for practitioner ${practitioner.id}:`, error);
-          locationsMap[practitioner.id] = [];
-        }
-      }
-      
-      return locationsMap;
-    },
-    enabled: !!dbPractitioners && dbPractitioners.length > 0,
-  });
-
-  // Fetch locations for institutions
-  const { data: institutionLocations, isLoading: institutionLocationsLoading } = useQuery({
-    queryKey: ['all-institution-locations', dbInstitutions?.map(i => i.id)],
-    queryFn: async () => {
-      if (!dbInstitutions) return {};
-      const locationsMap: Record<number, any[]> = {};
-      
-      for (const institution of dbInstitutions) {
-        try {
-          const locations = await databaseService.getLocationsByInstitution(institution.id);
-          locationsMap[institution.id] = locations || [];
-        } catch (error) {
-          console.error(`Error fetching locations for institution ${institution.id}:`, error);
-          locationsMap[institution.id] = [];
-        }
-      }
-      
-      return locationsMap;
-    },
-    enabled: !!dbInstitutions && dbInstitutions.length > 0,
-  });
-
   const allPractitioners = useMemo<Practitioner[]>(() => {
-    if (!dbPractitioners || !allPractitionerServices || !practitionerLocations) return [];
+    if (!dbPractitioners) return [];
 
-    return dbPractitioners.map(dbPractitioner => {
-      const services = (allPractitionerServices[dbPractitioner.id] || []).map(transformService);
-      const locations = practitionerLocations[dbPractitioner.id] || [];
+    return dbPractitioners.map((dbPractitioner: any) => {
+      const services = (dbPractitioner.practitioner_services || [])
+        .map((ps: any) => ps.service)
+        .filter(Boolean)
+        .map(transformService);
+      const locations = (dbPractitioner.practitioner_locations || [])
+        .map((pl: any) => pl.location)
+        .filter(Boolean);
       const primaryLocation = locations[0];
 
       return {
@@ -154,14 +70,19 @@ const Index = () => {
         }
       };
     });
-  }, [dbPractitioners, allPractitionerServices, practitionerLocations, t]);
+  }, [dbPractitioners, t]);
 
   const allBureaus = useMemo<Bureau[]>(() => {
-    if (!dbInstitutions || !allInstitutionServices || !institutionLocations) return [];
+    if (!dbInstitutions) return [];
 
-    return dbInstitutions.map(dbInstitution => {
-      const services = (allInstitutionServices[dbInstitution.id] || []).map(transformService);
-      const locations = institutionLocations[dbInstitution.id] || [];
+    return dbInstitutions.map((dbInstitution: any) => {
+      const services = (dbInstitution.institution_services || [])
+        .map((is: any) => is.service)
+        .filter(Boolean)
+        .map(transformService);
+      const locations = (dbInstitution.institution_locations || [])
+        .map((il: any) => il.location)
+        .filter(Boolean);
       const primaryLocation = locations[0];
 
       return {
@@ -174,7 +95,7 @@ const Index = () => {
         }
       };
     });
-  }, [dbInstitutions, allInstitutionServices, institutionLocations, t]);
+  }, [dbInstitutions, t]);
 
   const allProfessionalResources = useMemo(() => {
     return [...allPractitioners, ...allBureaus];
@@ -356,7 +277,7 @@ const Index = () => {
     };
   }, [allProfessionalResources]);
 
-  const isLoading = practitionersLoading || institutionsLoading || practitionerServicesLoading || institutionServicesLoading || practitionerLocationsLoading || institutionLocationsLoading || peerCounselingLoading || organizationsLoading || activitiesLoading;
+  const isLoading = practitionersLoading || institutionsLoading || peerCounselingLoading || organizationsLoading || activitiesLoading;
 
   useEffect(() => {
     if (filters.search) {
