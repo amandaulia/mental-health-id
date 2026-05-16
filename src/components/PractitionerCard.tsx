@@ -9,6 +9,8 @@ import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
 
 interface PractitionerCardProps {
   practitioner: Practitioner;
+  hideInstitutionName?: boolean;
+  hideInsurance?: boolean;
 }
 
 const ModeIcon = ({ mode }: { mode: string }) => {
@@ -26,7 +28,7 @@ const ModeIcon = ({ mode }: { mode: string }) => {
   }
 };
 
-export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
+export const PractitionerCard = ({ practitioner, hideInstitutionName = false, hideInsurance = false }: PractitionerCardProps) => {
   const { t } = useLanguage();
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -38,7 +40,7 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
 
   const getPriceRange = () => {
     const prices = practitioner.services.map(s => s.price).filter(Boolean);
-    if (prices.length === 0) return t('common.priceNotAvailable');
+    if (prices.length === 0) return t('detail.priceUponRequest');
     if (prices.length === 1) return formatPrice(prices[0]);
     
     const minPrice = Math.min(...prices);
@@ -89,7 +91,9 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground mb-1 truncate">{practitioner.bureauName}</p>
+                  {!hideInstitutionName && (
+                    <p className="text-sm text-muted-foreground mb-1 truncate">{practitioner.bureauName}</p>
+                  )}
                   <div className="flex flex-wrap gap-1 mb-2">
                     {practitioner.professionTypes.slice(0, 2).map((type) => (
                       <Badge key={type} variant="outline" className="text-xs">
@@ -135,7 +139,7 @@ export const PractitionerCard = ({ practitioner }: PractitionerCardProps) => {
                   {getPriceRange()}
                 </div>
 
-                {getUniqueInsurance().length > 0 && (
+                {!hideInsurance && getUniqueInsurance().length > 0 && (
                   <div className="flex flex-wrap gap-1">
                     {getUniqueInsurance().map((insurance) => (
                       <Badge 
