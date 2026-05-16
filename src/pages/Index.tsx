@@ -5,7 +5,6 @@ import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { Separator } from "@/components/ui/separator";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
-import { InfiniteCardGrid } from "@/components/InfiniteCardGrid";
 import { usePractitionersWithRelations, useInstitutionsWithRelations, usePeerCounseling, useOrganizations, useActivities } from "@/hooks/useDatabase";
 import { transformPractitioner, transformInstitution, transformService } from "@/utils/dataTransform";
 import { Button } from "@/components/ui/button";
@@ -398,9 +397,8 @@ const Index = () => {
               </a>
             </Button>
           </div>
-          <InfiniteCardGrid
-            items={filteredProfessionalResources}
-            renderItem={(resource: any) => {
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredProfessionalResources.slice(0, 6).map((resource: any) => {
               const cardData: UnifiedCardData = resource.type === "practitioner" ? {
                 type: "practitioner",
                 id: resource.id,
@@ -435,8 +433,8 @@ const Index = () => {
                   />
                 </div>
               );
-            }}
-          />
+            })}
+          </div>
         </div>
 
         {/* Separator */}
@@ -454,9 +452,8 @@ const Index = () => {
               </a>
             </Button>
           </div>
-          <InfiniteCardGrid
-            items={sortByCompleteness(allBureaus)}
-            renderItem={(resource: any) => {
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {sortByCompleteness(allBureaus).slice(0, 6).map((resource: any) => {
               const cardData: UnifiedCardData = {
                 type: "institution",
                 id: resource.id,
@@ -475,8 +472,8 @@ const Index = () => {
                   <UnifiedCard data={cardData} linkTo={`/bureau/${resource.id}`} />
                 </div>
               );
-            }}
-          />
+            })}
+          </div>
         </div>
 
         <Separator className="my-8" />
@@ -504,9 +501,8 @@ const Index = () => {
             )}
           </div>
           {filteredPeerCounseling.length > 0 && (
-            <InfiniteCardGrid
-              items={filteredPeerCounseling}
-              renderItem={(item: any, index: number) => {
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredPeerCounseling.slice(0, 6).map((item: any, index: number) => {
                 const cardData: UnifiedCardData = {
                   type: "peer-counseling",
                   id: item.id.toString(),
@@ -523,8 +519,8 @@ const Index = () => {
                     <UnifiedCard data={cardData} linkTo={`/peer-counseling/${item.id}`} />
                   </div>
                 );
-              }}
-            />
+              })}
+            </div>
           )}
         </div>
         )}
@@ -542,9 +538,8 @@ const Index = () => {
                 </a>
               </Button>
             </div>
-            <InfiniteCardGrid
-              items={filteredActivities}
-              renderItem={(item: any, index: number) => {
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredActivities.slice(0, 6).map((item: any, index: number) => {
                 const cardData: UnifiedCardData = {
                   type: "activity",
                   id: item.id.toString(),
@@ -560,8 +555,8 @@ const Index = () => {
                     <UnifiedCard data={cardData} />
                   </div>
                 );
-              }}
-            />
+              })}
+            </div>
           </div>
         )}
 
@@ -578,9 +573,8 @@ const Index = () => {
                 </a>
               </Button>
             </div>
-            <InfiniteCardGrid
-              items={filteredOrganizations}
-              renderItem={(item: any, index: number) => {
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredOrganizations.slice(0, 6).map((item: any, index: number) => {
                 const cardData: UnifiedCardData = {
                   type: "organization",
                   id: item.id.toString(),
@@ -594,8 +588,8 @@ const Index = () => {
                     <UnifiedCard data={cardData} linkTo={`/organizations/${item.id}`} />
                   </div>
                 );
-              }}
-            />
+              })}
+            </div>
           </div>
         )}
       </div>
