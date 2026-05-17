@@ -50,7 +50,8 @@ export default function AddPractitioner() {
   const professionOptions = [
     'Psychologist',
     'Psychiatrist', 
-    'Therapist'
+    'Therapist',
+    'Counselor'
   ];
 
   const specializationOptions = [
