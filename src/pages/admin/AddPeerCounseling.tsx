@@ -424,6 +424,18 @@ export default function AddPeerCounseling() {
             AddNewComponent={AddContactForm}
             onAddNew={handleAddNewContact}
           />
+
+          <RelationshipDropdown
+            label="Counselors (Practitioners)"
+            options={availableData.practitioners}
+            selected={relations.practitioners}
+            onSelect={(p) => setRelations(prev => ({ ...prev, practitioners: [...prev.practitioners, p] }))}
+            onRemove={(p) => setRelations(prev => ({ ...prev, practitioners: prev.practitioners.filter(x => x.id !== p.id) }))}
+            renderOption={(p) => p.name}
+            renderSelected={(p) => p.name}
+            AddNewComponent={AddPractitionerForm}
+            onAddNew={handleAddNewPractitioner}
+          />
         </div>
 
         <div className="flex items-center space-x-2">
