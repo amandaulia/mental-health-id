@@ -92,6 +92,7 @@ const PeerCounseling = () => {
             filters={filters}
             onFiltersChange={setFilters}
             institutionNames={[]}
+            hiddenFilters={["insurance"]}
             searchPlaceholder={t('search.placeholderPeerCounseling')}
           />
         </div>
