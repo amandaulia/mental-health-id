@@ -205,6 +205,32 @@ const PeerCounselingDetail = () => {
           </CardContent>
         </Card>
 
+        {/* Hosted By — directly under the name */}
+        {institutions.length > 0 && (
+          <Card>
+            <CardHeader><CardTitle>{t("peerDetail.hostedBy") || "Hosted By"}</CardTitle></CardHeader>
+            <CardContent>
+              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
+                {institutions.map((inst: any) => (
+                  <Link
+                    key={inst.id}
+                    to={`/bureau/${inst.id}`}
+                    className="flex items-center gap-3 p-2 rounded-md hover:bg-muted transition-colors"
+                  >
+                    <img
+                      src={safeImageSrc(inst.image) || clinicPlaceholder}
+                      alt={inst.name}
+                      className="w-12 h-12 rounded-md object-cover flex-shrink-0"
+                      onError={(e) => { (e.target as HTMLImageElement).src = clinicPlaceholder; }}
+                    />
+                    <span className="font-medium text-sm">{inst.name}</span>
+                  </Link>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Body grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
@@ -230,8 +256,7 @@ const PeerCounselingDetail = () => {
               </Card>
             )}
 
-            {institutions.length > 0 && (
-              <Card>
+            {counselors.length > 0 && (
               <Card>
                 <CardHeader><CardTitle>{t("peerDetail.counselors") || "Counselors"}</CardTitle></CardHeader>
                 <CardContent>
