@@ -108,6 +108,7 @@ const translations = {
       location: "Location",
       durationNotSpecified: "Duration not specified",
       noResults: "No results found",
+      loading: "Loading...",
     },
     professionTypes: {
       psychologist: "Psychologist",
@@ -440,6 +441,11 @@ const translations = {
       instagram: "Instagram",
       getSupport: "Get Support",
       followDesc: "Follow us for updates and mental health tips",
+      hostedBy: "Hosted By",
+      counselors: "Counselors",
+      searchCounselors: "Search counselors by name",
+      filterBySpecialization: "Filter by specialization",
+      allSpecializations: "All specializations",
     },
     organizationDetail: {
       notFound: "Organization Not Found",
