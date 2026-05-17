@@ -41,29 +41,7 @@ const PeerCounselingDetail = () => {
     enabled: !isNaN(numericId),
   });
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8 text-center text-muted-foreground">
-        {t("common.loading") || "Loading..."}
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t("peerDetail.notFound")}</h1>
-          <p className="text-muted-foreground">{t("peerDetail.notFoundDesc")}</p>
-          <Button onClick={() => window.history.back()} className="mt-4">
-            {t("common.goBack")}
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  const rawLocations = (data.peer_counseling_locations || [])
+  const rawLocations = (data?.peer_counseling_locations || [])
     .map((rel: any) => rel.location)
     .filter(Boolean);
   const locations = rawLocations.map((loc: any) => ({
@@ -77,15 +55,15 @@ const PeerCounselingDetail = () => {
   const primaryLocation = rawLocations[0];
   const city = primaryLocation?.city || "";
 
-  const contacts = (data.peer_counseling_contacts || [])
+  const contacts = (data?.peer_counseling_contacts || [])
     .map((rel: any) => rel.contact_details)
     .filter(Boolean);
 
-  const institutions = (data.institution_peer_counselings || [])
+  const institutions = (data?.institution_peer_counselings || [])
     .map((rel: any) => rel.institution)
     .filter(Boolean);
 
-  const counselors = (data.practitioner_peer_counselings || [])
+  const counselors = (data?.practitioner_peer_counselings || [])
     .map((rel: any) => rel.practitioner)
     .filter((p: any) => Array.isArray(p?.profession_type) && p.profession_type.includes("Counselor"));
 
@@ -112,9 +90,31 @@ const PeerCounselingDetail = () => {
     });
   }, [counselors, counselorSearch, counselorSpec]);
 
-  const peerTypes: string[] = data.peer_type || [];
-  const specializations: string[] = data.specialization || [];
-  const tags: string[] = data.tags || [];
+  const peerTypes: string[] = data?.peer_type || [];
+  const specializations: string[] = data?.specialization || [];
+  const tags: string[] = data?.tags || [];
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center text-muted-foreground">
+        {t("common.loading") || "Loading..."}
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">{t("peerDetail.notFound")}</h1>
+          <p className="text-muted-foreground">{t("peerDetail.notFoundDesc")}</p>
+          <Button onClick={() => window.history.back()} className="mt-4">
+            {t("common.goBack")}
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
