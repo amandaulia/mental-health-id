@@ -882,6 +882,11 @@ const translations = {
       instagram: "Instagram",
       getSupport: "Dapatkan Dukungan",
       followDesc: "Ikuti kami untuk pembaruan dan tips kesehatan mental",
+      hostedBy: "Diselenggarakan Oleh",
+      counselors: "Konselor",
+      searchCounselors: "Cari konselor berdasarkan nama",
+      filterBySpecialization: "Filter berdasarkan spesialisasi",
+      allSpecializations: "Semua spesialisasi",
     },
     organizationDetail: {
       notFound: "Organisasi Tidak Ditemukan",
