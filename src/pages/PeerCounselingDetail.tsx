@@ -12,6 +12,7 @@ import { PageSEO } from "@/components/PageSEO";
 import { databaseService } from "@/services/database";
 import { getPlaceholderImage } from "@/utils/placeholderImage";
 const clinicPlaceholder = getPlaceholderImage("peer-counseling");
+const practitionerPlaceholder = getPlaceholderImage("practitioner");
 import { safeImageSrc } from "@/utils/imageUrl";
 
 const getContactIcon = (type: string) => {
@@ -76,6 +77,14 @@ const PeerCounselingDetail = () => {
   const contacts = (data.peer_counseling_contacts || [])
     .map((rel: any) => rel.contact_details)
     .filter(Boolean);
+
+  const institutions = (data.institution_peer_counselings || [])
+    .map((rel: any) => rel.institution)
+    .filter(Boolean);
+
+  const counselors = (data.practitioner_peer_counselings || [])
+    .map((rel: any) => rel.practitioner)
+    .filter((p: any) => Array.isArray(p?.profession_type) && p.profession_type.includes("Counselor"));
 
   const peerTypes: string[] = data.peer_type || [];
   const specializations: string[] = data.specialization || [];
@@ -189,6 +198,65 @@ const PeerCounselingDetail = () => {
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag) => (
                       <Badge key={tag} variant="secondary">{tag}</Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {institutions.length > 0 && (
+              <Card>
+                <CardHeader><CardTitle>{t("peerDetail.hostedBy") || "Hosted By"}</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="flex flex-col gap-3">
+                    {institutions.map((inst: any) => (
+                      <Link
+                        key={inst.id}
+                        to={`/bureau/${inst.id}`}
+                        className="flex items-center gap-3 p-2 rounded-md hover:bg-muted transition-colors"
+                      >
+                        <img
+                          src={safeImageSrc(inst.image) || clinicPlaceholder}
+                          alt={inst.name}
+                          className="w-12 h-12 rounded-md object-cover flex-shrink-0"
+                          onError={(e) => { (e.target as HTMLImageElement).src = clinicPlaceholder; }}
+                        />
+                        <span className="font-medium text-sm">{inst.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {counselors.length > 0 && (
+              <Card>
+                <CardHeader><CardTitle>{t("peerDetail.counselors") || "Counselors"}</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {counselors.map((p: any) => (
+                      <Link
+                        key={p.id}
+                        to={`/practitioner/${p.id}`}
+                        className="flex items-start gap-3 p-3 rounded-md border hover:bg-muted transition-colors"
+                      >
+                        <img
+                          src={safeImageSrc(p.image) || practitionerPlaceholder}
+                          alt={p.name}
+                          className="w-14 h-14 rounded-full object-cover flex-shrink-0"
+                          onError={(e) => { (e.target as HTMLImageElement).src = practitionerPlaceholder; }}
+                        />
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <p className="font-medium text-sm truncate">{p.name}</p>
+                          {Array.isArray(p.specialization) && p.specialization.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {p.specialization.slice(0, 3).map((s: string) => (
+                                <Badge key={s} variant="outline" className="text-xs">{s}</Badge>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </Link>
                     ))}
                   </div>
                 </CardContent>

@@ -560,7 +560,9 @@ export const databaseService = {
       .select(`
         *,
         peer_counseling_locations(location:location(*)),
-        peer_counseling_contacts(contact_details:contact_id(*))
+        peer_counseling_contacts(contact_details:contact_id(*)),
+        institution_peer_counselings(institution:institution_id(*)),
+        practitioner_peer_counselings(practitioner:practitioner_id(*))
       `)
       .eq("id", id)
       .maybeSingle();
