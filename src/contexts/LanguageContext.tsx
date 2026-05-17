@@ -108,6 +108,7 @@ const translations = {
       location: "Location",
       durationNotSpecified: "Duration not specified",
       noResults: "No results found",
+      loading: "Loading...",
     },
     professionTypes: {
       psychologist: "Psychologist",
@@ -440,6 +441,11 @@ const translations = {
       instagram: "Instagram",
       getSupport: "Get Support",
       followDesc: "Follow us for updates and mental health tips",
+      hostedBy: "Hosted By",
+      counselors: "Counselors",
+      searchCounselors: "Search counselors by name",
+      filterBySpecialization: "Filter by specialization",
+      allSpecializations: "All specializations",
     },
     organizationDetail: {
       notFound: "Organization Not Found",
@@ -542,6 +548,7 @@ const translations = {
       location: "Lokasi",
       durationNotSpecified: "Durasi tidak ditentukan",
       noResults: "Tidak ada hasil ditemukan",
+      loading: "Memuat...",
     },
     professionTypes: {
       psychologist: "Psikolog",
@@ -875,6 +882,11 @@ const translations = {
       instagram: "Instagram",
       getSupport: "Dapatkan Dukungan",
       followDesc: "Ikuti kami untuk pembaruan dan tips kesehatan mental",
+      hostedBy: "Diselenggarakan Oleh",
+      counselors: "Konselor",
+      searchCounselors: "Cari konselor berdasarkan nama",
+      filterBySpecialization: "Filter berdasarkan spesialisasi",
+      allSpecializations: "Semua spesialisasi",
     },
     organizationDetail: {
       notFound: "Organisasi Tidak Ditemukan",

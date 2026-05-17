@@ -1,10 +1,13 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { ArrowLeft, MapPin, Phone, Mail, Globe, Instagram, MessageCircle, ExternalLink } from "lucide-react";
+import { ArrowLeft, MapPin, Phone, Mail, Globe, Instagram, MessageCircle, ExternalLink, Search } from "lucide-react";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
 import { BureauLocations } from "@/components/BureauLocations";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -85,6 +88,29 @@ const PeerCounselingDetail = () => {
   const counselors = (data.practitioner_peer_counselings || [])
     .map((rel: any) => rel.practitioner)
     .filter((p: any) => Array.isArray(p?.profession_type) && p.profession_type.includes("Counselor"));
+
+  const [counselorSearch, setCounselorSearch] = useState("");
+  const [counselorSpec, setCounselorSpec] = useState<string>("all");
+
+  const counselorSpecOptions = useMemo(() => {
+    const set = new Set<string>();
+    counselors.forEach((p: any) => {
+      (p.specialization || []).forEach((s: string) => s && set.add(s));
+    });
+    return Array.from(set).sort();
+  }, [counselors]);
+
+  const filteredCounselors = useMemo(() => {
+    const q = counselorSearch.trim().toLowerCase();
+    return counselors.filter((p: any) => {
+      if (q && !(p.name || "").toLowerCase().includes(q)) return false;
+      if (counselorSpec !== "all") {
+        const specs: string[] = Array.isArray(p.specialization) ? p.specialization : [];
+        if (!specs.includes(counselorSpec)) return false;
+      }
+      return true;
+    });
+  }, [counselors, counselorSearch, counselorSpec]);
 
   const peerTypes: string[] = data.peer_type || [];
   const specializations: string[] = data.specialization || [];
@@ -179,6 +205,32 @@ const PeerCounselingDetail = () => {
           </CardContent>
         </Card>
 
+        {/* Hosted By — directly under the name */}
+        {institutions.length > 0 && (
+          <Card>
+            <CardHeader><CardTitle>{t("peerDetail.hostedBy") || "Hosted By"}</CardTitle></CardHeader>
+            <CardContent>
+              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
+                {institutions.map((inst: any) => (
+                  <Link
+                    key={inst.id}
+                    to={`/bureau/${inst.id}`}
+                    className="flex items-center gap-3 p-2 rounded-md hover:bg-muted transition-colors"
+                  >
+                    <img
+                      src={safeImageSrc(inst.image) || clinicPlaceholder}
+                      alt={inst.name}
+                      className="w-12 h-12 rounded-md object-cover flex-shrink-0"
+                      onError={(e) => { (e.target as HTMLImageElement).src = clinicPlaceholder; }}
+                    />
+                    <span className="font-medium text-sm">{inst.name}</span>
+                  </Link>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Body grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
@@ -204,37 +256,36 @@ const PeerCounselingDetail = () => {
               </Card>
             )}
 
-            {institutions.length > 0 && (
-              <Card>
-                <CardHeader><CardTitle>{t("peerDetail.hostedBy") || "Hosted By"}</CardTitle></CardHeader>
-                <CardContent>
-                  <div className="flex flex-col gap-3">
-                    {institutions.map((inst: any) => (
-                      <Link
-                        key={inst.id}
-                        to={`/bureau/${inst.id}`}
-                        className="flex items-center gap-3 p-2 rounded-md hover:bg-muted transition-colors"
-                      >
-                        <img
-                          src={safeImageSrc(inst.image) || clinicPlaceholder}
-                          alt={inst.name}
-                          className="w-12 h-12 rounded-md object-cover flex-shrink-0"
-                          onError={(e) => { (e.target as HTMLImageElement).src = clinicPlaceholder; }}
-                        />
-                        <span className="font-medium text-sm">{inst.name}</span>
-                      </Link>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
             {counselors.length > 0 && (
               <Card>
                 <CardHeader><CardTitle>{t("peerDetail.counselors") || "Counselors"}</CardTitle></CardHeader>
                 <CardContent>
+                  <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        value={counselorSearch}
+                        onChange={(e) => setCounselorSearch(e.target.value)}
+                        placeholder={t("peerDetail.searchCounselors") || "Search counselors by name"}
+                        className="pl-9"
+                      />
+                    </div>
+                    {counselorSpecOptions.length > 0 && (
+                      <Select value={counselorSpec} onValueChange={setCounselorSpec}>
+                        <SelectTrigger className="sm:w-64">
+                          <SelectValue placeholder={t("peerDetail.filterBySpecialization") || "Filter by specialization"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">{t("peerDetail.allSpecializations") || "All specializations"}</SelectItem>
+                          {counselorSpecOptions.map((s) => (
+                            <SelectItem key={s} value={s}>{s}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {counselors.map((p: any) => (
+                    {filteredCounselors.map((p: any) => (
                       <Link
                         key={p.id}
                         to={`/practitioner/${p.id}`}
@@ -259,6 +310,11 @@ const PeerCounselingDetail = () => {
                       </Link>
                     ))}
                   </div>
+                  {filteredCounselors.length === 0 && (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      {t("common.noResults") || "No results found"}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             )}
