@@ -25,7 +25,8 @@ export function AddPractitionerForm({ onAdd }: AddPractitionerFormProps) {
   const professionTypes = [
     'Psychologist',
     'Psychiatrist',
-    'Therapist'
+    'Therapist',
+    'Counselor'
   ];
 
   const specializations = [
