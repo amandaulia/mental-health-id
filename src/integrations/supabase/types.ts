@@ -1184,7 +1184,11 @@ export type Database = {
         | "Private Hospital"
       insurance: "Private Insurance" | "BPJS"
       peer_type: "Peer Counseling" | "Group Therapy"
-      profession_type: "Psychologist" | "Psychiatrist" | "Therapist"
+      profession_type:
+        | "Psychologist"
+        | "Psychiatrist"
+        | "Therapist"
+        | "Counselor"
       session_mode: "Chat" | "Voice Call" | "Video Call" | "Offline"
       specialization:
         | "Personality Disorders"
@@ -1358,7 +1362,12 @@ export const Constants = {
       ],
       insurance: ["Private Insurance", "BPJS"],
       peer_type: ["Peer Counseling", "Group Therapy"],
-      profession_type: ["Psychologist", "Psychiatrist", "Therapist"],
+      profession_type: [
+        "Psychologist",
+        "Psychiatrist",
+        "Therapist",
+        "Counselor",
+      ],
       session_mode: ["Chat", "Voice Call", "Video Call", "Offline"],
       specialization: [
         "Personality Disorders",
