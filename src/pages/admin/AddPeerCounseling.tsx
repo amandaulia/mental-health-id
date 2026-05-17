@@ -329,6 +329,44 @@ export default function AddPeerCounseling() {
     }
   };
 
+  const handleAddNewPractitioner = async (practitionerData: any) => {
+    try {
+      const { data, error } = await supabase
+        .from('practitioner')
+        .insert({
+          name: practitionerData.name,
+          image: practitionerData.image,
+          experience: practitionerData.experience,
+          education: practitionerData.education,
+          license_number: practitionerData.license_number,
+          profession_type: practitionerData.profession_type as any,
+          specialization: practitionerData.specialization as any,
+          insurance: practitionerData.insurance,
+          verified: practitionerData.verified,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (Array.isArray(data.profession_type) && data.profession_type.includes('Counselor')) {
+        setAvailableData(prev => ({ ...prev, practitioners: [...prev.practitioners, data] }));
+        setRelations(prev => ({ ...prev, practitioners: [...prev.practitioners, data] }));
+      } else {
+        toast({
+          title: "Added, but not linked",
+          description: "Practitioner created. Only practitioners with profession type 'Counselor' can be linked here.",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to create practitioner",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="container mx-auto py-8">
       <div className="flex items-center gap-4 mb-6">
