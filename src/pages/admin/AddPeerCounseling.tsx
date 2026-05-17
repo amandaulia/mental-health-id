@@ -12,6 +12,7 @@ import { RelationshipDropdown } from '@/components/admin/RelationshipDropdown';
 import { AddInstitutionForm } from '@/components/admin/AddInstitutionForm';
 import { AddLocationForm } from '@/components/admin/AddLocationForm';
 import { AddContactForm } from '@/components/admin/AddContactForm';
+import { AddPractitionerForm } from '@/components/admin/AddPractitionerForm';
 
 export default function AddPeerCounseling() {
   const { id } = useParams();
@@ -32,13 +33,15 @@ export default function AddPeerCounseling() {
   const [availableData, setAvailableData] = useState({
     institutions: [] as any[],
     locations: [] as any[],
-    contacts: [] as any[]
+    contacts: [] as any[],
+    practitioners: [] as any[]
   });
 
   const [relations, setRelations] = useState({
     institutions: [] as any[],
     locations: [] as any[],
-    contacts: [] as any[]
+    contacts: [] as any[],
+    practitioners: [] as any[]
   });
 
   const peerTypes = [
@@ -72,16 +75,20 @@ export default function AddPeerCounseling() {
 
   const loadAvailableData = async () => {
     try {
-      const [institutionsRes, locationsRes, contactsRes] = await Promise.all([
+      const [institutionsRes, locationsRes, contactsRes, practitionersRes] = await Promise.all([
         supabase.from('institution').select('*'),
         supabase.from('location').select('*'),
-        supabase.from('contact_details').select('*')
+        supabase.from('contact_details').select('*'),
+        supabase.from('practitioner').select('*')
       ]);
 
       setAvailableData({
         institutions: institutionsRes.data || [],
         locations: locationsRes.data || [],
-        contacts: contactsRes.data || []
+        contacts: contactsRes.data || [],
+        practitioners: (practitionersRes.data || []).filter((p: any) =>
+          Array.isArray(p.profession_type) && p.profession_type.includes('Counselor')
+        )
       });
     } catch (error: any) {
       toast({
@@ -100,7 +107,8 @@ export default function AddPeerCounseling() {
           *,
           institution_peer_counselings(institution_id, institution(*)),
           peer_counseling_locations(location_id, location(*)),
-          peer_counseling_contacts(contact_id, contact_details(*))
+          peer_counseling_contacts(contact_id, contact_details(*)),
+          practitioner_peer_counselings(practitioner_id, practitioner(*))
         `)
         .eq('id', parseInt(id))
         .single();
@@ -119,7 +127,8 @@ export default function AddPeerCounseling() {
       setRelations({
         institutions: peerCounseling.institution_peer_counselings?.map(ipc => ipc.institution) || [],
         locations: peerCounseling.peer_counseling_locations?.map(pcl => pcl.location) || [],
-        contacts: peerCounseling.peer_counseling_contacts?.map(pcc => pcc.contact_details) || []
+        contacts: peerCounseling.peer_counseling_contacts?.map(pcc => pcc.contact_details) || [],
+        practitioners: peerCounseling.practitioner_peer_counselings?.map((ppc: any) => ppc.practitioner).filter(Boolean) || []
       });
     } catch (error: any) {
       toast({
@@ -158,7 +167,8 @@ export default function AddPeerCounseling() {
         await Promise.all([
           supabase.from('institution_peer_counselings').delete().eq('peer_counseling_id', peerCounselingId),
           supabase.from('peer_counseling_locations').delete().eq('peer_counseling_id', peerCounselingId),
-          supabase.from('peer_counseling_contacts').delete().eq('peer_counseling_id', peerCounselingId)
+          supabase.from('peer_counseling_contacts').delete().eq('peer_counseling_id', peerCounselingId),
+          supabase.from('practitioner_peer_counselings').delete().eq('peer_counseling_id', peerCounselingId)
         ]);
       } else {
         const { data, error } = await supabase
@@ -193,6 +203,14 @@ export default function AddPeerCounseling() {
         relationPromises.push(
           supabase.from('peer_counseling_contacts').insert(
             relations.contacts.map(contact => ({ peer_counseling_id: peerCounselingId, contact_id: contact.id }))
+          )
+        );
+      }
+
+      if (relations.practitioners.length > 0) {
+        relationPromises.push(
+          supabase.from('practitioner_peer_counselings').insert(
+            relations.practitioners.map(p => ({ peer_counseling_id: peerCounselingId, practitioner_id: p.id }))
           )
         );
       }
