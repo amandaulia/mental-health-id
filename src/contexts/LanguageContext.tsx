@@ -548,6 +548,7 @@ const translations = {
       location: "Lokasi",
       durationNotSpecified: "Durasi tidak ditentukan",
       noResults: "Tidak ada hasil ditemukan",
+      loading: "Memuat...",
     },
     professionTypes: {
       psychologist: "Psikolog",
