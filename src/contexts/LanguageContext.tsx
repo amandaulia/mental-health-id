@@ -109,6 +109,10 @@ const translations = {
       durationNotSpecified: "Duration not specified",
       noResults: "No results found",
       loading: "Loading...",
+      tags: "Tags",
+      scrollToTop: "Scroll to top",
+      toggleLanguage: "Toggle language",
+      duration: "Duration",
     },
     professionTypes: {
       psychologist: "Psychologist",
