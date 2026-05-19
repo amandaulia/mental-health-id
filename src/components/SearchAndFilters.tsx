@@ -475,6 +475,86 @@ export const SearchAndFilters = ({
               </PopoverContent>
             </Popover>
             )}
+
+            {/* Institution Type Filter (Mobile) */}
+            {institutionTypeOptions.length > 0 && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
+                  >
+                    <Building2 className="h-3 w-3" />
+                    <span>{t('filters.institutionType')}</span>
+                    {getActiveFilterCount(filters.institutionTypes) > 0 && (
+                      <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
+                        {getActiveFilterCount(filters.institutionTypes)}
+                      </Badge>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground">{t('filters.institutionType')}</h3>
+                    <div className="flex flex-wrap gap-1">
+                      {institutionTypeOptions.map((type) => (
+                        <button
+                          key={type}
+                          onClick={() => handleInstitutionTypeSelect(type)}
+                          className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                            filters.institutionTypes.includes(type as any)
+                              ? 'bg-purple-100 border-purple-300 text-purple-700'
+                              : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                          }`}
+                        >
+                          {getInstitutionTypeLabel(type)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
+
+            {/* Profession Filter (Mobile) */}
+            {professionTypeOptions.length > 0 && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
+                  >
+                    <User className="h-3 w-3" />
+                    <span>{t('filters.profession')}</span>
+                    {getActiveFilterCount(filters.professionTypes) > 0 && (
+                      <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
+                        {getActiveFilterCount(filters.professionTypes)}
+                      </Badge>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground">{t('filters.profession')}</h3>
+                    <div className="flex flex-wrap gap-1">
+                      {professionTypeOptions.map((type) => (
+                        <button
+                          key={type}
+                          onClick={() => handleProfessionSelect(type)}
+                          className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                            filters.professionTypes.includes(type as ProfessionType)
+                              ? 'bg-purple-100 border-purple-300 text-purple-700'
+                              : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                          }`}
+                        >
+                          {getProfessionLabel(t, type)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
           </div>
         </div>
       )}
