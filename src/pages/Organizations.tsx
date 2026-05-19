@@ -145,7 +145,7 @@ const Organizations = () => {
           })}
         </div>
         {isLoading && (
-          <div className="text-center text-muted-foreground mt-8">Loading...</div>
+          <div className="text-center text-muted-foreground mt-8">{t('common.loading')}</div>
         )}
       </div>
     </div>

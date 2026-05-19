@@ -130,7 +130,7 @@ const StressRelief = () => {
       </div>
 
       {isLoading ? (
-        <div className="text-center text-muted-foreground mt-8">Loading...</div>
+        <div className="text-center text-muted-foreground mt-8">{t('common.loading')}</div>
       ) : filteredData.length === 0 && (
         <div className="text-center text-muted-foreground mt-8">
           {t('stressRelief.noActivities')}
