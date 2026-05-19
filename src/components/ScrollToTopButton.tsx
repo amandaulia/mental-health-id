@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Routes where the button is also shown on desktop (infinite-scroll pages).
 const DESKTOP_ROUTES = ["/professional-counseling"];
@@ -9,6 +10,7 @@ const DESKTOP_ROUTES = ["/professional-counseling"];
 export function ScrollToTopButton() {
   const [visible, setVisible] = useState(false);
   const { pathname } = useLocation();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 400);
@@ -24,7 +26,7 @@ export function ScrollToTopButton() {
   return (
     <button
       type="button"
-      aria-label="Scroll to top"
+      aria-label={t('common.scrollToTop')}
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       className={cn(
         "fixed bottom-6 z-50 h-11 w-11 rounded-full bg-primary text-primary-foreground",
