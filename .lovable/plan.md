@@ -1,43 +1,23 @@
-I scanned the codebase for two issues:
+## Problem
 
-1. **All `t()` keys are defined** in both EN and ID — no missing keys, no orphaned keys. ✅
-2. **Hardcoded user-facing strings** that bypass the translation system — found below.
+The mobile filter panel in `src/components/SearchAndFilters.tsx` is missing two filters that exist on desktop:
 
-## Hardcoded strings to translate
+- **Institution Type** (rendered desktop-only, lines 722–760)
+- **Profession** (rendered desktop-only, lines 763–801)
 
-Excludes admin pages, shadcn `ui/` primitives, and brand names (e.g. logos `alt="Elysium Mental Care"` which should stay as-is).
+On mobile (<768px) the collapsible filter grid only shows: City, Specialization, Session Mode, Price Range, Insurance. So on Professional Counseling (where Institution Type and Profession matter most), mobile users cannot filter by them.
 
-### Visible text in JSX
+## Fix
 
-| File | Line | String | Suggested key |
-|---|---|---|---|
-| `src/components/Footer.tsx` | 32 | "Counseling Quick Links" | `footer.counselingQuickLinks` |
-| `src/components/Footer.tsx` | 72 | "Activities" | `footer.activities` |
-| `src/components/Footer.tsx` | 73 | "Organizations" | `footer.organizations` |
-| `src/components/Footer.tsx` | 74 | "Communities" | `footer.communities` |
-| `src/pages/Organizations.tsx` | 148 | "Loading..." | use existing `common.loading` |
-| `src/pages/PeerCounseling.tsx` | 139 | "Loading..." | use existing `common.loading` |
-| `src/pages/StressRelief.tsx` | 133 | "Loading..." | use existing `common.loading` |
-| `src/pages/PeerCounselingDetail.tsx` | 248 | "Tags" | `common.tags` |
-| `src/pages/PractitionerDetail.tsx` | 352 | "Duration" | `detail.duration` |
-| `src/pages/BureauDetail.tsx` | 454 | "Duration" | `detail.duration` |
+In `src/components/SearchAndFilters.tsx`, inside the mobile `{showMobileFilters && ...}` block (the `grid grid-cols-2 gap-2` container, around lines 247–478), append two more Popover filter buttons mirroring the desktop versions:
 
-### Accessibility / placeholder attributes
+1. **Institution Type** — conditional on `institutionTypeOptions.length > 0`. Icon: `Building2`. Same multi-select chip popover as desktop, using `handleInstitutionTypeSelect` and `getInstitutionTypeLabel`. Show active count badge.
+2. **Profession** — conditional on `professionTypeOptions.length > 0`. Icon: `User`. Same chip popover, using `handleProfessionSelect` and `getProfessionLabel`. Show active count badge.
 
-| File | Line | Attribute | String | Suggested key |
-|---|---|---|---|---|
-| `src/components/LanguageToggle.tsx` | 19 | JSX text "Toggle language" (sr-only) | | `header.toggleLanguage` |
-| `src/components/ScrollToTopButton.tsx` | 27 | `aria-label="Scroll to top"` | | `common.scrollToTop` |
+Style each trigger to match the existing mobile filter buttons (`bg-purple-100 ... rounded-full px-3 py-2 h-auto text-xs ...`), and reuse the existing `PopoverContent w-80 p-6` layout with the wrap-of-chips pattern already used for City/Specialization on mobile.
 
-### Likely false positives (recommend leaving as-is)
+No prop, state, type, or business-logic changes — pure presentation parity between mobile and desktop.
 
-- `alt="Elysium Mental Care"` / `alt="Mental Wellness Movie Club"` — brand/product names, fine in both languages.
-- `src/pages/BureauDetail.tsx` L571 "Remove" and L746 placeholder "Search by name" — these sit inside the admin-only edit panel of that page. Confirm before translating.
+## Files
 
-## Implementation steps (when you approve)
-
-1. Add the new keys to `src/contexts/LanguageContext.tsx` for both `en` and `id`.
-2. Replace each hardcoded literal listed above with `t("...")`.
-3. Reuse the existing `common.loading` key for the three "Loading..." cases instead of creating new ones.
-
-Total: ~12 strings to wrap, all in presentation code only.
+- `src/components/SearchAndFilters.tsx` — add two Popover blocks inside the mobile grid.
