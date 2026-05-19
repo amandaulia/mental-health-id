@@ -553,6 +553,10 @@ const translations = {
       durationNotSpecified: "Durasi tidak ditentukan",
       noResults: "Tidak ada hasil ditemukan",
       loading: "Memuat...",
+      tags: "Tag",
+      scrollToTop: "Gulir ke atas",
+      toggleLanguage: "Ubah bahasa",
+      duration: "Durasi",
     },
     professionTypes: {
       psychologist: "Psikolog",
