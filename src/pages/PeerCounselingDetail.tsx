@@ -245,7 +245,7 @@ const PeerCounselingDetail = () => {
 
             {tags.length > 0 && (
               <Card>
-                <CardHeader><CardTitle>Tags</CardTitle></CardHeader>
+                <CardHeader><CardTitle>{t('common.tags')}</CardTitle></CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag) => (
