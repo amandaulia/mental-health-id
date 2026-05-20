@@ -17,6 +17,14 @@ import { getPlaceholderImage } from "@/utils/placeholderImage";
 const clinicPlaceholder = getPlaceholderImage("peer-counseling");
 const practitionerPlaceholder = getPlaceholderImage("practitioner");
 import { safeImageSrc } from "@/utils/imageUrl";
+import {
+  SITE_URL,
+  buildPostalAddress,
+  buildGeo,
+  phoneFromContacts,
+  sameAsFromContacts,
+  buildBreadcrumbList,
+} from "@/utils/jsonLd";
 
 const getContactIcon = (type: string) => {
   switch (type) {
@@ -123,6 +131,36 @@ const PeerCounselingDetail = () => {
         path={`/peer-counseling/${id}`}
         title={`${data.name}${city ? " — " + city : ""} | Konseling Sebaya & Kelompok Dukungan`}
         description={`${data.name}${specializations[0] ? " — " + specializations[0] : ""}. Konseling sebaya dan kelompok dukungan kesehatan mental${city ? " di " + city : ""}.`}
+        jsonLd={(() => {
+          const pageUrl = `${SITE_URL}/peer-counseling/${id}`;
+          const primary = primaryLocation;
+          const transformedContacts = contacts.map((c: any) => ({
+            type: c.type,
+            value: c.value,
+            link: c.link,
+          }));
+          const phone = phoneFromContacts(transformedContacts as any);
+          const sameAs = sameAsFromContacts(transformedContacts as any);
+          const serviceNode: Record<string, unknown> = {
+            "@type": "MedicalBusiness",
+            "@id": `${pageUrl}#business`,
+            name: data.name,
+            url: pageUrl,
+            ...(data.image && { image: data.image }),
+            ...(phone && { telephone: phone }),
+            ...(buildPostalAddress(primary) && { address: buildPostalAddress(primary) }),
+            ...(buildGeo(primary) && { geo: buildGeo(primary) }),
+            ...(specializations.length && { medicalSpecialty: specializations }),
+            ...(sameAs.length && { sameAs }),
+            ...(city && { areaServed: city }),
+          };
+          const breadcrumbNode = buildBreadcrumbList([
+            { name: t("detail.home"), path: "/" },
+            { name: t("nav.peerCounseling") || "Peer Counseling", path: "/peer-counseling" },
+            { name: data.name, path: `/peer-counseling/${id}` },
+          ]);
+          return [serviceNode, breadcrumbNode];
+        })()}
       />
 
       <div className="max-w-6xl mx-auto space-y-6">

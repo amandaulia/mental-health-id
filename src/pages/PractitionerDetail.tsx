@@ -26,6 +26,7 @@ import {
   phoneFromContacts,
   sameAsFromContacts,
   buildOffers,
+  buildBreadcrumbList,
 } from "@/utils/jsonLd";
 
 const PractitionerDetail = () => {
@@ -251,7 +252,12 @@ const PractitionerDetail = () => {
     ...(offers && { availableService: offers }),
     provider: { "@id": `${pageUrl}#person` },
   };
-  const jsonLd = [personNode, businessNode];
+  const breadcrumbNode = buildBreadcrumbList([
+    { name: t('detail.home'), path: "/" },
+    { name: t('nav.professionalCounseling') || "Professional Counseling", path: "/professional-counseling" },
+    { name: practitioner.name, path: `/practitioner/${practitionerId}` },
+  ]);
+  const jsonLd = [personNode, businessNode, breadcrumbNode];
 
   return (
     <div className="container mx-auto px-4 py-4 sm:py-8">

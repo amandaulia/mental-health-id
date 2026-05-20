@@ -1,23 +1,62 @@
-## Problem
+## SEO Boost — Phase 1
 
-The mobile filter panel in `src/components/SearchAndFilters.tsx` is missing two filters that exist on desktop:
+Three focused improvements: run the built-in SEO scan, add structured data to the two detail pages that are missing it (plus breadcrumbs everywhere), and fix the hreflang duplication.
 
-- **Institution Type** (rendered desktop-only, lines 722–760)
-- **Profession** (rendered desktop-only, lines 763–801)
+### 1. Run the SEO scan
 
-On mobile (<768px) the collapsible filter grid only shows: City, Specialization, Session Mode, Price Range, Insurance. So on Professional Counseling (where Institution Type and Profession matter most), mobile users cannot filter by them.
+Trigger the built-in SEO reviewer against the live site. It returns concrete findings (missing alts, heading hierarchy, meta length, etc.) that we can then triage in a follow-up pass. Requires your one-tap approval when it runs.
 
-## Fix
+### 2. Add JSON-LD to missing detail pages + BreadcrumbList everywhere
 
-In `src/components/SearchAndFilters.tsx`, inside the mobile `{showMobileFilters && ...}` block (the `grid grid-cols-2 gap-2` container, around lines 247–478), append two more Popover filter buttons mirroring the desktop versions:
+Current state:
+- `PractitionerDetail` — has `Person` + business JSON-LD ✓
+- `BureauDetail` — has `MedicalBusiness`/`LocalBusiness` JSON-LD ✓
+- `PeerCounselingDetail` — no JSON-LD ✗
+- `OrganizationDetail` — no JSON-LD ✗
+- None of the detail pages emit `BreadcrumbList` (even though they render visual breadcrumbs)
 
-1. **Institution Type** — conditional on `institutionTypeOptions.length > 0`. Icon: `Building2`. Same multi-select chip popover as desktop, using `handleInstitutionTypeSelect` and `getInstitutionTypeLabel`. Show active count badge.
-2. **Profession** — conditional on `professionTypeOptions.length > 0`. Icon: `User`. Same chip popover, using `handleProfessionSelect` and `getProfessionLabel`. Show active count badge.
+Changes:
 
-Style each trigger to match the existing mobile filter buttons (`bg-purple-100 ... rounded-full px-3 py-2 h-auto text-xs ...`), and reuse the existing `PopoverContent w-80 p-6` layout with the wrap-of-chips pattern already used for City/Specialization on mobile.
+**`src/pages/PeerCounselingDetail.tsx`** — add a `Service` / `MedicalBusiness` node (name, description, areaServed = city, address from primary location, telephone/sameAs from contacts) and pass it to `PageSEO` via `jsonLd={[serviceNode, breadcrumbNode]}`.
 
-No prop, state, type, or business-logic changes — pure presentation parity between mobile and desktop.
+**`src/pages/OrganizationDetail.tsx`** — add an `Organization` / `NGO` node (name, description, address, telephone, sameAs, knowsAbout = specializations) and pass to `PageSEO`.
 
-## Files
+**Breadcrumb JSON-LD (all 4 detail pages)** — emit a `BreadcrumbList` node matching the visible breadcrumbs (e.g. Home › Professional Counseling › {Name}). Add a small `buildBreadcrumbList(items)` helper to `src/utils/jsonLd.ts` and reuse it from all four pages. `PageSEO` already accepts `jsonLd` as an array → auto-wraps in `@graph`.
 
-- `src/components/SearchAndFilters.tsx` — add two Popover blocks inside the mobile grid.
+### 3. Fix hreflang duplication
+
+`src/components/PageSEO.tsx` currently emits:
+```
+<link rel="alternate" hrefLang="id" href={url} />
+<link rel="alternate" hrefLang="en" href={url} />
+<link rel="alternate" hrefLang="x-default" href={url} />
+```
+Both lang variants point at the same URL, which Google treats as a misconfiguration (and the language is actually controlled by a client-side toggle, not the URL). Until we have real `/id` / `/en` URL prefixes, the correct signal is:
+- Set `<html lang>` to the active language (already done) ✓
+- Drop the `hreflang="id"` and `hreflang="en"` alternates
+- Keep `<link rel="alternate" hreflang="x-default">` pointing at the canonical
+
+This removes the duplicate-URL warning without overclaiming bilingual URLs.
+
+### Out of scope (saved for follow-ups)
+
+- Image `alt`/`loading=lazy`/dimensions audit
+- Internal linking (related practitioners on detail pages)
+- Per-language URL prefixes (requires routing changes)
+- Keyword research with Semrush (separate exploration)
+- Articles / blog content section
+- Core Web Vitals performance audit
+
+### Technical notes
+
+- `PageSEO` already supports `jsonLd: Record<string, unknown> | Record<string, unknown>[]` and wraps arrays in `@graph` — no change needed there.
+- Reuse existing helpers in `src/utils/jsonLd.ts` (`buildPostalAddress`, `phoneFromContacts`, `sameAsFromContacts`) plus a new `buildBreadcrumbList(items: {name, path}[])` helper.
+- No DB, routing, or business-logic changes. All edits are presentation/head-only.
+
+**Files touched:**
+- `src/utils/jsonLd.ts` (add breadcrumb helper)
+- `src/components/PageSEO.tsx` (hreflang cleanup)
+- `src/pages/PeerCounselingDetail.tsx` (add JSON-LD)
+- `src/pages/OrganizationDetail.tsx` (add JSON-LD)
+- `src/pages/PractitionerDetail.tsx` (add breadcrumb node)
+- `src/pages/BureauDetail.tsx` (add breadcrumb node)
