@@ -13,6 +13,14 @@ import { databaseService } from "@/services/database";
 import { getPlaceholderImage } from "@/utils/placeholderImage";
 const clinicPlaceholder = getPlaceholderImage("organization");
 import { safeImageSrc } from "@/utils/imageUrl";
+import {
+  SITE_URL,
+  buildPostalAddress,
+  buildGeo,
+  phoneFromContacts,
+  sameAsFromContacts,
+  buildBreadcrumbList,
+} from "@/utils/jsonLd";
 
 const getContactIcon = (type: string) => {
   switch (type) {
@@ -96,6 +104,36 @@ const OrganizationDetail = () => {
         path={`/organizations/${id}`}
         title={`${data.name}${city ? " — " + city : ""} | Organisasi & Komunitas Kesehatan Mental`}
         description={`${data.name} — organisasi/komunitas kesehatan mental${city ? " di " + city : ""}${orgType ? " (" + orgType + ")" : ""}.`}
+        jsonLd={(() => {
+          const pageUrl = `${SITE_URL}/organizations/${id}`;
+          const primary = primaryLocation;
+          const transformedContacts = contacts.map((c: any) => ({
+            type: c.type,
+            value: c.value,
+            link: c.link,
+          }));
+          const phone = phoneFromContacts(transformedContacts as any);
+          const sameAs = sameAsFromContacts(transformedContacts as any);
+          const orgNode: Record<string, unknown> = {
+            "@type": "NGO",
+            "@id": `${pageUrl}#org`,
+            name: data.name,
+            url: pageUrl,
+            ...(data.image && { logo: data.image, image: data.image }),
+            ...(phone && { telephone: phone }),
+            ...(buildPostalAddress(primary) && { address: buildPostalAddress(primary) }),
+            ...(buildGeo(primary) && { geo: buildGeo(primary) }),
+            ...(specializations.length && { knowsAbout: specializations }),
+            ...(sameAs.length && { sameAs }),
+            ...(city && { areaServed: city }),
+          };
+          const breadcrumbNode = buildBreadcrumbList([
+            { name: t("detail.home"), path: "/" },
+            { name: t("nav.organizations") || "Organizations", path: "/organizations" },
+            { name: data.name, path: `/organizations/${id}` },
+          ]);
+          return [orgNode, breadcrumbNode];
+        })()}
       />
 
       <div className="max-w-6xl mx-auto space-y-6">
