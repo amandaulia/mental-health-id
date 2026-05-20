@@ -1,0 +1,14 @@
+# Mental Health Directory Indonesia
+
+> A free directory of verified psychologists, psychiatrists, peer counselors, support groups, and wellness activities across Indonesia.
+
+The directory helps people in Indonesia find professional counseling (psychologists, psychiatrists, clinics/bureaus), peer counseling, support groups, stress-relief activities, and mental health organizations. Listings can be filtered by city, specialization, insurance (including BPJS), and session mode (online or in-person).
+
+## Pages
+
+- [Home](/): Search and browse all mental health resources across Indonesia.
+- [Professional Counseling](/professional-counseling): Verified psychologists, psychiatrists, and counseling clinics/bureaus.
+- [Peer Counseling](/peer-counseling): Peer counselors and support groups for community-based mental health support.
+- [Stress Relief](/stress-relief): Art, music, sports, and wellness activities to support mental wellbeing.
+- [Organizations](/organizations): Mental health organizations, communities, and advocacy groups.
+- [About](/about): About the Mental Health Directory Indonesia project and how to contribute.
