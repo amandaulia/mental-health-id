@@ -28,6 +28,7 @@ import {
   phoneFromContacts,
   sameAsFromContacts,
   buildOffers,
+  buildBreadcrumbList,
 } from "@/utils/jsonLd";
 
 const isTelLink = (url: string) => /^tel:/i.test(url);
@@ -330,7 +331,7 @@ const BureauDetail = () => {
           const sameAs = sameAsFromContacts(bureau.contactDetails);
           const offers = buildOffers(services);
           const type = bureau.bureauType === "independent" ? "LocalBusiness" : "MedicalClinic";
-          return {
+          const businessNode = {
             "@type": type,
             name: bureau.name,
             url: pageUrl,
@@ -346,6 +347,12 @@ const BureauDetail = () => {
               openingHours: bureau.businessHours,
             }),
           };
+          const breadcrumbNode = buildBreadcrumbList([
+            { name: t('detail.home'), path: "/" },
+            { name: t('nav.professionalCounseling') || "Professional Counseling", path: "/professional-counseling" },
+            { name: bureau.name, path: `/bureau/${id}` },
+          ]);
+          return [businessNode, breadcrumbNode];
         })()}
       />
       <div className="max-w-6xl mx-auto space-y-8">
