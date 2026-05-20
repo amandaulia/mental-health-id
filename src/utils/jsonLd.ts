@@ -56,3 +56,22 @@ export const buildOffers = (services: Service[] = []) => {
     }),
   }));
 };
+
+export interface BreadcrumbItemLike {
+  name: string;
+  path: string;
+}
+
+/**
+ * Build a BreadcrumbList JSON-LD node. Pass crumbs in display order
+ * (e.g. [{ name: "Home", path: "/" }, { name: "Practitioners", path: "/professional-counseling" }, { name: "Dr. X", path: "/practitioner/1" }]).
+ */
+export const buildBreadcrumbList = (items: BreadcrumbItemLike[]) => ({
+  "@type": "BreadcrumbList",
+  itemListElement: items.map((item, idx) => ({
+    "@type": "ListItem",
+    position: idx + 1,
+    name: item.name,
+    item: `${SITE_URL}${item.path}`,
+  })),
+});
