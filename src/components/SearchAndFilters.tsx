@@ -624,6 +624,7 @@ export const SearchAndFilters = ({
 
       {/* Desktop Filters - Original Layout */}
       <div className="hidden md:flex items-center gap-1 flex-nowrap">
+        {showSort && <SortChip variant="desktop" />}
         {/* City Filter */}
         <Popover>
           <PopoverTrigger asChild>
@@ -942,8 +943,6 @@ export const SearchAndFilters = ({
             </PopoverContent>
           </Popover>
         )}
-
-        {showSort && <SortSelect className="w-44 shrink-0" />}
 
         <div className="h-6 w-px bg-border mx-1"></div>
 
