@@ -435,6 +435,8 @@ export type Database = {
           created_at: string | null
           id: number
           last_updated_at: string | null
+          latitude: number | null
+          longitude: number | null
           name: string | null
           province: string
         }
@@ -445,6 +447,8 @@ export type Database = {
           created_at?: string | null
           id?: number
           last_updated_at?: string | null
+          latitude?: number | null
+          longitude?: number | null
           name?: string | null
           province: string
         }
@@ -455,6 +459,8 @@ export type Database = {
           created_at?: string | null
           id?: number
           last_updated_at?: string | null
+          latitude?: number | null
+          longitude?: number | null
           name?: string | null
           province?: string
         }
@@ -489,6 +495,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      resource_popularity: {
+        Row: {
+          click_count: number
+          resource_id: number
+          resource_type: string
+          updated_at: string
+        }
+        Insert: {
+          click_count?: number
+          resource_id: number
+          resource_type: string
+          updated_at?: string
+        }
+        Update: {
+          click_count?: number
+          resource_id?: number
+          resource_type?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       organization: {
         Row: {
@@ -1152,6 +1179,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_resource_click: {
+        Args: { resource_type_input: string; resource_id_input: number }
+        Returns: undefined
       }
       update_user_app_metadata: {
         Args: { new_app_metadata: Json; user_id: string }

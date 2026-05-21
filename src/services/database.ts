@@ -228,6 +228,8 @@ export const databaseService = {
     city: string;
     province: string;
     country: string;
+    latitude?: number | null;
+    longitude?: number | null;
   }) {
     const { data, error } = await supabase.from("location").insert(locationData).select().single();
 
