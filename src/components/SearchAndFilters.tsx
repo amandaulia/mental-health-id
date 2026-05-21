@@ -303,12 +303,11 @@ export const SearchAndFilters = ({
         </div>
       </div>
 
-      {showSort && <SortSelect className="md:hidden" />}
-
       {/* Mobile Filters - Collapsible */}
       {showMobileFilters && (
         <div className="md:hidden">
           <div className="grid grid-cols-2 gap-2">
+            {showSort && <SortChip variant="mobile" />}
             {/* City Filter */}
             <Popover>
               <PopoverTrigger asChild>
