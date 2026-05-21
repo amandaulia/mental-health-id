@@ -28,11 +28,15 @@ const cityMatchesLocations = (city: string, locations: string[]) => {
 };
 
 export const matchProfessional = (resource: any, filters: FilterState): boolean => {
+  const institutionNames = resource.type === "practitioner"
+    ? (resource.institutions?.map((institution: any) => institution.name) || [resource.bureauName]).filter(Boolean)
+    : [resource.name];
+
   if (filters.search) {
     const s = filters.search.toLowerCase();
     const hay = [
       resource.name,
-      resource.type === "practitioner" ? resource.bureauName : "",
+      ...institutionNames,
       resource.city,
       ...(resource.specializations || []),
       ...(resource.professionTypes || []),
@@ -43,8 +47,7 @@ export const matchProfessional = (resource: any, filters: FilterState): boolean 
   if (!cityMatchesLocations(resource.city, filters.locations)) return false;
 
   if (filters.institutions.length > 0) {
-    const name = resource.type === "practitioner" ? resource.bureauName : resource.name;
-    if (!filters.institutions.some(i => norm(name) === norm(i))) return false;
+    if (!filters.institutions.some(i => institutionNames.some((name: string) => norm(name) === norm(i)))) return false;
   }
 
   if (filters.institutionTypes.length > 0) {

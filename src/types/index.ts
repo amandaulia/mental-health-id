@@ -41,6 +41,11 @@ export interface Service {
   learnMoreUrl?: string;
 }
 
+export interface PractitionerInstitution {
+  id: string;
+  name: string;
+}
+
 export interface ContactDetail {
   type: "WhatsApp" | "Phone" | "Website" | "Instagram" | "Email" | "Application";
   value: string;
@@ -56,6 +61,7 @@ export interface Practitioner {
   name: string;
   bureauName: string;
   bureauId: string;
+  institutions?: PractitionerInstitution[];
   professionTypes: ProfessionType[];
   licenseNumber?: string;
   specializations: Specialization[];
@@ -162,6 +168,7 @@ export interface UnifiedCardData {
   city: string;
   isVerified?: boolean;
   institutionName?: string;
+  institutionNames?: string[];
   organizationName?: string;
   professionTypes?: ProfessionType[];
   specializations?: Specialization[];
