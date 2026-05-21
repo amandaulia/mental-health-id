@@ -20,6 +20,7 @@ export interface UnifiedCardData {
   
   // Professional/Institution specific
   institutionName?: string;
+  institutionNames?: string[];
   professionTypes?: string[];
   specializations?: string[];
   priceRange?: string;
@@ -61,6 +62,12 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
       onClick();
     }
   };
+
+  const practitionerInstitutionNames = Array.from(
+    new Set((data.institutionNames?.length ? data.institutionNames : data.institutionName ? [data.institutionName] : []).filter(Boolean))
+  );
+  const visiblePractitionerInstitutions = practitionerInstitutionNames.slice(0, 2);
+  const hiddenPractitionerInstitutionCount = Math.max(practitionerInstitutionNames.length - visiblePractitionerInstitutions.length, 0);
 
   const CardWrapper = ({ children }: { children: React.ReactNode }) => {
     if (linkTo) {
@@ -107,8 +114,11 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                 
                 {data.type === "practitioner" && (
                   <>
-                    {data.institutionName && (
-                      <p className="text-sm text-muted-foreground mb-2">{data.institutionName}</p>
+                    {visiblePractitionerInstitutions.length > 0 && (
+                      <p className="text-sm text-muted-foreground mb-2">
+                        {visiblePractitionerInstitutions.join(", ")}
+                        {hiddenPractitionerInstitutionCount > 0 && ` +${hiddenPractitionerInstitutionCount} ${t('common.more')}`}
+                      </p>
                     )}
                     <div className="flex flex-wrap gap-1 mb-3">
                       {data.professionTypes?.slice(0, 2).map((type) => (

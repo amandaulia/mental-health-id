@@ -211,8 +211,9 @@ const PractitionerDetail = () => {
     navigate(`/?${searchParams.toString()}`);
   };
 
-  const handleBureauClick = () => {
-    navigate(`/bureau/${practitioner.bureauId}`);
+  const handleBureauClick = (institutionId?: string) => {
+    const targetInstitutionId = institutionId || practitioner.bureauId;
+    if (targetInstitutionId) navigate(`/bureau/${targetInstitutionId}`);
   };
 
   const pageUrl = `${SITE_URL}/practitioner/${practitionerId}`;
@@ -226,14 +227,13 @@ const PractitionerDetail = () => {
     ...(practitioner.professionTypes?.[0] && { jobTitle: practitioner.professionTypes[0] }),
     ...(practitioner.specializations?.length && { knowsAbout: practitioner.specializations }),
     ...(practitioner.education && { alumniOf: practitioner.education }),
-    ...(practitioner.bureauName &&
-      practitioner.bureauName !== "Independent" && {
-        worksFor: {
-          "@type": "Organization",
-          name: practitioner.bureauName,
-          ...(practitioner.bureauId && { url: `${SITE_URL}/bureau/${practitioner.bureauId}` }),
-        },
-      }),
+    ...(practitioner.institutions?.length && {
+      worksFor: practitioner.institutions.map((institution) => ({
+        "@type": "Organization",
+        name: institution.name,
+        ...(institution.id && { url: `${SITE_URL}/bureau/${institution.id}` }),
+      })),
+    }),
   };
   const phone = phoneFromContacts(practitioner.contactDetails);
   const sameAs = sameAsFromContacts(practitioner.contactDetails);
