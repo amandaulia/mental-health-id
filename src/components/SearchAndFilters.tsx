@@ -1,7 +1,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, Building2, User, Heart, Monitor, Settings, ChevronDown, Filter, X } from "lucide-react";
+import { Search, MapPin, Building2, User, Heart, Monitor, Settings, ChevronDown, Filter, X, ArrowUpDown } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -228,25 +228,50 @@ export const SearchAndFilters = ({
     trackFormInteraction('sort', 'sort_changed', sortBy);
   };
 
-  const SortSelect = ({ className = "" }: { className?: string }) => (
-    <div className={className}>
-      <Select value={filters.sortBy || "popular"} onValueChange={(value) => handleSortChange(value as SortBy)}>
-        <SelectTrigger className="h-8 rounded-full border-gray-200 bg-background text-sm">
-          <SelectValue placeholder={t("sort.label")} />
-        </SelectTrigger>
-        <SelectContent>
-          {sortOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {locationSortMessage && filters.sortBy === "nearest" && (
-        <p className="mt-1 text-xs text-muted-foreground">{locationSortMessage}</p>
-      )}
-    </div>
-  );
+  const SortChip = ({ variant = "desktop" }: { variant?: "desktop" | "mobile" }) => {
+    const current = filters.sortBy || "popular";
+    const currentLabel = sortOptions.find((option) => option.value === current)?.label;
+    const triggerClass =
+      variant === "desktop"
+        ? "bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
+        : "bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1";
+    return (
+      <div className="flex flex-col">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className={triggerClass}>
+              <ArrowUpDown className={variant === "desktop" ? "h-3 w-3 mr-1" : "h-3 w-3"} />
+              <span>{t("sort.label")}</span>
+              <ChevronDown className={variant === "desktop" ? "h-3 w-3 ml-1" : "h-3 w-3 ml-1"} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-72 p-6" align="start">
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-foreground">{t("sort.label")}:</h3>
+              <div className="flex flex-wrap gap-1">
+                {sortOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => handleSortChange(option.value)}
+                    className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                      current === option.value
+                        ? "bg-purple-100 border-purple-300 text-purple-700"
+                        : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+        {locationSortMessage && filters.sortBy === "nearest" && (
+          <p className="mt-1 text-xs text-muted-foreground">{locationSortMessage}</p>
+        )}
+      </div>
+    );
+  };
 
   const getActiveFilterCount = (filterArray: any[]) => {
     return filterArray.length;
@@ -278,12 +303,11 @@ export const SearchAndFilters = ({
         </div>
       </div>
 
-      {showSort && <SortSelect className="md:hidden" />}
-
       {/* Mobile Filters - Collapsible */}
       {showMobileFilters && (
         <div className="md:hidden">
           <div className="grid grid-cols-2 gap-2">
+            {showSort && <SortChip variant="mobile" />}
             {/* City Filter */}
             <Popover>
               <PopoverTrigger asChild>
@@ -600,6 +624,7 @@ export const SearchAndFilters = ({
 
       {/* Desktop Filters - Original Layout */}
       <div className="hidden md:flex items-center gap-1 flex-nowrap">
+        {showSort && <SortChip variant="desktop" />}
         {/* City Filter */}
         <Popover>
           <PopoverTrigger asChild>
@@ -918,8 +943,6 @@ export const SearchAndFilters = ({
             </PopoverContent>
           </Popover>
         )}
-
-        {showSort && <SortSelect className="w-44 shrink-0" />}
 
         <div className="h-6 w-px bg-border mx-1"></div>
 
