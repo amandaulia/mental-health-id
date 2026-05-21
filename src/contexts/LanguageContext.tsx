@@ -83,7 +83,7 @@ const translations = {
       },
     },
     sort: {
-      label: "Sort by",
+      label: "Sort",
       popular: "Popular",
       name: "Name",
       lowestPrice: "Lowest Price",
