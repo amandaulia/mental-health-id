@@ -1,19 +1,20 @@
-
 import { useState, useCallback, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, Building2, User, Heart, Monitor, Settings, ChevronDown, Filter, X, ArrowUpDown } from "lucide-react";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Search,
+  MapPin,
+  Building2,
+  User,
+  Heart,
+  Monitor,
+  Settings,
+  ChevronDown,
+  Filter,
+  X,
+  ArrowUpDown,
+} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +22,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import type { FilterState, ProfessionType, Specialization, Mode, InsuranceType, SortBy } from "@/types";
 import { trackFormInteraction } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getSpecializationLabel, getInstitutionTypeLabel as getInstTypeLabelI18n, getProfessionLabel } from "@/utils/labels";
+import {
+  getSpecializationLabel,
+  getInstitutionTypeLabel as getInstTypeLabelI18n,
+  getProfessionLabel,
+} from "@/utils/labels";
 
 interface SearchAndFiltersProps {
   filters: FilterState;
@@ -61,7 +66,16 @@ export const SearchAndFilters = ({
 
   // Default filter options (fallback)
   const cities = filterOptions?.cities || ["Jakarta, Indonesia", "Surabaya, Indonesia", "Medan, Indonesia"];
-  const specializations = filterOptions?.specializations || ["Depression", "Anxiety", "Trauma", "Relationship Issues", "ADHD", "OCD", "Personality Disorders", "Family Therapy"];
+  const specializations = filterOptions?.specializations || [
+    "Depression",
+    "Anxiety",
+    "Trauma",
+    "Relationship Issues",
+    "ADHD",
+    "OCD",
+    "Personality Disorders",
+    "Family Therapy",
+  ];
   const sessionModeOptions = filterOptions?.sessionModes || ["text", "voice", "video", "offline"];
   const insuranceOptions = filterOptions?.insuranceTypes || [];
   const institutionTypeOptions = filterOptions?.institutionTypes || [];
@@ -72,11 +86,16 @@ export const SearchAndFilters = ({
 
   const getModeLabel = (mode: string) => {
     switch (mode) {
-      case "text": return t('sessionModes.textChat');
-      case "voice": return t('sessionModes.voiceCall');
-      case "video": return t('sessionModes.videoCall');
-      case "offline": return t('sessionModes.inPerson');
-      default: return mode;
+      case "text":
+        return t("sessionModes.textChat");
+      case "voice":
+        return t("sessionModes.voiceCall");
+      case "video":
+        return t("sessionModes.videoCall");
+      case "offline":
+        return t("sessionModes.inPerson");
+      default:
+        return mode;
     }
   };
 
@@ -87,8 +106,8 @@ export const SearchAndFilters = ({
   const getInsuranceLabel = (insurance: string) => {
     const normalized = insurance.toLowerCase();
     if (normalized === "bpjs") return "BPJS";
-    if (normalized === "private" || normalized === "private insurance") return t('insurance.privateInsurance');
-    if (normalized === "none") return t('insurance.noInsurance');
+    if (normalized === "private" || normalized === "private insurance") return t("insurance.privateInsurance");
+    if (normalized === "none") return t("insurance.noInsurance");
     return insurance;
   };
 
@@ -110,7 +129,7 @@ export const SearchAndFilters = ({
   const handleSearchChange = (value: string) => {
     onFiltersChange({ ...filters, search: value });
     if (value.trim()) {
-      trackFormInteraction('search', 'search_input', 'search_term');
+      trackFormInteraction("search", "search_input", "search_term");
     }
   };
 
@@ -120,9 +139,9 @@ export const SearchAndFilters = ({
         ? filters.locations.filter((loc) => loc !== value)
         : [...filters.locations, value];
       onFiltersChange({ ...filters, locations: newLocations });
-      trackFormInteraction('filter', 'location_changed');
+      trackFormInteraction("filter", "location_changed");
     },
-    [filters, onFiltersChange]
+    [filters, onFiltersChange],
   );
 
   const handleInstitutionSelect = useCallback(
@@ -131,9 +150,9 @@ export const SearchAndFilters = ({
         ? filters.institutions.filter((ins) => ins !== value)
         : [...filters.institutions, value];
       onFiltersChange({ ...filters, institutions: newInstitutions });
-      trackFormInteraction('filter', 'institution_changed');
+      trackFormInteraction("filter", "institution_changed");
     },
-    [filters, onFiltersChange]
+    [filters, onFiltersChange],
   );
 
   const handleProfessionSelect = useCallback(
@@ -142,9 +161,9 @@ export const SearchAndFilters = ({
         ? filters.professionTypes.filter((prof) => prof !== value)
         : [...filters.professionTypes, value as ProfessionType];
       onFiltersChange({ ...filters, professionTypes: newProfessions });
-      trackFormInteraction('filter', 'profession_changed');
+      trackFormInteraction("filter", "profession_changed");
     },
-    [filters, onFiltersChange]
+    [filters, onFiltersChange],
   );
 
   const handleSpecializationSelect = useCallback(
@@ -153,9 +172,9 @@ export const SearchAndFilters = ({
         ? filters.specializations.filter((spec) => spec !== value)
         : [...filters.specializations, value as Specialization];
       onFiltersChange({ ...filters, specializations: newSpecializations });
-      trackFormInteraction('filter', 'specialization_changed');
+      trackFormInteraction("filter", "specialization_changed");
     },
-    [filters, onFiltersChange]
+    [filters, onFiltersChange],
   );
 
   const handleModeSelect = useCallback(
@@ -164,9 +183,9 @@ export const SearchAndFilters = ({
         ? filters.modes.filter((mode) => mode !== value)
         : [...filters.modes, value as Mode];
       onFiltersChange({ ...filters, modes: newModes });
-      trackFormInteraction('filter', 'mode_changed');
+      trackFormInteraction("filter", "mode_changed");
     },
-    [filters, onFiltersChange]
+    [filters, onFiltersChange],
   );
 
   const handleInsuranceSelect = useCallback(
@@ -175,9 +194,9 @@ export const SearchAndFilters = ({
         ? filters.insurance.filter((ins) => ins !== value)
         : [...filters.insurance, value as InsuranceType];
       onFiltersChange({ ...filters, insurance: newInsurance });
-      trackFormInteraction('filter', 'insurance_changed');
+      trackFormInteraction("filter", "insurance_changed");
     },
-    [filters, onFiltersChange]
+    [filters, onFiltersChange],
   );
 
   const handleInstitutionTypeSelect = useCallback(
@@ -186,16 +205,16 @@ export const SearchAndFilters = ({
         ? filters.institutionTypes.filter((type) => type !== value)
         : [...filters.institutionTypes, value as any];
       onFiltersChange({ ...filters, institutionTypes: newInstitutionTypes });
-      trackFormInteraction('filter', 'institution_type_changed');
+      trackFormInteraction("filter", "institution_type_changed");
     },
-    [filters, onFiltersChange]
+    [filters, onFiltersChange],
   );
 
   const handlePriceRangeChange = (priceRange: [number, number]) => {
     onFiltersChange({ ...filters, priceRange });
     setMinPriceInput(priceRange[0].toString());
     setMaxPriceInput(priceRange[1].toString());
-    trackFormInteraction('filter', 'price_range_changed');
+    trackFormInteraction("filter", "price_range_changed");
   };
 
   const handleMinPriceChange = (value: string) => {
@@ -220,12 +239,12 @@ export const SearchAndFilters = ({
 
   const handleIncludeNullPriceChange = (checked: boolean) => {
     onFiltersChange({ ...filters, includeNullPrice: checked });
-    trackFormInteraction('filter', 'include_null_price_changed');
+    trackFormInteraction("filter", "include_null_price_changed");
   };
 
   const handleSortChange = (sortBy: SortBy) => {
     onFiltersChange({ ...filters, sortBy });
-    trackFormInteraction('sort', 'sort_changed', sortBy);
+    trackFormInteraction("sort", "sort_changed", sortBy);
   };
 
   const SortChip = ({ variant = "desktop" }: { variant?: "desktop" | "mobile" }) => {
@@ -247,7 +266,7 @@ export const SearchAndFilters = ({
           </PopoverTrigger>
           <PopoverContent className="w-72 p-6" align="start">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">{t("sort.label")}:</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t("sort.label")}</h3>
               <div className="flex flex-wrap gap-1">
                 {sortOptions.map((option) => (
                   <button
@@ -294,7 +313,7 @@ export const SearchAndFilters = ({
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3" />
             <Input
               type="text"
-              placeholder={searchPlaceholder ?? t('search.placeholder')}
+              placeholder={searchPlaceholder ?? t("search.placeholder")}
               value={filters.search}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-7 text-sm rounded-full border-gray-200 h-8"
@@ -311,12 +330,12 @@ export const SearchAndFilters = ({
             {/* City Filter */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
                   <MapPin className="h-3 w-3" />
-                  <span>{t('filters.city')}</span>
+                  <span>{t("filters.city")}</span>
                   {getActiveFilterCount(filters.locations) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.locations)}
@@ -326,7 +345,7 @@ export const SearchAndFilters = ({
               </PopoverTrigger>
               <PopoverContent className="w-80 p-6">
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">{t('filters.city')}</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{t("filters.city")}</h3>
                   <div className="flex flex-wrap gap-1">
                     {cities.map((location) => (
                       <button
@@ -334,11 +353,11 @@ export const SearchAndFilters = ({
                         onClick={() => handleLocationSelect(location)}
                         className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                           filters.locations.includes(location)
-                            ? 'bg-purple-100 border-purple-300 text-purple-700'
-                            : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                            ? "bg-purple-100 border-purple-300 text-purple-700"
+                            : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
                         }`}
                       >
-                        {location.split(',')[0]}
+                        {location.split(",")[0]}
                       </button>
                     ))}
                   </div>
@@ -349,12 +368,12 @@ export const SearchAndFilters = ({
             {/* Specializations Filter */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                 >
                   <Heart className="h-3 w-3" />
-                  <span>{t('filters.specialization')}</span>
+                  <span>{t("filters.specialization")}</span>
                   {getActiveFilterCount(filters.specializations) > 0 && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                       {getActiveFilterCount(filters.specializations)}
@@ -364,7 +383,7 @@ export const SearchAndFilters = ({
               </PopoverTrigger>
               <PopoverContent className="w-80 p-6">
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">{t('filters.specialization')}</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{t("filters.specialization")}</h3>
                   <div className="flex flex-wrap gap-1">
                     {specializations.map((specialization) => (
                       <button
@@ -372,8 +391,8 @@ export const SearchAndFilters = ({
                         onClick={() => handleSpecializationSelect(specialization)}
                         className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                           filters.specializations.includes(specialization as Specialization)
-                            ? 'bg-purple-100 border-purple-300 text-purple-700'
-                            : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                            ? "bg-purple-100 border-purple-300 text-purple-700"
+                            : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
                         }`}
                       >
                         {getSpecializationLabel(t, specialization)}
@@ -386,157 +405,158 @@ export const SearchAndFilters = ({
 
             {/* Session Mode Filter */}
             {!hiddenFilters.includes("sessionMode") && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
-                >
-                  <Monitor className="h-3 w-3" />
-                  <span>{t('filters.sessionMode')}</span>
-                  {getActiveFilterCount(filters.modes) > 0 && (
-                    <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
-                      {getActiveFilterCount(filters.modes)}
-                    </Badge>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">{t('filters.sessionMode')}</h3>
-                  <div className="flex flex-wrap gap-1">
-                    {sessionModeOptions.map((mode) => (
-                      <button
-                        key={mode}
-                        onClick={() => handleModeSelect(mode)}
-                        className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
-                          filters.modes.includes(mode as Mode)
-                            ? 'bg-purple-100 border-purple-300 text-purple-700'
-                            : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
-                        }`}
-                      >
-                        {getModeLabel(mode)}
-                      </button>
-                    ))}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
+                  >
+                    <Monitor className="h-3 w-3" />
+                    <span>{t("filters.sessionMode")}</span>
+                    {getActiveFilterCount(filters.modes) > 0 && (
+                      <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
+                        {getActiveFilterCount(filters.modes)}
+                      </Badge>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground">{t("filters.sessionMode")}</h3>
+                    <div className="flex flex-wrap gap-1">
+                      {sessionModeOptions.map((mode) => (
+                        <button
+                          key={mode}
+                          onClick={() => handleModeSelect(mode)}
+                          className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                            filters.modes.includes(mode as Mode)
+                              ? "bg-purple-100 border-purple-300 text-purple-700"
+                              : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+                          }`}
+                        >
+                          {getModeLabel(mode)}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverContent>
+              </Popover>
             )}
 
             {/* Price Range Filter */}
             {!hiddenFilters.includes("priceRange") && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
-                >
-                  <Settings className="h-3 w-3" />
-                  <span>{t('filters.priceRange')}</span>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">{t('filters.sessionCost')}</h3>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
+                  >
+                    <Settings className="h-3 w-3" />
+                    <span>{t("filters.priceRange")}</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-6">
                   <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="text-xs text-muted-foreground mb-1 block">{t('search.filters.minimum')}</label>
-                        <Input
-                          type="number"
-                          value={minPriceInput}
-                          onChange={(e) => handleMinPriceChange(e.target.value)}
-                          onBlur={handlePriceInputBlur}
-                          className="text-sm"
-                          min={0}
-                          max={maxPrice}
-                        />
+                    <h3 className="text-lg font-semibold text-foreground">{t("filters.sessionCost")}</h3>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-xs text-muted-foreground mb-1 block">
+                            {t("search.filters.minimum")}
+                          </label>
+                          <Input
+                            type="number"
+                            value={minPriceInput}
+                            onChange={(e) => handleMinPriceChange(e.target.value)}
+                            onBlur={handlePriceInputBlur}
+                            className="text-sm"
+                            min={0}
+                            max={maxPrice}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-muted-foreground mb-1 block">
+                            {t("search.filters.maximum")}
+                          </label>
+                          <Input
+                            type="number"
+                            value={maxPriceInput}
+                            onChange={(e) => handleMaxPriceChange(e.target.value)}
+                            onBlur={handlePriceInputBlur}
+                            className="text-sm"
+                            min={0}
+                            max={maxPrice}
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <label className="text-xs text-muted-foreground mb-1 block">{t('search.filters.maximum')}</label>
-                        <Input
-                          type="number"
-                          value={maxPriceInput}
-                          onChange={(e) => handleMaxPriceChange(e.target.value)}
-                          onBlur={handlePriceInputBlur}
-                          className="text-sm"
-                          min={0}
-                          max={maxPrice}
-                        />
-                      </div>
-                    </div>
-                    
-                    <Slider
-                      value={priceRange}
-                      max={maxPrice}
-                      step={25000}
-                      onValueChange={(value) => setPriceRange(value as [number, number])}
-                      onValueCommit={() => handlePriceRangeChange(priceRange)}
-                      className="mb-2"
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Rp {priceRange[0].toLocaleString()}</span>
-                      <span>Rp {priceRange[1].toLocaleString()}</span>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2 pt-2 border-t">
-                      <Checkbox 
-                        id="include-null-price-mobile"
-                        checked={filters.includeNullPrice || false}
-                        onCheckedChange={handleIncludeNullPriceChange}
+
+                      <Slider
+                        value={priceRange}
+                        max={maxPrice}
+                        step={25000}
+                        onValueChange={(value) => setPriceRange(value as [number, number])}
+                        onValueCommit={() => handlePriceRangeChange(priceRange)}
+                        className="mb-2"
                       />
-                      <label 
-                        htmlFor="include-null-price-mobile"
-                        className="text-sm text-foreground cursor-pointer"
-                      >
-                        {t('detail.includePriceUponRequest')}
-                      </label>
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Rp {priceRange[0].toLocaleString()}</span>
+                        <span>Rp {priceRange[1].toLocaleString()}</span>
+                      </div>
+
+                      <div className="flex items-center space-x-2 pt-2 border-t">
+                        <Checkbox
+                          id="include-null-price-mobile"
+                          checked={filters.includeNullPrice || false}
+                          onCheckedChange={handleIncludeNullPriceChange}
+                        />
+                        <label htmlFor="include-null-price-mobile" className="text-sm text-foreground cursor-pointer">
+                          {t("detail.includePriceUponRequest")}
+                        </label>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverContent>
+              </Popover>
             )}
 
             {/* Insurance Filter */}
             {!hiddenFilters.includes("insurance") && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
-                >
-                  <Settings className="h-3 w-3" />
-                  <span>{t('filters.insurance')}</span>
-                  {getActiveFilterCount(filters.insurance) > 0 && (
-                    <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
-                      {getActiveFilterCount(filters.insurance)}
-                    </Badge>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">{t('filters.insurance')}</h3>
-                  <div className="flex flex-wrap gap-1">
-                    {insuranceOptions.map((insurance) => (
-                      <button
-                        key={insurance}
-                        onClick={() => handleInsuranceSelect(insurance)}
-                        className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${
-                          filters.insurance.includes(insurance as InsuranceType)
-                            ? 'bg-purple-100 border-purple-300 text-purple-700'
-                            : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
-                        }`}
-                      >
-                        {getInsuranceLabel(insurance)}
-                      </button>
-                    ))}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
+                  >
+                    <Settings className="h-3 w-3" />
+                    <span>{t("filters.insurance")}</span>
+                    {getActiveFilterCount(filters.insurance) > 0 && (
+                      <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
+                        {getActiveFilterCount(filters.insurance)}
+                      </Badge>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground">{t("filters.insurance")}</h3>
+                    <div className="flex flex-wrap gap-1">
+                      {insuranceOptions.map((insurance) => (
+                        <button
+                          key={insurance}
+                          onClick={() => handleInsuranceSelect(insurance)}
+                          className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${
+                            filters.insurance.includes(insurance as InsuranceType)
+                              ? "bg-purple-100 border-purple-300 text-purple-700"
+                              : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+                          }`}
+                        >
+                          {getInsuranceLabel(insurance)}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverContent>
+              </Popover>
             )}
 
             {/* Institution Type Filter (Mobile) */}
@@ -548,7 +568,7 @@ export const SearchAndFilters = ({
                     className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                   >
                     <Building2 className="h-3 w-3" />
-                    <span>{t('filters.institutionType')}</span>
+                    <span>{t("filters.institutionType")}</span>
                     {getActiveFilterCount(filters.institutionTypes) > 0 && (
                       <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                         {getActiveFilterCount(filters.institutionTypes)}
@@ -558,7 +578,7 @@ export const SearchAndFilters = ({
                 </PopoverTrigger>
                 <PopoverContent className="w-80 p-6">
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-foreground">{t('filters.institutionType')}</h3>
+                    <h3 className="text-lg font-semibold text-foreground">{t("filters.institutionType")}</h3>
                     <div className="flex flex-wrap gap-1">
                       {institutionTypeOptions.map((type) => (
                         <button
@@ -566,8 +586,8 @@ export const SearchAndFilters = ({
                           onClick={() => handleInstitutionTypeSelect(type)}
                           className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                             filters.institutionTypes.includes(type as any)
-                              ? 'bg-purple-100 border-purple-300 text-purple-700'
-                              : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                              ? "bg-purple-100 border-purple-300 text-purple-700"
+                              : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
                           }`}
                         >
                           {getInstitutionTypeLabel(type)}
@@ -588,7 +608,7 @@ export const SearchAndFilters = ({
                     className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                   >
                     <User className="h-3 w-3" />
-                    <span>{t('filters.profession')}</span>
+                    <span>{t("filters.profession")}</span>
                     {getActiveFilterCount(filters.professionTypes) > 0 && (
                       <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                         {getActiveFilterCount(filters.professionTypes)}
@@ -598,7 +618,7 @@ export const SearchAndFilters = ({
                 </PopoverTrigger>
                 <PopoverContent className="w-80 p-6">
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-foreground">{t('filters.profession')}</h3>
+                    <h3 className="text-lg font-semibold text-foreground">{t("filters.profession")}</h3>
                     <div className="flex flex-wrap gap-1">
                       {professionTypeOptions.map((type) => (
                         <button
@@ -606,8 +626,8 @@ export const SearchAndFilters = ({
                           onClick={() => handleProfessionSelect(type)}
                           className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                             filters.professionTypes.includes(type as ProfessionType)
-                              ? 'bg-purple-100 border-purple-300 text-purple-700'
-                              : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                              ? "bg-purple-100 border-purple-300 text-purple-700"
+                              : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
                           }`}
                         >
                           {getProfessionLabel(t, type)}
@@ -628,12 +648,12 @@ export const SearchAndFilters = ({
         {/* City Filter */}
         <Popover>
           <PopoverTrigger asChild>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
             >
               <MapPin className="h-3 w-3 mr-1" />
-              {t('filters.city')}
+              {t("filters.city")}
               {getActiveFilterCount(filters.locations) > 0 && (
                 <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                   {getActiveFilterCount(filters.locations)}
@@ -644,7 +664,7 @@ export const SearchAndFilters = ({
           </PopoverTrigger>
           <PopoverContent className="w-80 p-6">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">{t('filters.city')}</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t("filters.city")}</h3>
               <div className="flex flex-wrap gap-1">
                 {cities.map((location) => (
                   <button
@@ -652,11 +672,11 @@ export const SearchAndFilters = ({
                     onClick={() => handleLocationSelect(location)}
                     className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                       filters.locations.includes(location)
-                        ? 'bg-purple-100 border-purple-300 text-purple-700'
-                        : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                        ? "bg-purple-100 border-purple-300 text-purple-700"
+                        : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
                     }`}
                   >
-                    {location.split(',')[0]}
+                    {location.split(",")[0]}
                   </button>
                 ))}
               </div>
@@ -667,12 +687,12 @@ export const SearchAndFilters = ({
         {/* Specialization Filter */}
         <Popover>
           <PopoverTrigger asChild>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
             >
               <Heart className="h-3 w-3 mr-1" />
-              {t('filters.specialization')}
+              {t("filters.specialization")}
               {getActiveFilterCount(filters.specializations) > 0 && (
                 <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                   {getActiveFilterCount(filters.specializations)}
@@ -683,7 +703,7 @@ export const SearchAndFilters = ({
           </PopoverTrigger>
           <PopoverContent className="w-80 p-6">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">{t('filters.specialization')}</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t("filters.specialization")}</h3>
               <div className="flex flex-wrap gap-1">
                 {specializations.map((specialization) => (
                   <button
@@ -691,8 +711,8 @@ export const SearchAndFilters = ({
                     onClick={() => handleSpecializationSelect(specialization)}
                     className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                       filters.specializations.includes(specialization as Specialization)
-                        ? 'bg-purple-100 border-purple-300 text-purple-700'
-                        : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                        ? "bg-purple-100 border-purple-300 text-purple-700"
+                        : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
                     }`}
                   >
                     {getSpecializationLabel(t, specialization)}
@@ -705,173 +725,170 @@ export const SearchAndFilters = ({
 
         {/* Session Mode Filter */}
         {!hiddenFilters.includes("sessionMode") && (
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button 
-              variant="outline" 
-              className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
-            >
-              <Monitor className="h-3 w-3 mr-1" />
-              {t('filters.sessionMode')}
-              {getActiveFilterCount(filters.modes) > 0 && (
-                <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
-                  {getActiveFilterCount(filters.modes)}
-                </Badge>
-              )}
-              <ChevronDown className="h-3 w-3 ml-1" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80 p-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">{t('filters.sessionMode')}</h3>
-              <div className="flex flex-wrap gap-1">
-                {sessionModeOptions.map((mode) => (
-                  <button
-                    key={mode}
-                    onClick={() => handleModeSelect(mode)}
-                    className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
-                      filters.modes.includes(mode as Mode)
-                        ? 'bg-purple-100 border-purple-300 text-purple-700'
-                        : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
-                    }`}
-                  >
-                    {getModeLabel(mode)}
-                  </button>
-                ))}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
+              >
+                <Monitor className="h-3 w-3 mr-1" />
+                {t("filters.sessionMode")}
+                {getActiveFilterCount(filters.modes) > 0 && (
+                  <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
+                    {getActiveFilterCount(filters.modes)}
+                  </Badge>
+                )}
+                <ChevronDown className="h-3 w-3 ml-1" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">{t("filters.sessionMode")}</h3>
+                <div className="flex flex-wrap gap-1">
+                  {sessionModeOptions.map((mode) => (
+                    <button
+                      key={mode}
+                      onClick={() => handleModeSelect(mode)}
+                      className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                        filters.modes.includes(mode as Mode)
+                          ? "bg-purple-100 border-purple-300 text-purple-700"
+                          : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+                      }`}
+                    >
+                      {getModeLabel(mode)}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          </PopoverContent>
-        </Popover>
+            </PopoverContent>
+          </Popover>
         )}
 
         {/* Price Range Filter */}
         {!hiddenFilters.includes("priceRange") && (
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button 
-              variant="outline" 
-              className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
-            >
-              <Settings className="h-3 w-3 mr-1" />
-              {t('filters.priceRange')}
-              <ChevronDown className="h-3 w-3 ml-1" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80 p-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">{t('filters.sessionCost')}</h3>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
+              >
+                <Settings className="h-3 w-3 mr-1" />
+                {t("filters.priceRange")}
+                <ChevronDown className="h-3 w-3 ml-1" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-6">
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">{t('search.filters.minimum')}</label>
-                    <Input
-                      type="number"
-                      value={minPriceInput}
-                      onChange={(e) => handleMinPriceChange(e.target.value)}
-                      onBlur={handlePriceInputBlur}
-                      className="text-sm"
-                      min={minPrice}
-                      max={maxPrice}
-                    />
+                <h3 className="text-lg font-semibold text-foreground">{t("filters.sessionCost")}</h3>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="text-xs text-muted-foreground mb-1 block">{t("search.filters.minimum")}</label>
+                      <Input
+                        type="number"
+                        value={minPriceInput}
+                        onChange={(e) => handleMinPriceChange(e.target.value)}
+                        onBlur={handlePriceInputBlur}
+                        className="text-sm"
+                        min={minPrice}
+                        max={maxPrice}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-muted-foreground mb-1 block">{t("search.filters.maximum")}</label>
+                      <Input
+                        type="number"
+                        value={maxPriceInput}
+                        onChange={(e) => handleMaxPriceChange(e.target.value)}
+                        onBlur={handlePriceInputBlur}
+                        className="text-sm"
+                        min={minPrice}
+                        max={maxPrice}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">{t('search.filters.maximum')}</label>
-                    <Input
-                      type="number"
-                      value={maxPriceInput}
-                      onChange={(e) => handleMaxPriceChange(e.target.value)}
-                      onBlur={handlePriceInputBlur}
-                      className="text-sm"
-                      min={minPrice}
-                      max={maxPrice}
-                    />
-                  </div>
-                </div>
-                
-                <Slider
-                  value={priceRange}
-                  min={minPrice}
-                  max={maxPrice}
-                  step={25000}
-                  onValueChange={(value) => setPriceRange(value as [number, number])}
-                  onValueCommit={() => handlePriceRangeChange(priceRange)}
-                  className="mb-2"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Rp {priceRange[0].toLocaleString()}</span>
-                  <span>Rp {priceRange[1].toLocaleString()}</span>
-                </div>
-                
-                <div className="flex items-center space-x-2 pt-2 border-t">
-                  <Checkbox 
-                    id="include-null-price"
-                    checked={filters.includeNullPrice || false}
-                    onCheckedChange={handleIncludeNullPriceChange}
+
+                  <Slider
+                    value={priceRange}
+                    min={minPrice}
+                    max={maxPrice}
+                    step={25000}
+                    onValueChange={(value) => setPriceRange(value as [number, number])}
+                    onValueCommit={() => handlePriceRangeChange(priceRange)}
+                    className="mb-2"
                   />
-                  <label 
-                    htmlFor="include-null-price"
-                    className="text-sm text-foreground cursor-pointer"
-                  >
-                    {t('detail.includePriceUponRequest')}
-                  </label>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Rp {priceRange[0].toLocaleString()}</span>
+                    <span>Rp {priceRange[1].toLocaleString()}</span>
+                  </div>
+
+                  <div className="flex items-center space-x-2 pt-2 border-t">
+                    <Checkbox
+                      id="include-null-price"
+                      checked={filters.includeNullPrice || false}
+                      onCheckedChange={handleIncludeNullPriceChange}
+                    />
+                    <label htmlFor="include-null-price" className="text-sm text-foreground cursor-pointer">
+                      {t("detail.includePriceUponRequest")}
+                    </label>
+                  </div>
                 </div>
               </div>
-            </div>
-          </PopoverContent>
-        </Popover>
+            </PopoverContent>
+          </Popover>
         )}
 
         {/* Insurance Filter */}
         {!hiddenFilters.includes("insurance") && (
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button 
-              variant="outline" 
-              className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
-            >
-              <Settings className="h-3 w-3 mr-1" />
-              {t('filters.insurance')}
-              {getActiveFilterCount(filters.insurance) > 0 && (
-                <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
-                  {getActiveFilterCount(filters.insurance)}
-                </Badge>
-              )}
-              <ChevronDown className="h-3 w-3 ml-1" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80 p-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">{t('filters.insurance')}</h3>
-              <div className="flex flex-wrap gap-1">
-                {insuranceOptions.map((insurance) => (
-                  <button
-                    key={insurance}
-                    onClick={() => handleInsuranceSelect(insurance)}
-                    className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${
-                      filters.insurance.includes(insurance as InsuranceType)
-                        ? 'bg-purple-100 border-purple-300 text-purple-700'
-                        : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
-                    }`}
-                  >
-                    {getInsuranceLabel(insurance)}
-                  </button>
-                ))}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
+              >
+                <Settings className="h-3 w-3 mr-1" />
+                {t("filters.insurance")}
+                {getActiveFilterCount(filters.insurance) > 0 && (
+                  <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
+                    {getActiveFilterCount(filters.insurance)}
+                  </Badge>
+                )}
+                <ChevronDown className="h-3 w-3 ml-1" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">{t("filters.insurance")}</h3>
+                <div className="flex flex-wrap gap-1">
+                  {insuranceOptions.map((insurance) => (
+                    <button
+                      key={insurance}
+                      onClick={() => handleInsuranceSelect(insurance)}
+                      className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${
+                        filters.insurance.includes(insurance as InsuranceType)
+                          ? "bg-purple-100 border-purple-300 text-purple-700"
+                          : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+                      }`}
+                    >
+                      {getInsuranceLabel(insurance)}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          </PopoverContent>
-        </Popover>
+            </PopoverContent>
+          </Popover>
         )}
 
         {/* Institution Type Filter */}
         {institutionTypeOptions.length > 0 && (
           <Popover>
             <PopoverTrigger asChild>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
               >
                 <Building2 className="h-3 w-3 mr-1" />
-                {t('filters.institutionType')}
+                {t("filters.institutionType")}
                 {getActiveFilterCount(filters.institutionTypes) > 0 && (
                   <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                     {getActiveFilterCount(filters.institutionTypes)}
@@ -882,7 +899,7 @@ export const SearchAndFilters = ({
             </PopoverTrigger>
             <PopoverContent className="w-80 p-6">
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">{t('filters.institutionType')}</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t("filters.institutionType")}</h3>
                 <div className="flex flex-wrap gap-1">
                   {institutionTypeOptions.map((type) => (
                     <button
@@ -890,8 +907,8 @@ export const SearchAndFilters = ({
                       onClick={() => handleInstitutionTypeSelect(type)}
                       className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                         filters.institutionTypes.includes(type as any)
-                          ? 'bg-purple-100 border-purple-300 text-purple-700'
-                          : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                          ? "bg-purple-100 border-purple-300 text-purple-700"
+                          : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
                       }`}
                     >
                       {getInstitutionTypeLabel(type)}
@@ -912,7 +929,7 @@ export const SearchAndFilters = ({
                 className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
               >
                 <User className="h-3 w-3 mr-1" />
-                {t('filters.profession')}
+                {t("filters.profession")}
                 {getActiveFilterCount(filters.professionTypes) > 0 && (
                   <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                     {getActiveFilterCount(filters.professionTypes)}
@@ -923,7 +940,7 @@ export const SearchAndFilters = ({
             </PopoverTrigger>
             <PopoverContent className="w-80 p-6">
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">{t('filters.profession')}</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t("filters.profession")}</h3>
                 <div className="flex flex-wrap gap-1">
                   {professionTypeOptions.map((type) => (
                     <button
@@ -931,8 +948,8 @@ export const SearchAndFilters = ({
                       onClick={() => handleProfessionSelect(type)}
                       className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
                         filters.professionTypes.includes(type as ProfessionType)
-                          ? 'bg-purple-100 border-purple-300 text-purple-700'
-                          : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                          ? "bg-purple-100 border-purple-300 text-purple-700"
+                          : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
                       }`}
                     >
                       {getProfessionLabel(t, type)}
@@ -952,7 +969,7 @@ export const SearchAndFilters = ({
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3" />
             <Input
               type="text"
-              placeholder={searchPlaceholder ?? t('search.placeholder')}
+              placeholder={searchPlaceholder ?? t("search.placeholder")}
               value={filters.search}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-7 text-sm rounded-full border-gray-200 h-8"
