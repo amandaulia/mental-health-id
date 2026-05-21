@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Menu, X, Home, Info, Users, Heart, Palette, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -25,35 +26,35 @@ export const Header = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             <nav className="flex items-center space-x-6">
-              <a href="/" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+              <Link to="/" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
                 <Home className="h-4 w-4" />
                 {t('header.navigation.home')}
-              </a>
-              <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+              </Link>
+              <Link to="/about" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
                 <Info className="h-4 w-4" />
                 {t('header.navigation.about')}
-              </a>
-              <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+              </Link>
+              <Link to="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 {t('header.navigation.professional')}
-              </a>
+              </Link>
               {featureFlags.peerCounseling && (
-                <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                <Link to="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
                   <Heart className="h-4 w-4" />
                   {t('header.navigation.peer')}
-                </a>
+                </Link>
               )}
               {featureFlags.stressRelief && (
-                <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                <Link to="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
                   <Palette className="h-4 w-4" />
                   {t('header.navigation.stressRelief')}
-                </a>
+                </Link>
               )}
               {featureFlags.organizations && (
-                <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                <Link to="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
                   <Building2 className="h-4 w-4" />
                   {t('header.navigation.organizations')}
-                </a>
+                </Link>
               )}
             </nav>
             {featureFlags.languageOptions && <LanguageToggle />}
@@ -77,35 +78,35 @@ export const Header = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden bg-white/10 backdrop-blur-sm rounded-lg m-2 p-4">
             <nav className="flex flex-col space-y-3">
-              <a href="/" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+              <Link to="/" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Home className="h-4 w-4" />
                 {t('header.navigation.home')}
-              </a>
-              <a href="/about" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+              </Link>
+              <Link to="/about" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Info className="h-4 w-4" />
                 {t('header.navigation.about')}
-              </a>
-              <a href="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+              </Link>
+              <Link to="/professional-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 {t('header.navigation.professional')}
-              </a>
+              </Link>
               {featureFlags.peerCounseling && (
-                <a href="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                <Link to="/peer-counseling" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                   <Heart className="h-4 w-4" />
                   {t('header.navigation.peer')}
-                </a>
+                </Link>
               )}
               {featureFlags.stressRelief && (
-                <a href="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                <Link to="/stress-relief" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                   <Palette className="h-4 w-4" />
                   {t('header.navigation.stressRelief')}
-                </a>
+                </Link>
               )}
               {featureFlags.organizations && (
-                <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                <Link to="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                   <Building2 className="h-4 w-4" />
                   {t('header.navigation.organizations')}
-                </a>
+                </Link>
               )}
             </nav>
           </div>

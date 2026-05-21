@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { Toaster } from "@/components/ui/toaster"
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LanguageProvider } from '@/contexts/LanguageContext';
@@ -22,6 +21,7 @@ const BureauDetail = lazy(() => import('@/pages/BureauDetail'));
 const PeerCounselingDetail = lazy(() => import('@/pages/PeerCounselingDetail'));
 const OrganizationDetail = lazy(() => import('@/pages/OrganizationDetail'));
 const About = lazy(() => import('@/pages/About'));
+const Toaster = lazy(() => import('@/components/ui/toaster').then((module) => ({ default: module.Toaster })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -82,7 +82,9 @@ function AppContent() {
         </Suspense>
       </main>
       <Footer />
-      <Toaster />
+      <Suspense fallback={null}>
+        <Toaster />
+      </Suspense>
       <ScrollToTopButton />
     </div>
   );

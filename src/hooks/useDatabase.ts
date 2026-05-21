@@ -2,21 +2,27 @@
 import { useQuery } from "@tanstack/react-query";
 import { databaseService } from "@/services/database";
 
+type QueryOptions = {
+  enabled?: boolean;
+};
+
 // OPTIMIZED: Fetch practitioners with all relations in one query
-export const usePractitionersWithRelations = () => {
+export const usePractitionersWithRelations = (options: QueryOptions = {}) => {
   return useQuery({
     queryKey: ['practitioners-with-relations'],
     queryFn: databaseService.getAllPractitionersWithRelations,
+    enabled: options.enabled ?? true,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
 };
 
 // OPTIMIZED: Fetch institutions with all relations in one query
-export const useInstitutionsWithRelations = () => {
+export const useInstitutionsWithRelations = (options: QueryOptions = {}) => {
   return useQuery({
     queryKey: ['institutions-with-relations'],
     queryFn: databaseService.getAllInstitutionsWithRelations,
+    enabled: options.enabled ?? true,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
@@ -122,23 +128,26 @@ export const useLocations = () => {
   });
 };
 
-export const usePeerCounseling = () => {
+export const usePeerCounseling = (options: QueryOptions = {}) => {
   return useQuery({
     queryKey: ['peer-counseling'],
     queryFn: databaseService.getPeerCounseling,
+    enabled: options.enabled ?? true,
   });
 };
 
-export const useOrganizations = () => {
+export const useOrganizations = (options: QueryOptions = {}) => {
   return useQuery({
     queryKey: ['organizations'],
     queryFn: databaseService.getOrganizations,
+    enabled: options.enabled ?? true,
   });
 };
 
-export const useActivities = () => {
+export const useActivities = (options: QueryOptions = {}) => {
   return useQuery({
     queryKey: ['activities'],
     queryFn: databaseService.getActivities,
+    enabled: options.enabled ?? true,
   });
 };

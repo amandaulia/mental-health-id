@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { FilterState } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
@@ -118,9 +119,9 @@ const Organizations = () => {
             {t('organizations.all')}
           </h2>
           <Button variant="outline" asChild>
-            <a href="/organizations">
+            <Link to="/organizations">
               {t('common.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
-            </a>
+            </Link>
           </Button>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
