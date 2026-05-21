@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
 import { FilterState, Practitioner, Bureau } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
@@ -54,15 +53,9 @@ const Index = () => {
   // OPTIMIZED: Fetch everything via Supabase JOINs (2 queries instead of 200+)
   const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitionersWithRelations();
   const { data: dbInstitutions, isLoading: institutionsLoading } = useInstitutionsWithRelations();
-  const { data: dbPeerCounseling, isLoading: peerCounselingLoading } = usePeerCounseling({
-    enabled: featureFlags.peerCounseling,
-  });
-  const { data: dbOrganizations, isLoading: organizationsLoading } = useOrganizations({
-    enabled: featureFlags.organizations,
-  });
-  const { data: dbActivities, isLoading: activitiesLoading } = useActivities({
-    enabled: featureFlags.stressRelief,
-  });
+  const { data: dbPeerCounseling, isLoading: peerCounselingLoading } = usePeerCounseling();
+  const { data: dbOrganizations, isLoading: organizationsLoading } = useOrganizations();
+  const { data: dbActivities, isLoading: activitiesLoading } = useActivities();
 
   const { data: resourcePopularity = [] } = useQuery({
     queryKey: ["resource-popularity"],
@@ -461,9 +454,9 @@ const Index = () => {
               {t('home.sectionHeading.professional')}
             </h2>
             <Button variant="outline" asChild>
-              <Link to="/professional-counseling">
+              <a href="/professional-counseling">
                 {t('common.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+              </a>
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -504,9 +497,9 @@ const Index = () => {
               {t('home.sectionHeading.clinics')}
             </h2>
             <Button variant="outline" asChild>
-              <Link to="/professional-counseling">
+              <a href="/professional-counseling">
                 {t('common.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+              </a>
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -554,9 +547,9 @@ const Index = () => {
             </div>
             {filteredPeerCounseling.length > 0 && (
               <Button variant="outline" asChild>
-                <Link to="/peer-counseling">
+                <a href="/peer-counseling">
                   {t('common.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+                </a>
               </Button>
             )}
           </div>
@@ -593,9 +586,9 @@ const Index = () => {
                 {t('home.sectionHeading.stressRelief')}
               </h2>
               <Button variant="outline" asChild>
-                <Link to="/stress-relief">
+                <a href="/stress-relief">
                   {t('common.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+                </a>
               </Button>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -631,9 +624,9 @@ const Index = () => {
                 {t('home.sectionHeading.organizations')}
               </h2>
               <Button variant="outline" asChild>
-                <Link to="/organizations">
+                <a href="/organizations">
                   {t('common.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+                </a>
               </Button>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
