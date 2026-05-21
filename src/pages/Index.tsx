@@ -316,6 +316,38 @@ const Index = () => {
     }
   }, [filters.search, filteredPractitioners, filteredClinics, filteredPeerCounseling, filteredActivities, filteredOrganizations]);
 
+  useEffect(() => {
+    if (filters.sortBy !== "nearest") {
+      setLocationSortMessage("");
+      return;
+    }
+    if (userLocation) {
+      setLocationSortMessage("");
+      return;
+    }
+    if (!navigator.geolocation) {
+      setLocationSortMessage(locationUnsupportedMessage);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        setLocationSortMessage("");
+      },
+      (error) => {
+        setLocationSortMessage(
+          error.code === error.PERMISSION_DENIED
+            ? locationDeniedMessage
+            : locationUnavailableMessage
+        );
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+    );
+  }, [filters.sortBy, locationDeniedMessage, locationUnavailableMessage, locationUnsupportedMessage, userLocation]);
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
