@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { FilterState, Practitioner, Bureau } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
@@ -17,6 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { featureFlags } from "@/config/features";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { sortByCompleteness } from "@/utils/completeness";
+import { sortResources } from "@/utils/sortResources";
+import type { Coordinates } from "@/utils/sortResources";
 import { PageSEO } from "@/components/PageSEO";
 import { matchProfessional, matchPeer, matchActivity, matchOrganization } from "@/utils/filterResource";
 
@@ -37,8 +40,14 @@ const Index = () => {
     specializations: [],
     priceRange: [0, 2000000],
     modes: [],
-    insurance: []
+    insurance: [],
+    sortBy: "popular",
   });
+  const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
+  const [locationSortMessage, setLocationSortMessage] = useState("");
+  const locationDeniedMessage = t("sort.locationDenied");
+  const locationUnavailableMessage = t("sort.locationUnavailable");
+  const locationUnsupportedMessage = t("sort.locationUnsupported");
 
   const { toast } = useToast();
   // OPTIMIZED: Fetch everything via Supabase JOINs (2 queries instead of 200+)
@@ -47,6 +56,32 @@ const Index = () => {
   const { data: dbPeerCounseling, isLoading: peerCounselingLoading } = usePeerCounseling();
   const { data: dbOrganizations, isLoading: organizationsLoading } = useOrganizations();
   const { data: dbActivities, isLoading: activitiesLoading } = useActivities();
+
+  const { data: resourcePopularity = [] } = useQuery({
+    queryKey: ["resource-popularity"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("resource_popularity")
+        .select("resource_type, resource_id, click_count");
+      if (error) {
+        console.error("Error fetching resource popularity:", error);
+        return [];
+      }
+      return data || [];
+    },
+  });
+
+  const popularity = useMemo(() => {
+    return (resourcePopularity as any[]).reduce<Record<string, number>>((acc, item: any) => {
+      acc[`${item.resource_type}:${item.resource_id}`] = item.click_count || 0;
+      return acc;
+    }, {});
+  }, [resourcePopularity]);
+
+  const sortOpts = useMemo(
+    () => ({ sortBy: filters.sortBy || "popular", popularity, userLocation }),
+    [filters.sortBy, popularity, userLocation]
+  );
 
   const allPractitioners = useMemo<Practitioner[]>(() => {
     if (!dbPractitioners) return [];
@@ -151,36 +186,36 @@ const Index = () => {
 
   const filteredProfessionalResources = useMemo(() => {
     const filtered = allProfessionalResources.filter((r) => matchProfessional(r, filters));
-    return sortByCompleteness(filtered);
-  }, [filters, allProfessionalResources]);
+    return sortResources(filtered as any, sortOpts);
+  }, [filters, allProfessionalResources, sortOpts]);
 
   const filteredPractitioners = useMemo(() => {
     const filtered = allPractitioners.filter((r) => matchProfessional(r, filters));
-    return sortByCompleteness(filtered);
-  }, [filters, allPractitioners]);
+    return sortResources(filtered as any, sortOpts);
+  }, [filters, allPractitioners, sortOpts]);
 
   const filteredClinics = useMemo(() => {
     const filtered = allBureaus.filter((r) => matchProfessional(r, filters));
-    return sortByCompleteness(filtered);
-  }, [filters, allBureaus]);
+    return sortResources(filtered as any, sortOpts);
+  }, [filters, allBureaus, sortOpts]);
 
   const filteredPeerCounseling = useMemo(() => {
     if (!dbPeerCounseling) return [];
     const filtered = (dbPeerCounseling as any[]).filter((item) => matchPeer(item, filters));
-    return sortByCompleteness(filtered);
-  }, [filters, dbPeerCounseling]);
+    return sortResources(filtered as any, sortOpts);
+  }, [filters, dbPeerCounseling, sortOpts]);
 
   const filteredActivities = useMemo(() => {
     if (!dbActivities) return [];
     const filtered = (dbActivities as any[]).filter((item) => matchActivity(item, filters));
-    return sortByCompleteness(filtered);
-  }, [filters, dbActivities]);
+    return sortResources(filtered as any, sortOpts);
+  }, [filters, dbActivities, sortOpts]);
 
   const filteredOrganizations = useMemo(() => {
     if (!dbOrganizations) return [];
     const filtered = (dbOrganizations as any[]).filter((item) => matchOrganization(item, filters));
-    return sortByCompleteness(filtered);
-  }, [filters, dbOrganizations]);
+    return sortResources(filtered as any, sortOpts);
+  }, [filters, dbOrganizations, sortOpts]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
@@ -200,7 +235,8 @@ const Index = () => {
       specializations: [],
       priceRange: [0, 2000000],
       modes: [],
-      insurance: []
+      insurance: [],
+      sortBy: "popular",
     });
     
     trackFilter('clear_all', 'all_filters', 'Home');
@@ -364,6 +400,8 @@ const Index = () => {
             institutionNames={institutionNames}
             filterOptions={filterOptions}
             searchPlaceholder={t('search.placeholderAll')}
+            showSort
+            locationSortMessage={locationSortMessage}
           />
         </div>
         <div className="mt-4">
