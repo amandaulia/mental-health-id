@@ -496,27 +496,6 @@ export type Database = {
           },
         ]
       }
-      resource_popularity: {
-        Row: {
-          click_count: number
-          resource_id: number
-          resource_type: string
-          updated_at: string
-        }
-        Insert: {
-          click_count?: number
-          resource_id: number
-          resource_type: string
-          updated_at?: string
-        }
-        Update: {
-          click_count?: number
-          resource_id?: number
-          resource_type?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       organization: {
         Row: {
           created_at: string | null
@@ -1036,6 +1015,27 @@ export type Database = {
         }
         Relationships: []
       }
+      resource_popularity: {
+        Row: {
+          click_count: number
+          resource_id: number
+          resource_type: string
+          updated_at: string
+        }
+        Insert: {
+          click_count?: number
+          resource_id: number
+          resource_type: string
+          updated_at?: string
+        }
+        Update: {
+          click_count?: number
+          resource_id?: number
+          resource_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       service: {
         Row: {
           book_cta: number | null
@@ -1181,9 +1181,11 @@ export type Database = {
         Returns: boolean
       }
       increment_resource_click: {
-        Args: { resource_type_input: string; resource_id_input: number }
+        Args: { resource_id_input: number; resource_type_input: string }
         Returns: undefined
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       update_user_app_metadata: {
         Args: { new_app_metadata: Json; user_id: string }
         Returns: undefined
