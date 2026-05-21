@@ -26,6 +26,8 @@ export type InsuranceType = string;
 
 export type BureauType = "independent" | "clinic" | "faskes1" | "faskes2";
 
+export type SortBy = "popular" | "name" | "lowestPrice" | "highestPrice" | "nearest";
+
 export interface Service {
   id: string;
   name: string;
@@ -143,6 +145,7 @@ export interface FilterState {
   modes: Mode[];
   insurance: InsuranceType[];
   includeNullPrice?: boolean; // Include services/institutions with null prices
+  sortBy?: SortBy;
 }
 
 export interface FilterTag {

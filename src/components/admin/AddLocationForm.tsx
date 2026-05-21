@@ -13,12 +13,18 @@ export function AddLocationForm({ onAdd }: AddLocationFormProps) {
     address: '',
     city: '',
     province: '',
-    country: 'Indonesia'
+    country: 'Indonesia',
+    latitude: '',
+    longitude: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onAdd(formData);
+    onAdd({
+      ...formData,
+      latitude: formData.latitude.trim() === '' ? null : Number(formData.latitude),
+      longitude: formData.longitude.trim() === '' ? null : Number(formData.longitude),
+    });
   };
 
   return (
@@ -70,6 +76,31 @@ export function AddLocationForm({ onAdd }: AddLocationFormProps) {
           onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
           required
         />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="latitude">Latitude</Label>
+          <Input
+            id="latitude"
+            type="number"
+            step="any"
+            value={formData.latitude}
+            onChange={(e) => setFormData(prev => ({ ...prev, latitude: e.target.value }))}
+            placeholder="-6.2088"
+          />
+        </div>
+        <div>
+          <Label htmlFor="longitude">Longitude</Label>
+          <Input
+            id="longitude"
+            type="number"
+            step="any"
+            value={formData.longitude}
+            onChange={(e) => setFormData(prev => ({ ...prev, longitude: e.target.value }))}
+            placeholder="106.8456"
+          />
+        </div>
       </div>
 
       <Button type="submit" className="w-full">Add Location</Button>

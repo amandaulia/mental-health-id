@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FilterState, ProfessionType, Specialization, Mode, InsuranceType } from "@/types";
+import type { FilterState, ProfessionType, Specialization, Mode, InsuranceType, SortBy } from "@/types";
 import { trackFormInteraction } from "@/utils/analytics";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getSpecializationLabel, getInstitutionTypeLabel as getInstTypeLabelI18n, getProfessionLabel } from "@/utils/labels";
@@ -39,6 +39,8 @@ interface SearchAndFiltersProps {
   };
   hiddenFilters?: Array<"sessionMode" | "priceRange" | "insurance">;
   searchPlaceholder?: string;
+  locationSortMessage?: string;
+  showSort?: boolean;
 }
 
 export const SearchAndFilters = ({
@@ -48,6 +50,8 @@ export const SearchAndFilters = ({
   filterOptions,
   hiddenFilters = [],
   searchPlaceholder,
+  locationSortMessage,
+  showSort = false,
 }: SearchAndFiltersProps) => {
   const [priceRange, setPriceRange] = useState(filters.priceRange);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -87,6 +91,14 @@ export const SearchAndFilters = ({
     if (normalized === "none") return t('insurance.noInsurance');
     return insurance;
   };
+
+  const sortOptions: Array<{ value: SortBy; label: string }> = [
+    { value: "popular", label: t("sort.popular") },
+    { value: "name", label: t("sort.name") },
+    { value: "lowestPrice", label: t("sort.lowestPrice") },
+    { value: "highestPrice", label: t("sort.highestPrice") },
+    { value: "nearest", label: t("sort.nearest") },
+  ];
 
   // Update local state when filters change from parent
   useEffect(() => {
@@ -211,6 +223,31 @@ export const SearchAndFilters = ({
     trackFormInteraction('filter', 'include_null_price_changed');
   };
 
+  const handleSortChange = (sortBy: SortBy) => {
+    onFiltersChange({ ...filters, sortBy });
+    trackFormInteraction('sort', 'sort_changed', sortBy);
+  };
+
+  const SortSelect = ({ className = "" }: { className?: string }) => (
+    <div className={className}>
+      <Select value={filters.sortBy || "popular"} onValueChange={(value) => handleSortChange(value as SortBy)}>
+        <SelectTrigger className="h-8 rounded-full border-gray-200 bg-background text-sm">
+          <SelectValue placeholder={t("sort.label")} />
+        </SelectTrigger>
+        <SelectContent>
+          {sortOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {locationSortMessage && filters.sortBy === "nearest" && (
+        <p className="mt-1 text-xs text-muted-foreground">{locationSortMessage}</p>
+      )}
+    </div>
+  );
+
   const getActiveFilterCount = (filterArray: any[]) => {
     return filterArray.length;
   };
@@ -240,6 +277,8 @@ export const SearchAndFilters = ({
           </div>
         </div>
       </div>
+
+      {showSort && <SortSelect className="md:hidden" />}
 
       {/* Mobile Filters - Collapsible */}
       {showMobileFilters && (
@@ -879,6 +918,8 @@ export const SearchAndFilters = ({
             </PopoverContent>
           </Popover>
         )}
+
+        {showSort && <SortSelect className="w-44 shrink-0" />}
 
         <div className="h-6 w-px bg-border mx-1"></div>
 

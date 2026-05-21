@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { trackSearch, trackFilter } from "@/utils/analytics";
 import { PageSEO } from "@/components/PageSEO";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { sortByCompleteness } from "@/utils/completeness";
+import { sortResources } from "@/utils/sortResources";
+import type { Coordinates } from "@/utils/sortResources";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -46,6 +47,9 @@ const hasInsuranceMatch = (resourceInsurance: string[] = [], selectedInsurance: 
 
 const ProfessionalCounseling = () => {
   const { t } = useLanguage();
+  const locationDeniedMessage = t("sort.locationDenied");
+  const locationUnavailableMessage = t("sort.locationUnavailable");
+  const locationUnsupportedMessage = t("sort.locationUnsupported");
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     locations: [],
@@ -57,11 +61,30 @@ const ProfessionalCounseling = () => {
     modes: [],
     insurance: [],
     includeNullPrice: true,
+    sortBy: "popular",
   });
+  const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
+  const [locationSortMessage, setLocationSortMessage] = useState("");
 
   // OPTIMIZED: Fetch all data with relations in 2 queries instead of 300+
   const { data: practitionersData = [], isLoading: practitionersLoading } = usePractitionersWithRelations();
   const { data: institutionsData = [], isLoading: institutionsLoading } = useInstitutionsWithRelations();
+
+  const { data: resourcePopularity = [] } = useQuery({
+    queryKey: ["resource-popularity"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("resource_popularity")
+        .select("resource_type, resource_id, click_count");
+
+      if (error) {
+        console.error("Error fetching resource popularity:", error);
+        return [];
+      }
+
+      return data || [];
+    },
+  });
 
   // Fetch min/max prices for the price range filter
   const { data: priceRange } = useQuery({
@@ -213,6 +236,7 @@ const ProfessionalCounseling = () => {
       modes: [],
       insurance: [],
       includeNullPrice: false,
+      sortBy: "popular",
     });
   };
 
@@ -351,8 +375,17 @@ const ProfessionalCounseling = () => {
   }, [filters, allBureaus]);
 
   const allResources = useMemo(() => {
-    return sortByCompleteness([...filteredPractitioners, ...filteredBureaus]);
-  }, [filteredPractitioners, filteredBureaus]);
+    const popularity = resourcePopularity.reduce<Record<string, number>>((acc, item: any) => {
+      acc[`${item.resource_type}:${item.resource_id}`] = item.click_count || 0;
+      return acc;
+    }, {});
+
+    return sortResources([...filteredPractitioners, ...filteredBureaus], {
+      sortBy: filters.sortBy || "popular",
+      popularity,
+      userLocation,
+    });
+  }, [filteredPractitioners, filteredBureaus, filters.sortBy, resourcePopularity, userLocation]);
 
   const institutionNames = useMemo(() => {
     const names = new Set<string>();
@@ -409,6 +442,41 @@ const ProfessionalCounseling = () => {
     }
   }, [filterOptions.minPrice, filterOptions.maxPrice]);
 
+  useEffect(() => {
+    if (filters.sortBy !== "nearest") {
+      setLocationSortMessage("");
+      return;
+    }
+
+    if (userLocation) {
+      setLocationSortMessage("");
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      setLocationSortMessage(locationUnsupportedMessage);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        setLocationSortMessage("");
+      },
+      (error) => {
+        setLocationSortMessage(
+          error.code === error.PERMISSION_DENIED
+            ? locationDeniedMessage
+            : locationUnavailableMessage
+        );
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+    );
+  }, [filters.sortBy, locationDeniedMessage, locationUnavailableMessage, locationUnsupportedMessage, userLocation]);
+
   const isInitialLoading = practitionersLoading || institutionsLoading;
 
   useEffect(() => {
@@ -439,6 +507,8 @@ const ProfessionalCounseling = () => {
             onFiltersChange={setFilters}
             filterOptions={filterOptions}
             institutionNames={institutionNames}
+            locationSortMessage={locationSortMessage}
+            showSort
           />
         </div>
         <div className="mt-4">

@@ -1,4 +1,6 @@
 
+import { supabase } from "@/integrations/supabase/client";
+
 // Google Analytics 4 Event Tracking Utility
 declare global {
   interface Window {
@@ -95,6 +97,14 @@ export const trackCardClick = (cardType: string, cardId: string, cardName: strin
       card_name: cardName,
     },
   });
+
+  const resourceId = Number(cardId);
+  if (Number.isFinite(resourceId) && ["practitioner", "institution"].includes(cardType)) {
+    void supabase.rpc("increment_resource_click", {
+      resource_type_input: cardType,
+      resource_id_input: resourceId,
+    });
+  }
 };
 
 export const trackContactClick = (contactType: string, resourceName: string, resourceType: string) => {
