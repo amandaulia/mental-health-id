@@ -253,8 +253,7 @@ const Index = () => {
     const names = new Set<string>();
     allProfessionalResources.forEach(resource => {
       if (resource.type === "practitioner") {
-        const practitionerInstitutionNames = resource.institutions?.map((institution) => institution.name) || [resource.bureauName];
-        practitionerInstitutionNames.forEach((name) => names.add(name));
+        names.add(resource.bureauName);
       } else {
         names.add(resource.name);
       }
@@ -440,6 +439,7 @@ const Index = () => {
             institutionNames={institutionNames}
             filterOptions={filterOptions}
             searchPlaceholder={t('search.placeholderAll')}
+            showSort
             locationSortMessage={locationSortMessage}
           />
         </div>
@@ -476,7 +476,6 @@ const Index = () => {
                 city: resource.city,
                 isVerified: resource.isVerified,
                 institutionName: resource.bureauName,
-                institutionNames: resource.institutions?.map((institution: any) => institution.name),
                 professionTypes: resource.professionTypes,
                 specializations: resource.specializations,
                 priceRange: resource.priceRange,

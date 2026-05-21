@@ -18,17 +18,15 @@ export const transformPractitioner = (
   services: Service[] = [], 
   contactDetails: ContactDetails = []
 ): Practitioner => {
-  const linkedInstitutions: any[] = dbPractitioner.practitioner_institutions
-    ? dbPractitioner.practitioner_institutions.map((pi: any) => pi.institution).filter(Boolean)
-    : (dbPractitioner.institution ? [dbPractitioner.institution] : []);
-  const institutions = linkedInstitutions.map((institution: any) => ({
-    id: institution.id.toString(),
-    name: institution.name,
-  }));
-  const primaryInstitution = linkedInstitutions[0];
+  const institution =
+    dbPractitioner.institution ??
+    dbPractitioner.practitioner_institutions?.[0]?.institution;
 
   // Combine practitioner insurance with insurance from ALL linked institutions
   const practitionerInsurance = dbPractitioner.insurance || [];
+  const linkedInstitutions: any[] = dbPractitioner.practitioner_institutions
+    ? dbPractitioner.practitioner_institutions.map((pi: any) => pi.institution).filter(Boolean)
+    : (institution ? [institution] : []);
   const institutionInsurance = linkedInstitutions.flatMap((inst: any) => inst?.insurance || []);
   const combinedInsurance = [...new Set([...practitionerInsurance, ...institutionInsurance])];
 
@@ -37,9 +35,8 @@ export const transformPractitioner = (
     type: "practitioner",
     image: dbPractitioner.image || null,
     name: dbPractitioner.name,
-    bureauName: primaryInstitution?.name || "Independent",
-    bureauId: primaryInstitution?.id ? primaryInstitution.id.toString() : "",
-    institutions,
+    bureauName: institution?.name || "Independent",
+    bureauId: institution?.id ? institution.id.toString() : "",
     professionTypes: mapProfessionTypes(dbPractitioner.profession_type || []),
     licenseNumber: dbPractitioner.license_number,
     specializations: mapSpecializations(dbPractitioner.specialization || []),

@@ -117,13 +117,6 @@ const ProfessionalCounseling = () => {
       const locations = practitioner.practitioner_locations?.map((pl: any) => pl.location).filter(Boolean) || [];
       const services = practitioner.practitioner_services?.map((ps: any) => ps.service).filter(Boolean) || [];
       const institutionInsurance = practitioner.practitioner_institutions?.flatMap((pi: any) => pi.institution?.insurance || []) || [];
-      const institutions = (practitioner.practitioner_institutions || [])
-        .map((pi: any) => pi.institution)
-        .filter(Boolean)
-        .map((institution: any) => ({
-          id: institution.id,
-          name: institution.name,
-        }));
       const institutionTypes = Array.from(new Set(
         (practitioner.practitioner_institutions || [])
           .map((pi: any) => pi.institution?.institution_type)
@@ -158,8 +151,7 @@ const ProfessionalCounseling = () => {
         type: "practitioner" as const,
         id: practitioner.id,
         name: practitioner.name,
-        bureauName: institutions[0]?.name || "Independent",
-        institutions,
+        bureauName: practitioner.practitioner_institutions?.[0]?.institution?.name || "Independent",
         image: practitioner.image,
         professionTypes: practitioner.profession_type || [],
         specializations: practitioner.specialization || [],
@@ -250,16 +242,11 @@ const ProfessionalCounseling = () => {
 
   const filteredPractitioners = useMemo(() => {
     return allPractitioners.filter((practitioner: any) => {
-      const practitionerInstitutionNames = practitioner.institutions?.length
-        ? practitioner.institutions.map((institution: any) => institution.name)
-        : [practitioner.bureauName];
-
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         if (
           !practitioner.name.toLowerCase().includes(searchLower) &&
           !practitioner.bureauName.toLowerCase().includes(searchLower) &&
-          !practitionerInstitutionNames.some((name: string) => name.toLowerCase().includes(searchLower)) &&
           !practitioner.city.toLowerCase().includes(searchLower)
         )
           return false;
@@ -270,10 +257,7 @@ const ProfessionalCounseling = () => {
         if (!filters.locations.some((loc) => cityCountry.includes(loc.split(",")[0]))) return false;
       }
 
-      if (
-        filters.institutions.length > 0 &&
-        !practitionerInstitutionNames.some((name: string) => filters.institutions.includes(name))
-      ) {
+      if (filters.institutions.length > 0 && !filters.institutions.includes(practitioner.bureauName)) {
         return false;
       }
 
@@ -405,10 +389,7 @@ const ProfessionalCounseling = () => {
 
   const institutionNames = useMemo(() => {
     const names = new Set<string>();
-    allPractitioners.forEach((practitioner: any) => {
-      const practitionerInstitutionNames = practitioner.institutions?.map((institution: any) => institution.name) || [practitioner.bureauName];
-      practitionerInstitutionNames.forEach((name: string) => names.add(name));
-    });
+    allPractitioners.forEach((practitioner: any) => names.add(practitioner.bureauName));
     allBureaus.forEach((bureau: any) => names.add(bureau.name));
     return Array.from(names);
   }, [allPractitioners, allBureaus]);
@@ -561,7 +542,6 @@ const ProfessionalCounseling = () => {
             id: resource.id.toString(),
             name: resource.name,
             institutionName: resource.bureauName,
-            institutionNames: resource.institutions?.map((institution: any) => institution.name),
             professionTypes: resource.professionTypes,
             specializations: resource.specializations,
             insurance: resource.insurance,

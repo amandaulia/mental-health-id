@@ -79,15 +79,6 @@ export const PractitionerCard = ({ practitioner, hideInstitutionName = false, hi
     return [...new Set(practitioner.modes)];
   };
 
-  const getInstitutionNames = () => {
-    const names = practitioner.institutions?.map((institution) => institution.name) || [];
-    return [...new Set(names.length > 0 ? names : [practitioner.bureauName])].filter(Boolean);
-  };
-
-  const institutionNames = getInstitutionNames();
-  const visibleInstitutionNames = institutionNames.slice(0, 2);
-  const hiddenInstitutionCount = Math.max(institutionNames.length - visibleInstitutionNames.length, 0);
-
   return (
     <Link to={`/practitioner/${practitioner.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
@@ -110,10 +101,7 @@ export const PractitionerCard = ({ practitioner, hideInstitutionName = false, hi
                     )}
                   </div>
                   {!hideInstitutionName && (
-                    <p className="text-sm text-muted-foreground mb-1">
-                      {visibleInstitutionNames.join(", ")}
-                      {hiddenInstitutionCount > 0 && ` +${hiddenInstitutionCount} ${t('common.more')}`}
-                    </p>
+                    <p className="text-sm text-muted-foreground mb-1 truncate">{practitioner.bureauName}</p>
                   )}
                   <div className="flex flex-wrap gap-1 mb-2">
                     {practitioner.professionTypes.slice(0, 2).map((type) => (

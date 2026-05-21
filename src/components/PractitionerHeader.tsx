@@ -11,7 +11,7 @@ import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
 interface PractitionerHeaderProps {
   practitioner: Practitioner;
   onTagClick: (type: string, value: string) => void;
-  onBureauClick: (institutionId?: string) => void;
+  onBureauClick: () => void;
   getModeLabel: (mode: string) => string;
   getInsuranceLabel: (ins: string) => string;
 }
@@ -36,11 +36,6 @@ export const PractitionerHeader = ({
   const visibleModes = showAllModes 
     ? practitioner.modes 
     : practitioner.modes.slice(0, maxItemsToShow);
-  const institutions = practitioner.institutions?.length
-    ? practitioner.institutions
-    : practitioner.bureauId
-      ? [{ id: practitioner.bureauId, name: practitioner.bureauName }]
-      : [];
 
   return (
     <Card>
@@ -61,19 +56,12 @@ export const PractitionerHeader = ({
                     <Badge className="bg-green-100 text-green-700 w-fit">{t('common.verified')}</Badge>
                   )}
                 </div>
-                {institutions.length > 0 && (
-                  <div className="flex flex-wrap gap-x-2 gap-y-1">
-                    {institutions.map((institution) => (
-                      <button
-                        key={institution.id}
-                        onClick={() => onBureauClick(institution.id)}
-                        className="text-lg sm:text-xl text-primary hover:text-primary/80 transition-colors cursor-pointer underline text-left"
-                      >
-                        {institution.name}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                <button
+                  onClick={onBureauClick}
+                  className="text-lg sm:text-xl text-primary hover:text-primary/80 transition-colors cursor-pointer underline"
+                >
+                  {practitioner.bureauName}
+                </button>
                 
                 {/* Experience & Education moved here */}
                 <div className="space-y-2 text-sm mt-3">
