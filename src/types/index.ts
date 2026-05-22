@@ -56,6 +56,7 @@ export interface Practitioner {
   name: string;
   bureauName: string;
   bureauId: string;
+  institutions?: { id: string; name: string }[];
   professionTypes: ProfessionType[];
   licenseNumber?: string;
   specializations: Specialization[];
