@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from "react";
 import { FilterState } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
@@ -24,7 +23,7 @@ const PeerCounseling = () => {
     specializations: [],
     priceRange: [0, 2000000],
     modes: [],
-    insurance: []
+    insurance: [],
   });
 
   const filteredData = useMemo(() => {
@@ -41,10 +40,10 @@ const PeerCounseling = () => {
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
-    const newArray = currentArray.filter(item => item !== value);
-    setFilters(prev => ({ ...prev, [type]: newArray }));
-    
-    trackFilter(type, value, 'Peer Counseling');
+    const newArray = currentArray.filter((item) => item !== value);
+    setFilters((prev) => ({ ...prev, [type]: newArray }));
+
+    trackFilter(type, value, "Peer Counseling");
   };
 
   const handleClearAllFilters = () => {
@@ -57,15 +56,15 @@ const PeerCounseling = () => {
       specializations: [],
       priceRange: [0, 2000000],
       modes: [],
-      insurance: []
+      insurance: [],
     });
-    
-    trackFilter('clear_all', 'all_filters', 'Peer Counseling');
+
+    trackFilter("clear_all", "all_filters", "Peer Counseling");
   };
 
   useEffect(() => {
     if (filters.search) {
-      trackSearch(filters.search, filteredData.length, 'Peer Counseling');
+      trackSearch(filters.search, filteredData.length, "Peer Counseling");
     }
   }, [filters.search, filteredData]);
 
@@ -75,7 +74,8 @@ const PeerCounseling = () => {
       {/* Hero Section */}
       <div className="mb-8 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
-          <span className="gradient-text">{t("pages.peer.heroTitleA")}</span>{t("pages.peer.heroTitleB")}
+          <span className="gradient-text">{t("pages.peer.heroTitleA")}</span>
+          {t("pages.peer.heroTitleB")}
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
           {t("pages.peer.heroLead")}
@@ -85,23 +85,16 @@ const PeerCounseling = () => {
       {/* Search and Browse Section */}
       <div className="mb-8 sm:mb-10">
         <div className="bg-card rounded-xl p-6 card-shadow">
-          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-6">
-            {t('peerCounseling.findPeerSupport')}
-          </h2>
           <SearchAndFilters
             filters={filters}
             onFiltersChange={setFilters}
             institutionNames={[]}
             hiddenFilters={["insurance"]}
-            searchPlaceholder={t('search.placeholderPeerCounseling')}
+            searchPlaceholder={t("search.placeholderPeerCounseling")}
           />
         </div>
         <div className="mt-4">
-          <FilterTags
-            filters={filters}
-            onRemoveFilter={handleRemoveFilter}
-            onClearAll={handleClearAllFilters}
-          />
+          <FilterTags filters={filters} onRemoveFilter={handleRemoveFilter} onClearAll={handleClearAllFilters} />
         </div>
       </div>
 
@@ -120,24 +113,19 @@ const PeerCounseling = () => {
                 isVerified: item.verified,
                 specialization: item.specialization?.[0] || "General",
                 serviceType: item.peer_type?.[0] || "Peer Counseling",
-                price: 0
+                price: 0,
               };
 
               return (
                 <div key={item.id} className="transform transition-all duration-200 hover:scale-[1.02]">
-                  <UnifiedCard 
-                    data={cardData} 
-                    linkTo={`/peer-counseling/${item.id}`}
-                  />
+                  <UnifiedCard data={cardData} linkTo={`/peer-counseling/${item.id}`} />
                 </div>
               );
             })}
           </div>
         </div>
       </div>
-      {isLoading && (
-        <div className="text-center text-muted-foreground mt-8">{t('common.loading')}</div>
-      )}
+      {isLoading && <div className="text-center text-muted-foreground mt-8">{t("common.loading")}</div>}
     </div>
   );
 };
