@@ -30,7 +30,12 @@ export const PractitionerLocations = ({ locations }: PractitionerLocationsProps)
         {locations.map((location) => {
           const encodedAddress = encodeURIComponent(location.address);
           const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
-          
+          const addr = (location.address || '').trim();
+          const hasProperAddress =
+            !!addr &&
+            addr.toLowerCase() !== 'online' &&
+            addr !== 'Address not available';
+
           console.log('Location data:', location);
           console.log('Maps URL:', mapsUrl);
           
@@ -49,6 +54,7 @@ export const PractitionerLocations = ({ locations }: PractitionerLocationsProps)
                 </div>
 
                 {/* Map Preview - Click to open in Google Maps */}
+                {hasProperAddress && (
                 <a
                   href={mapsUrl}
                   target="_top"
@@ -66,6 +72,7 @@ export const PractitionerLocations = ({ locations }: PractitionerLocationsProps)
                     </p>
                   </div>
                 </a>
+                )}
               </div>
             </Card>
           );
