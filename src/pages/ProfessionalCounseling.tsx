@@ -122,6 +122,10 @@ const ProfessionalCounseling = () => {
           .map((pi: any) => pi.institution?.institution_type)
           .filter(Boolean)
       ));
+      const institutions = (practitioner.practitioner_institutions || [])
+        .map((pi: any) => pi.institution)
+        .filter((inst: any) => inst?.id && inst?.name)
+        .map((inst: any) => ({ id: inst.id.toString(), name: inst.name }));
 
       // Extract cities from locations
       const cities = Array.from(new Set(locations.map((loc: any) => loc.city).filter(Boolean)));
@@ -152,6 +156,7 @@ const ProfessionalCounseling = () => {
         id: practitioner.id,
         name: practitioner.name,
         bureauName: practitioner.practitioner_institutions?.[0]?.institution?.name || "Independent",
+        institutions,
         image: practitioner.image,
         professionTypes: practitioner.profession_type || [],
         specializations: practitioner.specialization || [],
