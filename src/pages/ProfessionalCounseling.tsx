@@ -547,6 +547,7 @@ const ProfessionalCounseling = () => {
             id: resource.id.toString(),
             name: resource.name,
             institutionName: resource.bureauName,
+            institutions: resource.institutions,
             professionTypes: resource.professionTypes,
             specializations: resource.specializations,
             insurance: resource.insurance,
