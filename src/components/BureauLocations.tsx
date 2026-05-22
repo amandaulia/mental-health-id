@@ -39,7 +39,12 @@ export const BureauLocations = ({ locations, bureauName = "Bureau" }: BureauLoca
           const locationQuery = `${location.name || ''} ${location.address}`.trim();
           const encodedQuery = encodeURIComponent(locationQuery);
           const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedQuery}`;
-          
+          const addr = (location.address || '').trim();
+          const hasProperAddress =
+            !!addr &&
+            addr.toLowerCase() !== 'online' &&
+            addr !== 'Address not available';
+
           console.log('Location data:', location);
           console.log('Maps URL:', mapsUrl);
           
@@ -58,6 +63,7 @@ export const BureauLocations = ({ locations, bureauName = "Bureau" }: BureauLoca
                 </div>
 
                 {/* Open in Google Maps Button */}
+                {hasProperAddress && (
                 <AnalyticsWrapper
                   trackingType="external-link"
                   trackingData={{
@@ -78,6 +84,7 @@ export const BureauLocations = ({ locations, bureauName = "Bureau" }: BureauLoca
                     <ExternalLink className="h-3 w-3" />
                   </Button>
                 </AnalyticsWrapper>
+                )}
               </div>
             </Card>
           );
