@@ -211,8 +211,9 @@ const PractitionerDetail = () => {
     navigate(`/?${searchParams.toString()}`);
   };
 
-  const handleBureauClick = () => {
-    navigate(`/bureau/${practitioner.bureauId}`);
+  const handleBureauClick = (bureauId?: string) => {
+    const targetId = bureauId || practitioner.bureauId;
+    if (targetId) navigate(`/bureau/${targetId}`);
   };
 
   const pageUrl = `${SITE_URL}/practitioner/${practitionerId}`;
