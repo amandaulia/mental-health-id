@@ -20,6 +20,7 @@ export interface UnifiedCardData {
   
   // Professional/Institution specific
   institutionName?: string;
+  institutions?: { id: string; name: string }[];
   professionTypes?: string[];
   specializations?: string[];
   priceRange?: string;
@@ -107,8 +108,15 @@ export const UnifiedCard = ({ data, linkTo, onClick }: UnifiedCardProps) => {
                 
                 {data.type === "practitioner" && (
                   <>
-                    {data.institutionName && (
-                      <p className="text-sm text-muted-foreground mb-2">{data.institutionName}</p>
+                    {data.institutions && data.institutions.length > 0 ? (
+                      <p className="text-sm text-muted-foreground mb-2 truncate">
+                        {data.institutions.slice(0, 2).map((i) => i.name).join(", ")}
+                        {data.institutions.length > 2 && ` +${data.institutions.length - 2} ${t('common.more')}`}
+                      </p>
+                    ) : (
+                      data.institutionName && (
+                        <p className="text-sm text-muted-foreground mb-2">{data.institutionName}</p>
+                      )
                     )}
                     <div className="flex flex-wrap gap-1 mb-3">
                       {data.professionTypes?.slice(0, 2).map((type) => (

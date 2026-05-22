@@ -37,6 +37,9 @@ export const transformPractitioner = (
     name: dbPractitioner.name,
     bureauName: institution?.name || "Independent",
     bureauId: institution?.id ? institution.id.toString() : "",
+    institutions: linkedInstitutions
+      .filter((inst: any) => inst?.id && inst?.name)
+      .map((inst: any) => ({ id: inst.id.toString(), name: inst.name })),
     professionTypes: mapProfessionTypes(dbPractitioner.profession_type || []),
     licenseNumber: dbPractitioner.license_number,
     specializations: mapSpecializations(dbPractitioner.specialization || []),

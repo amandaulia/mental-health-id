@@ -56,6 +56,7 @@ export interface Practitioner {
   name: string;
   bureauName: string;
   bureauId: string;
+  institutions?: { id: string; name: string }[];
   professionTypes: ProfessionType[];
   licenseNumber?: string;
   specializations: Specialization[];
@@ -162,6 +163,7 @@ export interface UnifiedCardData {
   city: string;
   isVerified?: boolean;
   institutionName?: string;
+  institutions?: { id: string; name: string }[];
   organizationName?: string;
   professionTypes?: ProfessionType[];
   specializations?: Specialization[];

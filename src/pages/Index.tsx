@@ -432,7 +432,6 @@ const Index = () => {
             institutionNames={institutionNames}
             filterOptions={filterOptions}
             searchPlaceholder={t('search.placeholderAll')}
-            showSort
             locationSortMessage={locationSortMessage}
           />
         </div>
@@ -469,6 +468,7 @@ const Index = () => {
                 city: resource.city,
                 isVerified: resource.isVerified,
                 institutionName: resource.bureauName,
+                institutions: resource.institutions,
                 professionTypes: resource.professionTypes,
                 specializations: resource.specializations,
                 priceRange: resource.priceRange,
