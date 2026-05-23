@@ -372,7 +372,62 @@ export const databaseService = {
       throw error;
     }
 
-    return data;
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    const serviceIds = data
+      .map((row: any) => row.service?.id)
+      .filter((id): id is number => typeof id === "number");
+
+    const { data: practitionerInstitutions, error: practitionerInstitutionError } = await supabase
+      .from("practitioner_institutions")
+      .select("institution_id")
+      .eq("practitioner_id", practitionerId);
+
+    if (practitionerInstitutionError) {
+      console.error("Error fetching practitioner institutions for services:", practitionerInstitutionError);
+      return data;
+    }
+
+    const institutionIds = (practitionerInstitutions || [])
+      .map((row: any) => row.institution_id)
+      .filter((id): id is number => typeof id === "number");
+
+    if (serviceIds.length === 0 || institutionIds.length === 0) {
+      return data;
+    }
+
+    const { data: serviceInstitutions, error: serviceInstitutionError } = await supabase
+      .from("institution_services")
+      .select("service_id, institution:institution_id(id, name)")
+      .in("service_id", serviceIds)
+      .in("institution_id", institutionIds);
+
+    if (serviceInstitutionError) {
+      console.error("Error fetching affiliated institutions for services:", serviceInstitutionError);
+      return data;
+    }
+
+    const institutionsByServiceId = new Map<number, string[]>();
+    (serviceInstitutions || []).forEach((row: any) => {
+      const institutionName = row.institution?.name;
+      if (!institutionName) return;
+      const names = institutionsByServiceId.get(row.service_id) || [];
+      if (!names.includes(institutionName)) names.push(institutionName);
+      institutionsByServiceId.set(row.service_id, names);
+    });
+
+    return data.map((row: any) => {
+      const institutionNames = institutionsByServiceId.get(row.service?.id) || [];
+      return {
+        ...row,
+        service: {
+          ...row.service,
+          institution: institutionNames.length > 0 ? { name: institutionNames.join(", ") } : undefined,
+        },
+      };
+    });
   },
 
   // ✅ UPDATED: Fetch services for an institution with book_cta and learn_more_cta links, then normalize them
