@@ -204,6 +204,11 @@ const PractitionerDetail = () => {
   };
 
   const filteredPractitioner: Practitioner = { ...practitioner, services: filteredServices };
+  const noServicesContactTarget =
+    contactFromInstitution && practitioner.contactDetails.length > 0
+      ? t('detail.institutionContactTarget')
+      : t('detail.practitionerContactTarget');
+  const noServicesMessage = `${t('detail.noServicesContactPrefix')} ${noServicesContactTarget} ${t('detail.noServicesContactSuffix')}`;
 
   const handleTagClick = (type: string, value: string) => {
     const searchParams = new URLSearchParams();
@@ -309,6 +314,7 @@ const PractitionerDetail = () => {
               practitioner={filteredPractitioner}
               formatPrice={formatPrice}
               getModeLabel={getModeLabel}
+              noServicesMessage={noServicesMessage}
               titleCount={services.length > 0 ? filteredServices.length : undefined}
               filtersSlot={services.length > 0 ? (
                 <div className="flex flex-col sm:flex-row gap-3">

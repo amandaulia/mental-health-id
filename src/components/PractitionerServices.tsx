@@ -16,6 +16,7 @@ interface PractitionerServicesProps {
   formatPrice: (price: number) => string;
   getModeLabel: (mode: string) => string;
   filtersSlot?: React.ReactNode;
+  noServicesMessage?: string;
   titleCount?: number;
 }
 
@@ -24,6 +25,7 @@ export const PractitionerServices = ({
   formatPrice, 
   getModeLabel,
   filtersSlot,
+  noServicesMessage,
   titleCount,
 }: PractitionerServicesProps) => {
   const { t } = useLanguage();
@@ -44,7 +46,11 @@ export const PractitionerServices = ({
         {filtersSlot}
       </CardHeader>
       <CardContent className="space-y-4">
-        {practitioner.services.map((service, index) => (
+        {practitioner.services.length === 0 ? (
+          <div className="py-8 text-center text-muted-foreground">
+            {filtersSlot ? t('detail.noServicesMatch') : noServicesMessage || t('detail.noServices')}
+          </div>
+        ) : practitioner.services.map((service, index) => (
           <Card key={index} className="p-4">
             <div className="space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">

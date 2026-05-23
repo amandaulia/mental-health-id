@@ -316,6 +316,7 @@ const BureauDetail = () => {
   const hasActiveFilters = selectedModes.length > 0 || selectedDurations.length > 0 || searchQuery !== "" ||
     (validPrices.length > 0 && (priceRange[0] !== Math.min(...validPrices) ||
     priceRange[1] !== Math.max(...validPrices)));
+  const noServicesMessage = `${t('detail.noServicesContactPrefix')} ${t('detail.institutionContactTarget')} ${t('detail.noServicesContactSuffix')}`;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -392,12 +393,14 @@ const BureauDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             {/* Services Section */}
-            {services.length > 0 && (
-              <Card>
+            <Card>
                 <CardHeader className="space-y-6">
-                  <CardTitle>{t('detail.ourServices')} ({filteredServices.length})</CardTitle>
+                  <CardTitle>
+                    {t('detail.ourServices')}{services.length > 0 ? ` (${filteredServices.length})` : ''}
+                  </CardTitle>
                   
                   {/* Filters and Search in one line */}
+                  {services.length > 0 && (
                   <div className="flex flex-col sm:flex-row gap-3">
                     {/* Search Bar */}
                     <div className="relative flex-1">
@@ -559,9 +562,10 @@ const BureauDetail = () => {
                       </PopoverContent>
                     </Popover>
                   </div>
+                  )}
 
                   {/* Active Filters */}
-                  {hasActiveFilters && (
+                  {services.length > 0 && hasActiveFilters && (
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-sm text-muted-foreground">{t('detail.activeFiltersLabel')}</span>
                       {selectedModes.map(mode => (
@@ -680,13 +684,12 @@ const BureauDetail = () => {
                     ))}
                     {filteredServices.length === 0 && (
                       <div className="text-center py-8 text-muted-foreground">
-                        {t('detail.noServicesMatch')}
+                        {services.length > 0 ? t('detail.noServicesMatch') : noServicesMessage}
                       </div>
                     )}
                   </div>
                 </CardContent>
-              </Card>
-            )}
+            </Card>
 
             {/* Practitioners Section */}
             {practitioners.length > 0 && (
