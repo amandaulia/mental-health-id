@@ -450,7 +450,7 @@ const Index = () => {
         <div>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-              {t('home.sectionHeading.professional')}
+              {t('home.sectionHeading.professional')} ({filteredPractitioners.length})
             </h2>
             <Button variant="outline" asChild>
               <a href="/professional-counseling">
@@ -494,7 +494,7 @@ const Index = () => {
         <div>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-              {t('home.sectionHeading.clinics')}
+              {t('home.sectionHeading.clinics')} ({filteredClinics.length})
             </h2>
             <Button variant="outline" asChild>
               <a href="/professional-counseling">
@@ -537,7 +537,7 @@ const Index = () => {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-                {t('home.sectionHeading.peer')}
+                {t('home.sectionHeading.peer')} ({filteredPeerCounseling.length})
               </h2>
               {filteredPeerCounseling.length === 0 && (
                 <Badge variant="secondary" className="text-xs bg-purple-200 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-700">
@@ -583,7 +583,7 @@ const Index = () => {
           <div>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-                {t('home.sectionHeading.stressRelief')}
+                {t('home.sectionHeading.stressRelief')} ({filteredActivities.length})
               </h2>
               <Button variant="outline" asChild>
                 <a href="/stress-relief">
@@ -621,7 +621,7 @@ const Index = () => {
           <div>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-                {t('home.sectionHeading.organizations')}
+                {t('home.sectionHeading.organizations')} ({filteredOrganizations.length})
               </h2>
               <Button variant="outline" asChild>
                 <a href="/organizations">

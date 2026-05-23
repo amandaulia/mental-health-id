@@ -104,6 +104,12 @@ const Organizations = () => {
         </div>
       </div>
 
+      {!isLoading && (
+        <div className="mb-4 text-sm text-muted-foreground">
+          {filteredData.length} organizations
+        </div>
+      )}
+
       {/* Results Section */}
       <div>
         <div className="flex items-center justify-between mb-6">

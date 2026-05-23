@@ -107,6 +107,12 @@ const StressRelief = () => {
         </div>
       </div>
 
+      {!isLoading && (
+        <div className="mb-4 text-sm text-muted-foreground">
+          {filteredData.length} activities
+        </div>
+      )}
+
       {/* Activities List */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredData.map((item: any) => {

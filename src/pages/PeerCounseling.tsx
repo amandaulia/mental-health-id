@@ -98,6 +98,12 @@ const PeerCounseling = () => {
         </div>
       </div>
 
+      {!isLoading && (
+        <div className="mb-4 text-sm text-muted-foreground">
+          {filteredData.length} peer counseling
+        </div>
+      )}
+
       {/* Preview Sections */}
       <div className="space-y-8">
         {/* Peer Counseling & Support Groups Preview */}

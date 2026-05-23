@@ -525,6 +525,12 @@ const ProfessionalCounseling = () => {
         </div>
       </div>
 
+      {!isInitialLoading && (
+        <div className="mb-4 text-sm text-muted-foreground">
+          {filteredPractitioners.length} practitioners, {filteredBureaus.length} institutions
+        </div>
+      )}
+
       {/* Loading indicator */}
       {isInitialLoading && (
         <div className="mb-8 p-6 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl animate-fade-in">
