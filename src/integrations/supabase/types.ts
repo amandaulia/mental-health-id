@@ -496,6 +496,62 @@ export type Database = {
           },
         ]
       }
+      location_name_review: {
+        Row: {
+          address: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          current_name: string | null
+          linked_unnamed_location_count: number | null
+          location_id: number
+          province: string | null
+          review_reason: string
+          source_id: number | null
+          source_name: string | null
+          source_type: string | null
+          suggested_name: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          current_name?: string | null
+          linked_unnamed_location_count?: number | null
+          location_id: number
+          province?: string | null
+          review_reason: string
+          source_id?: number | null
+          source_name?: string | null
+          source_type?: string | null
+          suggested_name?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          current_name?: string | null
+          linked_unnamed_location_count?: number | null
+          location_id?: number
+          province?: string | null
+          review_reason?: string
+          source_id?: number | null
+          source_name?: string | null
+          source_type?: string | null
+          suggested_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_name_review_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: true
+            referencedRelation: "location"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization: {
         Row: {
           created_at: string | null
