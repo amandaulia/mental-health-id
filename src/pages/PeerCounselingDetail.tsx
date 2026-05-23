@@ -12,11 +12,9 @@ import { PhoneCallButton } from "@/components/PhoneCallButton";
 import { BureauLocations } from "@/components/BureauLocations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageSEO } from "@/components/PageSEO";
+import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { databaseService } from "@/services/database";
 import { getPlaceholderImage } from "@/utils/placeholderImage";
-const clinicPlaceholder = getPlaceholderImage("peer-counseling");
-const practitionerPlaceholder = getPlaceholderImage("practitioner");
-import { safeImageSrc } from "@/utils/imageUrl";
 import {
   SITE_URL,
   buildPostalAddress,
@@ -25,6 +23,9 @@ import {
   sameAsFromContacts,
   buildBreadcrumbList,
 } from "@/utils/jsonLd";
+
+const clinicPlaceholder = getPlaceholderImage("peer-counseling");
+const practitionerPlaceholder = getPlaceholderImage("practitioner");
 
 const getContactIcon = (type: string) => {
   switch (type) {
@@ -188,11 +189,11 @@ const PeerCounselingDetail = () => {
           <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                <img
-                  src={safeImageSrc(data.image) || clinicPlaceholder}
+                <ImageWithFallback
+                  src={data.image}
+                  fallbackSrc={clinicPlaceholder}
                   alt={data.name}
                   className="w-32 h-32 rounded-lg object-cover flex-shrink-0"
-                  onError={(e) => { (e.target as HTMLImageElement).src = clinicPlaceholder; }}
                 />
                 <div className="flex-1 space-y-4">
                   <div className="flex items-center gap-3 flex-wrap">
@@ -255,11 +256,11 @@ const PeerCounselingDetail = () => {
                     to={`/bureau/${inst.id}`}
                     className="flex items-center gap-3 p-2 rounded-md hover:bg-muted transition-colors"
                   >
-                    <img
-                      src={safeImageSrc(inst.image) || clinicPlaceholder}
+                    <ImageWithFallback
+                      src={inst.image}
+                      fallbackSrc={clinicPlaceholder}
                       alt={inst.name}
                       className="w-12 h-12 rounded-md object-cover flex-shrink-0"
-                      onError={(e) => { (e.target as HTMLImageElement).src = clinicPlaceholder; }}
                     />
                     <span className="font-medium text-sm">{inst.name}</span>
                   </Link>
@@ -329,11 +330,11 @@ const PeerCounselingDetail = () => {
                         to={`/practitioner/${p.id}`}
                         className="flex items-start gap-3 p-3 rounded-md border hover:bg-muted transition-colors"
                       >
-                        <img
-                          src={safeImageSrc(p.image) || practitionerPlaceholder}
+                        <ImageWithFallback
+                          src={p.image}
+                          fallbackSrc={practitionerPlaceholder}
                           alt={p.name}
                           className="w-14 h-14 rounded-full object-cover flex-shrink-0"
-                          onError={(e) => { (e.target as HTMLImageElement).src = practitionerPlaceholder; }}
                         />
                         <div className="flex-1 min-w-0 space-y-1">
                           <p className="font-medium text-sm truncate">{p.name}</p>

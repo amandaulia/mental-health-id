@@ -20,6 +20,7 @@ export function isHotlinkBlocked(url?: string | null): boolean {
  * so callers fall back to a placeholder.
  */
 export function safeImageSrc(url?: string | null): string | undefined {
-  if (!url) return undefined;
-  return url;
+  const trimmedUrl = url?.trim();
+  if (!trimmedUrl || isHotlinkBlocked(trimmedUrl)) return undefined;
+  return trimmedUrl;
 }

@@ -5,9 +5,11 @@ import { ModeIcon } from "./ModeIcon";
 import { Bureau } from "@/types";
 import { useState } from "react";
 import { getPlaceholderImage } from "@/utils/placeholderImage";
-const clinicPlaceholder = getPlaceholderImage("institution");
+import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
+
+const clinicPlaceholder = getPlaceholderImage("institution");
 
 interface BureauHeaderProps {
   bureau: Bureau;
@@ -58,13 +60,11 @@ export const BureauHeader = ({ bureau, getModeLabel, getInsuranceLabel }: Bureau
             {/* Left side - Image and Basic Info */}
             <div className="flex flex-col sm:flex-row gap-4 flex-1">
               <div className="flex-shrink-0">
-                <img
-                  src={bureau.image || clinicPlaceholder}
+                <ImageWithFallback
+                  src={bureau.image}
+                  fallbackSrc={clinicPlaceholder}
                   alt={bureau.name}
                   className="w-32 h-32 rounded-lg object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = clinicPlaceholder;
-                  }}
                 />
               </div>
               

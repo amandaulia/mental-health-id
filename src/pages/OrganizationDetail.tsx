@@ -9,10 +9,9 @@ import { PhoneCallButton } from "@/components/PhoneCallButton";
 import { BureauLocations } from "@/components/BureauLocations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageSEO } from "@/components/PageSEO";
+import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { databaseService } from "@/services/database";
 import { getPlaceholderImage } from "@/utils/placeholderImage";
-const clinicPlaceholder = getPlaceholderImage("organization");
-import { safeImageSrc } from "@/utils/imageUrl";
 import {
   SITE_URL,
   buildPostalAddress,
@@ -21,6 +20,8 @@ import {
   sameAsFromContacts,
   buildBreadcrumbList,
 } from "@/utils/jsonLd";
+
+const clinicPlaceholder = getPlaceholderImage("organization");
 
 const getContactIcon = (type: string) => {
   switch (type) {
@@ -161,11 +162,11 @@ const OrganizationDetail = () => {
           <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                <img
-                  src={safeImageSrc(data.image) || clinicPlaceholder}
+                <ImageWithFallback
+                  src={data.image}
+                  fallbackSrc={clinicPlaceholder}
                   alt={data.name}
                   className="w-32 h-32 rounded-lg object-cover flex-shrink-0"
-                  onError={(e) => { (e.target as HTMLImageElement).src = clinicPlaceholder; }}
                 />
                 <div className="flex-1 space-y-4">
                   <div className="flex items-center gap-3 flex-wrap">

@@ -7,6 +7,8 @@ import { Practitioner } from "@/types";
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
+import { getPlaceholderImage } from "@/utils/placeholderImage";
+import { ImageWithFallback } from "@/components/ImageWithFallback";
 
 interface PractitionerHeaderProps {
   practitioner: Practitioner;
@@ -28,6 +30,7 @@ export const PractitionerHeader = ({
   const [showAllModes, setShowAllModes] = useState(false);
 
   const maxItemsToShow = 4;
+  const practitionerPlaceholder = getPlaceholderImage("practitioner");
 
   const visibleSpecializations = showAllSpecializations 
     ? practitioner.specializations 
@@ -43,8 +46,9 @@ export const PractitionerHeader = ({
         {/* Header with Last Updated */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
           <div className="flex flex-col lg:flex-row gap-6 flex-1">
-            <img
+            <ImageWithFallback
               src={practitioner.image}
+              fallbackSrc={practitionerPlaceholder}
               alt={practitioner.name}
               className="w-32 h-32 rounded-lg object-cover mx-auto lg:mx-0 flex-shrink-0"
             />

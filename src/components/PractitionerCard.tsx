@@ -6,6 +6,8 @@ import { MapPin, MessageCircle, Phone, Video, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
+import { getPlaceholderImage } from "@/utils/placeholderImage";
+import { ImageWithFallback } from "@/components/ImageWithFallback";
 
 interface PractitionerCardProps {
   practitioner: Practitioner;
@@ -79,13 +81,16 @@ export const PractitionerCard = ({ practitioner, hideInstitutionName = false, hi
     return [...new Set(practitioner.modes)];
   };
 
+  const practitionerPlaceholder = getPlaceholderImage("practitioner");
+
   return (
     <Link to={`/practitioner/${practitioner.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
         <CardContent className="p-4">
           <div className="flex gap-4">
-            <img
+            <ImageWithFallback
               src={practitioner.image}
+              fallbackSrc={practitionerPlaceholder}
               alt={practitioner.name}
               className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
             />
