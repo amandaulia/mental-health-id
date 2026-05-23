@@ -38,6 +38,21 @@ const PeerCounseling = () => {
     return sortByCompleteness(filtered);
   }, [filters, dbPeerCounseling]);
 
+  const isSupportGroup = (item: any) =>
+    (item.peer_type || []).some((t: string) => {
+      const v = t.toLowerCase();
+      return v.includes("group");
+    });
+
+  const peerCounselingItems = useMemo(
+    () => filteredData.filter((item: any) => !isSupportGroup(item)),
+    [filteredData]
+  );
+  const supportGroupItems = useMemo(
+    () => filteredData.filter((item: any) => isSupportGroup(item)),
+    [filteredData]
+  );
+
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
     const newArray = currentArray.filter((item) => item !== value);
@@ -98,18 +113,14 @@ const PeerCounseling = () => {
         </div>
       </div>
 
-      {!isLoading && (
-        <div className="mb-4 text-sm text-muted-foreground">
-          {filteredData.length} peer counseling
-        </div>
-      )}
-
-      {/* Preview Sections */}
-      <div className="space-y-8">
-        {/* Peer Counseling & Support Groups Preview */}
-        <div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredData.map((item: any) => {
+      {/* Sections */}
+      <div className="space-y-10">
+        <section>
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-2">
+            Peer Counseling ({peerCounselingItems.length})
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mt-4">
+            {peerCounselingItems.map((item: any) => {
               const cardData: UnifiedCardData = {
                 type: "peer-counseling",
                 id: item.id.toString(),
@@ -121,7 +132,6 @@ const PeerCounseling = () => {
                 serviceType: item.peer_type?.[0] || "Peer Counseling",
                 price: 0,
               };
-
               return (
                 <div key={item.id} className="transform transition-all duration-200 hover:scale-[1.02]">
                   <UnifiedCard data={cardData} linkTo={`/peer-counseling/${item.id}`} />
@@ -129,7 +139,39 @@ const PeerCounseling = () => {
               );
             })}
           </div>
-        </div>
+          {peerCounselingItems.length === 0 && !isLoading && (
+            <p className="text-sm text-muted-foreground mt-4">No peer counseling found.</p>
+          )}
+        </section>
+
+        <section>
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-2">
+            Support Group ({supportGroupItems.length})
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mt-4">
+            {supportGroupItems.map((item: any) => {
+              const cardData: UnifiedCardData = {
+                type: "peer-counseling",
+                id: item.id.toString(),
+                image: item.image ?? undefined,
+                name: item.name,
+                city: "",
+                isVerified: item.verified,
+                specialization: item.specialization?.[0] || "General",
+                serviceType: item.peer_type?.[0] || "Support Group",
+                price: 0,
+              };
+              return (
+                <div key={item.id} className="transform transition-all duration-200 hover:scale-[1.02]">
+                  <UnifiedCard data={cardData} linkTo={`/peer-counseling/${item.id}`} />
+                </div>
+              );
+            })}
+          </div>
+          {supportGroupItems.length === 0 && !isLoading && (
+            <p className="text-sm text-muted-foreground mt-4">No support groups found.</p>
+          )}
+        </section>
       </div>
       {isLoading && <div className="text-center text-muted-foreground mt-8">{t("common.loading")}</div>}
     </div>
