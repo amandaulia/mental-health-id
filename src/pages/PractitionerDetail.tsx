@@ -62,6 +62,28 @@ const PractitionerDetail = () => {
     shouldFetchInstitutionContacts ? institutionId : 0
   );
 
+  const affiliatedInstitutions: AffiliatedInstitution[] = useMemo(() => {
+    const rows = (dbPractitioner as any)?.practitioner_institutions || [];
+    return rows
+      .map((pi: any) => pi.institution)
+      .filter((inst: any) => inst && inst.id && inst.name)
+      .map((inst: any) => ({
+        id: inst.id.toString(),
+        name: inst.name,
+        locations: (inst.institution_locations || [])
+          .map((il: any) => il.location)
+          .filter(Boolean)
+          .map((loc: any) => ({
+            id: loc.id?.toString() ?? '',
+            name: loc.name || undefined,
+            address: loc.address || undefined,
+            city: loc.city || undefined,
+            province: loc.province || undefined,
+            country: loc.country || undefined,
+          })),
+      }));
+  }, [dbPractitioner]);
+
   useEffect(() => {
     if (dbPractitioner && dbServices && dbContactDetails) {
       const transformedServices = dbServices.map(transformService);
