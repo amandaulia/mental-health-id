@@ -7,10 +7,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Search, MapPin, Building2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ImageWithFallback } from "@/components/ImageWithFallback";
+import { getPlaceholderImage } from "@/utils/placeholderImage";
 
 export interface AffiliatedInstitution {
   id: string;
   name: string;
+  image?: string;
   locations: { id: string; name?: string; address?: string; city?: string; province?: string; country?: string }[];
 }
 
@@ -55,6 +58,7 @@ export const AffiliatedInstitutions = ({ institutions }: Props) => {
   }, [institutions, search, selectedCities]);
 
   if (institutions.length === 0) return null;
+  const placeholder = getPlaceholderImage("institution");
 
   const toggleCity = (city: string) =>
     setSelectedCities(prev => (prev.includes(city) ? prev.filter(c => c !== city) : [...prev, city]));
@@ -64,7 +68,7 @@ export const AffiliatedInstitutions = ({ institutions }: Props) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Building2 className="h-5 w-5" />
-          {t('detail.affiliatedInstitutions') || 'Affiliated Institutions'} ({filtered.length})
+          Affiliated Institutions ({filtered.length})
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -129,41 +133,39 @@ export const AffiliatedInstitutions = ({ institutions }: Props) => {
             {t('detail.noResults') || 'No institutions match your filters.'}
           </p>
         ) : (
-          <div className="space-y-3">
-            {filtered.map(inst => (
-              <Card key={inst.id} className="p-4">
-                <div className="space-y-2">
-                  <button
-                    onClick={() => navigate(`/bureau/${inst.id}`)}
-                    className="text-left font-semibold text-primary hover:text-primary/80 underline"
-                  >
-                    {inst.name}
-                  </button>
-                  {inst.locations.length > 0 && (
-                    <div className="space-y-1">
-                      {inst.locations.map(loc => {
-                        const parts = [loc.city, loc.province, loc.country].filter(
-                          v => v && v !== 'Unknown City' && v !== 'Unknown Province' && v !== 'Unknown Country'
-                        );
-                        if (parts.length === 0 && !loc.address) return null;
-                        return (
-                          <div key={loc.id} className="flex items-start gap-2 text-sm text-muted-foreground">
-                            <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                            <div>
-                              {loc.name && <div className="font-medium text-foreground">{loc.name}</div>}
-                              {loc.address && loc.address !== 'Address not available' && (
-                                <div>{loc.address}</div>
-                              )}
-                              {parts.length > 0 && <div>{parts.join(', ')}</div>}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </Card>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {filtered.map(inst => {
+              const cities = Array.from(
+                new Set(
+                  inst.locations
+                    .map(l => l.city)
+                    .filter((c): c is string => !!c && c !== 'Unknown City')
+                )
+              );
+              return (
+                <button
+                  key={inst.id}
+                  onClick={() => navigate(`/bureau/${inst.id}`)}
+                  className="text-left flex items-center gap-3 p-3 rounded-lg border hover:border-primary hover:bg-accent/40 transition-colors"
+                >
+                  <ImageWithFallback
+                    src={inst.image}
+                    fallbackSrc={placeholder}
+                    alt={inst.name}
+                    className="w-12 h-12 rounded-md object-cover flex-shrink-0"
+                  />
+                  <div className="min-w-0">
+                    <div className="font-medium text-primary truncate">{inst.name}</div>
+                    {cities.length > 0 && (
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground truncate">
+                        <MapPin className="h-3 w-3 flex-shrink-0" />
+                        <span className="truncate">{cities.join(', ')}</span>
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
       </CardContent>

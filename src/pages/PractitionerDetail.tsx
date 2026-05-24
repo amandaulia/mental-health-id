@@ -70,6 +70,7 @@ const PractitionerDetail = () => {
       .map((inst: any) => ({
         id: inst.id.toString(),
         name: inst.name,
+        image: inst.image || undefined,
         locations: (inst.institution_locations || [])
           .map((il: any) => il.location)
           .filter(Boolean)
@@ -332,7 +333,8 @@ const PractitionerDetail = () => {
         />
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <div className="xl:col-span-2">
+          <div className="xl:col-span-2 space-y-6">
+            <AffiliatedInstitutions institutions={affiliatedInstitutions} />
             <PractitionerServices
               practitioner={filteredPractitioner}
               formatPrice={formatPrice}
@@ -456,7 +458,6 @@ const PractitionerDetail = () => {
           <div className="space-y-6">
             <PractitionerContact practitioner={practitioner} fromInstitution={contactFromInstitution} />
             <PractitionerLocations locations={locations} />
-            <AffiliatedInstitutions institutions={affiliatedInstitutions} />
           </div>
         </div>
       </div>
