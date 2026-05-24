@@ -124,7 +124,12 @@ export const databaseService = {
       .select(`
         *,
         practitioner_institutions(
-          institution(*)
+          institution(
+            *,
+            institution_locations(
+              location(*)
+            )
+          )
         )
       `)
       .eq("id", id)
