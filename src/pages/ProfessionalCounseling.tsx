@@ -19,7 +19,7 @@ const ITEMS_PER_PAGE = 10;
 const canonicalizeInsurance = (insurance: string) => {
   const normalized = insurance?.trim().toLowerCase();
   if (normalized === "bpjs") return "BPJS";
-  if (normalized === "private" || normalized === "private insurance") return "Private Insurance";
+  if (normalized === "private" || normalized === "private insurance" || normalized === "private practice") return "Private Practice";
   if (normalized === "none") return "none";
   return insurance?.trim() || "";
 };

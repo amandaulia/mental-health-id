@@ -167,10 +167,14 @@ const PractitionerDetail = () => {
   };
 
   const getInsuranceLabel = (ins: string) => {
-    switch (ins) {
+    const normalized = ins?.trim().toLowerCase();
+    switch (normalized) {
       case "none": return t('insurance.noInsurance');
-      case "PRIVATE": return t('insurance.privateInsurance');
-      case "BPJS": return "BPJS";
+      case "private":
+      case "private insurance":
+      case "private practice":
+        return t('insurance.privateInsurance');
+      case "bpjs": return "BPJS";
       default: return ins;
     }
   };
