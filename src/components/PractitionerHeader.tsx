@@ -60,31 +60,6 @@ export const PractitionerHeader = ({
                     <Badge className="bg-green-100 text-green-700 w-fit">{t('common.verified')}</Badge>
                   )}
                 </div>
-                {practitioner.institutions && practitioner.institutions.length > 0 ? (
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-lg sm:text-xl">
-                    {practitioner.institutions.map((inst, idx) => (
-                      <span key={inst.id} className="inline-flex items-center">
-                        <button
-                          onClick={() => onBureauClick(inst.id)}
-                          className="text-primary hover:text-primary/80 transition-colors cursor-pointer underline text-left"
-                        >
-                          {inst.name}
-                        </button>
-                        {idx < practitioner.institutions!.length - 1 && (
-                          <span className="text-muted-foreground ml-2">,</span>
-                        )}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => onBureauClick(practitioner.bureauId)}
-                    className="text-lg sm:text-xl text-primary hover:text-primary/80 transition-colors cursor-pointer underline"
-                  >
-                    {practitioner.bureauName}
-                  </button>
-                )}
-                
                 {/* Experience & Education moved here */}
                 <div className="space-y-2 text-sm mt-3">
                   {practitioner.experience && practitioner.experience !== "Not specified" && (
