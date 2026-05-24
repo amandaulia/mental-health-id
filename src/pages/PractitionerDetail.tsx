@@ -12,6 +12,7 @@ import { PractitionerHeader } from "@/components/PractitionerHeader";
 import { PractitionerServices } from "@/components/PractitionerServices";
 import { PractitionerContact } from "@/components/PractitionerContact";
 import { PractitionerLocations } from "@/components/PractitionerLocations";
+import { AffiliatedInstitutions, AffiliatedInstitution } from "@/components/AffiliatedInstitutions";
 import { usePractitioner, useServicesByPractitioner, useContactDetailsByPractitioner, useLocationsByPractitioner, useContactDetailsByInstitution } from "@/hooks/useDatabase";
 import { transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
 import { useEffect, useMemo, useState } from "react";
@@ -204,6 +205,29 @@ const PractitionerDetail = () => {
   };
 
   const filteredPractitioner: Practitioner = { ...practitioner, services: filteredServices };
+
+  const affiliatedInstitutions: AffiliatedInstitution[] = useMemo(() => {
+    const rows = (dbPractitioner as any)?.practitioner_institutions || [];
+    return rows
+      .map((pi: any) => pi.institution)
+      .filter((inst: any) => inst && inst.id && inst.name)
+      .map((inst: any) => ({
+        id: inst.id.toString(),
+        name: inst.name,
+        locations: (inst.institution_locations || [])
+          .map((il: any) => il.location)
+          .filter(Boolean)
+          .map((loc: any) => ({
+            id: loc.id?.toString() ?? '',
+            name: loc.name || undefined,
+            address: loc.address || undefined,
+            city: loc.city || undefined,
+            province: loc.province || undefined,
+            country: loc.country || undefined,
+          })),
+      }));
+  }, [dbPractitioner]);
+
   const noServicesContactTarget =
     contactFromInstitution && practitioner.contactDetails.length > 0
       ? t('detail.institutionContactTarget')
@@ -433,6 +457,7 @@ const PractitionerDetail = () => {
           <div className="space-y-6">
             <PractitionerContact practitioner={practitioner} fromInstitution={contactFromInstitution} />
             <PractitionerLocations locations={locations} />
+            <AffiliatedInstitutions institutions={affiliatedInstitutions} />
           </div>
         </div>
       </div>
