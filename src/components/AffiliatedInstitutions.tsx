@@ -68,7 +68,7 @@ export const AffiliatedInstitutions = ({ institutions }: Props) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Building2 className="h-5 w-5" />
-          {t('detail.affiliatedInstitutions') || 'Affiliated Institutions'} ({filtered.length})
+          Affiliated Institutions ({filtered.length})
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
