@@ -165,10 +165,10 @@ const translations = {
       offlineSession: "Offline Session",
     },
     insurance: {
-      private: "Private Practice",
+      private: "Private Insurance",
       bpjs: "BPJS",
       none: "None",
-      privateInsurance: "Private Practice",
+      privateInsurance: "Private Insurance",
       noInsurance: "No Insurance",
     },
     institutionTypes: {
@@ -357,7 +357,7 @@ const translations = {
       showLess: "Show less",
       practitioners: "Practitioners",
       noInsurance: "No Insurance",
-      privateInsurance: "Private Practice",
+      privateInsurance: "Private Insurance",
       ourServices: "Our Services",
       ourPractitioners: "Our Practitioners",
       searchServices: "Search services...",
@@ -626,10 +626,10 @@ const translations = {
       offlineSession: "Sesi Tatap Muka",
     },
     insurance: {
-      private: "Praktik Mandiri",
+      private: "Asuransi Pribadi",
       bpjs: "BPJS",
       none: "Tidak Ada",
-      privateInsurance: "Praktik Mandiri",
+      privateInsurance: "Asuransi Pribadi",
       noInsurance: "Tanpa Asuransi",
     },
     institutionTypes: {
@@ -819,7 +819,7 @@ const translations = {
       showLess: "Tampilkan lebih sedikit",
       practitioners: "Praktisi",
       noInsurance: "Tanpa Asuransi",
-      privateInsurance: "Praktik Mandiri",
+      privateInsurance: "Asuransi Pribadi",
       ourServices: "Layanan Kami",
       ourPractitioners: "Praktisi Kami",
       searchServices: "Cari layanan...",

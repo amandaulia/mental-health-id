@@ -17,7 +17,7 @@ const mapSessionMode = (raw: string): string => {
 const mapInsurance = (raw: string): string => {
   const m = norm(raw);
   if (m === "bpjs") return "bpjs";
-  if (m === "private insurance" || m === "private practice" || m === "private") return "private";
+  if (m === "private insurance" || m === "private") return "private";
   return "none";
 };
 

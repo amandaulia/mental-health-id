@@ -172,7 +172,6 @@ const PractitionerDetail = () => {
       case "none": return t('insurance.noInsurance');
       case "private":
       case "private insurance":
-      case "private practice":
         return t('insurance.privateInsurance');
       case "bpjs": return "BPJS";
       default: return ins;
