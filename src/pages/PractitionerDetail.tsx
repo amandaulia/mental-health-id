@@ -70,6 +70,7 @@ const PractitionerDetail = () => {
       .map((inst: any) => ({
         id: inst.id.toString(),
         name: inst.name,
+        image: inst.image || undefined,
         locations: (inst.institution_locations || [])
           .map((il: any) => il.location)
           .filter(Boolean)
