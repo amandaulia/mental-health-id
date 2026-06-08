@@ -20,11 +20,14 @@ interface BureauLocationsProps {
 
 export const BureauLocations = ({ locations, bureauName = "Bureau" }: BureauLocationsProps) => {
   const { t } = useLanguage();
+  const isOnline = (v?: string) => (v || "").trim().toLowerCase() === "online";
   const hasMeaningfulDetail = (loc: Location) => {
     const isMissing = (v?: string) => !v || v === "Address not available" || v === "Unknown Province" || v === "Unknown Country";
     return !!loc.name || !isMissing(loc.address) || !isMissing(loc.province) || !isMissing(loc.country);
   };
-  const visibleLocations = locations.filter(hasMeaningfulDetail);
+  const visibleLocations = locations.filter(
+    (l) => hasMeaningfulDetail(l) && !isOnline(l.address) && !isOnline(l.city)
+  );
   if (visibleLocations.length === 0) return null;
 
   return (
