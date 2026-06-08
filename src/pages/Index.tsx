@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
 import { FilterState, Practitioner, Bureau } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
