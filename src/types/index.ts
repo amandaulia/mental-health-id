@@ -147,6 +147,8 @@ export interface FilterState {
   modes: Mode[];
   insurance: InsuranceType[];
   includeNullPrice?: boolean; // Include services/institutions with null prices
+  includePractitionersForInstitutionType?: boolean;
+  includeInstitutionsForProfessionType?: boolean;
   sortBy?: SortBy;
 }
 
