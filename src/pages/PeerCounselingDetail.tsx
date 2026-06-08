@@ -363,7 +363,7 @@ const PeerCounselingDetail = () => {
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button variant="outline" className="flex items-center gap-2">
-                            Filter
+                            Session Mode
                             {serviceMode.length > 0 && (
                               <Badge variant="secondary" className="ml-1 text-xs">{serviceMode.length}</Badge>
                             )}
@@ -492,7 +492,7 @@ const PeerCounselingDetail = () => {
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button variant="outline" className="flex items-center gap-2">
-                            Filter
+                            Specialization
                             {counselorSpec.length > 0 && (
                               <Badge variant="secondary" className="ml-1 text-xs">{counselorSpec.length}</Badge>
                             )}
