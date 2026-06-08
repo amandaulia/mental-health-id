@@ -679,9 +679,9 @@ export const SearchAndFilters = ({
             >
               <MapPin className="h-3 w-3 mr-1" />
               {t("filters.city")}
-              {getActiveFilterCount(filters.locations) > 0 && (
+              {(regularLocationCount > 0 || isOnlineSelected) && (
                 <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
-                  {getActiveFilterCount(filters.locations)}
+                  {regularLocationCount + (isOnlineSelected ? 1 : 0)}
                 </Badge>
               )}
               <ChevronDown className="h-3 w-3 ml-1" />
