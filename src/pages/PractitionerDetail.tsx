@@ -65,6 +65,17 @@ const PractitionerDetail = () => {
     shouldFetchInstitutionContacts ? institutionId : 0
   );
 
+  // Collect institution IDs across all services for CTA fallback (per-service)
+  const serviceInstitutionIds = useMemo<number[]>(() => {
+    const set = new Set<number>();
+    (dbServices || []).forEach((row: any) => {
+      const ids: number[] = row?.service?.institutionIds || [];
+      ids.forEach((id) => typeof id === 'number' && id > 0 && set.add(id));
+    });
+    return Array.from(set);
+  }, [dbServices]);
+  const { data: institutionContactsMap } = useContactDetailsByInstitutionIds(serviceInstitutionIds);
+
   const affiliatedInstitutions: AffiliatedInstitution[] = useMemo(() => {
     const rows = (dbPractitioner as any)?.practitioner_institutions || [];
     return rows
@@ -181,10 +192,18 @@ const PractitionerDetail = () => {
     }
   };
 
-  // Build filter facets from services
-  const services = practitioner.services.map((s) =>
-    withCtaFallback(s, practitioner.contactDetails),
-  );
+  // Build filter facets from services — fill CTA fallback from each service's affiliated institution contacts
+  const services = practitioner.services.map((s) => {
+    const ids = s.institutionIds || [];
+    const merged: ContactDetail[] = [];
+    ids.forEach((id) => {
+      const rows = (institutionContactsMap as any)?.[id] || [];
+      rows.forEach((c: any) => {
+        merged.push({ type: c.contact_type, value: c.value, link: c.link });
+      });
+    });
+    return withCtaFallback(s, merged);
+  });
   const allModes = Array.from(new Set(services.flatMap(s => s.modes || [s.mode]))) as Mode[];
   const allDurations = Array.from(new Set(
     services.map(s => s.durationMinutes).filter((d): d is number => typeof d === 'number' && d > 0)
