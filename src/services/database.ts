@@ -415,21 +415,31 @@ export const databaseService = {
     }
 
     const institutionsByServiceId = new Map<number, string[]>();
+    const institutionIdsByServiceId = new Map<number, number[]>();
     (serviceInstitutions || []).forEach((row: any) => {
       const institutionName = row.institution?.name;
-      if (!institutionName) return;
-      const names = institutionsByServiceId.get(row.service_id) || [];
-      if (!names.includes(institutionName)) names.push(institutionName);
-      institutionsByServiceId.set(row.service_id, names);
+      const institutionIdValue = row.institution?.id;
+      if (institutionName) {
+        const names = institutionsByServiceId.get(row.service_id) || [];
+        if (!names.includes(institutionName)) names.push(institutionName);
+        institutionsByServiceId.set(row.service_id, names);
+      }
+      if (typeof institutionIdValue === "number") {
+        const ids = institutionIdsByServiceId.get(row.service_id) || [];
+        if (!ids.includes(institutionIdValue)) ids.push(institutionIdValue);
+        institutionIdsByServiceId.set(row.service_id, ids);
+      }
     });
 
     return data.map((row: any) => {
       const institutionNames = institutionsByServiceId.get(row.service?.id) || [];
+      const institutionIdsForService = institutionIdsByServiceId.get(row.service?.id) || [];
       return {
         ...row,
         service: {
           ...row.service,
           institution: institutionNames.length > 0 ? { name: institutionNames.join(", ") } : undefined,
+          institutionIds: institutionIdsForService,
         },
       };
     });
