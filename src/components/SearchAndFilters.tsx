@@ -636,7 +636,7 @@ export const SearchAndFilters = ({
                 </PopoverTrigger>
                 <PopoverContent className="w-80 p-6">
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-foreground">{t("filters.institutionType")}</h3>
+                    <h3 className="text-lg font-semibold text-foreground">{t("filters.institution")}</h3>
                     <div className="flex flex-wrap gap-1">
                       {institutionTypeOptions.map((type) => (
                         <button
