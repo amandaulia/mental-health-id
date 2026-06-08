@@ -76,6 +76,17 @@ const PeerCounselingDetail = () => {
     .map((rel: any) => rel.practitioner)
     .filter((p: any) => Array.isArray(p?.profession_type) && p.profession_type.includes("Counselor"));
 
+  const services = (data?.service_peer_counselings || [])
+    .map((rel: any) => rel.service)
+    .filter(Boolean);
+
+  const [serviceSearch, setServiceSearch] = useState("");
+  const filteredServices = useMemo(() => {
+    const q = serviceSearch.trim().toLowerCase();
+    if (!q) return services;
+    return services.filter((s: any) => (s.name || "").toLowerCase().includes(q));
+  }, [services, serviceSearch]);
+
   const [counselorSearch, setCounselorSearch] = useState("");
   const [counselorSpec, setCounselorSpec] = useState<string>("all");
 
@@ -354,6 +365,64 @@ const PeerCounselingDetail = () => {
                       {t("common.noResults") || "No results found"}
                     </p>
                   )}
+                </CardContent>
+              </Card>
+            )}
+
+            {services.length > 0 && (
+              <Card>
+                <CardHeader><CardTitle>{t('detail.services')} ({services.length})</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="relative mb-4">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      value={serviceSearch}
+                      onChange={(e) => setServiceSearch(e.target.value)}
+                      placeholder={t("peerDetail.searchServices") || "Search services by name"}
+                      className="pl-9"
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    {filteredServices.map((s: any) => (
+                      <div key={s.id} className="p-3 rounded-md border">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm">{s.name}</p>
+                            <div className="flex flex-wrap items-center gap-3 mt-1 text-xs text-muted-foreground">
+                              {s.duration != null && (
+                                <span>{s.duration} {t('common.minutes') || 'min'}</span>
+                              )}
+                              {Array.isArray(s.session_mode) && s.session_mode.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {s.session_mode.map((m: string) => (
+                                    <Badge key={m} variant="outline" className="text-xs">{m}</Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <p
+                            className={
+                              s.price == null
+                                ? "text-xs text-muted-foreground italic"
+                                : "font-medium text-primary text-sm"
+                            }
+                          >
+                            {s.price == null
+                              ? t('detail.priceUponRequest')
+                              : Number(s.price) === 0
+                              ? t('detail.free')
+                              : `Rp ${Number(s.price).toLocaleString('id-ID')}`}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {filteredServices.length === 0 && (
+                      <p className="text-sm text-muted-foreground text-center py-4">
+                        {t("common.noResults") || "No results found"}
+                      </p>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )}
