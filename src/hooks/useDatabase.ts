@@ -1,6 +1,27 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { databaseService } from "@/services/database";
+import { supabase } from "@/integrations/supabase/client";
+
+// Shared popularity query: used by home and listing pages. Cached with a
+// 5-minute staleTime so the two pages don't refetch on every navigation.
+export const useResourcePopularity = () => {
+  return useQuery({
+    queryKey: ["resource-popularity"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("resource_popularity")
+        .select("resource_type, resource_id, click_count");
+      if (error) {
+        console.error("Error fetching resource popularity:", error);
+        return [];
+      }
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+};
 
 // OPTIMIZED: Fetch practitioners with all relations in one query
 export const usePractitionersWithRelations = () => {
