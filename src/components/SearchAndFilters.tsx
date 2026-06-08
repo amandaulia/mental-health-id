@@ -268,6 +268,16 @@ export const SearchAndFilters = ({
     trackFormInteraction("filter", "include_null_price_changed");
   };
 
+  const handleIncludePractitionersForInstitutionTypeChange = (checked: boolean) => {
+    onFiltersChange({ ...filters, includePractitionersForInstitutionType: checked });
+    trackFormInteraction("filter", "include_practitioners_institution_type_changed");
+  };
+
+  const handleIncludeInstitutionsForProfessionTypeChange = (checked: boolean) => {
+    onFiltersChange({ ...filters, includeInstitutionsForProfessionType: checked });
+    trackFormInteraction("filter", "include_institutions_profession_type_changed");
+  };
+
   const handleSortChange = (sortBy: SortBy) => {
     onFiltersChange({ ...filters, sortBy });
     trackFormInteraction("sort", "sort_changed", sortBy);
