@@ -110,6 +110,12 @@ export const transformService = (dbService: any): Service => {
   // Handle multiple session modes
   const sessionModes = service.session_mode || ["OFFLINE"];
   const mappedModes = sessionModes.map((mode: string) => mapSessionMode(mode));
+
+  const getCtaLink = (contactLink: unknown, rawCta: unknown) => {
+    if (typeof contactLink === "string" && contactLink.trim()) return contactLink;
+    if (typeof rawCta === "string" && rawCta.trim()) return rawCta;
+    return undefined;
+  };
   
   return {
     id: service.id?.toString() || 'unknown',
@@ -121,8 +127,8 @@ export const transformService = (dbService: any): Service => {
     price: service.price ?? null,
     mode: mappedModes[0], // Keep first mode for backward compatibility
     modes: mappedModes, // All modes for display
-    bookingUrl: service.book_cta ? service.book_cta.toString() : undefined,
-    learnMoreUrl: service.learn_more_cta ? service.learn_more_cta.toString() : undefined,
+    bookingUrl: getCtaLink(service.book_contact?.link, service.book_cta),
+    learnMoreUrl: getCtaLink(service.learn_more_contact?.link, service.learn_more_cta),
   };
 };
 

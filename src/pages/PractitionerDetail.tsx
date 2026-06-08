@@ -108,6 +108,7 @@ const PractitionerDetail = () => {
         transformedContactDetails = transformContactDetails(dbInstitutionContacts as any[]);
         usingInstitutionContacts = true;
       }
+
       setContactFromInstitution(usingInstitutionContacts);
       setPractitioner(transformPractitioner(dbPractitioner, transformedServices, transformedContactDetails));
     }

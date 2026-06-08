@@ -406,6 +406,28 @@ export const databaseService = {
       .map((row: any) => row.service?.id)
       .filter((id): id is number => typeof id === "number");
 
+    const ctaIds = new Set<number>();
+    data.forEach((row: any) => {
+      if (row.service?.book_cta) ctaIds.add(row.service.book_cta);
+      if (row.service?.learn_more_cta) ctaIds.add(row.service.learn_more_cta);
+    });
+
+    let contactMap = new Map<number, string | null>();
+    if (ctaIds.size > 0) {
+      const { data: contactData, error: contactError } = await supabase
+        .from("contact_details")
+        .select("id, link")
+        .in("id", Array.from(ctaIds));
+
+      if (contactError) {
+        console.error("Error fetching practitioner service CTA details:", contactError);
+      } else {
+        contactMap = new Map(
+          (contactData || []).map((contact) => [contact.id, normalizeLink(contact.link)])
+        );
+      }
+    }
+
     const { data: practitionerInstitutions, error: practitionerInstitutionError } = await supabase
       .from("practitioner_institutions")
       .select("institution_id")
@@ -455,12 +477,16 @@ export const databaseService = {
     return data.map((row: any) => {
       const institutionNames = institutionsByServiceId.get(row.service?.id) || [];
       const institutionIdsForService = institutionIdsByServiceId.get(row.service?.id) || [];
+      const bookLink = row.service?.book_cta ? contactMap.get(row.service.book_cta) : null;
+      const learnMoreLink = row.service?.learn_more_cta ? contactMap.get(row.service.learn_more_cta) : null;
       return {
         ...row,
         service: {
           ...row.service,
           institution: institutionNames.length > 0 ? { name: institutionNames.join(", ") } : undefined,
           institutionIds: institutionIdsForService,
+          book_contact: bookLink ? { link: bookLink } : null,
+          learn_more_contact: learnMoreLink ? { link: learnMoreLink } : null,
         },
       };
     });
