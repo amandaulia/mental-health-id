@@ -18,6 +18,7 @@ import { useTrackResourceView } from "@/hooks/useTrackResourceView";
 import { transformInstitution, transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
 import { Bureau, Practitioner, Service, Mode, ProfessionType, Specialization } from "@/types";
 import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
+import { withCtaFallback } from "@/utils/serviceCtaFallback";
 import { BureauLocations } from "@/components/BureauLocations";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -98,9 +99,14 @@ const BureauDetail = () => {
       
       // Get institution contact details for the sidebar
       const contactDetails = dbContactDetails ? transformContactDetails(dbContactDetails) : [];
-      
-      setBureau(transformInstitution(dbInstitution, transformedServices, contactDetails));
-      setServices(transformedServices);
+
+      // Fill missing Book Now / Learn More from institution contacts (priority order)
+      const servicesWithFallback = transformedServices.map((s) =>
+        withCtaFallback(s, contactDetails),
+      );
+
+      setBureau(transformInstitution(dbInstitution, servicesWithFallback, contactDetails));
+      setServices(servicesWithFallback);
       
       // Set price range from actual data (include 0 as a valid price)
       const prices = transformedServices

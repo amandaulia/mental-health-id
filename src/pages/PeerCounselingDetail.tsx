@@ -16,6 +16,8 @@ import { PageSEO } from "@/components/PageSEO";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { databaseService } from "@/services/database";
 import { getPlaceholderImage } from "@/utils/placeholderImage";
+import { pickBookingCta, pickLearnMoreCta } from "@/utils/serviceCtaFallback";
+import type { ContactDetail } from "@/types";
 import {
   SITE_URL,
   buildPostalAddress,
@@ -68,6 +70,15 @@ const PeerCounselingDetail = () => {
   const contacts = (data?.peer_counseling_contacts || [])
     .map((rel: any) => rel.contact_details)
     .filter(Boolean);
+
+  // Normalize peer-counseling contacts for CTA fallback (Book Now / Learn More)
+  const parentContacts: ContactDetail[] = contacts.map((c: any) => ({
+    type: c.contact_type,
+    value: c.value,
+    link: c.link,
+  }));
+  const fallbackBookingUrl = pickBookingCta(parentContacts);
+  const fallbackLearnMoreUrl = pickLearnMoreCta(parentContacts);
 
   const institutions = (data?.institution_peer_counselings || [])
     .map((rel: any) => rel.institution)
@@ -384,19 +395,51 @@ const PeerCounselingDetail = () => {
                               )}
                             </div>
                           </div>
-                          <p
-                            className={
-                              s.price == null
-                                ? "text-xs text-muted-foreground italic"
-                                : "font-medium text-primary text-sm"
-                            }
-                          >
-                            {s.price == null
-                              ? t('detail.priceUponRequest')
-                              : Number(s.price) === 0
-                              ? t('detail.free')
-                              : `Rp ${Number(s.price).toLocaleString('id-ID')}`}
-                          </p>
+                          <div className="flex flex-col items-start sm:items-end gap-2">
+                            <p
+                              className={
+                                s.price == null
+                                  ? "text-xs text-muted-foreground italic"
+                                  : "font-medium text-primary text-sm"
+                              }
+                            >
+                              {s.price == null
+                                ? t('detail.priceUponRequest')
+                                : Number(s.price) === 0
+                                ? t('detail.free')
+                                : `Rp ${Number(s.price).toLocaleString('id-ID')}`}
+                            </p>
+                            {(fallbackBookingUrl || fallbackLearnMoreUrl) && (
+                              <div className="flex gap-2">
+                                {fallbackBookingUrl && (
+                                  /^tel:/i.test(fallbackBookingUrl) ? (
+                                    <PhoneCallButton phone={fallbackBookingUrl.replace(/^tel:/i, "")} size="sm">
+                                      {t('detail.bookNow')}
+                                    </PhoneCallButton>
+                                  ) : (
+                                    <Button size="sm" asChild>
+                                      <a href={fallbackBookingUrl} target="_blank" rel="noopener noreferrer">
+                                        {t('detail.bookNow')}
+                                      </a>
+                                    </Button>
+                                  )
+                                )}
+                                {fallbackLearnMoreUrl && (
+                                  /^tel:/i.test(fallbackLearnMoreUrl) ? (
+                                    <PhoneCallButton phone={fallbackLearnMoreUrl.replace(/^tel:/i, "")} variant="outline" size="sm">
+                                      {t('detail.learnMore')}
+                                    </PhoneCallButton>
+                                  ) : (
+                                    <Button variant="outline" size="sm" asChild>
+                                      <a href={fallbackLearnMoreUrl} target="_blank" rel="noopener noreferrer">
+                                        {t('detail.learnMore')}
+                                      </a>
+                                    </Button>
+                                  )
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
