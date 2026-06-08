@@ -575,7 +575,7 @@ export const SearchAndFilters = ({
                     variant="outline"
                     className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                   >
-                    <Settings className="h-3 w-3" />
+                    <CreditCard className="h-3 w-3" />
                     <span>{t("filters.insurance")}</span>
                     {getActiveFilterCount(filters.insurance) > 0 && (
                       <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
@@ -842,7 +842,7 @@ export const SearchAndFilters = ({
                 variant="outline"
                 className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
               >
-                <Settings className="h-3 w-3 mr-1" />
+                <Banknote className="h-3 w-3 mr-1" />
                 {t("filters.priceRange")}
                 <ChevronDown className="h-3 w-3 ml-1" />
               </Button>
@@ -916,7 +916,7 @@ export const SearchAndFilters = ({
                 variant="outline"
                 className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
               >
-                <Settings className="h-3 w-3 mr-1" />
+                <CreditCard className="h-3 w-3 mr-1" />
                 {t("filters.insurance")}
                 {getActiveFilterCount(filters.insurance) > 0 && (
                   <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
