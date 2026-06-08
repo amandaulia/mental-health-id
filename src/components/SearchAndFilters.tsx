@@ -146,6 +146,29 @@ export const SearchAndFilters = ({
     [filters, onFiltersChange],
   );
 
+  const isOnlineSelected = filters.locations.some((loc) =>
+    loc.toLowerCase().startsWith("online")
+  );
+
+  const handleOnlineToggle = useCallback(
+    (checked: boolean) => {
+      const onlineValue = "Online";
+      const newLocations = checked
+        ? [...filters.locations, onlineValue]
+        : filters.locations.filter((loc) => !loc.toLowerCase().startsWith("online"));
+      onFiltersChange({ ...filters, locations: newLocations });
+    },
+    [filters, onFiltersChange],
+  );
+
+  const nonOnlineCities = cities.filter((city) => !city.toLowerCase().startsWith("online"));
+  const searchedCities = nonOnlineCities.filter((city) =>
+    city.toLowerCase().includes(citySearch.toLowerCase())
+  );
+  const regularLocationCount = filters.locations.filter(
+    (loc) => !loc.toLowerCase().startsWith("online")
+  ).length;
+
   const handleInstitutionSelect = useCallback(
     (value: string) => {
       const newInstitutions = filters.institutions.includes(value)
