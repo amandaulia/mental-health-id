@@ -7,7 +7,8 @@ import {
   User,
   Heart,
   Monitor,
-  Settings,
+  Banknote,
+  CreditCard,
   ChevronDown,
   Filter,
   X,
@@ -267,6 +268,16 @@ export const SearchAndFilters = ({
     trackFormInteraction("filter", "include_null_price_changed");
   };
 
+  const handleIncludePractitionersForInstitutionTypeChange = (checked: boolean) => {
+    onFiltersChange({ ...filters, includePractitionersForInstitutionType: checked });
+    trackFormInteraction("filter", "include_practitioners_institution_type_changed");
+  };
+
+  const handleIncludeInstitutionsForProfessionTypeChange = (checked: boolean) => {
+    onFiltersChange({ ...filters, includeInstitutionsForProfessionType: checked });
+    trackFormInteraction("filter", "include_institutions_profession_type_changed");
+  };
+
   const handleSortChange = (sortBy: SortBy) => {
     onFiltersChange({ ...filters, sortBy });
     trackFormInteraction("sort", "sort_changed", sortBy);
@@ -498,7 +509,7 @@ export const SearchAndFilters = ({
                     variant="outline"
                     className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                   >
-                    <Settings className="h-3 w-3" />
+                    <Banknote className="h-3 w-3" />
                     <span>{t("filters.priceRange")}</span>
                   </Button>
                 </PopoverTrigger>
@@ -574,7 +585,7 @@ export const SearchAndFilters = ({
                     variant="outline"
                     className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                   >
-                    <Settings className="h-3 w-3" />
+                    <CreditCard className="h-3 w-3" />
                     <span>{t("filters.insurance")}</span>
                     {getActiveFilterCount(filters.insurance) > 0 && (
                       <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
@@ -615,7 +626,7 @@ export const SearchAndFilters = ({
                     className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                   >
                     <Building2 className="h-3 w-3" />
-                    <span>{t("filters.institutionType")}</span>
+                    <span>{t("filters.institution")}</span>
                     {getActiveFilterCount(filters.institutionTypes) > 0 && (
                       <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                         {getActiveFilterCount(filters.institutionTypes)}
@@ -625,7 +636,17 @@ export const SearchAndFilters = ({
                 </PopoverTrigger>
                 <PopoverContent className="w-80 p-6">
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-foreground">{t("filters.institutionType")}</h3>
+                    <h3 className="text-lg font-semibold text-foreground">{t("filters.institution")}</h3>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="include-practitioners-institution-mobile"
+                        checked={filters.includePractitionersForInstitutionType ?? true}
+                        onCheckedChange={handleIncludePractitionersForInstitutionTypeChange}
+                      />
+                      <label htmlFor="include-practitioners-institution-mobile" className="text-sm text-foreground cursor-pointer">
+                        {t("filters.includePractitionersForInstitutionType")}
+                      </label>
+                    </div>
                     <div className="flex flex-wrap gap-1">
                       {institutionTypeOptions.map((type) => (
                         <button
@@ -666,6 +687,16 @@ export const SearchAndFilters = ({
                 <PopoverContent className="w-80 p-6">
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-foreground">{t("filters.profession")}</h3>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="include-institutions-profession-mobile"
+                        checked={filters.includeInstitutionsForProfessionType ?? true}
+                        onCheckedChange={handleIncludeInstitutionsForProfessionTypeChange}
+                      />
+                      <label htmlFor="include-institutions-profession-mobile" className="text-sm text-foreground cursor-pointer">
+                        {t("filters.includeInstitutionsForProfessionType")}
+                      </label>
+                    </div>
                     <div className="flex flex-wrap gap-1">
                       {professionTypeOptions.map((type) => (
                         <button
@@ -841,7 +872,7 @@ export const SearchAndFilters = ({
                 variant="outline"
                 className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
               >
-                <Settings className="h-3 w-3 mr-1" />
+                <Banknote className="h-3 w-3 mr-1" />
                 {t("filters.priceRange")}
                 <ChevronDown className="h-3 w-3 ml-1" />
               </Button>
@@ -915,7 +946,7 @@ export const SearchAndFilters = ({
                 variant="outline"
                 className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
               >
-                <Settings className="h-3 w-3 mr-1" />
+                <CreditCard className="h-3 w-3 mr-1" />
                 {t("filters.insurance")}
                 {getActiveFilterCount(filters.insurance) > 0 && (
                   <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
@@ -957,7 +988,7 @@ export const SearchAndFilters = ({
                 className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
               >
                 <Building2 className="h-3 w-3 mr-1" />
-                {t("filters.institutionType")}
+                {t("filters.institution")}
                 {getActiveFilterCount(filters.institutionTypes) > 0 && (
                   <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                     {getActiveFilterCount(filters.institutionTypes)}
@@ -968,7 +999,17 @@ export const SearchAndFilters = ({
             </PopoverTrigger>
             <PopoverContent className="w-80 p-6">
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">{t("filters.institutionType")}</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t("filters.institution")}</h3>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="include-practitioners-institution-desktop"
+                    checked={filters.includePractitionersForInstitutionType ?? true}
+                    onCheckedChange={handleIncludePractitionersForInstitutionTypeChange}
+                  />
+                  <label htmlFor="include-practitioners-institution-desktop" className="text-sm text-foreground cursor-pointer">
+                    {t("filters.includePractitionersForInstitutionType")}
+                  </label>
+                </div>
                 <div className="flex flex-wrap gap-1">
                   {institutionTypeOptions.map((type) => (
                     <button
@@ -1010,6 +1051,16 @@ export const SearchAndFilters = ({
             <PopoverContent className="w-80 p-6">
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-foreground">{t("filters.profession")}</h3>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="include-institutions-profession-desktop"
+                    checked={filters.includeInstitutionsForProfessionType ?? true}
+                    onCheckedChange={handleIncludeInstitutionsForProfessionTypeChange}
+                  />
+                  <label htmlFor="include-institutions-profession-desktop" className="text-sm text-foreground cursor-pointer">
+                    {t("filters.includeInstitutionsForProfessionType")}
+                  </label>
+                </div>
                 <div className="flex flex-wrap gap-1">
                   {professionTypeOptions.map((type) => (
                     <button

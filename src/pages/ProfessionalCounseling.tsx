@@ -252,11 +252,13 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
-      if (
-        filters.institutionTypes.length > 0 &&
-        !filters.institutionTypes.some((t) => practitioner.institutionTypes?.includes(t))
-      ) {
-        return false;
+      if (filters.institutionTypes.length > 0) {
+        if (filters.includePractitionersForInstitutionType === false) {
+          return false;
+        }
+        if (!filters.institutionTypes.some((t) => practitioner.institutionTypes?.includes(t))) {
+          return false;
+        }
       }
 
       if (
@@ -331,11 +333,13 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
-      if (
-        filters.professionTypes.length > 0 &&
-        !filters.professionTypes.some((type) => bureau.professionTypes.includes(type))
-      ) {
-        return false;
+      if (filters.professionTypes.length > 0) {
+        if (filters.includeInstitutionsForProfessionType === false) {
+          return false;
+        }
+        if (!filters.professionTypes.some((type) => bureau.professionTypes.includes(type))) {
+          return false;
+        }
       }
 
       if (

@@ -48,11 +48,12 @@ export const matchProfessional = (resource: any, filters: FilterState): boolean 
   }
 
   if (filters.institutionTypes.length > 0) {
-    if (resource.type !== "bureau") return false;
+    if (filters.includePractitionersForInstitutionType === false && resource.type !== "bureau") return false;
     if (!filters.institutionTypes.includes(resource.bureauType)) return false;
   }
 
   if (filters.professionTypes.length > 0) {
+    if (filters.includeInstitutionsForProfessionType === false && resource.type === "bureau") return false;
     if (!(resource.professionTypes || []).some((p: string) => filters.professionTypes.includes(p as any))) return false;
   }
 
