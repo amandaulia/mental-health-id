@@ -63,6 +63,7 @@ export const SearchAndFilters = ({
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [minPriceInput, setMinPriceInput] = useState(filters.priceRange[0].toString());
   const [maxPriceInput, setMaxPriceInput] = useState(filters.priceRange[1].toString());
+  const [citySearch, setCitySearch] = useState("");
   const { t } = useLanguage();
 
   // Default filter options (fallback)
