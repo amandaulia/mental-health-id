@@ -252,11 +252,13 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
-      if (
-        filters.institutionTypes.length > 0 &&
-        !filters.institutionTypes.some((t) => practitioner.institutionTypes?.includes(t))
-      ) {
-        return false;
+      if (filters.institutionTypes.length > 0) {
+        if (filters.includePractitionersForInstitutionType === false) {
+          return false;
+        }
+        if (!filters.institutionTypes.some((t) => practitioner.institutionTypes?.includes(t))) {
+          return false;
+        }
       }
 
       if (
