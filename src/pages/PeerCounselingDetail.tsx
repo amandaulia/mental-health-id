@@ -114,7 +114,7 @@ const PeerCounselingDetail = () => {
   }, [services, serviceSearch, serviceMode]);
 
   const [counselorSearch, setCounselorSearch] = useState("");
-  const [counselorSpec, setCounselorSpec] = useState<string>("all");
+  const [counselorSpec, setCounselorSpec] = useState<string[]>([]);
 
   const counselorSpecOptions = useMemo(() => {
     const set = new Set<string>();
@@ -128,9 +128,9 @@ const PeerCounselingDetail = () => {
     const q = counselorSearch.trim().toLowerCase();
     return counselors.filter((p: any) => {
       if (q && !(p.name || "").toLowerCase().includes(q)) return false;
-      if (counselorSpec !== "all") {
+      if (counselorSpec.length > 0) {
         const specs: string[] = Array.isArray(p.specialization) ? p.specialization : [];
-        if (!specs.includes(counselorSpec)) return false;
+        if (!counselorSpec.some((s) => specs.includes(s))) return false;
       }
       return true;
     });
