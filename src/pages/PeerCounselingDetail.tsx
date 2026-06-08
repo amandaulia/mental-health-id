@@ -347,17 +347,22 @@ const PeerCounselingDetail = () => {
                       />
                     </div>
                     {serviceModeOptions.length > 0 && (
-                      <Select value={serviceMode} onValueChange={setServiceMode}>
-                        <SelectTrigger className="sm:w-56">
-                          <SelectValue placeholder="Filter by session mode" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All session modes</SelectItem>
-                          {serviceModeOptions.map((m) => (
-                            <SelectItem key={m} value={m}>{m}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex flex-wrap gap-3">
+                        {serviceModeOptions.map((m) => (
+                          <div key={m} className="flex items-center gap-1.5">
+                            <Checkbox
+                              id={`service-mode-${m}`}
+                              checked={serviceMode.includes(m)}
+                              onCheckedChange={(checked) => {
+                                setServiceMode((prev) =>
+                                  checked ? [...prev, m] : prev.filter((x) => x !== m)
+                                );
+                              }}
+                            />
+                            <Label htmlFor={`service-mode-${m}`} className="text-sm cursor-pointer">{m}</Label>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                   <div className="space-y-3">
