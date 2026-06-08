@@ -360,22 +360,41 @@ const PeerCounselingDetail = () => {
                       />
                     </div>
                     {serviceModeOptions.length > 0 && (
-                      <div className="flex flex-wrap gap-3">
-                        {serviceModeOptions.map((m) => (
-                          <div key={m} className="flex items-center gap-1.5">
-                            <Checkbox
-                              id={`service-mode-${m}`}
-                              checked={serviceMode.includes(m)}
-                              onCheckedChange={(checked) => {
-                                setServiceMode((prev) =>
-                                  checked ? [...prev, m] : prev.filter((x) => x !== m)
-                                );
-                              }}
-                            />
-                            <Label htmlFor={`service-mode-${m}`} className="text-sm cursor-pointer">{m}</Label>
-                          </div>
-                        ))}
-                      </div>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className="flex items-center gap-2">
+                            Filter
+                            {serviceMode.length > 0 && (
+                              <Badge variant="secondary" className="ml-1 text-xs">{serviceMode.length}</Badge>
+                            )}
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-56 p-2" align="end">
+                          <ScrollArea className="max-h-60">
+                            <div className="space-y-1 p-1">
+                              {serviceModeOptions.map((m) => (
+                                <div key={m} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted cursor-pointer" onClick={() => {
+                                  setServiceMode((prev) =>
+                                    prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m]
+                                  );
+                                }}>
+                                  <Checkbox
+                                    id={`service-mode-${m}`}
+                                    checked={serviceMode.includes(m)}
+                                    onCheckedChange={(checked) => {
+                                      setServiceMode((prev) =>
+                                        checked ? [...prev, m] : prev.filter((x) => x !== m)
+                                      );
+                                    }}
+                                  />
+                                  <Label htmlFor={`service-mode-${m}`} className="text-sm cursor-pointer flex-1">{m}</Label>
+                                </div>
+                              ))}
+                            </div>
+                          </ScrollArea>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                   <div className="space-y-3">
