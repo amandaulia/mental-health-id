@@ -76,9 +76,18 @@ const PeerCounselingDetail = () => {
     .map((rel: any) => rel.practitioner)
     .filter((p: any) => Array.isArray(p?.profession_type) && p.profession_type.includes("Counselor"));
 
-  const services = (data?.service_peer_counselings || [])
-    .map((rel: any) => rel.service)
-    .filter(Boolean);
+  const services = (() => {
+    const map = new Map<number, any>();
+    counselors.forEach((p: any) => {
+      (p.practitioner_services || []).forEach((rel: any) => {
+        const s = rel.service;
+        if (s && !map.has(s.id)) {
+          map.set(s.id, { ...s, _practitionerName: p.name, _practitionerId: p.id });
+        }
+      });
+    });
+    return Array.from(map.values());
+  })();
 
   const [serviceSearch, setServiceSearch] = useState("");
   const filteredServices = useMemo(() => {
@@ -388,6 +397,14 @@ const PeerCounselingDetail = () => {
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-sm">{s.name}</p>
+                            {s._practitionerName && (
+                              <Link
+                                to={`/practitioner/${s._practitionerId}`}
+                                className="text-xs text-primary hover:underline"
+                              >
+                                {s._practitionerName}
+                              </Link>
+                            )}
                             <div className="flex flex-wrap items-center gap-3 mt-1 text-xs text-muted-foreground">
                               {s.duration != null && (
                                 <span>{s.duration} {t('common.minutes') || 'min'}</span>
