@@ -115,6 +115,7 @@ export const transformService = (dbService: any): Service => {
     id: service.id?.toString() || 'unknown',
     name: service.name || "Unnamed Service",
     institutionName: service.institution?.name,
+    institutionIds: Array.isArray(service.institutionIds) ? service.institutionIds : undefined,
     duration: durationText,
     durationMinutes: service.duration ?? undefined,
     price: service.price ?? null,
