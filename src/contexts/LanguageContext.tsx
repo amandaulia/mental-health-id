@@ -388,6 +388,8 @@ const translations = {
       insurance: "Insurance",
       sessionCost: "Session Cost (IDR)",
       loadMoreCount: "Load More",
+      includePractitionersForInstitutionType: "Include practitioners under the institution type",
+      includeInstitutionsForProfessionType: "Include institution hosting practitioners with the profession type",
     },
     about: {
       hero: {
