@@ -331,6 +331,79 @@ const PeerCounselingDetail = () => {
               </Card>
             )}
 
+            {services.length > 0 && (
+              <Card>
+                <CardHeader><CardTitle>{t('detail.services')} ({services.length})</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        value={serviceSearch}
+                        onChange={(e) => setServiceSearch(e.target.value)}
+                        placeholder="Search services by name"
+                        className="pl-9"
+                      />
+                    </div>
+                    {serviceModeOptions.length > 0 && (
+                      <Select value={serviceMode} onValueChange={setServiceMode}>
+                        <SelectTrigger className="sm:w-56">
+                          <SelectValue placeholder="Filter by session mode" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All session modes</SelectItem>
+                          {serviceModeOptions.map((m) => (
+                            <SelectItem key={m} value={m}>{m}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                  <div className="space-y-3">
+                    {filteredServices.map((s: any) => (
+                      <div key={s.id} className="p-3 rounded-md border">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm">{s.name}</p>
+                            <div className="flex flex-wrap items-center gap-3 mt-1 text-xs text-muted-foreground">
+                              {s.duration != null && (
+                                <span>{s.duration} {t('common.minutes') || 'min'}</span>
+                              )}
+                              {Array.isArray(s.session_mode) && s.session_mode.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {s.session_mode.map((m: string) => (
+                                    <Badge key={m} variant="outline" className="text-xs">{m}</Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <p
+                            className={
+                              s.price == null
+                                ? "text-xs text-muted-foreground italic"
+                                : "font-medium text-primary text-sm"
+                            }
+                          >
+                            {s.price == null
+                              ? t('detail.priceUponRequest')
+                              : Number(s.price) === 0
+                              ? t('detail.free')
+                              : `Rp ${Number(s.price).toLocaleString('id-ID')}`}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {filteredServices.length === 0 && (
+                      <p className="text-sm text-muted-foreground text-center py-4">
+                        {t("common.noResults") || "No results found"}
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {counselors.length > 0 && (
               <Card>
                 <CardHeader><CardTitle>{t("peerDetail.counselors") || "Counselors"}</CardTitle></CardHeader>
@@ -341,17 +414,17 @@ const PeerCounselingDetail = () => {
                       <Input
                         value={counselorSearch}
                         onChange={(e) => setCounselorSearch(e.target.value)}
-                        placeholder={t("peerDetail.searchCounselors") || "Search counselors by name"}
+                        placeholder="Search counselors by name"
                         className="pl-9"
                       />
                     </div>
                     {counselorSpecOptions.length > 0 && (
                       <Select value={counselorSpec} onValueChange={setCounselorSpec}>
                         <SelectTrigger className="sm:w-64">
-                          <SelectValue placeholder={t("peerDetail.filterBySpecialization") || "Filter by specialization"} />
+                          <SelectValue placeholder="Filter by specialization" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">{t("peerDetail.allSpecializations") || "All specializations"}</SelectItem>
+                          <SelectItem value="all">All specializations</SelectItem>
                           {counselorSpecOptions.map((s) => (
                             <SelectItem key={s} value={s}>{s}</SelectItem>
                           ))}
@@ -390,72 +463,6 @@ const PeerCounselingDetail = () => {
                       {t("common.noResults") || "No results found"}
                     </p>
                   )}
-                </CardContent>
-              </Card>
-            )}
-
-            {services.length > 0 && (
-              <Card>
-                <CardHeader><CardTitle>{t('detail.services')} ({services.length})</CardTitle></CardHeader>
-                <CardContent>
-                  <div className="relative mb-4">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      value={serviceSearch}
-                      onChange={(e) => setServiceSearch(e.target.value)}
-                      placeholder={t("peerDetail.searchServices") || "Search services by name"}
-                      className="pl-9"
-                    />
-                  </div>
-                  <div className="space-y-3">
-                    {filteredServices.map((s: any) => (
-                      <div key={s.id} className="p-3 rounded-md border">
-                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-sm">{s.name}</p>
-                            {s._practitionerName && (
-                              <Link
-                                to={`/practitioner/${s._practitionerId}`}
-                                className="text-xs text-primary hover:underline"
-                              >
-                                {s._practitionerName}
-                              </Link>
-                            )}
-                            <div className="flex flex-wrap items-center gap-3 mt-1 text-xs text-muted-foreground">
-                              {s.duration != null && (
-                                <span>{s.duration} {t('common.minutes') || 'min'}</span>
-                              )}
-                              {Array.isArray(s.session_mode) && s.session_mode.length > 0 && (
-                                <div className="flex flex-wrap gap-1">
-                                  {s.session_mode.map((m: string) => (
-                                    <Badge key={m} variant="outline" className="text-xs">{m}</Badge>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          <p
-                            className={
-                              s.price == null
-                                ? "text-xs text-muted-foreground italic"
-                                : "font-medium text-primary text-sm"
-                            }
-                          >
-                            {s.price == null
-                              ? t('detail.priceUponRequest')
-                              : Number(s.price) === 0
-                              ? t('detail.free')
-                              : `Rp ${Number(s.price).toLocaleString('id-ID')}`}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                    {filteredServices.length === 0 && (
-                      <p className="text-sm text-muted-foreground text-center py-4">
-                        {t("common.noResults") || "No results found"}
-                      </p>
-                    )}
-                  </div>
                 </CardContent>
               </Card>
             )}
