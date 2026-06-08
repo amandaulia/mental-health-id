@@ -18,6 +18,7 @@ import { transformPractitioner, transformService, transformContactDetails } from
 import { useEffect, useMemo, useState } from "react";
 import { Practitioner, Mode } from "@/types";
 import { trackError } from "@/utils/analytics";
+import { useTrackResourceView } from "@/hooks/useTrackResourceView";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageSEO } from "@/components/PageSEO";
 import {
@@ -46,6 +47,7 @@ const PractitionerDetail = () => {
   const [includeNullPrice, setIncludeNullPrice] = useState<boolean>(true);
   
   const practitionerId = parseInt(id || "0");
+  useTrackResourceView("practitioner", practitionerId || null);
   const { data: dbPractitioner, isLoading: practitionerLoading, error: practitionerError } = usePractitioner(practitionerId);
   const { data: dbServices, isLoading: servicesLoading } = useServicesByPractitioner(practitionerId);
   const { data: dbContactDetails, isLoading: contactLoading } = useContactDetailsByPractitioner(practitionerId);

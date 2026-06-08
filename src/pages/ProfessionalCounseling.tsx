@@ -6,7 +6,7 @@ import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { UnifiedCard } from "@/components/UnifiedCard";
 import { InfiniteCardGrid } from "@/components/InfiniteCardGrid";
-import { usePractitionersWithRelations, useInstitutionsWithRelations } from "@/hooks/useDatabase";
+import { usePractitionersWithRelations, useInstitutionsWithRelations, useResourcePopularity } from "@/hooks/useDatabase";
 import { Button } from "@/components/ui/button";
 import { trackSearch, trackFilter } from "@/utils/analytics";
 import { PageSEO } from "@/components/PageSEO";
@@ -70,21 +70,7 @@ const ProfessionalCounseling = () => {
   const { data: practitionersData = [], isLoading: practitionersLoading } = usePractitionersWithRelations();
   const { data: institutionsData = [], isLoading: institutionsLoading } = useInstitutionsWithRelations();
 
-  const { data: resourcePopularity = [] } = useQuery({
-    queryKey: ["resource-popularity"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("resource_popularity")
-        .select("resource_type, resource_id, click_count");
-
-      if (error) {
-        console.error("Error fetching resource popularity:", error);
-        return [];
-      }
-
-      return data || [];
-    },
-  });
+  const { data: resourcePopularity = [] } = useResourcePopularity();
 
   // Fetch min/max prices for the price range filter
   const { data: priceRange } = useQuery({

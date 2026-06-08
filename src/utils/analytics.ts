@@ -16,33 +16,71 @@ export interface GAEvent {
   custom_parameters?: Record<string, any>;
 }
 
-// Initialize Google Analytics
-export const initGA = (measurementId: string) => {
-  // Add Google Analytics script to head
-  const script1 = document.createElement('script');
-  script1.async = true;
-  script1.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-  document.head.appendChild(script1);
+// Initialize Google Analytics. Defers the network request to idle time so it
+// doesn't compete with the React bundle on first paint.
+let gaInitialized = false;
+const pendingEvents: Array<() => void> = [];
 
-  const script2 = document.createElement('script');
-  script2.innerHTML = `
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', '${measurementId}');
-  `;
-  document.head.appendChild(script2);
+const flushPendingEvents = () => {
+  while (pendingEvents.length) {
+    const fn = pendingEvents.shift();
+    try {
+      fn?.();
+    } catch (err) {
+      console.warn("[analytics] queued event failed", err);
+    }
+  }
+};
+
+export const initGA = (measurementId: string) => {
+  if (gaInitialized || typeof window === "undefined") return;
+  gaInitialized = true;
+
+  const inject = () => {
+    const script1 = document.createElement("script");
+    script1.async = true;
+    script1.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+    document.head.appendChild(script1);
+
+    const script2 = document.createElement("script");
+    script2.innerHTML = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${measurementId}');
+    `;
+    document.head.appendChild(script2);
+
+    flushPendingEvents();
+  };
+
+  const idle = (window as any).requestIdleCallback as
+    | ((cb: () => void, opts?: { timeout: number }) => number)
+    | undefined;
+  if (idle) {
+    idle(inject, { timeout: 2000 });
+  } else {
+    window.setTimeout(inject, 1500);
+  }
 };
 
 // Generic event tracking function
 export const trackEvent = (event: GAEvent) => {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', event.action, {
+  if (typeof window === "undefined") return;
+  const send = () => {
+    if (!window.gtag) return;
+    window.gtag("event", event.action, {
       event_category: event.category,
       event_label: event.label,
       value: event.value,
       ...event.custom_parameters,
     });
+  };
+  if (window.gtag) {
+    send();
+  } else {
+    // Queue until GA has been injected.
+    pendingEvents.push(send);
   }
 };
 
@@ -86,6 +124,16 @@ export const trackFilter = (filterType: string, filterValue: string, category: s
   });
 };
 
+// Map UI-level card types to the resource types accepted by the
+// `increment_resource_click` RPC. "bureau" (used in ProfessionalCounseling)
+// must be normalized to "institution" or the RPC raises an exception and the
+// click is silently dropped.
+const RESOURCE_TYPE_MAP: Record<string, "practitioner" | "institution"> = {
+  practitioner: "practitioner",
+  institution: "institution",
+  bureau: "institution",
+};
+
 export const trackCardClick = (cardType: string, cardId: string, cardName: string) => {
   trackEvent({
     action: 'card_click',
@@ -98,12 +146,17 @@ export const trackCardClick = (cardType: string, cardId: string, cardName: strin
     },
   });
 
+  const resourceType = RESOURCE_TYPE_MAP[cardType];
   const resourceId = Number(cardId);
-  if (Number.isFinite(resourceId) && ["practitioner", "institution"].includes(cardType)) {
-    void supabase.rpc("increment_resource_click", {
-      resource_type_input: cardType,
-      resource_id_input: resourceId,
-    });
+  if (resourceType && Number.isFinite(resourceId)) {
+    void supabase
+      .rpc("increment_resource_click", {
+        resource_type_input: resourceType,
+        resource_id_input: resourceId,
+      })
+      .then(({ error }) => {
+        if (error) console.warn("[analytics] increment_resource_click failed", error);
+      });
   }
 };
 

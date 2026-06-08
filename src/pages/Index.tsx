@@ -1,12 +1,11 @@
 import { useState, useMemo, useEffect } from "react";
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
 import { FilterState, Practitioner, Bureau } from "@/types";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { Separator } from "@/components/ui/separator";
 import { UnifiedCard, UnifiedCardData } from "@/components/UnifiedCard";
-import { usePractitionersWithRelations, useInstitutionsWithRelations, usePeerCounseling, useOrganizations, useActivities } from "@/hooks/useDatabase";
+import { usePractitionersWithRelations, useInstitutionsWithRelations, usePeerCounseling, useOrganizations, useActivities, useResourcePopularity } from "@/hooks/useDatabase";
 import { transformPractitioner, transformInstitution, transformService } from "@/utils/dataTransform";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -57,19 +56,7 @@ const Index = () => {
   const { data: dbOrganizations, isLoading: organizationsLoading } = useOrganizations();
   const { data: dbActivities, isLoading: activitiesLoading } = useActivities();
 
-  const { data: resourcePopularity = [] } = useQuery({
-    queryKey: ["resource-popularity"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("resource_popularity")
-        .select("resource_type, resource_id, click_count");
-      if (error) {
-        console.error("Error fetching resource popularity:", error);
-        return [];
-      }
-      return data || [];
-    },
-  });
+  const { data: resourcePopularity = [] } = useResourcePopularity();
 
   const popularity = useMemo(() => {
     return (resourcePopularity as any[]).reduce<Record<string, number>>((acc, item: any) => {
