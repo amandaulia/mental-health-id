@@ -637,6 +637,16 @@ export const SearchAndFilters = ({
                 <PopoverContent className="w-80 p-6">
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-foreground">{t("filters.institution")}</h3>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="include-practitioners-institution-mobile"
+                        checked={filters.includePractitionersForInstitutionType ?? true}
+                        onCheckedChange={handleIncludePractitionersForInstitutionTypeChange}
+                      />
+                      <label htmlFor="include-practitioners-institution-mobile" className="text-sm text-foreground cursor-pointer">
+                        {t("filters.includePractitionersForInstitutionType")}
+                      </label>
+                    </div>
                     <div className="flex flex-wrap gap-1">
                       {institutionTypeOptions.map((type) => (
                         <button
