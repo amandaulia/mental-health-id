@@ -17,17 +17,21 @@ interface PractitionerLocationsProps {
 
 export const PractitionerLocations = ({ locations }: PractitionerLocationsProps) => {
   const { t } = useLanguage();
-  if (locations.length === 0) return null;
+  const isOnline = (v?: string) => (v || "").trim().toLowerCase() === "online";
+  const visibleLocations = locations.filter(
+    (l) => !isOnline(l.address) && !isOnline(l.city)
+  );
+  if (visibleLocations.length === 0) return null;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          {t('detail.locations')} ({locations.length})
+          {t('detail.locations')} ({visibleLocations.length})
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {locations.map((location) => {
+        {visibleLocations.map((location) => {
           const encodedAddress = encodeURIComponent(location.address);
           const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
           const addr = (location.address || '').trim();
