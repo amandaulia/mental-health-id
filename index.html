@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://vvvsefzarzfisxrpfygw.supabase.co" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://cdn.jotfor.ms" />
     <title>Direktori Kesehatan Mental Indonesia — Psikolog & Konseling</title>
     <meta
       name="description"
@@ -135,25 +138,44 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script src="https://cdn.jotfor.ms/s/static/latest/static/feedback2.js"></script>
     <script>
-      var componentID = new JotformFeedback({
-        type: false,
-        width: 700,
-        height: 500,
-        fontColor: "#FFFFFF",
-        background: "#EE5B2B",
-        isCardForm: false,
-        formId: "261353904089057",
-        buttonText: "Contact Us",
-        buttonSide: "right",
-        buttonAlign: "center",
-        base: "https://form.jotform.com/",
-      }).componentID;
-    </script>
-    <script src="https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js"></script>
-    <script>
-      window.jotformEmbedHandler("iframe[id='" + componentID + "_iframe']", "https://form.jotform.com/")
+      // Defer Jotform feedback widget until the page is idle so it doesn't
+      // compete with the React bundle on first paint.
+      (function () {
+        function loadJotform() {
+          var s1 = document.createElement('script');
+          s1.src = 'https://cdn.jotfor.ms/s/static/latest/static/feedback2.js';
+          s1.async = true;
+          s1.onload = function () {
+            var componentID = new JotformFeedback({
+              type: false,
+              width: 700,
+              height: 500,
+              fontColor: '#FFFFFF',
+              background: '#EE5B2B',
+              isCardForm: false,
+              formId: '261353904089057',
+              buttonText: 'Contact Us',
+              buttonSide: 'right',
+              buttonAlign: 'center',
+              base: 'https://form.jotform.com/',
+            }).componentID;
+            var s2 = document.createElement('script');
+            s2.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
+            s2.async = true;
+            s2.onload = function () {
+              window.jotformEmbedHandler("iframe[id='" + componentID + "_iframe']", 'https://form.jotform.com/');
+            };
+            document.body.appendChild(s2);
+          };
+          document.body.appendChild(s1);
+        }
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadJotform, { timeout: 3000 });
+        } else {
+          window.addEventListener('load', function () { setTimeout(loadJotform, 1500); });
+        }
+      })();
     </script>
   </body>
 </html>

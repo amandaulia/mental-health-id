@@ -63,6 +63,7 @@ const BureauDetail = () => {
   const [pracIncludeNullPrice, setPracIncludeNullPrice] = useState<boolean>(true);
   
   const institutionId = parseInt(id || "0");
+  useTrackResourceView("institution", institutionId || null);
   const { data: dbInstitution, isLoading: institutionLoading, error: institutionError } = useInstitution(institutionId);
   const { data: dbPractitioners, isLoading: practitionersLoading } = usePractitionersByInstitution(institutionId);
   const { data: dbServices, isLoading: servicesLoading } = useServicesByInstitution(institutionId);
