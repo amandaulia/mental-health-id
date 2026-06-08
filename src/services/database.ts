@@ -361,6 +361,27 @@ export const databaseService = {
     return contactsWithLocations;
   },
 
+  // Fetch contact_details for multiple institutions in one go, grouped by institution_id
+  async getContactDetailsByInstitutionIds(institutionIds: number[]) {
+    const result: Record<number, any[]> = {};
+    if (!institutionIds || institutionIds.length === 0) return result;
+    const { data, error } = await supabase
+      .from("institution_contacts")
+      .select(`institution_id, contact_details:contact_id(*)`)
+      .in("institution_id", institutionIds);
+    if (error) {
+      console.error("Error fetching contact details for institutions:", error);
+      return result;
+    }
+    (data || []).forEach((row: any) => {
+      if (!row?.contact_details) return;
+      const list = result[row.institution_id] || [];
+      list.push(row.contact_details);
+      result[row.institution_id] = list;
+    });
+    return result;
+  },
+
   // Fetch services for a practitioner with institution data
   async getServicesByPractitioner(practitionerId: number) {
     const { data, error } = await supabase
