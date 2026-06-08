@@ -712,21 +712,43 @@ export const SearchAndFilters = ({
           <PopoverContent className="w-80 p-6">
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">{t("filters.city")}</h3>
-              <div className="flex flex-wrap gap-1">
-                {cities.map((location) => (
-                  <button
-                    key={location}
-                    onClick={() => handleLocationSelect(location)}
-                    className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
-                      filters.locations.includes(location)
-                        ? "bg-purple-100 border-purple-300 text-purple-700"
-                        : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
-                    }`}
-                  >
-                    {location.split(",")[0]}
-                  </button>
-                ))}
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="include-online-desktop"
+                  checked={isOnlineSelected}
+                  onCheckedChange={handleOnlineToggle}
+                />
+                <label htmlFor="include-online-desktop" className="text-sm text-foreground cursor-pointer">
+                  Include Online only location
+                </label>
               </div>
+              <Input
+                type="text"
+                placeholder="Search city..."
+                value={citySearch}
+                onChange={(e) => setCitySearch(e.target.value)}
+                className="text-sm rounded-full border-gray-200 h-8"
+              />
+              <ScrollArea className="h-48">
+                <div className="flex flex-wrap gap-1">
+                  {searchedCities.map((location) => (
+                    <button
+                      key={location}
+                      onClick={() => handleLocationSelect(location)}
+                      className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                        filters.locations.includes(location)
+                          ? "bg-purple-100 border-purple-300 text-purple-700"
+                          : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+                      }`}
+                    >
+                      {location.split(",")[0]}
+                    </button>
+                  ))}
+                  {searchedCities.length === 0 && (
+                    <p className="text-sm text-muted-foreground">No cities found</p>
+                  )}
+                </div>
+              </ScrollArea>
             </div>
           </PopoverContent>
         </Popover>
