@@ -425,17 +425,22 @@ const PeerCounselingDetail = () => {
                       />
                     </div>
                     {counselorSpecOptions.length > 0 && (
-                      <Select value={counselorSpec} onValueChange={setCounselorSpec}>
-                        <SelectTrigger className="sm:w-64">
-                          <SelectValue placeholder="Filter by specialization" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All specializations</SelectItem>
-                          {counselorSpecOptions.map((s) => (
-                            <SelectItem key={s} value={s}>{s}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex flex-wrap gap-3">
+                        {counselorSpecOptions.map((s) => (
+                          <div key={s} className="flex items-center gap-1.5">
+                            <Checkbox
+                              id={`counselor-spec-${s}`}
+                              checked={counselorSpec.includes(s)}
+                              onCheckedChange={(checked) => {
+                                setCounselorSpec((prev) =>
+                                  checked ? [...prev, s] : prev.filter((x) => x !== s)
+                                );
+                              }}
+                            />
+                            <Label htmlFor={`counselor-spec-${s}`} className="text-sm cursor-pointer">{s}</Label>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
