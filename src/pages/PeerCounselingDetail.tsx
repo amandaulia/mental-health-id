@@ -412,7 +412,7 @@ const PeerCounselingDetail = () => {
 
             {counselors.length > 0 && (
               <Card>
-                <CardHeader><CardTitle>{t("peerDetail.counselors") || "Counselors"}</CardTitle></CardHeader>
+                <CardHeader><CardTitle>{t("peerDetail.counselors") || "Counselors"} ({counselors.length})</CardTitle></CardHeader>
                 <CardContent>
                   <div className="flex flex-col sm:flex-row gap-3 mb-4">
                     <div className="relative flex-1">
