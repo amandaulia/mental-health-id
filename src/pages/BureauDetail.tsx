@@ -14,6 +14,7 @@ import { BureauContact } from "@/components/BureauContact";
 import { ModeIcon } from "@/components/ModeIcon";
 import { useState, useEffect } from "react";
 import { useInstitution, usePractitionersByInstitution, useServicesByInstitution, useContactDetailsByInstitution, useLocationsByInstitution } from "@/hooks/useDatabase";
+import { useTrackResourceView } from "@/hooks/useTrackResourceView";
 import { transformInstitution, transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
 import { Bureau, Practitioner, Service, Mode, ProfessionType, Specialization } from "@/types";
 import { getProfessionLabel, getSpecializationLabel } from "@/utils/labels";
