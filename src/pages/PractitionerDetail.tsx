@@ -18,6 +18,7 @@ import { transformPractitioner, transformService, transformContactDetails } from
 import { useEffect, useMemo, useState } from "react";
 import { Practitioner, Mode } from "@/types";
 import { trackError } from "@/utils/analytics";
+import { withCtaFallback } from "@/utils/serviceCtaFallback";
 import { useTrackResourceView } from "@/hooks/useTrackResourceView";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageSEO } from "@/components/PageSEO";
@@ -181,7 +182,9 @@ const PractitionerDetail = () => {
   };
 
   // Build filter facets from services
-  const services = practitioner.services;
+  const services = practitioner.services.map((s) =>
+    withCtaFallback(s, practitioner.contactDetails),
+  );
   const allModes = Array.from(new Set(services.flatMap(s => s.modes || [s.mode]))) as Mode[];
   const allDurations = Array.from(new Set(
     services.map(s => s.durationMinutes).filter((d): d is number => typeof d === 'number' && d > 0)
