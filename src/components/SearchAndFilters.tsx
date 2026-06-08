@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
@@ -62,6 +63,7 @@ export const SearchAndFilters = ({
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [minPriceInput, setMinPriceInput] = useState(filters.priceRange[0].toString());
   const [maxPriceInput, setMaxPriceInput] = useState(filters.priceRange[1].toString());
+  const [citySearch, setCitySearch] = useState("");
   const { t } = useLanguage();
 
   // Default filter options (fallback)
@@ -143,6 +145,29 @@ export const SearchAndFilters = ({
     },
     [filters, onFiltersChange],
   );
+
+  const isOnlineSelected = filters.locations.some((loc) =>
+    loc.toLowerCase().startsWith("online")
+  );
+
+  const handleOnlineToggle = useCallback(
+    (checked: boolean) => {
+      const onlineValue = "Online";
+      const newLocations = checked
+        ? [...filters.locations, onlineValue]
+        : filters.locations.filter((loc) => !loc.toLowerCase().startsWith("online"));
+      onFiltersChange({ ...filters, locations: newLocations });
+    },
+    [filters, onFiltersChange],
+  );
+
+  const nonOnlineCities = cities.filter((city) => !city.toLowerCase().startsWith("online"));
+  const searchedCities = nonOnlineCities.filter((city) =>
+    city.toLowerCase().includes(citySearch.toLowerCase())
+  );
+  const regularLocationCount = filters.locations.filter(
+    (loc) => !loc.toLowerCase().startsWith("online")
+  ).length;
 
   const handleInstitutionSelect = useCallback(
     (value: string) => {
@@ -336,9 +361,9 @@ export const SearchAndFilters = ({
                 >
                   <MapPin className="h-3 w-3" />
                   <span>{t("filters.city")}</span>
-                  {getActiveFilterCount(filters.locations) > 0 && (
+                  {(regularLocationCount > 0 || isOnlineSelected) && (
                     <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
-                      {getActiveFilterCount(filters.locations)}
+                      {regularLocationCount + (isOnlineSelected ? 1 : 0)}
                     </Badge>
                   )}
                 </Button>
@@ -346,21 +371,43 @@ export const SearchAndFilters = ({
               <PopoverContent className="w-80 p-6">
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-foreground">{t("filters.city")}</h3>
-                  <div className="flex flex-wrap gap-1">
-                    {cities.map((location) => (
-                      <button
-                        key={location}
-                        onClick={() => handleLocationSelect(location)}
-                        className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
-                          filters.locations.includes(location)
-                            ? "bg-purple-100 border-purple-300 text-purple-700"
-                            : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
-                        }`}
-                      >
-                        {location.split(",")[0]}
-                      </button>
-                    ))}
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="include-online-mobile"
+                      checked={isOnlineSelected}
+                      onCheckedChange={handleOnlineToggle}
+                    />
+                    <label htmlFor="include-online-mobile" className="text-sm text-foreground cursor-pointer">
+                      Include Online only location
+                    </label>
                   </div>
+                  <Input
+                    type="text"
+                    placeholder="Search city..."
+                    value={citySearch}
+                    onChange={(e) => setCitySearch(e.target.value)}
+                    className="text-sm rounded-full border-gray-200 h-8"
+                  />
+                  <ScrollArea className="h-48">
+                    <div className="flex flex-wrap gap-1">
+                      {searchedCities.map((location) => (
+                        <button
+                          key={location}
+                          onClick={() => handleLocationSelect(location)}
+                          className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                            filters.locations.includes(location)
+                              ? "bg-purple-100 border-purple-300 text-purple-700"
+                              : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+                          }`}
+                        >
+                          {location.split(",")[0]}
+                        </button>
+                      ))}
+                      {searchedCities.length === 0 && (
+                        <p className="text-sm text-muted-foreground">No cities found</p>
+                      )}
+                    </div>
+                  </ScrollArea>
                 </div>
               </PopoverContent>
             </Popover>
@@ -654,9 +701,9 @@ export const SearchAndFilters = ({
             >
               <MapPin className="h-3 w-3 mr-1" />
               {t("filters.city")}
-              {getActiveFilterCount(filters.locations) > 0 && (
+              {(regularLocationCount > 0 || isOnlineSelected) && (
                 <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
-                  {getActiveFilterCount(filters.locations)}
+                  {regularLocationCount + (isOnlineSelected ? 1 : 0)}
                 </Badge>
               )}
               <ChevronDown className="h-3 w-3 ml-1" />
@@ -665,21 +712,43 @@ export const SearchAndFilters = ({
           <PopoverContent className="w-80 p-6">
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">{t("filters.city")}</h3>
-              <div className="flex flex-wrap gap-1">
-                {cities.map((location) => (
-                  <button
-                    key={location}
-                    onClick={() => handleLocationSelect(location)}
-                    className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
-                      filters.locations.includes(location)
-                        ? "bg-purple-100 border-purple-300 text-purple-700"
-                        : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
-                    }`}
-                  >
-                    {location.split(",")[0]}
-                  </button>
-                ))}
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="include-online-desktop"
+                  checked={isOnlineSelected}
+                  onCheckedChange={handleOnlineToggle}
+                />
+                <label htmlFor="include-online-desktop" className="text-sm text-foreground cursor-pointer">
+                  Include Online only location
+                </label>
               </div>
+              <Input
+                type="text"
+                placeholder="Search city..."
+                value={citySearch}
+                onChange={(e) => setCitySearch(e.target.value)}
+                className="text-sm rounded-full border-gray-200 h-8"
+              />
+              <ScrollArea className="h-48">
+                <div className="flex flex-wrap gap-1">
+                  {searchedCities.map((location) => (
+                    <button
+                      key={location}
+                      onClick={() => handleLocationSelect(location)}
+                      className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                        filters.locations.includes(location)
+                          ? "bg-purple-100 border-purple-300 text-purple-700"
+                          : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+                      }`}
+                    >
+                      {location.split(",")[0]}
+                    </button>
+                  ))}
+                  {searchedCities.length === 0 && (
+                    <p className="text-sm text-muted-foreground">No cities found</p>
+                  )}
+                </div>
+              </ScrollArea>
             </div>
           </PopoverContent>
         </Popover>
