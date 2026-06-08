@@ -1240,8 +1240,6 @@ export type Database = {
         Args: { resource_id_input: number; resource_type_input: string }
         Returns: undefined
       }
-      show_limit: { Args: never; Returns: number }
-      show_trgm: { Args: { "": string }; Returns: string[] }
       update_user_app_metadata: {
         Args: { new_app_metadata: Json; user_id: string }
         Returns: undefined
