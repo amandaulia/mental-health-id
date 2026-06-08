@@ -91,7 +91,7 @@ const PeerCounselingDetail = () => {
   })();
 
   const [serviceSearch, setServiceSearch] = useState("");
-  const [serviceMode, setServiceMode] = useState<string>("all");
+  const [serviceMode, setServiceMode] = useState<string[]>([]);
 
   const serviceModeOptions = useMemo(() => {
     const set = new Set<string>();
@@ -105,9 +105,9 @@ const PeerCounselingDetail = () => {
     const q = serviceSearch.trim().toLowerCase();
     return services.filter((s: any) => {
       if (q && !(s.name || "").toLowerCase().includes(q)) return false;
-      if (serviceMode !== "all") {
+      if (serviceMode.length > 0) {
         const modes: string[] = Array.isArray(s.session_mode) ? s.session_mode : [];
-        if (!modes.includes(serviceMode)) return false;
+        if (!serviceMode.some((m) => modes.includes(m))) return false;
       }
       return true;
     });
