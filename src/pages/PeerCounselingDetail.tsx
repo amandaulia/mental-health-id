@@ -16,6 +16,8 @@ import { PageSEO } from "@/components/PageSEO";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { databaseService } from "@/services/database";
 import { getPlaceholderImage } from "@/utils/placeholderImage";
+import { pickBookingCta, pickLearnMoreCta } from "@/utils/serviceCtaFallback";
+import type { ContactDetail } from "@/types";
 import {
   SITE_URL,
   buildPostalAddress,
@@ -68,6 +70,15 @@ const PeerCounselingDetail = () => {
   const contacts = (data?.peer_counseling_contacts || [])
     .map((rel: any) => rel.contact_details)
     .filter(Boolean);
+
+  // Normalize peer-counseling contacts for CTA fallback (Book Now / Learn More)
+  const parentContacts: ContactDetail[] = contacts.map((c: any) => ({
+    type: c.contact_type,
+    value: c.value,
+    link: c.link,
+  }));
+  const fallbackBookingUrl = pickBookingCta(parentContacts);
+  const fallbackLearnMoreUrl = pickLearnMoreCta(parentContacts);
 
   const institutions = (data?.institution_peer_counselings || [])
     .map((rel: any) => rel.institution)
