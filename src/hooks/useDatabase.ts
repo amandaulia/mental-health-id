@@ -120,6 +120,15 @@ export const useContactDetailsByInstitution = (institutionId: number) => {
   });
 };
 
+export const useContactDetailsByInstitutionIds = (institutionIds: number[]) => {
+  const sorted = [...(institutionIds || [])].filter((n) => typeof n === 'number' && n > 0).sort((a, b) => a - b);
+  return useQuery({
+    queryKey: ['contact-details', 'institutions', sorted],
+    queryFn: () => databaseService.getContactDetailsByInstitutionIds(sorted),
+    enabled: sorted.length > 0,
+  });
+};
+
 export const useLocationsByPractitioner = (practitionerId: number) => {
   return useQuery({
     queryKey: ['locations', 'practitioner', practitionerId],
