@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { ArrowLeft, MapPin, Phone, Mail, Globe, Instagram, MessageCircle, ExternalLink, Search } from "lucide-react";
+import { ArrowLeft, MapPin, Phone, Mail, Globe, Instagram, MessageCircle, ExternalLink, Search, ChevronDown } from "lucide-react";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
 import { BureauLocations } from "@/components/BureauLocations";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -468,22 +470,41 @@ const PeerCounselingDetail = () => {
                       />
                     </div>
                     {counselorSpecOptions.length > 0 && (
-                      <div className="flex flex-wrap gap-3">
-                        {counselorSpecOptions.map((s) => (
-                          <div key={s} className="flex items-center gap-1.5">
-                            <Checkbox
-                              id={`counselor-spec-${s}`}
-                              checked={counselorSpec.includes(s)}
-                              onCheckedChange={(checked) => {
-                                setCounselorSpec((prev) =>
-                                  checked ? [...prev, s] : prev.filter((x) => x !== s)
-                                );
-                              }}
-                            />
-                            <Label htmlFor={`counselor-spec-${s}`} className="text-sm cursor-pointer">{s}</Label>
-                          </div>
-                        ))}
-                      </div>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className="flex items-center gap-2">
+                            Filter
+                            {counselorSpec.length > 0 && (
+                              <Badge variant="secondary" className="ml-1 text-xs">{counselorSpec.length}</Badge>
+                            )}
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-56 p-2" align="end">
+                          <ScrollArea className="max-h-60">
+                            <div className="space-y-1 p-1">
+                              {counselorSpecOptions.map((s) => (
+                                <div key={s} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted cursor-pointer" onClick={() => {
+                                  setCounselorSpec((prev) =>
+                                    prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
+                                  );
+                                }}>
+                                  <Checkbox
+                                    id={`counselor-spec-${s}`}
+                                    checked={counselorSpec.includes(s)}
+                                    onCheckedChange={(checked) => {
+                                      setCounselorSpec((prev) =>
+                                        checked ? [...prev, s] : prev.filter((x) => x !== s)
+                                      );
+                                    }}
+                                  />
+                                  <Label htmlFor={`counselor-spec-${s}`} className="text-sm cursor-pointer flex-1">{s}</Label>
+                                </div>
+                              ))}
+                            </div>
+                          </ScrollArea>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
