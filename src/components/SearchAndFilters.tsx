@@ -499,7 +499,7 @@ export const SearchAndFilters = ({
                     variant="outline"
                     className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
                   >
-                    <Settings className="h-3 w-3" />
+                    <Banknote className="h-3 w-3" />
                     <span>{t("filters.priceRange")}</span>
                   </Button>
                 </PopoverTrigger>
