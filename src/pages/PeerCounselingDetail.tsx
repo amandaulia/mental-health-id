@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { ArrowLeft, MapPin, Phone, Mail, Globe, Instagram, MessageCircle, ExternalLink, Search } from "lucide-react";
 import { PhoneCallButton } from "@/components/PhoneCallButton";
@@ -90,7 +91,7 @@ const PeerCounselingDetail = () => {
   })();
 
   const [serviceSearch, setServiceSearch] = useState("");
-  const [serviceMode, setServiceMode] = useState<string>("all");
+  const [serviceMode, setServiceMode] = useState<string[]>([]);
 
   const serviceModeOptions = useMemo(() => {
     const set = new Set<string>();
@@ -104,16 +105,16 @@ const PeerCounselingDetail = () => {
     const q = serviceSearch.trim().toLowerCase();
     return services.filter((s: any) => {
       if (q && !(s.name || "").toLowerCase().includes(q)) return false;
-      if (serviceMode !== "all") {
+      if (serviceMode.length > 0) {
         const modes: string[] = Array.isArray(s.session_mode) ? s.session_mode : [];
-        if (!modes.includes(serviceMode)) return false;
+        if (!serviceMode.some((m) => modes.includes(m))) return false;
       }
       return true;
     });
   }, [services, serviceSearch, serviceMode]);
 
   const [counselorSearch, setCounselorSearch] = useState("");
-  const [counselorSpec, setCounselorSpec] = useState<string>("all");
+  const [counselorSpec, setCounselorSpec] = useState<string[]>([]);
 
   const counselorSpecOptions = useMemo(() => {
     const set = new Set<string>();
@@ -127,9 +128,9 @@ const PeerCounselingDetail = () => {
     const q = counselorSearch.trim().toLowerCase();
     return counselors.filter((p: any) => {
       if (q && !(p.name || "").toLowerCase().includes(q)) return false;
-      if (counselorSpec !== "all") {
+      if (counselorSpec.length > 0) {
         const specs: string[] = Array.isArray(p.specialization) ? p.specialization : [];
-        if (!specs.includes(counselorSpec)) return false;
+        if (!counselorSpec.some((s) => specs.includes(s))) return false;
       }
       return true;
     });
@@ -346,17 +347,22 @@ const PeerCounselingDetail = () => {
                       />
                     </div>
                     {serviceModeOptions.length > 0 && (
-                      <Select value={serviceMode} onValueChange={setServiceMode}>
-                        <SelectTrigger className="sm:w-56">
-                          <SelectValue placeholder="Filter by session mode" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All session modes</SelectItem>
-                          {serviceModeOptions.map((m) => (
-                            <SelectItem key={m} value={m}>{m}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex flex-wrap gap-3">
+                        {serviceModeOptions.map((m) => (
+                          <div key={m} className="flex items-center gap-1.5">
+                            <Checkbox
+                              id={`service-mode-${m}`}
+                              checked={serviceMode.includes(m)}
+                              onCheckedChange={(checked) => {
+                                setServiceMode((prev) =>
+                                  checked ? [...prev, m] : prev.filter((x) => x !== m)
+                                );
+                              }}
+                            />
+                            <Label htmlFor={`service-mode-${m}`} className="text-sm cursor-pointer">{m}</Label>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                   <div className="space-y-3">
@@ -406,7 +412,7 @@ const PeerCounselingDetail = () => {
 
             {counselors.length > 0 && (
               <Card>
-                <CardHeader><CardTitle>{t("peerDetail.counselors") || "Counselors"}</CardTitle></CardHeader>
+                <CardHeader><CardTitle>{t("peerDetail.counselors") || "Counselors"} ({counselors.length})</CardTitle></CardHeader>
                 <CardContent>
                   <div className="flex flex-col sm:flex-row gap-3 mb-4">
                     <div className="relative flex-1">
@@ -419,17 +425,22 @@ const PeerCounselingDetail = () => {
                       />
                     </div>
                     {counselorSpecOptions.length > 0 && (
-                      <Select value={counselorSpec} onValueChange={setCounselorSpec}>
-                        <SelectTrigger className="sm:w-64">
-                          <SelectValue placeholder="Filter by specialization" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All specializations</SelectItem>
-                          {counselorSpecOptions.map((s) => (
-                            <SelectItem key={s} value={s}>{s}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex flex-wrap gap-3">
+                        {counselorSpecOptions.map((s) => (
+                          <div key={s} className="flex items-center gap-1.5">
+                            <Checkbox
+                              id={`counselor-spec-${s}`}
+                              checked={counselorSpec.includes(s)}
+                              onCheckedChange={(checked) => {
+                                setCounselorSpec((prev) =>
+                                  checked ? [...prev, s] : prev.filter((x) => x !== s)
+                                );
+                              }}
+                            />
+                            <Label htmlFor={`counselor-spec-${s}`} className="text-sm cursor-pointer">{s}</Label>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
