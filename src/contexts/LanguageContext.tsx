@@ -852,6 +852,8 @@ const translations = {
       insurance: "Asuransi",
       sessionCost: "Biaya Sesi (IDR)",
       loadMoreCount: "Muat Lebih Banyak",
+      includePractitionersForInstitutionType: "Sertakan praktisi di bawah tipe institusi",
+      includeInstitutionsForProfessionType: "Sertakan institusi yang menampung praktisi dengan tipe profesi",
     },
     about: {
       hero: {
