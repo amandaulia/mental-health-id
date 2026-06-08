@@ -48,7 +48,7 @@ export const matchProfessional = (resource: any, filters: FilterState): boolean 
   }
 
   if (filters.institutionTypes.length > 0) {
-    if (resource.type !== "bureau") return false;
+    if (filters.includePractitionersForInstitutionType === false && resource.type !== "bureau") return false;
     if (!filters.institutionTypes.includes(resource.bureauType)) return false;
   }
 
