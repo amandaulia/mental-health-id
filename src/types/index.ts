@@ -32,6 +32,7 @@ export interface Service {
   id: string;
   name: string;
   institutionName?: string;
+  institutionIds?: number[];
   duration: string;
   durationMinutes?: number;
   price: number | null;
