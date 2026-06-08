@@ -90,11 +90,27 @@ const PeerCounselingDetail = () => {
   })();
 
   const [serviceSearch, setServiceSearch] = useState("");
+  const [serviceMode, setServiceMode] = useState<string>("all");
+
+  const serviceModeOptions = useMemo(() => {
+    const set = new Set<string>();
+    services.forEach((s: any) => {
+      (s.session_mode || []).forEach((m: string) => m && set.add(m));
+    });
+    return Array.from(set).sort();
+  }, [services]);
+
   const filteredServices = useMemo(() => {
     const q = serviceSearch.trim().toLowerCase();
-    if (!q) return services;
-    return services.filter((s: any) => (s.name || "").toLowerCase().includes(q));
-  }, [services, serviceSearch]);
+    return services.filter((s: any) => {
+      if (q && !(s.name || "").toLowerCase().includes(q)) return false;
+      if (serviceMode !== "all") {
+        const modes: string[] = Array.isArray(s.session_mode) ? s.session_mode : [];
+        if (!modes.includes(serviceMode)) return false;
+      }
+      return true;
+    });
+  }, [services, serviceSearch, serviceMode]);
 
   const [counselorSearch, setCounselorSearch] = useState("");
   const [counselorSpec, setCounselorSpec] = useState<string>("all");
