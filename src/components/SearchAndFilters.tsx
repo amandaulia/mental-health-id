@@ -968,7 +968,7 @@ export const SearchAndFilters = ({
                 className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
               >
                 <Building2 className="h-3 w-3 mr-1" />
-                {t("filters.institutionType")}
+                {t("filters.institution")}
                 {getActiveFilterCount(filters.institutionTypes) > 0 && (
                   <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
                     {getActiveFilterCount(filters.institutionTypes)}
