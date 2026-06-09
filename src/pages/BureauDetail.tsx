@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Clock, Search, Monitor, Settings, X, User, Heart, MapPin } from "lucide-react";
+import { ArrowLeft, Clock, Search, Monitor, Settings, X, User, Heart, MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { BureauHeader } from "@/components/BureauHeader";
 import { BureauContact } from "@/components/BureauContact";
@@ -53,6 +53,7 @@ const BureauDetail = () => {
   const [includeNullPrice, setIncludeNullPrice] = useState<boolean>(true);
   const [minPriceInput, setMinPriceInput] = useState("0");
   const [maxPriceInput, setMaxPriceInput] = useState("2000000");
+  const [showAllServices, setShowAllServices] = useState(false);
 
   // Practitioner filter states
   const [pracSearch, setPracSearch] = useState("");
@@ -62,6 +63,7 @@ const BureauDetail = () => {
   const [pracCities, setPracCities] = useState<string[]>([]);
   const [pracPriceRange, setPracPriceRange] = useState<[number, number] | null>(null);
   const [pracIncludeNullPrice, setPracIncludeNullPrice] = useState<boolean>(true);
+  const [showAllPractitioners, setShowAllPractitioners] = useState(false);
   
   const institutionId = parseInt(id || "0");
   useTrackResourceView("institution", institutionId || null);
@@ -620,7 +622,7 @@ const BureauDetail = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {filteredServices.map((service, index) => (
+                    {(showAllServices ? filteredServices : filteredServices.slice(0, 3)).map((service, index) => (
                       <Card key={index} className="p-4">
                         <div className="space-y-3">
                           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -693,6 +695,28 @@ const BureauDetail = () => {
                     {filteredServices.length === 0 && (
                       <div className="text-center py-8 text-muted-foreground">
                         {services.length > 0 ? t('detail.noServicesMatch') : noServicesMessage}
+                      </div>
+                    )}
+                    {filteredServices.length > 3 && (
+                      <div className="flex justify-center pt-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowAllServices(v => !v)}
+                          className="flex items-center gap-1 text-primary"
+                        >
+                          {showAllServices ? (
+                            <>
+                              <ChevronUp className="h-4 w-4" />
+                              {t('detail.showLess')}
+                            </>
+                          ) : (
+                            <>
+                              <ChevronDown className="h-4 w-4" />
+                              {t('detail.showAll')}
+                            </>
+                          )}
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -909,10 +933,34 @@ const BureauDetail = () => {
                   </CardHeader>
                   <CardContent>
                     {filteredPractitioners.length > 0 ? (
-                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                        {filteredPractitioners.map((practitioner) => (
-                          <PractitionerCard key={practitioner.id} practitioner={practitioner} hideInstitutionName hideInsurance />
-                        ))}
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                          {(showAllPractitioners ? filteredPractitioners : filteredPractitioners.slice(0, 3)).map((practitioner) => (
+                            <PractitionerCard key={practitioner.id} practitioner={practitioner} hideInstitutionName hideInsurance />
+                          ))}
+                        </div>
+                        {filteredPractitioners.length > 3 && (
+                          <div className="flex justify-center pt-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setShowAllPractitioners(v => !v)}
+                              className="flex items-center gap-1 text-primary"
+                            >
+                              {showAllPractitioners ? (
+                                <>
+                                  <ChevronUp className="h-4 w-4" />
+                                  {t('detail.showLess')}
+                                </>
+                              ) : (
+                                <>
+                                  <ChevronDown className="h-4 w-4" />
+                                  {t('detail.showAll')}
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="text-center py-8 text-muted-foreground">
