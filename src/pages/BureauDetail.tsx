@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Clock, Search, Monitor, Settings, X, User, Heart, MapPin } from "lucide-react";
+import { ArrowLeft, Clock, Search, Monitor, Settings, X, User, Heart, MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import { PractitionerCard } from "@/components/PractitionerCard";
 import { BureauHeader } from "@/components/BureauHeader";
 import { BureauContact } from "@/components/BureauContact";
