@@ -933,10 +933,34 @@ const BureauDetail = () => {
                   </CardHeader>
                   <CardContent>
                     {filteredPractitioners.length > 0 ? (
-                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                        {filteredPractitioners.map((practitioner) => (
-                          <PractitionerCard key={practitioner.id} practitioner={practitioner} hideInstitutionName hideInsurance />
-                        ))}
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                          {(showAllPractitioners ? filteredPractitioners : filteredPractitioners.slice(0, 3)).map((practitioner) => (
+                            <PractitionerCard key={practitioner.id} practitioner={practitioner} hideInstitutionName hideInsurance />
+                          ))}
+                        </div>
+                        {filteredPractitioners.length > 3 && (
+                          <div className="flex justify-center pt-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setShowAllPractitioners(v => !v)}
+                              className="flex items-center gap-1 text-primary"
+                            >
+                              {showAllPractitioners ? (
+                                <>
+                                  <ChevronUp className="h-4 w-4" />
+                                  {t('detail.showLess')}
+                                </>
+                              ) : (
+                                <>
+                                  <ChevronDown className="h-4 w-4" />
+                                  {t('detail.showAll')}
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="text-center py-8 text-muted-foreground">
