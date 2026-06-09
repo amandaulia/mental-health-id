@@ -53,6 +53,7 @@ const BureauDetail = () => {
   const [includeNullPrice, setIncludeNullPrice] = useState<boolean>(true);
   const [minPriceInput, setMinPriceInput] = useState("0");
   const [maxPriceInput, setMaxPriceInput] = useState("2000000");
+  const [showAllServices, setShowAllServices] = useState(false);
 
   // Practitioner filter states
   const [pracSearch, setPracSearch] = useState("");
@@ -62,6 +63,7 @@ const BureauDetail = () => {
   const [pracCities, setPracCities] = useState<string[]>([]);
   const [pracPriceRange, setPracPriceRange] = useState<[number, number] | null>(null);
   const [pracIncludeNullPrice, setPracIncludeNullPrice] = useState<boolean>(true);
+  const [showAllPractitioners, setShowAllPractitioners] = useState(false);
   
   const institutionId = parseInt(id || "0");
   useTrackResourceView("institution", institutionId || null);
