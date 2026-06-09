@@ -622,7 +622,7 @@ const BureauDetail = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {filteredServices.map((service, index) => (
+                    {(showAllServices ? filteredServices : filteredServices.slice(0, 3)).map((service, index) => (
                       <Card key={index} className="p-4">
                         <div className="space-y-3">
                           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -695,6 +695,28 @@ const BureauDetail = () => {
                     {filteredServices.length === 0 && (
                       <div className="text-center py-8 text-muted-foreground">
                         {services.length > 0 ? t('detail.noServicesMatch') : noServicesMessage}
+                      </div>
+                    )}
+                    {filteredServices.length > 3 && (
+                      <div className="flex justify-center pt-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowAllServices(v => !v)}
+                          className="flex items-center gap-1 text-primary"
+                        >
+                          {showAllServices ? (
+                            <>
+                              <ChevronUp className="h-4 w-4" />
+                              {t('detail.showLess')}
+                            </>
+                          ) : (
+                            <>
+                              <ChevronDown className="h-4 w-4" />
+                              {t('detail.showAll')}
+                            </>
+                          )}
+                        </Button>
                       </div>
                     )}
                   </div>
