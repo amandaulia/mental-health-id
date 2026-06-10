@@ -226,7 +226,7 @@ const ProfessionalCounseling = () => {
       priceRange: [filterOptions.minPrice || 0, filterOptions.maxPrice || 0],
       modes: [],
       insurance: [],
-      includeNullPrice: false,
+      includeNullPrice: true,
       sortBy: "popular",
     });
   };
