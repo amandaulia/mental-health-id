@@ -275,7 +275,13 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
-      if (filters.priceRange && practitioner.services.length > 0) {
+      const minPriceBound = priceRange?.minPrice ?? 0;
+      const maxPriceBound = priceRange?.maxPrice ?? 0;
+      const isPriceFilterActive =
+        !!filters.priceRange &&
+        (filters.priceRange[0] > minPriceBound || filters.priceRange[1] < maxPriceBound);
+
+      if (isPriceFilterActive && practitioner.services.length > 0) {
         const hasServiceInRange = practitioner.services.some((service: any) => {
           if (filters.includeNullPrice && (!service.price || service.price === 0)) {
             return true;
