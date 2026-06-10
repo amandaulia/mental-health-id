@@ -32,12 +32,47 @@ function normalizeLink(raw?: string | null): string | null {
   return `https://${link}`;
 }
 
+const FETCH_BATCH_SIZE = 1000;
+
+async function fetchAllRowsWithRelations<T>(
+  tableName: "practitioner" | "institution",
+  selectQuery: string,
+): Promise<T[]> {
+  const allRows: T[] = [];
+  let from = 0;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from(tableName)
+      .select(selectQuery)
+      .order("id", { ascending: true })
+      .range(from, from + FETCH_BATCH_SIZE - 1);
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      break;
+    }
+
+    allRows.push(...(data as T[]));
+
+    if (data.length < FETCH_BATCH_SIZE) {
+      break;
+    }
+
+    from += FETCH_BATCH_SIZE;
+  }
+
+  return allRows;
+}
+
 export const databaseService = {
   // OPTIMIZED: Fetch all practitioners with all their relations in ONE query
   async getAllPractitionersWithRelations() {
-    const { data, error } = await supabase
-      .from("practitioner")
-      .select(`
+    try {
+      return await fetchAllRowsWithRelations("practitioner", `
         *,
         practitioner_institutions(
           institution(*)
@@ -52,22 +87,19 @@ export const databaseService = {
             learn_more_contact:learn_more_cta(id, link)
           )
         )
-      `)
-      .range(0, 9999);
-
-    if (error) {
+      `);
+    } catch (error) {
       console.error("Error fetching practitioners with relations:", error);
       throw error;
     }
-
-    return data || [];
   },
 
   // OPTIMIZED: Fetch all institutions with all their relations in ONE query
   async getAllInstitutionsWithRelations() {
-    const { data, error } = await supabase
-      .from("institution")
-      .select(`
+    let data;
+
+    try {
+      data = await fetchAllRowsWithRelations<any>("institution", `
         *,
         institution_locations(
           location(*)
@@ -79,10 +111,8 @@ export const databaseService = {
             learn_more_contact:learn_more_cta(id, link)
           )
         )
-      `)
-      .range(0, 9999);
-
-    if (error) {
+      `);
+    } catch (error) {
       console.error("Error fetching institutions with relations:", error);
       throw error;
     }
