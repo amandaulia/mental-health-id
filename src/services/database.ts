@@ -52,7 +52,8 @@ export const databaseService = {
             learn_more_contact:learn_more_cta(id, link)
           )
         )
-      `);
+      `)
+      .range(0, 9999);
 
     if (error) {
       console.error("Error fetching practitioners with relations:", error);
@@ -78,7 +79,8 @@ export const databaseService = {
             learn_more_contact:learn_more_cta(id, link)
           )
         )
-      `);
+      `)
+      .range(0, 9999);
 
     if (error) {
       console.error("Error fetching institutions with relations:", error);
