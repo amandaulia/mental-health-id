@@ -38,8 +38,9 @@ export const useInstitutionsWithRelations = () => {
   return useQuery({
     queryKey: ['institutions-with-relations'],
     queryFn: databaseService.getAllInstitutionsWithRelations,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
   });
 };
 
