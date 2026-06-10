@@ -355,7 +355,13 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
-      if (filters.priceRange && bureau.services.length > 0) {
+      const minPriceBound = priceRange?.minPrice ?? 0;
+      const maxPriceBound = priceRange?.maxPrice ?? 0;
+      const isPriceFilterActive =
+        !!filters.priceRange &&
+        (filters.priceRange[0] > minPriceBound || filters.priceRange[1] < maxPriceBound);
+
+      if (isPriceFilterActive && bureau.services.length > 0) {
         const hasServiceInRange = bureau.services.some((service: any) => {
           if (service.price == null) return filters.includeNullPrice;
           return service.price >= filters.priceRange[0] && service.price <= filters.priceRange[1];
