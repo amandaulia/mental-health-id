@@ -301,7 +301,7 @@ const ProfessionalCounseling = () => {
 
       return true;
     });
-  }, [filters, allPractitioners]);
+  }, [filters, allPractitioners, priceRange]);
 
   const filteredBureaus = useMemo(() => {
     return allBureaus.filter((bureau: any) => {
