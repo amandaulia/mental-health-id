@@ -379,7 +379,7 @@ const ProfessionalCounseling = () => {
 
       return true;
     });
-  }, [filters, allBureaus]);
+  }, [filters, allBureaus, priceRange]);
 
   const allResources = useMemo(() => {
     const popularity = resourcePopularity.reduce<Record<string, number>>((acc, item: any) => {
