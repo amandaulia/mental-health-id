@@ -226,7 +226,7 @@ const ProfessionalCounseling = () => {
       priceRange: [filterOptions.minPrice || 0, filterOptions.maxPrice || 0],
       modes: [],
       insurance: [],
-      includeNullPrice: false,
+      includeNullPrice: true,
       sortBy: "popular",
     });
   };
@@ -275,7 +275,13 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
-      if (filters.priceRange && practitioner.services.length > 0) {
+      const minPriceBound = priceRange?.minPrice ?? 0;
+      const maxPriceBound = priceRange?.maxPrice ?? 0;
+      const isPriceFilterActive =
+        !!filters.priceRange &&
+        (filters.priceRange[0] > minPriceBound || filters.priceRange[1] < maxPriceBound);
+
+      if (isPriceFilterActive && practitioner.services.length > 0) {
         const hasServiceInRange = practitioner.services.some((service: any) => {
           if (filters.includeNullPrice && (!service.price || service.price === 0)) {
             return true;
@@ -295,7 +301,7 @@ const ProfessionalCounseling = () => {
 
       return true;
     });
-  }, [filters, allPractitioners]);
+  }, [filters, allPractitioners, priceRange]);
 
   const filteredBureaus = useMemo(() => {
     return allBureaus.filter((bureau: any) => {
@@ -349,7 +355,13 @@ const ProfessionalCounseling = () => {
         return false;
       }
 
-      if (filters.priceRange && bureau.services.length > 0) {
+      const minPriceBound = priceRange?.minPrice ?? 0;
+      const maxPriceBound = priceRange?.maxPrice ?? 0;
+      const isPriceFilterActive =
+        !!filters.priceRange &&
+        (filters.priceRange[0] > minPriceBound || filters.priceRange[1] < maxPriceBound);
+
+      if (isPriceFilterActive && bureau.services.length > 0) {
         const hasServiceInRange = bureau.services.some((service: any) => {
           if (service.price == null) return filters.includeNullPrice;
           return service.price >= filters.priceRange[0] && service.price <= filters.priceRange[1];
@@ -367,7 +379,7 @@ const ProfessionalCounseling = () => {
 
       return true;
     });
-  }, [filters, allBureaus]);
+  }, [filters, allBureaus, priceRange]);
 
   const allResources = useMemo(() => {
     const popularity = resourcePopularity.reduce<Record<string, number>>((acc, item: any) => {
