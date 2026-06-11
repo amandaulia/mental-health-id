@@ -935,11 +935,11 @@ const BureauDetail = () => {
                     {filteredPractitioners.length > 0 ? (
                       <div className="space-y-4">
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                          {(showAllPractitioners ? filteredPractitioners : filteredPractitioners.slice(0, 3)).map((practitioner) => (
+                          {(showAllPractitioners ? filteredPractitioners : filteredPractitioners.slice(0, 4)).map((practitioner) => (
                             <PractitionerCard key={practitioner.id} practitioner={practitioner} hideInstitutionName hideInsurance />
                           ))}
                         </div>
-                        {filteredPractitioners.length > 3 && (
+                        {filteredPractitioners.length > 4 && (
                           <div className="flex justify-center pt-2">
                             <Button
                               variant="ghost"
