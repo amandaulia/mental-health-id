@@ -745,6 +745,7 @@ export type Database = {
           description: string | null
           id: number
           image: string | null
+          institution_id: number | null
           last_updated_at: string | null
           name: string
           peer_type: Database["public"]["Enums"]["peer_type"][] | null
@@ -757,6 +758,7 @@ export type Database = {
           description?: string | null
           id?: number
           image?: string | null
+          institution_id?: number | null
           last_updated_at?: string | null
           name: string
           peer_type?: Database["public"]["Enums"]["peer_type"][] | null
@@ -771,6 +773,7 @@ export type Database = {
           description?: string | null
           id?: number
           image?: string | null
+          institution_id?: number | null
           last_updated_at?: string | null
           name?: string
           peer_type?: Database["public"]["Enums"]["peer_type"][] | null
@@ -780,7 +783,15 @@ export type Database = {
           tags?: string[] | null
           verified?: boolean | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "peer_counseling_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institution"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       peer_counseling_contacts: {
         Row: {
@@ -838,6 +849,36 @@ export type Database = {
             columns: ["peer_counseling_id"]
             isOneToOne: false
             referencedRelation: "peer_counseling"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      peer_counseling_services: {
+        Row: {
+          peer_counseling_id: number
+          service_id: number
+        }
+        Insert: {
+          peer_counseling_id: number
+          service_id: number
+        }
+        Update: {
+          peer_counseling_id?: number
+          service_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "peer_counseling_services_peer_counseling_id_fkey"
+            columns: ["peer_counseling_id"]
+            isOneToOne: false
+            referencedRelation: "peer_counseling"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "peer_counseling_services_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "service"
             referencedColumns: ["id"]
           },
         ]
