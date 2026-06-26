@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
-import { AlertTriangle, MapPin, ExternalLink } from "lucide-react";
+import { AlertTriangle, MapPin, ExternalLink, ChevronDown } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
