@@ -436,6 +436,7 @@ export type Database = {
           id: number
           last_updated_at: string | null
           latitude: number | null
+          location_type: Database["public"]["Enums"]["location_type"] | null
           longitude: number | null
           name: string | null
           province: string
@@ -448,6 +449,7 @@ export type Database = {
           id?: number
           last_updated_at?: string | null
           latitude?: number | null
+          location_type?: Database["public"]["Enums"]["location_type"] | null
           longitude?: number | null
           name?: string | null
           province: string
@@ -460,6 +462,7 @@ export type Database = {
           id?: number
           last_updated_at?: string | null
           latitude?: number | null
+          location_type?: Database["public"]["Enums"]["location_type"] | null
           longitude?: number | null
           name?: string | null
           province?: string
@@ -1311,6 +1314,11 @@ export type Database = {
         | "Faskes 3"
         | "Private Hospital"
       insurance: "Private Insurance" | "BPJS"
+      location_type:
+        | "Institution"
+        | "Organization"
+        | "Peer Counseling"
+        | "Pharmacy"
       peer_type: "Peer Counseling" | "Group Therapy"
       profession_type:
         | "Psychologist"
@@ -1489,6 +1497,12 @@ export const Constants = {
         "Private Hospital",
       ],
       insurance: ["Private Insurance", "BPJS"],
+      location_type: [
+        "Institution",
+        "Organization",
+        "Peer Counseling",
+        "Pharmacy",
+      ],
       peer_type: ["Peer Counseling", "Group Therapy"],
       profession_type: [
         "Psychologist",
