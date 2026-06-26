@@ -22,6 +22,7 @@ const BureauDetail = lazy(() => import('@/pages/BureauDetail'));
 const PeerCounselingDetail = lazy(() => import('@/pages/PeerCounselingDetail'));
 const OrganizationDetail = lazy(() => import('@/pages/OrganizationDetail'));
 const About = lazy(() => import('@/pages/About'));
+const Pharmacies = lazy(() => import('@/pages/Pharmacies'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -75,6 +76,9 @@ function AppContent() {
               <Route path="/organizations" element={<Organizations />} />
               <Route path="/organizations/:id" element={<OrganizationDetail />} />
             </>
+          )}
+          {featureFlags.pharmacies && (
+            <Route path="/pharmacies" element={<Pharmacies />} />
           )}
           <Route path="/practitioner/:id" element={<PractitionerDetail />} />
           <Route path="/bureau/:id" element={<BureauDetail />} />

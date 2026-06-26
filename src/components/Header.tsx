@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X, Home, Info, Users, Heart, Palette, Building2 } from "lucide-react";
+import { Menu, X, Home, Info, Users, Heart, Palette, Building2, Pill } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -55,6 +55,12 @@ export const Header = () => {
                   {t('header.navigation.organizations')}
                 </a>
               )}
+              {featureFlags.pharmacies && (
+                <a href="/pharmacies" className="text-white hover:text-accent-foreground transition-colors font-medium flex items-center gap-2">
+                  <Pill className="h-4 w-4" />
+                  Pharmacies
+                </a>
+              )}
             </nav>
             {featureFlags.languageOptions && <LanguageToggle />}
           </div>
@@ -105,6 +111,12 @@ export const Header = () => {
                 <a href="/organizations" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
                   <Building2 className="h-4 w-4" />
                   {t('header.navigation.organizations')}
+                </a>
+              )}
+              {featureFlags.pharmacies && (
+                <a href="/pharmacies" className="text-white hover:text-accent-foreground transition-colors font-medium py-2 flex items-center gap-2">
+                  <Pill className="h-4 w-4" />
+                  Pharmacies
                 </a>
               )}
             </nav>
