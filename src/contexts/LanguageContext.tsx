@@ -989,5 +989,16 @@ const translations = {
       tryAgain: "Coba Lagi",
       refresh: "Muat Ulang Halaman",
     },
+    pharmacies: {
+      title: "Apotek",
+      description: "Apotek di Indonesia yang dikenal mendistribusikan obat psikiatri seperti antidepresan, anxiolitik, stabilizer mood, dan antipsikotik.",
+      alertTitle: "Resep selalu diperlukan",
+      alertDescription: "Obat psikiatri yang tercantum di sini memerlukan resep. Apotek tidak akan mendistribusikannya tanpa resep yang sah dan ditandatangani oleh psikiater atau dokter berlisensi. Jangan pernah mengobati sendiri, membagikan obat, atau membeli obat psikiatri dari penjual online yang tidak terverifikasi.",
+      stockAvailability: "Ketersediaan stok bervariasi menurut cabang. Hubungi terlebih dahulu untuk memastikan obat spesifik Anda tersedia sebelum berkunjung.",
+      searchPlaceholder: "Cari berdasarkan nama apotek atau lokasi...",
+      count: "{count} apotek",
+      seoTitle: "Apotek untuk Obat Psikiatri",
+      seoDescription: "Apotek di Indonesia yang mendistribusikan obat psikiatri. Resep yang valid dari dokter berlisensi selalu diperlukan.",
+    },
   },
 };
