@@ -1,9 +1,13 @@
-import { AlertTriangle, MapPin, ExternalLink, Pill } from "lucide-react";
+import { useState, useMemo } from "react";
+import { AlertTriangle, MapPin, ExternalLink } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageSEO } from "@/components/PageSEO";
+import { SearchAndFilters } from "@/components/SearchAndFilters";
+import { FilterTags } from "@/components/FilterTags";
+import { FilterState } from "@/types";
 
 interface Pharmacy {
   name: string;
@@ -48,7 +52,61 @@ const pharmacies: Pharmacy[] = [
   },
 ];
 
+const allCities = Array.from(new Set(pharmacies.map((p) => p.city)));
+
 const Pharmacies = () => {
+  const [filters, setFilters] = useState<FilterState>({
+    search: "",
+    locations: [],
+    institutions: [],
+    institutionTypes: [],
+    professionTypes: [],
+    specializations: [],
+    priceRange: [0, 2000000],
+    modes: [],
+    insurance: [],
+  });
+
+  const filteredPharmacies = useMemo(() => {
+    return pharmacies.filter((p) => {
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        if (
+          !p.name.toLowerCase().includes(searchLower) &&
+          !p.description.toLowerCase().includes(searchLower)
+        ) {
+          return false;
+        }
+      }
+      if (filters.locations.length > 0) {
+        if (!filters.locations.some((loc) => p.city.includes(loc.split(",")[0]))) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [filters]);
+
+  const handleRemoveFilter = (type: keyof FilterState, value: string) => {
+    const currentArray = filters[type] as string[];
+    const newArray = currentArray.filter((item) => item !== value);
+    setFilters((prev) => ({ ...prev, [type]: newArray }));
+  };
+
+  const handleClearAllFilters = () => {
+    setFilters({
+      search: "",
+      locations: [],
+      institutions: [],
+      institutionTypes: [],
+      professionTypes: [],
+      specializations: [],
+      priceRange: [0, 2000000],
+      modes: [],
+      insurance: [],
+    });
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
       <PageSEO
@@ -58,17 +116,39 @@ const Pharmacies = () => {
         description="Pharmacies in Indonesia that dispense psychiatric medication. A valid prescription from a licensed doctor is always required."
       />
 
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="p-2 rounded-lg bg-primary/10">
-            <Pill className="h-6 w-6 text-primary" />
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-bold">Pharmacies</h1>
-        </div>
-        <p className="text-muted-foreground max-w-2xl">
+      {/* Hero Section */}
+      <div className="mb-8 sm:mb-12 text-center">
+        <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
+          <span className="gradient-text">Pharmacies</span>
+        </h1>
+        <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
           Pharmacies in Indonesia known to dispense psychiatric medication such as
           antidepressants, anxiolytics, mood stabilizers, and antipsychotics.
         </p>
+      </div>
+
+      {/* Search and Browse Section */}
+      <div className="mb-8 sm:mb-10">
+        <div className="bg-card rounded-xl p-6 card-shadow">
+          <SearchAndFilters
+            filters={filters}
+            onFiltersChange={setFilters}
+            institutionNames={[]}
+            hiddenFilters={["sessionMode", "priceRange", "insurance"]}
+            filterOptions={{ cities: allCities.map((c) => `${c}, Indonesia`), specializations: [], sessionModes: [], insuranceTypes: [], minPrice: 0, maxPrice: 0 }}
+          />
+        </div>
+        <div className="mt-4">
+          <FilterTags
+            filters={filters}
+            onRemoveFilter={handleRemoveFilter}
+            onClearAll={handleClearAllFilters}
+          />
+        </div>
+      </div>
+
+      <div className="mb-4 text-sm text-muted-foreground">
+        {filteredPharmacies.length} pharmacies
       </div>
 
       <Alert className="mb-8 border-destructive/40 bg-destructive/5">
@@ -82,8 +162,8 @@ const Pharmacies = () => {
         </AlertDescription>
       </Alert>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {pharmacies.map((p) => (
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        {filteredPharmacies.map((p) => (
           <Card key={p.name}>
             <CardHeader>
               <CardTitle className="text-xl">{p.name}</CardTitle>
