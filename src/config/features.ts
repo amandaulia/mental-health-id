@@ -6,4 +6,5 @@ export const featureFlags = {
   organizations: true,
   peerCounseling: true,
   languageOptions: true,
+  pharmacies: false,
 } as const;
