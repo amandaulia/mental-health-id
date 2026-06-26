@@ -77,9 +77,7 @@ function AppContent() {
               <Route path="/organizations/:id" element={<OrganizationDetail />} />
             </>
           )}
-          {featureFlags.pharmacies && (
-            <Route path="/pharmacies" element={<Pharmacies />} />
-          )}
+          <Route path="/pharmacies" element={<Pharmacies />} />
           <Route path="/practitioner/:id" element={<PractitionerDetail />} />
           <Route path="/bureau/:id" element={<BureauDetail />} />
         </Routes>
