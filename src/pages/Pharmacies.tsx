@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { AlertTriangle, MapPin, ExternalLink, ChevronDown } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { AlertTriangle, MapPin, ExternalLink, ChevronDown, Phone, Instagram, Globe, Map as MapIcon, Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -9,53 +9,56 @@ import { PageSEO } from "@/components/PageSEO";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { FilterState } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
 
+interface PharmacyContact {
+  contact_type: string;
+  value: string;
+  link: string | null;
+}
 interface Pharmacy {
+  id: number;
   name: string;
-  description: string;
-  city: string;
-  website?: string;
-  tags?: string[];
+  address: string | null;
+  city: string | null;
+  province: string | null;
+  contacts: PharmacyContact[];
 }
 
-const pharmacies: Pharmacy[] = [
-  {
-    name: "Kimia Farma",
-    description:
-      "National pharmacy chain with broad availability of psychiatric medications across most cities in Indonesia.",
-    city: "Nationwide",
-    website: "https://www.kimiafarmaapotek.co.id/",
-    tags: ["Chain", "Nationwide"],
-  },
-  {
-    name: "Apotek K-24",
-    description:
-      "24-hour pharmacy chain that commonly stocks antidepressants, anxiolytics, and antipsychotics.",
-    city: "Nationwide",
-    website: "https://www.k24klik.com/",
-    tags: ["Chain", "24 hours"],
-  },
-  {
-    name: "Century Healthcare",
-    description:
-      "Pharmacy and health store chain found in major malls; carries common psychiatric prescriptions.",
-    city: "Nationwide",
-    website: "https://century-healthcare.co.id/",
-    tags: ["Chain"],
-  },
-  {
-    name: "Guardian Pharmacy",
-    description:
-      "Health and beauty retailer with pharmacy counters in major cities for prescription fulfillment.",
-    city: "Nationwide",
-    website: "https://www.guardian.co.id/",
-    tags: ["Chain"],
-  },
-];
-
-const allCities = Array.from(new Set(pharmacies.map((p) => p.city)));
-
 const Pharmacies = () => {
+  const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("location")
+        .select("id,name,address,city,province,location_contacts(contact_details(contact_type,value,link))")
+        .eq("location_type", "Pharmacy")
+        .order("name");
+      if (!error && data) {
+        setPharmacies(
+          data.map((r: any) => ({
+            id: r.id,
+            name: r.name,
+            address: r.address,
+            city: r.city,
+            province: r.province,
+            contacts: (r.location_contacts ?? [])
+              .map((lc: any) => lc.contact_details)
+              .filter(Boolean),
+          }))
+        );
+      }
+      setLoading(false);
+    })();
+  }, []);
+
+  const allCities = useMemo(
+    () => Array.from(new Set(pharmacies.map((p) => p.city).filter(Boolean))) as string[],
+    [pharmacies]
+  );
+
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     locations: [],
@@ -74,19 +77,19 @@ const Pharmacies = () => {
         const searchLower = filters.search.toLowerCase();
         if (
           !p.name.toLowerCase().includes(searchLower) &&
-          !p.description.toLowerCase().includes(searchLower)
+          !(p.address ?? "").toLowerCase().includes(searchLower)
         ) {
           return false;
         }
       }
-      if (filters.locations.length > 0) {
-        if (!filters.locations.some((loc) => p.city.includes(loc.split(",")[0]))) {
+      if (filters.locations.length > 0 && p.city) {
+        if (!filters.locations.some((loc) => p.city!.includes(loc.split(",")[0]))) {
           return false;
         }
       }
       return true;
     });
-  }, [filters]);
+  }, [filters, pharmacies]);
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const currentArray = filters[type] as string[];
@@ -177,37 +180,74 @@ const Pharmacies = () => {
       </Collapsible>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredPharmacies.map((p) => (
-          <Card key={p.name}>
-            <CardHeader>
-              <CardTitle className="text-xl">{p.name}</CardTitle>
-              <CardDescription className="flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5" />
-                {p.city}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">{p.description}</p>
-              {p.tags && p.tags.length > 0 && (
+        {loading && (
+          <div className="col-span-full flex justify-center py-12">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        )}
+        {!loading && filteredPharmacies.map((p) => {
+          const phone = p.contacts.find((c) => c.contact_type === "Phone");
+          const instagram = p.contacts.find((c) => c.contact_type === "Instagram");
+          const website = p.contacts.find((c) => c.contact_type === "Website");
+          const fullAddress = [p.address, p.city, p.province].filter(Boolean).join(", ");
+          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${p.name} ${fullAddress}`)}`;
+          return (
+            <Card key={p.id}>
+              <CardHeader>
+                <CardTitle className="text-xl">{p.name}</CardTitle>
+                {(p.address || p.city) && (
+                  <CardDescription className="flex items-start gap-1">
+                    <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                    <span>{fullAddress}</span>
+                  </CardDescription>
+                )}
+              </CardHeader>
+              <CardContent className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  {p.tags.map((t) => (
-                    <Badge key={t} variant="secondary">{t}</Badge>
-                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(mapsUrl, "_blank", "noopener,noreferrer")}
+                  >
+                    <MapIcon className="mr-2 h-3.5 w-3.5" />
+                    Google Maps
+                  </Button>
+                  {phone && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open(phone.link || `tel:${phone.value}`, "_blank", "noopener,noreferrer")}
+                    >
+                      <Phone className="mr-2 h-3.5 w-3.5" />
+                      {phone.value}
+                    </Button>
+                  )}
+                  {instagram && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open(instagram.link || `https://instagram.com/${instagram.value.replace("@","")}`, "_blank", "noopener,noreferrer")}
+                    >
+                      <Instagram className="mr-2 h-3.5 w-3.5" />
+                      {instagram.value}
+                    </Button>
+                  )}
+                  {website && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open(website.link || website.value, "_blank", "noopener,noreferrer")}
+                    >
+                      <Globe className="mr-2 h-3.5 w-3.5" />
+                      Website
+                      <ExternalLink className="ml-2 h-3 w-3" />
+                    </Button>
+                  )}
                 </div>
-              )}
-              {p.website && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.open(p.website, "_blank", "noopener,noreferrer")}
-                >
-                  Visit website
-                  <ExternalLink className="ml-2 h-3.5 w-3.5" />
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       <p className="text-xs text-muted-foreground mt-8">
