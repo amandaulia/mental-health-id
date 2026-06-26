@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
-import { AlertTriangle, MapPin, ExternalLink } from "lucide-react";
+import { AlertTriangle, MapPin, ExternalLink, ChevronDown } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -151,16 +152,29 @@ const Pharmacies = () => {
         {filteredPharmacies.length} pharmacies
       </div>
 
-      <Alert className="mb-8 border-destructive/40 bg-destructive/5">
-        <AlertTriangle className="h-5 w-5 text-destructive" />
-        <AlertTitle className="text-destructive">Prescription always required</AlertTitle>
-        <AlertDescription>
-          Psychiatric medications listed here are prescription-only. Pharmacies will
-          not dispense them without a valid, signed prescription from a licensed
-          psychiatrist or doctor. Never self-medicate, share medication, or buy
-          psychiatric drugs from unverified online sellers.
-        </AlertDescription>
-      </Alert>
+      <Collapsible defaultOpen>
+        <Alert className="mb-8 border-yellow-500/30 bg-yellow-500/10">
+          <CollapsibleTrigger asChild>
+            <div className="flex items-start gap-2 cursor-pointer w-full">
+              <AlertTriangle className="h-5 w-5 text-yellow-600 shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <AlertTitle className="text-yellow-700 flex items-center justify-between gap-2">
+                  <span>Prescription always required</span>
+                  <ChevronDown className="h-4 w-4 text-yellow-600 shrink-0 transition-transform duration-200 data-[state=open]:rotate-180" />
+                </AlertTitle>
+                <CollapsibleContent>
+                  <AlertDescription className="text-yellow-700/80 mt-2">
+                    Psychiatric medications listed here are prescription-only. Pharmacies will
+                    not dispense them without a valid, signed prescription from a licensed
+                    psychiatrist or doctor. Never self-medicate, share medication, or buy
+                    psychiatric drugs from unverified online sellers.
+                  </AlertDescription>
+                </CollapsibleContent>
+              </div>
+            </div>
+          </CollapsibleTrigger>
+        </Alert>
+      </Collapsible>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredPharmacies.map((p) => (
