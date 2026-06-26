@@ -155,8 +155,8 @@ const Pharmacies = () => {
       <Collapsible>
         <Alert className="mb-8 border-yellow-500/30 bg-yellow-500/10">
           <CollapsibleTrigger asChild>
-            <div className="flex items-start gap-2 cursor-pointer w-full">
-              <AlertTriangle className="h-5 w-5 text-yellow-600 shrink-0 mt-0.5" />
+            <div className="flex items-center gap-2 cursor-pointer w-full">
+              <AlertTriangle className="h-5 w-5 text-yellow-600 shrink-0" />
               <div className="flex-1">
                 <AlertTitle className="text-yellow-700 flex items-center justify-between gap-2">
                   <span>Prescription always required</span>
