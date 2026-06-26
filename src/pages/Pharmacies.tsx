@@ -152,7 +152,7 @@ const Pharmacies = () => {
         {filteredPharmacies.length} pharmacies
       </div>
 
-      <Collapsible defaultOpen>
+      <Collapsible>
         <Alert className="mb-8 border-yellow-500/30 bg-yellow-500/10">
           <CollapsibleTrigger asChild>
             <div className="flex items-start gap-2 cursor-pointer w-full">
