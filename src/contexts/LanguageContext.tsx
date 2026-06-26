@@ -514,6 +514,17 @@ const translations = {
       tryAgain: "Try Again",
       refresh: "Refresh Page",
     },
+    pharmacies: {
+      title: "Pharmacies",
+      description: "Pharmacies in Indonesia known to dispense psychiatric medication such as antidepressants, anxiolytics, mood stabilizers, and antipsychotics.",
+      alertTitle: "Prescription always required",
+      alertDescription: "Psychiatric medications listed here are prescription-only. Pharmacies will not dispense them without a valid, signed prescription from a licensed psychiatrist or doctor. Never self-medicate, share medication, or buy psychiatric drugs from unverified online sellers.",
+      stockAvailability: "Stock availability varies by branch. Call ahead to confirm your specific medication is in stock before visiting.",
+      searchPlaceholder: "Search by pharmacy name or location...",
+      count: "{count} pharmacies",
+      seoTitle: "Pharmacies for Psychiatric Medication",
+      seoDescription: "Pharmacies in Indonesia that dispense psychiatric medication. A valid prescription from a licensed doctor is always required.",
+    },
   },
   id: {
     header: {
