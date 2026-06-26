@@ -44,7 +44,7 @@ interface SearchAndFiltersProps {
     minPrice: number;
     maxPrice: number;
   };
-  hiddenFilters?: Array<"sessionMode" | "priceRange" | "insurance">;
+  hiddenFilters?: Array<"sessionMode" | "priceRange" | "insurance" | "specialization">;
   searchPlaceholder?: string;
   locationSortMessage?: string;
   showSort?: boolean;
