@@ -10,6 +10,7 @@ import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { FilterTags } from "@/components/FilterTags";
 import { FilterState } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PharmacyContact {
   contact_type: string;
@@ -26,6 +27,7 @@ interface Pharmacy {
 }
 
 const Pharmacies = () => {
+  const { t } = useLanguage();
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -116,18 +118,17 @@ const Pharmacies = () => {
       <PageSEO
         pageKey="pharmacies"
         path="/pharmacies"
-        title="Pharmacies for Psychiatric Medication"
-        description="Pharmacies in Indonesia that dispense psychiatric medication. A valid prescription from a licensed doctor is always required."
+        title={t("pharmacies.seoTitle")}
+        description={t("pharmacies.seoDescription")}
       />
 
       {/* Hero Section */}
       <div className="mb-8 sm:mb-12 text-center">
         <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">
-          <span className="gradient-text">Pharmacies</span>
+          <span className="gradient-text">{t("pharmacies.title")}</span>
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
-          Pharmacies in Indonesia known to dispense psychiatric medication such as
-          antidepressants, anxiolytics, mood stabilizers, and antipsychotics.
+          {t("pharmacies.description")}
         </p>
       </div>
 
@@ -138,8 +139,9 @@ const Pharmacies = () => {
             filters={filters}
             onFiltersChange={setFilters}
             institutionNames={[]}
-            hiddenFilters={["sessionMode", "priceRange", "insurance"]}
+            hiddenFilters={["sessionMode", "priceRange", "insurance", "specialization"]}
             filterOptions={{ cities: allCities.map((c) => `${c}, Indonesia`), specializations: [], sessionModes: [], insuranceTypes: [], minPrice: 0, maxPrice: 0 }}
+            searchPlaceholder={t("pharmacies.searchPlaceholder")}
           />
         </div>
         <div className="mt-4">
@@ -151,8 +153,11 @@ const Pharmacies = () => {
         </div>
       </div>
 
+      <p className="text-xs text-muted-foreground mb-2">
+        {t("pharmacies.stockAvailability")}
+      </p>
       <div className="mb-4 text-sm text-muted-foreground">
-        {filteredPharmacies.length} pharmacies
+        {t("pharmacies.count").replace("{count}", String(filteredPharmacies.length))}
       </div>
 
       <Collapsible>
@@ -162,15 +167,12 @@ const Pharmacies = () => {
               <AlertTriangle className="h-5 w-5 text-yellow-600 shrink-0" />
               <div className="flex-1">
                 <AlertTitle className="text-yellow-700 flex items-center justify-between gap-2">
-                  <span>Prescription always required</span>
+                  <span>{t("pharmacies.alertTitle")}</span>
                   <ChevronDown className="h-4 w-4 text-yellow-600 shrink-0 transition-transform duration-200 data-[state=open]:rotate-180" />
                 </AlertTitle>
                 <CollapsibleContent>
                   <AlertDescription className="text-yellow-700/80 mt-2">
-                    Psychiatric medications listed here are prescription-only. Pharmacies will
-                    not dispense them without a valid, signed prescription from a licensed
-                    psychiatrist or doctor. Never self-medicate, share medication, or buy
-                    psychiatric drugs from unverified online sellers.
+                    {t("pharmacies.alertDescription")}
                   </AlertDescription>
                 </CollapsibleContent>
               </div>
@@ -210,7 +212,7 @@ const Pharmacies = () => {
                     onClick={() => window.open(mapsUrl, "_blank", "noopener,noreferrer")}
                   >
                     <MapIcon className="mr-2 h-3.5 w-3.5" />
-                    Google Maps
+                    {t("common.openInGoogleMaps")}
                   </Button>
                   {phone && (
                     <Button
@@ -239,7 +241,7 @@ const Pharmacies = () => {
                       onClick={() => window.open(website.link || website.value, "_blank", "noopener,noreferrer")}
                     >
                       <Globe className="mr-2 h-3.5 w-3.5" />
-                      Website
+                      {t("common.website")}
                       <ExternalLink className="ml-2 h-3 w-3" />
                     </Button>
                   )}
@@ -249,11 +251,6 @@ const Pharmacies = () => {
           );
         })}
       </div>
-
-      <p className="text-xs text-muted-foreground mt-8">
-        Stock availability varies by branch. Call ahead to confirm your specific
-        medication is in stock before visiting.
-      </p>
     </div>
   );
 };

@@ -514,6 +514,17 @@ const translations = {
       tryAgain: "Try Again",
       refresh: "Refresh Page",
     },
+    pharmacies: {
+      title: "Pharmacies",
+      description: "Pharmacies in Indonesia known to dispense psychiatric medication such as antidepressants, anxiolytics, mood stabilizers, and antipsychotics.",
+      alertTitle: "Prescription always required",
+      alertDescription: "Psychiatric medications listed here are prescription-only. Pharmacies will not dispense them without a valid, signed prescription from a licensed psychiatrist or doctor. Never self-medicate, share medication, or buy psychiatric drugs from unverified online sellers.",
+      stockAvailability: "Stock availability varies by branch. Call ahead to confirm your specific medication is in stock before visiting.",
+      searchPlaceholder: "Search by pharmacy name or location...",
+      count: "{count} pharmacies",
+      seoTitle: "Pharmacies for Psychiatric Medication",
+      seoDescription: "Pharmacies in Indonesia that dispense psychiatric medication. A valid prescription from a licensed doctor is always required.",
+    },
   },
   id: {
     header: {
@@ -977,6 +988,17 @@ const translations = {
       unexpected: "Maaf, terjadi sesuatu yang tidak terduga. Silakan coba muat ulang halaman.",
       tryAgain: "Coba Lagi",
       refresh: "Muat Ulang Halaman",
+    },
+    pharmacies: {
+      title: "Apotek",
+      description: "Apotek di Indonesia yang dikenal mendistribusikan obat psikiatri seperti antidepresan, anxiolitik, stabilizer mood, dan antipsikotik.",
+      alertTitle: "Resep selalu diperlukan",
+      alertDescription: "Obat psikiatri yang tercantum di sini memerlukan resep. Apotek tidak akan mendistribusikannya tanpa resep yang sah dan ditandatangani oleh psikiater atau dokter berlisensi. Jangan pernah mengobati sendiri, membagikan obat, atau membeli obat psikiatri dari penjual online yang tidak terverifikasi.",
+      stockAvailability: "Ketersediaan stok bervariasi menurut cabang. Hubungi terlebih dahulu untuk memastikan obat spesifik Anda tersedia sebelum berkunjung.",
+      searchPlaceholder: "Cari berdasarkan nama apotek atau lokasi...",
+      count: "{count} apotek",
+      seoTitle: "Apotek untuk Obat Psikiatri",
+      seoDescription: "Apotek di Indonesia yang mendistribusikan obat psikiatri. Resep yang valid dari dokter berlisensi selalu diperlukan.",
     },
   },
 };

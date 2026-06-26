@@ -44,7 +44,7 @@ interface SearchAndFiltersProps {
     minPrice: number;
     maxPrice: number;
   };
-  hiddenFilters?: Array<"sessionMode" | "priceRange" | "insurance">;
+  hiddenFilters?: Array<"sessionMode" | "priceRange" | "insurance" | "specialization">;
   searchPlaceholder?: string;
   locationSortMessage?: string;
   showSort?: boolean;
@@ -423,43 +423,44 @@ export const SearchAndFilters = ({
               </PopoverContent>
             </Popover>
 
-            {/* Specializations Filter */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
-                >
-                  <Heart className="h-3 w-3" />
-                  <span>{t("filters.specialization")}</span>
-                  {getActiveFilterCount(filters.specializations) > 0 && (
-                    <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
-                      {getActiveFilterCount(filters.specializations)}
-                    </Badge>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">{t("filters.specialization")}</h3>
-                  <div className="flex flex-wrap gap-1">
-                    {specializations.map((specialization) => (
-                      <button
-                        key={specialization}
-                        onClick={() => handleSpecializationSelect(specialization)}
-                        className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
-                          filters.specializations.includes(specialization as Specialization)
-                            ? "bg-purple-100 border-purple-300 text-purple-700"
-                            : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
-                        }`}
-                      >
-                        {getSpecializationLabel(t, specialization)}
-                      </button>
-                    ))}
+            {!hiddenFilters.includes("specialization") && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-3 py-2 h-auto text-xs font-medium justify-center flex items-center gap-1"
+                  >
+                    <Heart className="h-3 w-3" />
+                    <span>{t("filters.specialization")}</span>
+                    {getActiveFilterCount(filters.specializations) > 0 && (
+                      <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
+                        {getActiveFilterCount(filters.specializations)}
+                      </Badge>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground">{t("filters.specialization")}</h3>
+                    <div className="flex flex-wrap gap-1">
+                      {specializations.map((specialization) => (
+                        <button
+                          key={specialization}
+                          onClick={() => handleSpecializationSelect(specialization)}
+                          className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                            filters.specializations.includes(specialization as Specialization)
+                              ? "bg-purple-100 border-purple-300 text-purple-700"
+                              : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+                          }`}
+                        >
+                          {getSpecializationLabel(t, specialization)}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverContent>
+              </Popover>
+            )}
 
             {/* Session Mode Filter */}
             {!hiddenFilters.includes("sessionMode") && (
@@ -784,44 +785,45 @@ export const SearchAndFilters = ({
           </PopoverContent>
         </Popover>
 
-        {/* Specialization Filter */}
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
-            >
-              <Heart className="h-3 w-3 mr-1" />
-              {t("filters.specialization")}
-              {getActiveFilterCount(filters.specializations) > 0 && (
-                <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
-                  {getActiveFilterCount(filters.specializations)}
-                </Badge>
-              )}
-              <ChevronDown className="h-3 w-3 ml-1" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80 p-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">{t("filters.specialization")}</h3>
-              <div className="flex flex-wrap gap-1">
-                {specializations.map((specialization) => (
-                  <button
-                    key={specialization}
-                    onClick={() => handleSpecializationSelect(specialization)}
-                    className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
-                      filters.specializations.includes(specialization as Specialization)
-                        ? "bg-purple-100 border-purple-300 text-purple-700"
-                        : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
-                    }`}
-                  >
-                    {getSpecializationLabel(t, specialization)}
-                  </button>
-                ))}
+        {!hiddenFilters.includes("specialization") && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-200 rounded-full px-2 py-1 h-auto text-sm font-medium whitespace-nowrap"
+              >
+                <Heart className="h-3 w-3 mr-1" />
+                {t("filters.specialization")}
+                {getActiveFilterCount(filters.specializations) > 0 && (
+                  <Badge className="ml-1 bg-purple-600 text-white text-xs px-1 py-0.5 rounded-full">
+                    {getActiveFilterCount(filters.specializations)}
+                  </Badge>
+                )}
+                <ChevronDown className="h-3 w-3 ml-1" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">{t("filters.specialization")}</h3>
+                <div className="flex flex-wrap gap-1">
+                  {specializations.map((specialization) => (
+                    <button
+                      key={specialization}
+                      onClick={() => handleSpecializationSelect(specialization)}
+                      className={`px-3 py-1.5 rounded-full border transition-colors text-sm whitespace-nowrap ${
+                        filters.specializations.includes(specialization as Specialization)
+                          ? "bg-purple-100 border-purple-300 text-purple-700"
+                          : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+                      }`}
+                    >
+                      {getSpecializationLabel(t, specialization)}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          </PopoverContent>
-        </Popover>
+            </PopoverContent>
+          </Popover>
+        )}
 
         {/* Session Mode Filter */}
         {!hiddenFilters.includes("sessionMode") && (
