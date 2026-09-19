@@ -13,7 +13,7 @@ import { PractitionerServices } from "@/components/PractitionerServices";
 import { PractitionerContact } from "@/components/PractitionerContact";
 import { PractitionerLocations } from "@/components/PractitionerLocations";
 import { AffiliatedInstitutions, AffiliatedInstitution } from "@/components/AffiliatedInstitutions";
-import { usePractitioner, useServicesByPractitioner, useContactDetailsByPractitioner, useLocationsByPractitioner, useContactDetailsByInstitution, useContactDetailsByInstitutionIds } from "@/hooks/useDatabase";
+import { usePractitioner, useServicesByPractitioner, useContactDetailsByPractitioner, useLocationsByPractitioner, useContactDetailsByInstitutionIds } from "@/hooks/useDatabase";
 import { transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
 import { useEffect, useMemo, useState } from "react";
 import { Practitioner, Mode, ContactDetail } from "@/types";
@@ -135,9 +135,24 @@ const PractitionerDetail = () => {
 
   useEffect(() => {
     if (dbLocations) {
-      const validLocations = (dbLocations as any[]).filter((loc: any) => 
-        loc && typeof loc === 'object' && loc.id && loc.name && !loc.error
-      );
+      const seen = new Set<string>();
+      const raw: any[] = [];
+      (dbLocations as any[]).forEach((loc: any) => raw.push(loc));
+      // Merge in locations from all affiliated institutions
+      const instRows = (dbPractitioner as any)?.practitioner_institutions || [];
+      instRows.forEach((pi: any) => {
+        const instLocs = pi?.institution?.institution_locations || [];
+        instLocs.forEach((il: any) => {
+          if (il?.location) raw.push(il.location);
+        });
+      });
+      const validLocations = raw.filter((loc: any) => {
+        if (!loc || typeof loc !== 'object' || !loc.id || !loc.name || loc.error) return false;
+        const key = loc.id.toString();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
       const transformedLocations = validLocations.map((loc: any) => ({
         id: loc.id.toString(),
         name: loc.name || "Unnamed Location", 
@@ -148,7 +163,7 @@ const PractitionerDetail = () => {
       }));
       setLocations(transformedLocations);
     }
-  }, [dbLocations]);
+  }, [dbLocations, dbPractitioner]);
 
   useEffect(() => {
     if (practitionerError) {
