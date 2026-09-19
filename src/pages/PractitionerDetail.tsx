@@ -13,7 +13,7 @@ import { PractitionerServices } from "@/components/PractitionerServices";
 import { PractitionerContact } from "@/components/PractitionerContact";
 import { PractitionerLocations } from "@/components/PractitionerLocations";
 import { AffiliatedInstitutions, AffiliatedInstitution } from "@/components/AffiliatedInstitutions";
-import { usePractitioner, useServicesByPractitioner, useContactDetailsByPractitioner, useLocationsByPractitioner, useContactDetailsByInstitution, useContactDetailsByInstitutionIds } from "@/hooks/useDatabase";
+import { usePractitioner, useServicesByPractitioner, useContactDetailsByPractitioner, useLocationsByPractitioner, useContactDetailsByInstitutionIds } from "@/hooks/useDatabase";
 import { transformPractitioner, transformService, transformContactDetails } from "@/utils/dataTransform";
 import { useEffect, useMemo, useState } from "react";
 import { Practitioner, Mode, ContactDetail } from "@/types";
@@ -54,16 +54,35 @@ const PractitionerDetail = () => {
   const { data: dbContactDetails, isLoading: contactLoading } = useContactDetailsByPractitioner(practitionerId);
   const { data: dbLocations, isLoading: locationsLoading } = useLocationsByPractitioner(practitionerId);
 
-  // Derive institution ID for contact fallback
-  const institutionId = useMemo<number>(() => {
-    const inst = (dbPractitioner as any)?.practitioner_institutions?.[0]?.institution;
-    return inst?.id ? Number(inst.id) : 0;
+  // Derive ALL institution IDs for contact fallback
+  const institutionIds = useMemo<number[]>(() => {
+    const rows = (dbPractitioner as any)?.practitioner_institutions || [];
+    return rows
+      .map((pi: any) => pi.institution?.id)
+      .filter((id: any) => id != null)
+      .map((id: any) => Number(id));
   }, [dbPractitioner]);
   const practitionerContactsEmpty = !dbContactDetails || (dbContactDetails as any[]).length === 0;
-  const shouldFetchInstitutionContacts = !contactLoading && practitionerContactsEmpty && institutionId > 0;
-  const { data: dbInstitutionContacts } = useContactDetailsByInstitution(
-    shouldFetchInstitutionContacts ? institutionId : 0
+  const shouldFetchInstitutionContacts = !contactLoading && practitionerContactsEmpty && institutionIds.length > 0;
+  const { data: dbInstitutionContactsMap } = useContactDetailsByInstitutionIds(
+    shouldFetchInstitutionContacts ? institutionIds : []
   );
+  // Merge contacts across all affiliated institutions, deduped by contact id
+  const dbInstitutionContacts = useMemo<any[]>(() => {
+    if (!dbInstitutionContactsMap) return [];
+    const seen = new Set<any>();
+    const merged: any[] = [];
+    institutionIds.forEach((id) => {
+      const rows = (dbInstitutionContactsMap as any)?.[id] || [];
+      rows.forEach((c: any) => {
+        const key = c?.id ?? `${c?.contact_type}:${c?.value}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        merged.push(c);
+      });
+    });
+    return merged;
+  }, [dbInstitutionContactsMap, institutionIds]);
 
   // Collect institution IDs across all services for CTA fallback (per-service)
   const serviceInstitutionIds = useMemo<number[]>(() => {
@@ -116,9 +135,24 @@ const PractitionerDetail = () => {
 
   useEffect(() => {
     if (dbLocations) {
-      const validLocations = (dbLocations as any[]).filter((loc: any) => 
-        loc && typeof loc === 'object' && loc.id && loc.name && !loc.error
-      );
+      const seen = new Set<string>();
+      const raw: any[] = [];
+      (dbLocations as any[]).forEach((loc: any) => raw.push(loc));
+      // Merge in locations from all affiliated institutions
+      const instRows = (dbPractitioner as any)?.practitioner_institutions || [];
+      instRows.forEach((pi: any) => {
+        const instLocs = pi?.institution?.institution_locations || [];
+        instLocs.forEach((il: any) => {
+          if (il?.location) raw.push(il.location);
+        });
+      });
+      const validLocations = raw.filter((loc: any) => {
+        if (!loc || typeof loc !== 'object' || !loc.id || !loc.name || loc.error) return false;
+        const key = loc.id.toString();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
       const transformedLocations = validLocations.map((loc: any) => ({
         id: loc.id.toString(),
         name: loc.name || "Unnamed Location", 
@@ -129,7 +163,7 @@ const PractitionerDetail = () => {
       }));
       setLocations(transformedLocations);
     }
-  }, [dbLocations]);
+  }, [dbLocations, dbPractitioner]);
 
   useEffect(() => {
     if (practitionerError) {
