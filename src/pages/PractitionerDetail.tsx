@@ -54,16 +54,35 @@ const PractitionerDetail = () => {
   const { data: dbContactDetails, isLoading: contactLoading } = useContactDetailsByPractitioner(practitionerId);
   const { data: dbLocations, isLoading: locationsLoading } = useLocationsByPractitioner(practitionerId);
 
-  // Derive institution ID for contact fallback
-  const institutionId = useMemo<number>(() => {
-    const inst = (dbPractitioner as any)?.practitioner_institutions?.[0]?.institution;
-    return inst?.id ? Number(inst.id) : 0;
+  // Derive ALL institution IDs for contact fallback
+  const institutionIds = useMemo<number[]>(() => {
+    const rows = (dbPractitioner as any)?.practitioner_institutions || [];
+    return rows
+      .map((pi: any) => pi.institution?.id)
+      .filter((id: any) => id != null)
+      .map((id: any) => Number(id));
   }, [dbPractitioner]);
   const practitionerContactsEmpty = !dbContactDetails || (dbContactDetails as any[]).length === 0;
-  const shouldFetchInstitutionContacts = !contactLoading && practitionerContactsEmpty && institutionId > 0;
-  const { data: dbInstitutionContacts } = useContactDetailsByInstitution(
-    shouldFetchInstitutionContacts ? institutionId : 0
+  const shouldFetchInstitutionContacts = !contactLoading && practitionerContactsEmpty && institutionIds.length > 0;
+  const { data: dbInstitutionContactsMap } = useContactDetailsByInstitutionIds(
+    shouldFetchInstitutionContacts ? institutionIds : []
   );
+  // Merge contacts across all affiliated institutions, deduped by contact id
+  const dbInstitutionContacts = useMemo<any[]>(() => {
+    if (!dbInstitutionContactsMap) return [];
+    const seen = new Set<any>();
+    const merged: any[] = [];
+    institutionIds.forEach((id) => {
+      const rows = (dbInstitutionContactsMap as any)?.[id] || [];
+      rows.forEach((c: any) => {
+        const key = c?.id ?? `${c?.contact_type}:${c?.value}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        merged.push(c);
+      });
+    });
+    return merged;
+  }, [dbInstitutionContactsMap, institutionIds]);
 
   // Collect institution IDs across all services for CTA fallback (per-service)
   const serviceInstitutionIds = useMemo<number[]>(() => {
