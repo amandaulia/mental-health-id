@@ -43,7 +43,7 @@ export const transformPractitioner = (
     professionTypes: mapProfessionTypes(dbPractitioner.profession_type || []),
     licenseNumber: dbPractitioner.license_number,
     specializations: mapSpecializations(dbPractitioner.specialization || []),
-    experience: dbPractitioner.experience ? `${dbPractitioner.experience} years` : undefined,
+    experience: dbPractitioner.experience ? `${dbPractitioner.experience} ${dbPractitioner.experience === 1 ? "year" : "years"}` : undefined,
     education: Array.isArray(dbPractitioner.education) ? dbPractitioner.education.join(", ") : undefined,
     city: "Unknown City", // Will be set from location data separately
     location: {
